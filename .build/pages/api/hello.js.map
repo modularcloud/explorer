@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../pages/api/hello.ts"],
+  "sourcesContent": ["// Next.js API route support: https://nextjs.org/docs/api-routes/introduction\nimport type { NextApiRequest, NextApiResponse } from 'next'\n\ntype Data = {\n  name: string\n}\n\nexport default function handler(\n  req: NextApiRequest,\n  res: NextApiResponse<Data>\n) {\n  res.status(200).json({ name: 'John Doe' })\n}\n"],
+  "mappings": ";;;;;;;AAAA;AAAA;AAAA;AAOe,iBACb,KACA,KACA;AACA,MAAI,OAAO,KAAK,KAAK,EAAE,MAAM;AAAA;",
+  "names": []
+}
