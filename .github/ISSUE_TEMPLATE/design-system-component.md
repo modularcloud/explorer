@@ -9,6 +9,8 @@ assignees: ''
 
 # Description
 
+# Images
+
 # Component Type
 - [ ] Atom
 - [ ] Molecule
