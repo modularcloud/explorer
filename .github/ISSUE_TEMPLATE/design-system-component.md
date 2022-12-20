@@ -18,8 +18,6 @@ assignees: ''
 - [ ] Page
 - [ ] Other
 
-# Figma Link
-
 # Styles
 
 # Implementation
