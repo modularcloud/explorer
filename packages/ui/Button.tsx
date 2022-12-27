@@ -3,7 +3,7 @@ interface Props {
   size?: "small" | "large";
   label?: string;
 }
- 
+
 export const Button = ({
   primary = false,
   label = "Boop",

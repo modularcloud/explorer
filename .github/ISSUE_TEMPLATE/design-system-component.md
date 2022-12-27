@@ -2,9 +2,8 @@
 name: Design System Component
 about: Describe what is needed to implement a design system
 title: "[Component] Name"
-labels: ''
-assignees: ''
-
+labels: ""
+assignees: ""
 ---
 
 # Description
@@ -12,6 +11,7 @@ assignees: ''
 # Images
 
 # Component Type
+
 - [ ] Atom
 - [ ] Molecule
 - [ ] Organism
