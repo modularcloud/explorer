@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../next.config.js"],
-  "sourcesContent": ["/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  reactStrictMode: true,\n  swcMinify: true,\n}\n\nmodule.exports = nextConfig\n"],
-  "mappings": "AACA,MAAM,aAAa;AAAA,EACjB,iBAAiB;AAAA,EACjB,WAAW;AAAA;AAGb,OAAO,UAAU;",
-  "names": []
-}
