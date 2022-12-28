@@ -5,7 +5,9 @@ export default function Web() {
     <div>
       <h1>Web</h1>
       <ul>
-        {ServiceManager.listNetworks().map(value => <li>{value}</li>)}
+        {ServiceManager.listNetworks().map((value) => (
+          <li>{value}</li>
+        ))}
       </ul>
       <Button />
     </div>

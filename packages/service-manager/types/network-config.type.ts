@@ -1,3 +1,3 @@
 export type NetworkConfig = {
-    label: string,
-}
+  label: string;
+};
