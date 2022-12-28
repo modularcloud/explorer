@@ -1,8 +1,6 @@
-import { addNetwork, listNetworks } from "service-manager/manager";
+import { createServiceManager } from "service-manager/manager";
 
-addNetwork({ label: "Celestia" });
-addNetwork({ label: "Dymension" });
+export const ServiceManager = createServiceManager();
 
-export const ServiceManager = {
-  listNetworks,
-};
+ServiceManager.addNetwork({ label: "Celestia" });
+ServiceManager.addNetwork({ label: "Dymension" });
