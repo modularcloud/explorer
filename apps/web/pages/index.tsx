@@ -31,6 +31,18 @@ export async function getServerSideProps() {
       description: `Same block, retrieved by hash (${blockByHeight?.uniqueIdentifier})`,
       result: blockByHash?.raw ?? "",
     });
+
+    const transactionByHash = await getEntity(
+      network,
+      "Transaction",
+      "hash",
+      "C12DA33E2AF01882260063550DBDF0B23241D1116797D87D60E270BCF406D95D"
+    );
+    examples.push({
+      description:
+        "Transaction by hash (C12DA33E2AF01882260063550DBDF0B23241D1116797D87D60E270BCF406D95D)",
+      result: transactionByHash?.raw ?? "",
+    });
   }
   return {
     props: {
@@ -46,7 +58,7 @@ export default function Web(props: Props) {
       {ServiceManager.listNetworks().map((value) => {
         const network = ServiceManager.getNetwork(value);
         return (
-          <div>
+          <div key={value}>
             <h2>{value}</h2>
             <ul>
               {network?.entityTypes.map((entityType) => (

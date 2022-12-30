@@ -21,7 +21,7 @@ export async function getEntity(
   fieldValue: string
 ): Promise<Entity | null> {
   const entityType = network.entityTypes.find(
-    (entityType) => (entityType.name = typeName)
+    (entityType) => entityType.name === typeName
   );
   if (!entityType) {
     return null;

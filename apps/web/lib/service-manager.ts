@@ -8,6 +8,7 @@ type JSONRPCResponse<T> = {
   id: number;
   result: T;
 };
+
 type Block = {
   block_id: {
     hash: string;
@@ -75,6 +76,30 @@ type Block = {
   };
 };
 
+type Transaction = {
+  hash: string;
+  height: string;
+  index: number;
+  tx_result: {
+    code: number;
+    data: string;
+    log: string;
+    info: string;
+    gas_wanted: string;
+    gas_used: string;
+    events: {
+      type: string;
+      attributes: {
+        key: string;
+        value: string;
+        index: boolean;
+      }[];
+    }[];
+    codespace: string;
+  };
+  tx: string;
+};
+
 async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
   const baseUrl =
     queryType === "height"
@@ -106,6 +131,37 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
   }
 }
 
+async function getTransactionByHash(hash: string) {
+  try {
+    const response = await fetch(
+      "http://rpc-mocha.pops.one:26657/tx?hash=0x" + hash
+    );
+
+    if (!response.ok) {
+      throw Error(`Response code ${response.status}: ${response.statusText}`);
+    }
+
+    const txResponse = (await response.json()) as JSONRPCResponse<Transaction>;
+    const txEntity: Entity = {
+      uniqueIdentifier: txResponse.result.hash,
+      uniqueIdentifierLabel: "Hash",
+      metadata: {
+        Height: txResponse.result.height,
+        Index: String(txResponse.result.index),
+        Status: txResponse.result.tx_result.code ? "Failed" : "Success",
+        "Gas (used/wanted)":
+          txResponse.result.tx_result.gas_used +
+          "/" +
+          txResponse.result.tx_result.gas_wanted,
+      },
+      raw: JSON.stringify(txResponse, null, 2),
+    };
+    return txEntity;
+  } catch {
+    return null;
+  }
+}
+
 ServiceManager.addNetwork({
   label: "Mocha",
   entityTypes: [
@@ -114,6 +170,12 @@ ServiceManager.addNetwork({
       getByField: {
         height: (height: string) => getBlockBy("height", height),
         hash: (hash: string) => getBlockBy("hash", hash),
+      },
+    },
+    {
+      name: "Transaction",
+      getByField: {
+        hash: (hash: string) => getTransactionByHash(hash),
       },
     },
   ],
