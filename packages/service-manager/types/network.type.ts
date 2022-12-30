@@ -1,8 +1,9 @@
+import { slugify } from "../utils/slugify";
 import { Entity } from "./entity.type";
 
 type EntityType = {
   name: string;
-  getByField: { [field: string]: (field: string) => Promise<Entity | null> };
+  getters: { field: string; fn: (field: string) => Promise<Entity | null> }[];
 };
 
 export type Network = {
@@ -21,16 +22,18 @@ export async function getEntity(
   fieldValue: string
 ): Promise<Entity | null> {
   const entityType = network.entityTypes.find(
-    (entityType) => entityType.name === typeName
+    (entityType) => slugify(entityType.name) === slugify(typeName)
   );
   if (!entityType) {
     return null;
   }
 
-  const getter = entityType.getByField[field];
+  const getter = entityType.getters.find(
+    (getter) => slugify(getter.field) === slugify(field)
+  );
   if (!getter) {
     return null;
   }
 
-  return getter(fieldValue);
+  return getter.fn(fieldValue);
 }

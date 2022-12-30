@@ -167,16 +167,22 @@ ServiceManager.addNetwork({
   entityTypes: [
     {
       name: "Block",
-      getByField: {
-        height: (height: string) => getBlockBy("height", height),
-        hash: (hash: string) => getBlockBy("hash", hash),
-      },
+      getters: [
+        {
+          field: "height",
+          fn: (height: string) => getBlockBy("height", height),
+        },
+        { field: "hash", fn: (hash: string) => getBlockBy("hash", hash) },
+      ],
     },
     {
       name: "Transaction",
-      getByField: {
-        hash: (hash: string) => getTransactionByHash(hash),
-      },
+      getters: [
+        {
+          field: "hash",
+          fn: (hash: string) => getTransactionByHash(hash),
+        },
+      ],
     },
   ],
 });
