@@ -13,7 +13,11 @@
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "react": "^18.2.0",
+    "service-manager": "*",
     "tsconfig": "*",
     "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.7.4"
   }
 }

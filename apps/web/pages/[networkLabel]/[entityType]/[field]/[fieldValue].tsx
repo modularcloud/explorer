@@ -2,6 +2,7 @@ import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { getEntities, getEntity } from "service-manager/types/network.type";
+import { Table } from "ui";
 import { ServiceManager } from "../../../../lib/service-manager";
 
 export const getServerSideProps: GetServerSideProps<{
@@ -38,7 +39,12 @@ export const getServerSideProps: GetServerSideProps<{
   const associated: Entity[] = [];
   if (entityType.toLowerCase() === "block") {
     associated.push(
-      ...(await getEntities(network, "transaction", "height", entity.metadata["Height"]))
+      ...(await getEntities(
+        network,
+        "transaction",
+        "height",
+        entity.metadata["Height"]
+      ))
     );
   }
 
@@ -58,11 +64,7 @@ function EntityPage({
     <div>
       <div>
         <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
-        <ol>
-          {associated.map((ae) => (
-            <li key={ae.uniqueIdentifier}>{ae.uniqueIdentifier}</li>
-          ))}
-        </ol>
+          <Table data={associated} />
         <code>{entity.raw}</code>
       </div>
       <div>

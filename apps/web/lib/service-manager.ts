@@ -103,7 +103,7 @@ type Transaction = {
 type TxSearch = {
   txs: Transaction[];
   total_count: string;
-}
+};
 
 async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
   const baseUrl =
