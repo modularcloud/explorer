@@ -4,6 +4,7 @@ import { Entity } from "service-manager/types/entity.type";
 import { getEntities, getEntity } from "service-manager/types/network.type";
 import { Table } from "ui";
 import { ServiceManager } from "../../../../lib/service-manager";
+import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
@@ -60,11 +61,24 @@ function EntityPage({
   entity,
   associated,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
+  const handleTableRowClick = (row: Entity) => {
+    router.push({
+      pathname: "/[networkLabel]/[entityType]/[field]/[fieldValue]",
+      // TODO: get full path from entity
+      query: {
+        networkLabel: "mocha",
+        entityType: "transaction",
+        field: "hash",
+        fieldValue: row.uniqueIdentifier,
+      },
+    });
+  };
   return (
     <div>
       <div>
         <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
-          <Table data={associated} />
+        <Table data={associated} onRowClick={handleTableRowClick} />
         <code>{entity.raw}</code>
       </div>
       <div>
