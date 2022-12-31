@@ -1,9 +1,12 @@
 import { slugify } from "../utils/slugify";
 import { Entity } from "./entity.type";
 
+type GetOneFn = (query: string) => Promise<Entity | null>;
+type GetManyFn = (query: string) => Promise<Entity[]>;
+
 type EntityType = {
   name: string;
-  getters: { field: string; fn: (field: string) => Promise<Entity | null> }[];
+  getters: { field: string; getOne?: GetOneFn; getMany?: GetManyFn }[];
 };
 
 export type Network = {
@@ -28,12 +31,36 @@ export async function getEntity(
     return null;
   }
 
-  const getter = entityType.getters.find(
-    (getter) => slugify(getter.field) === slugify(field)
-  );
-  if (!getter) {
+  const getter = entityType.getters
+    .filter((getter) => getter.getOne)
+    .find((getter) => slugify(getter.field) === slugify(field));
+  if (!getter?.getOne) {
     return null;
   }
 
-  return getter.fn(fieldValue);
+  return getter.getOne(fieldValue);
+}
+
+// temporary measure to unblock table development
+export async function getEntities(
+  network: Network,
+  typeName: string,
+  field: string,
+  fieldValue: string
+): Promise<Entity[]> {
+  const entityType = network.entityTypes.find(
+    (entityType) => slugify(entityType.name) === slugify(typeName)
+  );
+  if (!entityType) {
+    return [];
+  }
+
+  const getter = entityType.getters
+    .filter((getter) => getter.getMany)
+    .find((getter) => slugify(getter.field) === slugify(field));
+  if (!getter?.getMany) {
+    return [];
+  }
+
+  return getter.getMany(fieldValue);
 }

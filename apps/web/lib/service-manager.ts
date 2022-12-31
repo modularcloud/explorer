@@ -100,6 +100,11 @@ type Transaction = {
   tx: string;
 };
 
+type TxSearch = {
+  txs: Transaction[];
+  total_count: string;
+}
+
 async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
   const baseUrl =
     queryType === "height"
@@ -162,6 +167,36 @@ async function getTransactionByHash(hash: string) {
   }
 }
 
+async function getTransactionsByHeight(height: string) {
+  try {
+    const response = await fetch(
+      `http://rpc-mocha.pops.one:26657/tx_search?query="tx.height=${height}"`
+    );
+    if (!response.ok) {
+      throw Error(`Response code ${response.status}: ${response.statusText}`);
+    }
+
+    const txsResponse = (await response.json()) as JSONRPCResponse<TxSearch>;
+    return txsResponse.result.txs.map((tx) => {
+      const txEntity: Entity = {
+        uniqueIdentifier: tx.hash,
+        uniqueIdentifierLabel: "Hash",
+        metadata: {
+          Height: tx.height,
+          Index: String(tx.index),
+          Status: tx.tx_result.code ? "Failed" : "Success",
+          "Gas (used/wanted)":
+            tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
+        },
+        raw: JSON.stringify(tx, null, 2), // TODO: this will not return the full RPC request for the individual tx
+      };
+      return txEntity;
+    });
+  } catch {
+    return [];
+  }
+}
+
 ServiceManager.addNetwork({
   label: "Mocha",
   entityTypes: [
@@ -170,9 +205,9 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "height",
-          fn: (height: string) => getBlockBy("height", height),
+          getOne: (height: string) => getBlockBy("height", height),
         },
-        { field: "hash", fn: (hash: string) => getBlockBy("hash", hash) },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash) },
       ],
     },
     {
@@ -180,7 +215,11 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          fn: (hash: string) => getTransactionByHash(hash),
+          getOne: (hash: string) => getTransactionByHash(hash),
+        },
+        {
+          field: "height",
+          getMany: (height: string) => getTransactionsByHeight(height),
         },
       ],
     },
