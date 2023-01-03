@@ -127,6 +127,10 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
         "Square Size": blockResponse.result.block.data.square_size,
         Proposer: blockResponse.result.block.header.proposer_address,
       },
+      context: {
+        network: "Mocha",
+        entityTypeName: "Block",
+      },
       raw: JSON.stringify(blockResponse, null, 2),
     };
 
@@ -159,6 +163,10 @@ async function getTransactionByHash(hash: string) {
           "/" +
           txResponse.result.tx_result.gas_wanted,
       },
+      context: {
+        network: "Mocha",
+        entityTypeName: "Transaction",
+      },
       raw: JSON.stringify(txResponse, null, 2),
     };
     return txEntity;
@@ -187,6 +195,10 @@ async function getTransactionsByHeight(height: string) {
           Status: tx.tx_result.code ? "Failed" : "Success",
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
+        },
+        context: {
+          network: "Mocha",
+          entityTypeName: "Transaction",
         },
         raw: JSON.stringify(tx, null, 2), // TODO: this will not return the full RPC request for the individual tx
       };

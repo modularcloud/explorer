@@ -65,11 +65,10 @@ function EntityPage({
   const handleTableRowClick = (row: Entity) => {
     router.push({
       pathname: "/[networkLabel]/[entityType]/[field]/[fieldValue]",
-      // TODO: get full path from entity
       query: {
-        networkLabel: "mocha",
-        entityType: "transaction",
-        field: "hash",
+        networkLabel: row.context.network,
+        entityType: row.context.entityTypeName,
+        field: "hash", // TODO: get table layour from entity
         fieldValue: row.uniqueIdentifier,
       },
     });
