@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { getEntities, getEntity } from "service-manager/types/network.type";
-import { Table } from "../../../../../../packages/design-system";
+import { Table } from "@modularcloud/design-system";
 import { ServiceManager } from "../../../../lib/service-manager";
 import { useRouter } from "next/router";
 
