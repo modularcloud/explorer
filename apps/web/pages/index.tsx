@@ -1,5 +1,5 @@
 import { getEntity } from "service-manager/types/network.type";
-import { Button } from "ui";
+import { Button } from "../../../packages/design-system";
 import { ServiceManager } from "../lib/service-manager";
 
 type Example = {
