@@ -1,5 +1,5 @@
 import { getEntity } from "service-manager/types/network.type";
-import { Button } from "@modularcloud/design-system";
+import { BoxedValue, Button } from "@modularcloud/design-system";
 import { ServiceManager } from "../lib/service-manager";
 
 type Example = {
@@ -55,6 +55,7 @@ export default function Web(props: Props) {
   return (
     <div>
       <h1 className="text-xl">Networks</h1>
+      <BoxedValue value="Pay For Data"/>
       {ServiceManager.listNetworks().map((value) => {
         const network = ServiceManager.getNetwork(value);
         return (
