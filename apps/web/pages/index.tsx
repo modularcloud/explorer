@@ -55,7 +55,7 @@ export default function Web(props: Props) {
   return (
     <div>
       <h1 className="text-xl">Networks</h1>
-      <BoxedValue value="Pay For Data"/>
+      <BoxedValue value="Pay For Data" />
       {ServiceManager.listNetworks().map((value) => {
         const network = ServiceManager.getNetwork(value);
         return (
