@@ -4,7 +4,7 @@ interface Props {
 
 export const BoxedValue = ({ value }: Props) => {
   return (
-    <span className="flex justify-center items center rounded font-medium text-xs">
+    <span className="flex justify-center items center rounded font-medium text-xs bg-main-100">
       {value}
     </span>
   );

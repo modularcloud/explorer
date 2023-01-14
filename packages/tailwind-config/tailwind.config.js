@@ -1,5 +1,3 @@
-const colors = require("tailwindcss/colors");
-
 module.exports = {
   content: [
     // app content
@@ -11,8 +9,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brandblue: colors.blue[500],
-        brandred: colors.red[500],
+        "bg-50": "#f9f9f9",
+        "bg-100": "#f2f2f2",
+        "main-50": "#eeeeee",
+        "main-100": "#d9d9d9",
+        "main-200": "#7c7c7c",
+        "main-300": "#4a4949",
+        "alt": "#a8a2a2",
+        "success-50": "#eef9f5",
+        "success-100": "#2DB993",
+        "failure-50": "#e74d4d"
       },
     },
   },
