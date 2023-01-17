@@ -21,6 +21,11 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@vitejs/plugin-react": "^3.0.1",
+    "react": "^18.2.0",
+    "tailwind-config": "^0.0.0",
+    "vite": "^4.0.4"
+  },
   "packageManager": "npm@8.19.2"
 }
