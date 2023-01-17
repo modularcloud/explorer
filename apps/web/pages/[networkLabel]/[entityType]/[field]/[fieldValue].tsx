@@ -80,7 +80,6 @@ function EntityPage({
         <div className="grow">
           {/** Body */}
           <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
-          <Table data={associated} onRowClick={handleTableRowClick} />
         </div>
         <div className="w-96 p-8 border-l border-l-main-100 truncate flex flex-col">
           {/** Right Sidebar */}
