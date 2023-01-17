@@ -74,16 +74,29 @@ function EntityPage({
     });
   };
   return (
-    <div>
-      <div>
-        <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
-        <Table data={associated} onRowClick={handleTableRowClick} />
-        <code>{entity.raw}</code>
+    <div className="bg-bg-50 h-screen flex flex-col">
+      <div className="grow flex">
+        {/** Main */}
+        <div className="grow">
+          {/** Body */}
+          <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
+          <Table data={associated} onRowClick={handleTableRowClick} />
+        </div>
+        <div className="w-96 p-8 border-l border-l-main-100 truncate flex flex-col">
+          {/** Right Sidebar */}
+          {Object.entries(entity.metadata).map((entry) => (
+            <div className="flex justify-between" key={entry[0]}><span className="font-bold">{entry[0]}</span> <span className="truncate w-1/3 text-right">{entry[1]}</span></div>
+          ))}
+        </div>
       </div>
-      <div>
-        {Object.entries(entity.metadata).map((entry) => (
-          <li key={entry[0]}>{`${entry[0]}: ${entry[1]}`}</li>
-        ))}
+      <div className="flex w-full border-t border-t-main-100 items-center justify-between h-24 px-14">
+        { /** Footer */}
+        <span>Copyright 2023 Modular Cloud</span>
+        <ul className="flex">
+          <li>About Us</li>
+          <li>Terms & Conditions</li>
+          <li>Privacy Policy</li>
+        </ul>
       </div>
     </div>
   );
