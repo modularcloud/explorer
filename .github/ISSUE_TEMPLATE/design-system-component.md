@@ -1,23 +1,25 @@
 ---
 name: Design System Component
 about: Describe what is needed to implement a design system
-title: "[Component] Name"
-labels: ""
+title: "Component Name"
+labels: "component"
 assignees: ""
 ---
 
 # Description
+<!-- Describe the component here -->
 
-# Images
+# Design
+<!-- Add or remove breakpoints as needed -->
+<!-- Include images, all styles, and states for each breakpoint -->
 
-# Component Type
+## 1024
 
-- [ ] Atom
-- [ ] Molecule
-- [ ] Organism
-- [ ] Page
-- [ ] Other
+## 768
 
-# Styles
+## 640
 
-# Implementation
+## 375
+
+# Implementation notes
+<!-- (Optional) Remove this section if not needed -->
