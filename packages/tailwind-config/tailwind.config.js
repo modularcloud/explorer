@@ -22,7 +22,7 @@ module.exports = {
           "linear-gradient(267.41deg, #50B5FF 38.68%, #985EFE 63.16%)",
       }),
       boxShadow: {
-        "input-shadow":
+        "ocean-shadow":
           "0px 0px 6px rgba(74, 112, 254, 0.2), 0px 0px 2px rgba(42, 43, 46, 0.04)",
       },
       colors: {
@@ -101,5 +101,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-radix")()],
 };
