@@ -9,12 +9,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup index.tsx --format esm,cjs --dts --external react && tailwindcss -i ./styles.css -o ./dist/styles.css",
+    "build": "npm run gen:icons && tsup index.tsx --format esm,cjs --dts --external react && tailwindcss -i ./styles.css -o ./dist/styles.css",
     "dev": "concurrently \"tsup index.tsx --format esm,cjs --dts --external react --watch\" \"tailwindcss -i ./styles.css -o ./dist/styles.css --watch\"",
     "clean": "rm -rf dist",
-    "lint": "TIMING=1 eslint \"**/*.ts*\""
+    "lint": "TIMING=1 eslint \"**/*.ts*\"",
+    "gen:icons": "npx @svgr/cli --typescript --out-dir icons -- icon-svgs"
   },
   "devDependencies": {
+    "@svgr/cli": "^6.5.1",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
     "concurrently": "^7.2.2",
