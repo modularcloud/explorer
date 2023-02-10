@@ -1,14 +1,12 @@
-import React from "react";
-
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Args } from "@storybook/addons";
 import { SearchInput } from "@modularcloud/design-system";
 
 export default {
   title: "Components/SearchInput",
   component: SearchInput,
   argTypes: {
-    placeholder: { control: { type: "text " } },
+    mode: { control: { type: "select", options: ["light", "dark"] } },
+    placeholder: { control: { type: "text" } },
   },
 } as ComponentMeta<typeof SearchInput>;
 
