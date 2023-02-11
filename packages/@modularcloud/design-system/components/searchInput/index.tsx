@@ -1,6 +1,6 @@
+import React from "react";
 import clsx from "clsx";
 import * as Select from "@radix-ui/react-select";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 interface Props {
@@ -13,26 +13,30 @@ interface Props {
       value: string;
     }[];
   }[];
+  selectedItem?: string;
+  selectHandler: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SearchInput = ({
   mode = "light",
   placeholder = "Go to hash or height",
   optionGroups,
+  selectedItem,
+  selectHandler,
 }: Props) => {
   return (
     <div
-      className={clsx("flex shadow rounded-lg w-full", {
-        "bg-gradient-accent pt-0.5 hover:shadow-sm focus-within:bg-gradient-secondary focus-within:p-[1.5px]":
+      className={clsx("flex shadow rounded-lg w-full text-xs sm:text-base", {
+        "bg-gradient-accent pt-0.5 hover:shadow-sm focus-within:bg-gradient-secondary focus-within:p-0.5":
           mode === "dark",
-        "border border-gray-400 hover:shadow-ocean-shadow focus-within:border-2 focus-within:border-ocean-400 focus-within:shadow-ocean-shadow":
+        "bg-white border border-gray-400 hover:shadow-ocean-shadow focus-within:border focus-within:border-ocean-400 focus-within:shadow-ocean-shadow":
           mode === "light",
       })}
     >
-      <Select.Root>
+      <Select.Root value={selectedItem} onValueChange={selectHandler}>
         <Select.Trigger
           className={clsx(
-            "flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold",
+            "flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold text-sm sm:text-base",
             {
               "border-r-mid-dark-900 bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white":
                 mode === "dark",
@@ -42,7 +46,10 @@ export const SearchInput = ({
           )}
           aria-label="SearchType"
         >
-          <Select.Value placeholder="Mamaki" />
+          <Select.Value
+            aria-label={selectedItem}
+            defaultValue={selectedItem}
+          ></Select.Value>
           <Select.Icon className="ml-2">
             <ChevronDownIcon />
           </Select.Icon>
@@ -50,52 +57,47 @@ export const SearchInput = ({
         <Select.Portal>
           <Select.Content
             className={clsx(
-              "shadow rounded-lg overflow-auto max-h-[150px] min-w-[160px]",
+              "shadow-md rounded-lg max-h-[150px] min-w-[160px] text-sm sm:text-base",
               {
                 "bg-mid-dark text-white": mode === "dark",
-                "border ": mode === "light",
+                "border border-gray-400 bg-white": mode === "light",
               }
             )}
             position="popper"
-            sideOffset={5}
+            sideOffset={8}
           >
-            <ScrollArea.Root className="ScrollAreaRoot">
+            <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
               <Select.Viewport>
-                <ScrollArea.Viewport>
-                  {optionGroups?.map((grp, index) => (
-                    <Select.Group key={index}>
-                      <Select.Label
-                        className={clsx("font-bold p-2", {
-                          "bg-gray-100 border-b border-b-gray-400":
-                            mode === "light",
-                          "border-b border-b-mid-dark-900": mode === "dark",
-                        })}
+                {optionGroups?.map((grp, index) => (
+                  <Select.Group key={index}>
+                    <Select.Label
+                      className={clsx("font-bold p-2", {
+                        "bg-gray-300 border-y border-y-gray-400":
+                          mode === "light",
+                        "border-b border-b-mid-dark-900": mode === "dark",
+                      })}
+                    >
+                      {grp.label}
+                    </Select.Label>
+                    {grp.options.map((opt, idx) => (
+                      <Select.Item
+                        className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
+                        key={idx}
+                        value={opt.value}
                       >
-                        {grp.label}
-                      </Select.Label>
-                      {grp.options.map((opt, idx) => (
-                        <Select.Item
-                          className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
-                          key={idx}
-                          value={opt.value}
-                        >
-                          {opt.name}
-                        </Select.Item>
-                      ))}
-                    </Select.Group>
-                  ))}
-                </ScrollArea.Viewport>
+                        <Select.ItemText>{opt.name}</Select.ItemText>
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                ))}
               </Select.Viewport>
-              <ScrollArea.Scrollbar className="" orientation="vertical">
-                <ScrollArea.Thumb className="bg-mid-black" />
-              </ScrollArea.Scrollbar>
-            </ScrollArea.Root>
+            </div>
           </Select.Content>
         </Select.Portal>
       </Select.Root>
 
       <input
-        className={clsx("w-full p-2 focus:outline-none", {
+        className={clsx("w-full p-2 focus:outline-none peer", {
           "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
             mode === "dark",
           "placeholder:text-slate-400": mode === "light",
@@ -103,11 +105,16 @@ export const SearchInput = ({
         type="text"
         placeholder={placeholder}
       />
-
       <button
-        className={clsx("p-2 px-2.5 text-gray border-l rounded-r-lg", {
-          "bg-mid-dark border-l-mid-dark-900": mode === "dark",
-        })}
+        className={clsx(
+          "p-2 px-2.5 text-gray border-l rounded-r-lg sm:border-l-0",
+          {
+            "bg-mid-dark border-l-mid-dark-900 hover:bg-night-900 peer-hover:bg-night-900 peer-focus:bg-night-900":
+              mode === "dark",
+            "border-l-gray-300 text-slate-400 bg-transparent hover:text-mid-dark peer-hover:text-mid-dark peer-focus:text-mid-dark":
+              mode === "light",
+          }
+        )}
       >
         <MagnifyingGlassIcon />
       </button>

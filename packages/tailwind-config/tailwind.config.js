@@ -21,6 +21,10 @@ module.exports = {
         "gradient-secondary":
           "linear-gradient(267.41deg, #50B5FF 38.68%, #985EFE 63.16%)",
       }),
+      borderColor: () => ({
+        "gradient-primary":
+          "linear-gradient(90deg, rgba(74,112,254,1) 0%, rgba(177,96,254,1) 100%)",
+      }),
       boxShadow: {
         "ocean-shadow": "0px 0px 10px rgba(74, 112, 254, 0.3)",
       },
@@ -100,5 +104,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-radix")()],
+  plugins: [require("tailwindcss-radix")(), require("tailwind-scrollbar")],
+  variants: {
+    scrollbar: ["rounded"],
+  },
 };

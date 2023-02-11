@@ -4,6 +4,9 @@ import { Homepage } from "@modularcloud/design-system";
 export default {
   title: "Pages/Homepage",
   component: Homepage,
+  parameters: {
+    layout: "fullscreen",
+  },
   argTypes: {
     mode: { control: { type: "select", options: ["light", "dark"] } },
   },

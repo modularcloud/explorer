@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { SearchInput } from "../../components";
 // import bgLight from "./img/";
@@ -44,23 +44,31 @@ const dataGroups = [
   },
 ];
 
-export const Homepage = ({ mode }: Props) => {
+export const Homepage: React.FC<Props> = ({ mode }) => {
+  const [selectedItem, setSelectedItem] = useState(
+    dataGroups[0].options[0].value
+  );
+
+  const handleSelect = (selectedItem: React.SetStateAction<string>) => {
+    setSelectedItem(selectedItem);
+  };
+
   return (
     <div
       className={clsx(
-        "container flex flex-col items-center justify-center mx-auto min-h-screen",
+        "flex flex-col items-center justify-center mx-auto min-h-screen p-2  text-sm sm:text-base",
         {
           "text-white bg-night": mode === "dark",
           "bg-gray-100": mode === "light",
         }
       )}
     >
-      <main className="flex flex-col items-center w-full">
+      <main className="container flex flex-col items-center w-full">
         <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text font-bold text-transparent">
           Modular Cloud
         </span>
         <h1
-          className={clsx("my-2.5 text-4xl sm:text-5xl font-black", {
+          className={clsx("text-4xl sm:text-5xl font-black mt-2.5", {
             "text-white": mode === "dark",
           })}
         >
@@ -75,19 +83,25 @@ export const Homepage = ({ mode }: Props) => {
             Scan
           </span>
         </h1>
-        <div className="mt-5 w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5">
+        <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
           <SearchInput
             mode={mode}
             placeholder="Go to hash or height"
             optionGroups={dataGroups}
+            selectedItem={selectedItem}
+            selectHandler={handleSelect}
           />
         </div>
+        <p className="mt-6 sm:hidden block">
+          <span className="font-bold mx-4">Latest Block</span> /
+          <span className="mx-4">258306</span>
+        </p>
       </main>
-      <footer className="text-center absolute bottom-0">
+      <footer className="flex flex-col justify-evenly text-center absolute bottom-0 border-t h-1/6 p-2">
         <span className="text-slate-900">
           @Copyright 2022. All rights reserved.
         </span>
-        <div className="flex flex-row justify-around py-6">
+        <div className="flex flex-row justify-around">
           <a>About</a>
           <a>Terms</a>
           <a>Policy</a>
