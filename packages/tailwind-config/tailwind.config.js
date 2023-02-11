@@ -10,6 +10,16 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        sleek: ["0.8125rem", {
+          lineHeight: '1.5rem',
+          fontWeight: '457',
+        }],
+      },
+      fontWeight: {
+        semibold: "556",
+        bold: "656"
+      },
       fontFamily: {
         sans: ['var(--font-inter)', ...fontFamily.sans],
       },
