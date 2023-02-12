@@ -37,6 +37,8 @@
     "@tanstack/react-table": "^8.7.4",
     "clsx": "^1.2.1",
     "tailwind-scrollbar": "^2.1.0",
-    "tailwindcss-radix": "^2.7.0"
+    "tailwindcss-radix": "^2.7.0",
+    "@radix-ui/react-separator": "^1.0.1",
+    "@radix-ui/react-toggle-group": "^1.0.2"
   }
 }

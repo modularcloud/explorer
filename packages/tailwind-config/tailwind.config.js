@@ -10,6 +10,24 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "375px",
+        xl: "1440px",
+        "2xl": "1726px",
+      },
+      fontSize: {
+        sleek: [
+          "0.8125rem",
+          {
+            lineHeight: "1.5rem",
+            fontWeight: "457",
+          },
+        ],
+      },
+      fontWeight: {
+        semibold: "556",
+        bold: "656",
+      },
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
       },
@@ -100,6 +118,11 @@ module.exports = {
           300: "#E8CFFF",
           200: "#EFDFFF",
           100: "#F7EFFF",
+        },
+        specialty: {
+          gray: "#F6F7F9",
+          green: "#0DAA76",
+          red: "#EF4444",
         },
       },
     },
