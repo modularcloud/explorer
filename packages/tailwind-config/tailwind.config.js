@@ -10,6 +10,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "375px",
+        xl: "1440px",
+        "2xl": "1726px"
+      },
       fontSize: {
         sleek: ["0.8125rem", {
           lineHeight: '1.5rem',
