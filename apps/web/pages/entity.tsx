@@ -2,7 +2,9 @@ import { TopBar, Header } from "@modularcloud/design-system"
 
 export default function Entity() {
     return <div>
-        <TopBar />
+        <div className="lg:hidden">
+            <TopBar />
+        </div>
         <Header />
     </div>
 }
