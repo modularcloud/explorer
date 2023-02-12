@@ -100,6 +100,11 @@ module.exports = {
           300: "#E8CFFF",
           200: "#EFDFFF",
           100: "#F7EFFF"
+        },
+        specialty: {
+          gray: "#F6F7F9",
+          green: "#0DAA76",
+          red: "#EF4444" 
         }
       },
     },
