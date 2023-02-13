@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { SearchInput, Footer, LatestBlock } from "../../components";
-import { BigLogo } from "../../components/big-logo";
+import { SearchInput, Footer, LatestBlock, BigLogo } from "../../components";
 
 interface Props {
   mode: "light" | "dark";
@@ -44,7 +43,7 @@ const dataGroups = [
   },
 ];
 
-export const Homepage: React.FC<Props> = ({ mode }) => {
+export const Homepage: React.FC<Props> = ({ mode = "light" }) => {
   const [selectedItem, setSelectedItem] = useState(
     dataGroups[0].options[0].value
   );
