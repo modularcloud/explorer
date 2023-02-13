@@ -36,7 +36,7 @@ export const SearchInput = ({
       <Select.Root value={selectedItem} onValueChange={selectHandler}>
         <Select.Trigger
           className={clsx(
-            "flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold",
+            "select-none flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold sm:min-w-[98px]",
             {
               "border-r-mid-dark-900 bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white":
                 mode === "dark",
@@ -57,7 +57,7 @@ export const SearchInput = ({
         <Select.Portal>
           <Select.Content
             className={clsx(
-              "shadow-md rounded-lg max-h-[150px] min-w-[160px]",
+              "shadow-md rounded-lg max-h-[150px] min-w-[160px] text-sleek",
               {
                 "bg-mid-dark text-white": mode === "dark",
                 "border border-gray-400 bg-white": mode === "light",
@@ -67,7 +67,7 @@ export const SearchInput = ({
             sideOffset={8}
           >
             <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
-              <Select.Viewport>
+              <Select.Viewport className="font-sans">
                 {optionGroups?.map((grp, index) => (
                   <Select.Group key={index}>
                     <Select.Label

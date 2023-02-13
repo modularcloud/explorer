@@ -6,6 +6,7 @@ import {
   LatestBlock,
   BigLogo,
 } from "@modularcloud/design-system";
+import Link from "next/link";
 
 interface Props {
   mode: "light" | "dark";
@@ -68,7 +69,7 @@ export default function Homepage({ mode = "light" }: Props) {
         }
       )}
     >
-      <main className="container flex flex-col items-center justify-center w-full">
+      <div className="container flex flex-col items-center justify-center w-full">
         <BigLogo mode={mode} />
         <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
           <SearchInput
@@ -79,11 +80,15 @@ export default function Homepage({ mode = "light" }: Props) {
             selectHandler={handleSelect}
           />
         </div>
-        <a href="/">
+        <Link href="/">
           <LatestBlock block={258306} />
-        </a>
-      </main>
-      <Footer />
+        </Link>
+      </div>
+      <Footer>
+        <Link href="/">About</Link>
+        <Link href="/">Terms</Link>
+        <Link href="/">Policy</Link>
+      </Footer>
     </div>
   );
 }

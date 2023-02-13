@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: __Inter_9c9965;
+  font-size: 0.8125rem;
+  line-height: 1.5rem;
+  font-weight: 457;
+}

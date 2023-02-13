@@ -78,7 +78,11 @@ export const Homepage: React.FC<Props> = ({ mode = "light" }) => {
           <LatestBlock block={258306} />
         </a>
       </main>
-      <Footer />
+      <Footer>
+        <a href="/">About</a>
+        <a href="/">Terms</a>
+        <a href="/">Policy</a>
+      </Footer>
     </div>
   );
 };
