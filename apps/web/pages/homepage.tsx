@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { SearchInput, Footer, LatestBlock } from "../../components";
-import { BigLogo } from "../../components/big-logo";
+import { SearchInput, Footer, LatestBlock } from "@modularcloud/design-system";
+// import bgLight from "./img/";
 
 interface Props {
   mode: "light" | "dark";
@@ -56,16 +56,33 @@ export const Homepage: React.FC<Props> = ({ mode }) => {
   return (
     <div
       className={clsx(
-        "flex flex-col items-center justify-center mx-auto min-h-screen p-4",
+        "flex flex-col items-center justify-center mx-auto min-h-screen p-2",
         {
           "text-white bg-night": mode === "dark",
-          "bg-gray-100 sm:bg-[url('images/home-img-bg.png')] bg-no-repeat bg-top":
-            mode === "light",
+          "bg-gray-100": mode === "light",
         }
       )}
     >
-      <main className="container flex flex-col items-center justify-center w-full">
-        <BigLogo mode={mode} />
+      <main className="container flex flex-col items-center w-full">
+        <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text font-bold text-transparent">
+          Modular Cloud
+        </span>
+        <h1
+          className={clsx("text-4xl sm:text-5xl font-bold mt-2.5", {
+            "text-white": mode === "dark",
+          })}
+        >
+          Celestia
+          <span
+            className={clsx("font-bold", {
+              "text-white": mode === "dark",
+              "bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent":
+                mode === "light",
+            })}
+          >
+            Scan
+          </span>
+        </h1>
         <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
           <SearchInput
             mode={mode}
@@ -75,9 +92,7 @@ export const Homepage: React.FC<Props> = ({ mode }) => {
             selectHandler={handleSelect}
           />
         </div>
-        <a href="/">
-          <LatestBlock block={258306} />
-        </a>
+        <LatestBlock block={258306} />
       </main>
       <Footer />
     </div>

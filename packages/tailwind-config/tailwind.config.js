@@ -127,7 +127,10 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-radix")(), require("tailwind-scrollbar")],
+  plugins: [
+    require("tailwindcss-radix")(),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
   variants: {
     scrollbar: ["rounded"],
   },
