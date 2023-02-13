@@ -48,7 +48,7 @@ const dataGroups = [
   },
 ];
 
-export const Homepage: React.FC<Props> = ({ mode = "light" }) => {
+export default function Homepage({ mode = "light" }: Props) {
   const [selectedItem, setSelectedItem] = useState(
     dataGroups[0].options[0].value
   );
@@ -63,7 +63,8 @@ export const Homepage: React.FC<Props> = ({ mode = "light" }) => {
         "flex flex-col items-center justify-center mx-auto min-h-screen p-4",
         {
           "text-white bg-night": mode === "dark",
-          "bg-gray-100 bg-no-repeat bg-top": mode === "light",
+          "bg-gray-100 sm:bg-[url('/images/home-img-bg.png')] bg-no-repeat bg-top":
+            mode === "light",
         }
       )}
     >
@@ -85,4 +86,4 @@ export const Homepage: React.FC<Props> = ({ mode = "light" }) => {
       <Footer />
     </div>
   );
-};
+}
