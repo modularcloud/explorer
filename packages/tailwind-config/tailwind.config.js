@@ -125,6 +125,20 @@ module.exports = {
           red: "#EF4444",
         },
       },
+      keyframes: {
+        "right-to-left": {
+          "0%": { right: "-50%", opacity: 0.5 },
+          "100%": { right: 0, opacity: 1 },
+        },
+        "fade-in": {
+          "0%": { opacity: 0.4 },
+          "100%": { opacity: 1 },
+        },
+      },
+      animation: {
+        rtl: "right-to-left 0.6s ease-in-out",
+        fadeIn: "fade-in 0.4s ease-in-out",
+      },
     },
   },
   plugins: [

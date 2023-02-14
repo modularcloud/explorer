@@ -3,3 +3,7 @@ export * from "./search-input";
 export * from "./footer";
 export * from "./latest-block";
 export * from "./big-logo";
+export * from "./dialog-panel";
+export * from "./right-panel";
+export * from "./key-value-list";
+export * from "./entity-details";

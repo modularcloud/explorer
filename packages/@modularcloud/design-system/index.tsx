@@ -5,3 +5,4 @@ export * from "./components/header";
 export * from "./atoms/boxed-value";
 export * from "./components";
 export * from "./pages";
+export * from "./icons";
