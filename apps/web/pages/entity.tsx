@@ -3,22 +3,33 @@ import {
   TopBar,
   Header,
   RightPanel,
-  KeyValueList,
   EntityDetails,
   SearchInput,
+  KeyValueList,
 } from "@modularcloud/design-system";
 
 import { CubesOff } from "@modularcloud/design-system";
 
+const entryLabels = [
+  "Chain ID",
+  "Transactions",
+  "Height",
+  "Block time",
+  "Block time",
+  "Gas (used/wanted)",
+  "Block Round",
+  "Transactions",
+];
+
 const entriesData: [string, string][] = [
-  ["1", "Mamaki 5411"],
-  ["2", "4"],
-  ["3", "245588"],
-  ["4", "245588"],
-  ["5", "Oct 1, 2022 at 4:09:00 PM"],
-  ["6", "8.09/19.98"],
-  ["7", "1225"],
-  ["8", "Liam Scales"],
+  ["1212", "Mamaki 5411"],
+  ["2323", "4"],
+  ["3434", "245588"],
+  ["4545", "245588"],
+  ["5656", "Oct 1, 2022 at 4:09:00 PM"],
+  ["6767", "8.09/19.98"],
+  ["7878", "1225"],
+  ["8989", "Liam Scales"],
 ];
 
 const dataGroups = [
@@ -52,7 +63,11 @@ const EntityPanel = ({ classes }: PanelProps) => (
       type="Block"
       hash="0xE9A41C60FA1DCBA5B9CE560325FDB6F456464"
     />
-    <KeyValueList header="Block Information" entries={entriesData} />
+    <KeyValueList
+      header="Block Information"
+      entryLabels={entryLabels}
+      entries={entriesData}
+    />
   </RightPanel>
 );
 
