@@ -20,27 +20,17 @@ export function KeyValueList({ header, entries }: Props) {
   return (
     <div className="flex flex-col w-full space-y-4">
       <span className={clsx("font-bold", { hidden: !header })}>{header}</span>
-      <div className="flex w-full space-x-3">
-        <div className="flex flex-col flex-1 space-y-4">
-          {entryLabels.map((label, idx) => (
-            <span
-              key={idx}
-              className="flex-1 font-bold overflow-hidden text-ellipsis"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-        <div className="flex flex-col flex-1 space-y-4">
-          {entries?.map((entry) => (
-            <span
-              key={entry[0]}
-              className="flex flex-nowrap overflow-hidden text-ellipsis"
-            >
+      <div className="flex flex-col flex-1 space-y-4">
+        {entries?.map((entry, idx) => (
+          <div className="flex flex-row space-x-5">
+            <label className="w-1/2 font-bold truncate">
+              {entryLabels[idx]}
+            </label>
+            <span key={entry[0]} className="w-1/2 truncate">
               {entry[1]}
             </span>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
