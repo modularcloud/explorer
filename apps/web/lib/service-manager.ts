@@ -105,11 +105,11 @@ type TxSearch = {
   total_count: string;
 };
 
-async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
+async function getBlockBy(queryType: "hash" | "height", queryValue: string, networkBase: string) {
   const baseUrl =
     queryType === "height"
-      ? "http://rpc-mocha.pops.one:26657/block?height="
-      : "http://rpc-mocha.pops.one:26657/block_by_hash?hash=0x";
+      ? `${networkBase}/block?height=`
+      : `${networkBase}/block_by_hash?hash=0x`;
   try {
     const response = await fetch(baseUrl + queryValue);
 
@@ -140,10 +140,10 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string) {
   }
 }
 
-async function getTransactionByHash(hash: string) {
+async function getTransactionByHash(hash: string, networkBase: string) {
   try {
     const response = await fetch(
-      "http://rpc-mocha.pops.one:26657/tx?hash=0x" + hash
+      `${networkBase}/tx?hash=0x${hash}`
     );
 
     if (!response.ok) {
@@ -175,10 +175,10 @@ async function getTransactionByHash(hash: string) {
   }
 }
 
-async function getTransactionsByHeight(height: string) {
+async function getTransactionsByHeight(height: string, networkBase: string) {
   try {
     const response = await fetch(
-      `http://rpc-mocha.pops.one:26657/tx_search?query="tx.height=${height}"`
+      `${networkBase}/tx_search?query="tx.height=${height}"`
     );
     if (!response.ok) {
       throw Error(`Response code ${response.status}: ${response.statusText}`);
@@ -217,9 +217,9 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "height",
-          getOne: (height: string) => getBlockBy("height", height),
+          getOne: (height: string) => getBlockBy("height", height, "http://rpc-mocha.pops.one:26657"),
         },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash) },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "http://rpc-mocha.pops.one:26657") },
       ],
     },
     {
@@ -227,11 +227,40 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash),
+          getOne: (hash: string) => getTransactionByHash(hash, "http://rpc-mocha.pops.one:26657"),
         },
         {
           field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height),
+          getMany: (height: string) => getTransactionsByHeight(height, "http://rpc-mocha.pops.one:26657"),
+        },
+      ],
+    },
+  ],
+});
+
+ServiceManager.addNetwork({
+  label: "Dymension Hub",
+  entityTypes: [
+    {
+      name: "Block",
+      getters: [
+        {
+          field: "height",
+          getOne: (height: string) => getBlockBy("height", height, "https://rpc-hub-35c.dymension.xyz"),
+        },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://rpc-hub-35c.dymension.xyz") },
+      ],
+    },
+    {
+      name: "Transaction",
+      getters: [
+        {
+          field: "hash",
+          getOne: (hash: string) => getTransactionByHash(hash, "https://rpc-hub-35c.dymension.xyz"),
+        },
+        {
+          field: "height",
+          getMany: (height: string) => getTransactionsByHeight(height, "https://rpc-hub-35c.dymension.xyz"),
         },
       ],
     },
