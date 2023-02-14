@@ -84,7 +84,7 @@ export default function Entity() {
           }
           panelContent={<EntityPanel classes="flex lg:hidden" />}
         />
-        <Table data={[]} onRowClick={()=>{}} />
+        <Table />
       </div>
       <EntityPanel classes="hidden lg:flex" />
     </div>

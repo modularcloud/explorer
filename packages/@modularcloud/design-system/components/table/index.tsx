@@ -16,47 +16,6 @@ type Props = {
   onRowClick?: (row: Entity) => void;
 };
 
-const data: Entity[] = [{
-  uniqueIdentifierLabel: "Hash",
-  uniqueIdentifier: "E9A41C60FA1DCBA5B9CE560325FDB6F456464",
-  metadata: { 
-    type: "Get Reward",
-    status: "Success"
-   },
-  context: {
-    network: "Mocha",
-    entityTypeName: "Transaction",
-  },
-  raw: "blah blah blah",
-},
-{
-  uniqueIdentifierLabel: "Hash",
-  uniqueIdentifier: "09A41C60FA1DCBA5B9CE560325FDB6F456466",
-  metadata: { 
-    type: "IBC Update Client,IBC Acknowledgement",
-    status: "Success"
-   },
-  context: {
-    network: "Mocha",
-    entityTypeName: "Transaction",
-  },
-  raw: "blah blah blah",
-},
-{
-  uniqueIdentifierLabel: "Hash",
-  uniqueIdentifier: "F9A41C60FA1DCBA5B9CE560325FDB6F456465",
-  metadata: { 
-    type: "Pay For Data",
-    status: "Failure"
-   },
-  context: {
-    network: "Mocha",
-    entityTypeName: "Transaction",
-  },
-  raw: "blah blah blah",
-}
-];
-
 type EntityColumn<T extends React.ReactNode> = {
   id: string;
   header?: string;
@@ -74,44 +33,83 @@ type TableSection = {
   label: string;
 }
 
-const section: TableSection = {
-  rows: data,
-  label: "Transactions",
-  columns: [
-    {
-      id: "icon",
-      isIcon: true,
-      showOnXS: true,
-      getCell: (entity: Entity) => <Status status={entity.metadata.status} mode="icon" />
-    },
-    {
-      id: "hash",
-      header: "Transactions",
-      isPrimaryKey: true,
-      getCell: (entity: Entity) => entity.uniqueIdentifier
-    },
-    {
-      id: "type",
-      header: "Type",
-      rightJustifyOnXS: true,
-      getCell: (entity: Entity) => <Badge list={entity.metadata.type?.split(",")} />
-    },
-    {
-      id: "status",
-      header: "Status",
-      hideOnXS: true,
-      getCell: (entity: Entity) => <Status status={entity.metadata.status} />
-    },
-    {
-      id: "menu",
-      isIcon: true,
-      getCell: (entity: Entity) => <ElipsHorizOff />
-    },
-  ]
-}
-
-
 export function Table(props?: Props) {
+  const data: Entity[] = [{
+    uniqueIdentifierLabel: "Hash",
+    uniqueIdentifier: "E9A41C60FA1DCBA5B9CE560325FDB6F456464",
+    metadata: { 
+      type: "Get Reward",
+      status: "Success"
+     },
+    context: {
+      network: "Mocha",
+      entityTypeName: "Transaction",
+    },
+    raw: "blah blah blah",
+  },
+  {
+    uniqueIdentifierLabel: "Hash",
+    uniqueIdentifier: "09A41C60FA1DCBA5B9CE560325FDB6F456466",
+    metadata: { 
+      type: "IBC Update Client,IBC Acknowledgement",
+      status: "Success"
+     },
+    context: {
+      network: "Mocha",
+      entityTypeName: "Transaction",
+    },
+    raw: "blah blah blah",
+  },
+  {
+    uniqueIdentifierLabel: "Hash",
+    uniqueIdentifier: "F9A41C60FA1DCBA5B9CE560325FDB6F456465",
+    metadata: { 
+      type: "Pay For Data",
+      status: "Failure"
+     },
+    context: {
+      network: "Mocha",
+      entityTypeName: "Transaction",
+    },
+    raw: "blah blah blah",
+  }
+  ];
+
+  const section: TableSection = {
+    rows: data,
+    label: "Transactions",
+    columns: [
+      {
+        id: "icon",
+        isIcon: true,
+        showOnXS: true,
+        getCell: (entity: Entity) => <Status status={entity.metadata.status} mode="icon" />
+      },
+      {
+        id: "hash",
+        header: "Transactions",
+        isPrimaryKey: true,
+        getCell: (entity: Entity) => entity.uniqueIdentifier
+      },
+      {
+        id: "type",
+        header: "Type",
+        rightJustifyOnXS: true,
+        getCell: (entity: Entity) => <Badge list={entity.metadata.type?.split(",")} />
+      },
+      {
+        id: "status",
+        header: "Status",
+        hideOnXS: true,
+        getCell: (entity: Entity) => <Status status={entity.metadata.status} />
+      },
+      {
+        id: "menu",
+        isIcon: true,
+        getCell: (entity: Entity) => <ElipsHorizOff />
+      },
+    ]
+  }
   
   const columnHelper = createColumnHelper<Entity>();
   const columns = section.columns.map(col => {

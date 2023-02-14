@@ -22,7 +22,7 @@ export function KeyValueList({ header, entries }: Props) {
       <span className={clsx("font-bold", { hidden: !header })}>{header}</span>
       <div className="flex flex-col flex-1 space-y-4">
         {entries?.map((entry, idx) => (
-          <div className="flex flex-row space-x-5">
+          <div key={entry[0]} className="flex flex-row space-x-5">
             <label className="w-1/2 font-bold truncate">
               {entryLabels[idx]}
             </label>
