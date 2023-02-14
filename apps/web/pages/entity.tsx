@@ -3,23 +3,59 @@ import {
   TopBar,
   Header,
   RightPanel,
-  KeyValueList,
   EntityDetails,
   SearchInput,
-  Table
+  KeyValueList,
+  Card,
+  CardList,
+  Table,
 } from "@modularcloud/design-system";
 
 import { CubesOff } from "@modularcloud/design-system";
 
+const entryLabels = [
+  "Chain ID",
+  "Transactions",
+  "Height",
+  "Block time",
+  "Block time",
+  "Gas (used/wanted)",
+  "Block Round",
+  "Transactions",
+];
+
 const entriesData: [string, string][] = [
-  ["1", "Mamaki 5411"],
-  ["2", "4"],
-  ["3", "245588"],
-  ["4", "245588"],
-  ["5", "Oct 1, 2022 at 4:09:00 PM"],
-  ["6", "8.09/19.98"],
-  ["7", "1225"],
-  ["8", "Liam Scales"],
+  ["1212", "Mamaki 5411"],
+  ["2323", "4"],
+  ["3434", "245588"],
+  ["4545", "245588"],
+  ["5656", "Oct 1, 2022 at 4:09:00 PM"],
+  ["6767", "8.09/19.98"],
+  ["7878", "1225"],
+  ["8989", "Liam Scales"],
+];
+
+const transactionLabels = [
+  "Index",
+  "Chain ID",
+  "Height",
+  "Status",
+  "Block time",
+  "Time",
+  "Fee",
+  "Gas",
+  "Messages",
+];
+
+const transactionData: [string, string][] = [
+  ["ffv", "1"],
+  ["aee", "Mamaki"],
+  ["vbx", "245588"],
+  ["wef", "Failure"],
+  ["ghf", "Oct 1, 2022 at 4:09:00 PM"],
+  ["qqw", "8.09/19.98"],
+  ["qwe", "1225"],
+  ["sdf", "4"],
 ];
 
 const dataGroups = [
@@ -53,7 +89,11 @@ const EntityPanel = ({ classes }: PanelProps) => (
       type="Block"
       hash="0xE9A41C60FA1DCBA5B9CE560325FDB6F456464"
     />
-    <KeyValueList header="Block Information" entries={entriesData} />
+    <KeyValueList
+      header="Block Information"
+      entryLabels={entryLabels}
+      entries={entriesData}
+    />
   </RightPanel>
 );
 
@@ -84,9 +124,17 @@ export default function Entity() {
           }
           panelContent={<EntityPanel classes="flex lg:hidden" />}
         />
+        <CardList>
+          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+            <KeyValueList
+              entryLabels={transactionLabels}
+              entries={transactionData}
+            />
+          </Card>
+        </CardList>
         <Table />
       </div>
-      <EntityPanel classes="hidden lg:flex" />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" />
     </div>
   );
 }
