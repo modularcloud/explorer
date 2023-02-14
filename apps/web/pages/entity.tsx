@@ -6,6 +6,7 @@ import {
   KeyValueList,
   EntityDetails,
   SearchInput,
+  Table
 } from "@modularcloud/design-system";
 
 import { CubesOff } from "@modularcloud/design-system";
@@ -83,6 +84,7 @@ export default function Entity() {
           }
           panelContent={<EntityPanel classes="flex lg:hidden" />}
         />
+        <Table data={[]} onRowClick={()=>{}} />
       </div>
       <EntityPanel classes="hidden lg:flex" />
     </div>
