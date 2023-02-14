@@ -1,39 +1,41 @@
 import { CircleButton } from "../circle-button";
 import { CubesOn, ArrowOn } from "../../icons";
-
-const entryLabels = [
-  "Index",
-  "Chain ID",
-  "Height",
-  "Status",
-  "Time",
-  "Fee",
-  "Gas (used/wanted)",
-  "Messages",
-];
-const entryData = [
-  "Chain ID",
-  "Transactions",
-  "Height",
-  "Block time",
-  "Block time",
-  "Gas (used/wanted)",
-  "Block Round",
-  "Transactions",
-];
+import clsx from "clsx";
 
 interface Props {
   type: string;
   entries?: Array<[key: string, value: string]>;
   badgeText?: string;
   badgeIcon?: string;
+  children?: React.ReactNode;
 }
 
-export function Card({ badgeText }: Props) {
+function renderIcon(icon: string | undefined) {
+  switch (icon) {
+    case "reward":
+      return <ArrowOn />;
+    case "pay":
+      return <CubesOn />;
+  }
+}
+
+export function Card({ type, badgeText, badgeIcon, children }: Props) {
   return (
-    <div className="w-full border shadow-md rounded-lg">
-      <div className="bg-slate-100">Transaction</div>
-      <CircleButton>{badgeText}</CircleButton>
+    <div className="w-full border border-gray-300 shadow-md rounded-lg">
+      <div className="px-4 p-2 font-bold bg-gray-100 border-b border-b-gray-300 rounded-t-lg">
+        {type}
+      </div>
+      <div className="p-4">
+        <div className={clsx({ hidden: !badgeText || !badgeIcon })}>
+          <CircleButton>
+            <div className="flex flex-row space-x-1 items-center p-2.5">
+              {renderIcon(badgeIcon)}
+              <span className="font-bold">{badgeText}</span>
+            </div>
+          </CircleButton>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }

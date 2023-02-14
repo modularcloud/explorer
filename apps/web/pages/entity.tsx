@@ -6,6 +6,8 @@ import {
   EntityDetails,
   SearchInput,
   KeyValueList,
+  Card,
+  CardList,
 } from "@modularcloud/design-system";
 
 import { CubesOff } from "@modularcloud/design-system";
@@ -30,6 +32,29 @@ const entriesData: [string, string][] = [
   ["6767", "8.09/19.98"],
   ["7878", "1225"],
   ["8989", "Liam Scales"],
+];
+
+const transactionLabels = [
+  "Index",
+  "Chain ID",
+  "Height",
+  "Status",
+  "Block time",
+  "Time",
+  "Fee",
+  "Gas",
+  "Messages",
+];
+
+const transactionData: [string, string][] = [
+  ["ffv", "1"],
+  ["aee", "Mamaki"],
+  ["vbx", "245588"],
+  ["wef", "Failed"],
+  ["ghf", "Oct 1, 2022 at 4:09:00 PM"],
+  ["qqw", "8.09/19.98"],
+  ["qwe", "1225"],
+  ["sdf", "4"],
 ];
 
 const dataGroups = [
@@ -98,6 +123,26 @@ export default function Entity() {
           }
           panelContent={<EntityPanel classes="flex lg:hidden" />}
         />
+        <CardList>
+          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+            <KeyValueList
+              entryLabels={transactionLabels}
+              entries={transactionData}
+            />
+          </Card>
+          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+            <KeyValueList
+              entryLabels={transactionLabels}
+              entries={transactionData}
+            />
+          </Card>
+          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+            <KeyValueList
+              entryLabels={transactionLabels}
+              entries={transactionData}
+            />
+          </Card>
+        </CardList>
       </div>
       <EntityPanel classes="hidden lg:flex" />
     </div>
