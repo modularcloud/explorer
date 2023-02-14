@@ -113,7 +113,7 @@ export function Table(props?: Props) {
   
   const columnHelper = createColumnHelper<Entity>();
   const columns = section.columns.map(col => {
-    return columnHelper.accessor(col.getCell, {
+    return columnHelper.accessor("uniqueIdentifier", {
       id: col.id,
       header: col.header ?? (() => null),
       cell: (info) => col.getCell(info.row.original),
