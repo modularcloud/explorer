@@ -2,9 +2,109 @@ import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { getEntities, getEntity } from "service-manager/types/network.type";
-import { Table } from "@modularcloud/design-system";
 import { ServiceManager } from "../../../../lib/service-manager";
 import { useRouter } from "next/router";
+import React, { useState } from "react";
+import {
+  TopBar,
+  Header,
+  RightPanel,
+  EntityDetails,
+  SearchInput,
+  KeyValueList,
+  Card,
+  CardList,
+  Table,
+} from "@modularcloud/design-system";
+
+import { CubesOff } from "@modularcloud/design-system";
+
+const entryLabels = [
+  "Chain ID",
+  "Transactions",
+  "Height",
+  "Block time",
+  "Block time",
+  "Gas (used/wanted)",
+  "Block Round",
+  "Transactions",
+];
+
+const entriesData: [string, string][] = [
+  ["1212", "Mamaki 5411"],
+  ["2323", "4"],
+  ["3434", "245588"],
+  ["4545", "245588"],
+  ["5656", "Oct 1, 2022 at 4:09:00 PM"],
+  ["6767", "8.09/19.98"],
+  ["7878", "1225"],
+  ["8989", "Liam Scales"],
+];
+
+const transactionLabels = [
+  "Index",
+  "Chain ID",
+  "Height",
+  "Status",
+  "Block time",
+  "Time",
+  "Fee",
+  "Gas",
+  "Messages",
+];
+
+const transactionData: [string, string][] = [
+  ["ffv", "1"],
+  ["aee", "Mamaki"],
+  ["vbx", "245588"],
+  ["wef", "Failure"],
+  ["ghf", "Oct 1, 2022 at 4:09:00 PM"],
+  ["qqw", "8.09/19.98"],
+  ["qwe", "1225"],
+  ["sdf", "4"],
+];
+
+const dataGroups = [
+  {
+    label: "Celestia",
+    options: [
+      {
+        name: "Mamaki",
+        value: "MMK",
+      },
+      {
+        name: "Mocha",
+        value: "MCA",
+      },
+      {
+        name: "Arabic",
+        value: "ARB",
+      },
+    ],
+  },
+];
+
+interface PanelProps {
+  classes: string;
+  type: string,
+  id: string,
+  metadata: { [key: string]: string }
+}
+
+const EntityPanel = ({ classes, type, id, metadata }: PanelProps) => (
+  <RightPanel className={classes}>
+    <EntityDetails
+      iconType={<CubesOff />}
+      type={type}
+      hash={id}
+    />
+    <KeyValueList
+      header="Block Information"
+      entryLabels={Object.keys(metadata)}
+      entries={Object.entries(metadata)}
+    />
+  </RightPanel>
+);
 
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
@@ -61,42 +161,46 @@ function EntityPage({
   entity,
   associated,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
-  const handleTableRowClick = (row: Entity) => {
-    router.push({
-      pathname: "/[networkLabel]/[entityType]/[field]/[fieldValue]",
-      query: {
-        networkLabel: row.context.network,
-        entityType: row.context.entityTypeName,
-        field: "hash", // TODO: get table layour from entity
-        fieldValue: row.uniqueIdentifier,
-      },
-    });
+  const [selectedItem, setSelectedItem] = useState(
+    dataGroups[0].options[0].value
+  );
+  const [view, setView] = useState("table");
+
+  const handleSelect = (selectedItem: React.SetStateAction<string>) => {
+    console.log(selectedItem);
+    setSelectedItem(selectedItem);
   };
+
   return (
-    <div className="bg-bg-50 h-screen flex flex-col">
-      <div className="grow flex">
-        {/** Main */}
-        <div className="grow">
-          {/** Body */}
-          <div>{`${entity.uniqueIdentifierLabel}: ${entity.uniqueIdentifier}`}</div>
+    <div className="flex">
+      <div className="grow">
+        <div className="lg:hidden">
+          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier} />
         </div>
-        <div className="w-96 p-8 border-l border-l-main-100 truncate flex flex-col">
-          {/** Right Sidebar */}
-          {Object.entries(entity.metadata).map((entry) => (
-            <div className="flex justify-between" key={entry[0]}><span className="font-bold">{entry[0]}</span> <span className="truncate w-1/3 text-right">{entry[1]}</span></div>
-          ))}
-        </div>
+        <Header
+          searchInput={
+            <SearchInput
+              mode="light"
+              placeholder="Go to hash or height"
+              optionGroups={dataGroups}
+              selectedItem={selectedItem}
+              selectHandler={handleSelect}
+            />
+          }
+          panelContent={<EntityPanel classes="flex lg:hidden" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
+          onSwitchView={(view: string) => setView(view)}
+        />
+        { view === "cards" ? <CardList>
+          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+            <KeyValueList
+              entryLabels={transactionLabels}
+              entries={transactionData}
+            />
+          </Card>
+        </CardList> : null }
+        { view === "table" ? <Table /> : null }
       </div>
-      <div className="flex w-full border-t border-t-main-100 items-center justify-between h-24 px-14">
-        { /** Footer */}
-        <span>Copyright 2023 Modular Cloud</span>
-        <ul className="flex">
-          <li>About Us</li>
-          <li>Terms & Conditions</li>
-          <li>Privacy Policy</li>
-        </ul>
-      </div>
+      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />
     </div>
   );
 }
