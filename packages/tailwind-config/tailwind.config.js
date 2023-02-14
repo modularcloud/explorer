@@ -1,4 +1,4 @@
-const { fontFamily } = require('tailwindcss/defaultTheme')
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: [
@@ -13,20 +13,38 @@ module.exports = {
       screens: {
         xs: "375px",
         xl: "1440px",
-        "2xl": "1726px"
+        "2xl": "1726px",
       },
       fontSize: {
-        sleek: ["0.8125rem", {
-          lineHeight: '1.5rem',
-          fontWeight: '457',
-        }],
+        sleek: [
+          "0.8125rem",
+          {
+            lineHeight: "1.5rem",
+            fontWeight: "457",
+          },
+        ],
       },
       fontWeight: {
         semibold: "556",
-        bold: "656"
+        bold: "656",
       },
       fontFamily: {
-        sans: ['var(--font-inter)', ...fontFamily.sans],
+        sans: ["var(--font-inter)", ...fontFamily.sans],
+      },
+      backgroundImage: () => ({
+        "gradient-primary":
+          "linear-gradient(90deg, rgba(74,112,254,1) 0%, rgba(177,96,254,1) 100%)",
+        "gradient-accent":
+          "linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(74,112,254,1) 30%, rgba(177,96,254,1) 70%, rgba(255,255,255,0.2) 100%)",
+        "gradient-secondary":
+          "linear-gradient(267.41deg, #50B5FF 38.68%, #985EFE 63.16%)",
+      }),
+      borderColor: () => ({
+        "gradient-primary":
+          "linear-gradient(90deg, rgba(74,112,254,1) 0%, rgba(177,96,254,1) 100%)",
+      }),
+      boxShadow: {
+        "ocean-shadow": "0px 0px 10px rgba(74, 112, 254, 0.3)",
       },
       colors: {
         night: {
@@ -39,9 +57,9 @@ module.exports = {
           400: "#9C9BA1",
           300: "#B5B4B9",
           200: "#CECDD0",
-          100: "#E6E6E8"
+          100: "#E6E6E8",
         },
-        'mid-dark': {
+        "mid-dark": {
           DEFAULT: "#2A2B2E",
           900: "#3F4043",
           800: "#555558",
@@ -51,7 +69,7 @@ module.exports = {
           400: "#AAAAAB",
           300: "#BFBFC0",
           200: "#D4D5D5",
-          100: "#EAEAEA"
+          100: "#EAEAEA",
         },
         slate: {
           DEFAULT: "#888A90",
@@ -63,7 +81,7 @@ module.exports = {
           400: "#CFD0D3",
           300: "#DBDCDE",
           200: "#E7E8E9",
-          100: "#F3F3F4"
+          100: "#F3F3F4",
         },
         gray: {
           DEFAULT: "#AEB0B7",
@@ -75,7 +93,7 @@ module.exports = {
           400: "#DFDFE2",
           300: "#E7E7E9",
           200: "#EFEFF1",
-          100: "#F7F7F8"
+          100: "#F7F7F8",
         },
         ocean: {
           DEFAULT: "#4A70FE",
@@ -87,7 +105,7 @@ module.exports = {
           400: "#B7C6FF",
           300: "#C9D4FF",
           200: "#DBE2FF",
-          100: "#EDF1FF"
+          100: "#EDF1FF",
         },
         royal: {
           DEFAULT: "#B160FE",
@@ -99,15 +117,35 @@ module.exports = {
           400: "#E0BFFF",
           300: "#E8CFFF",
           200: "#EFDFFF",
-          100: "#F7EFFF"
+          100: "#F7EFFF",
         },
         specialty: {
           gray: "#F6F7F9",
           green: "#0DAA76",
-          red: "#EF4444" 
-        }
+          red: "#EF4444",
+        },
+      },
+      keyframes: {
+        "right-to-left": {
+          "0%": { right: "-50%", opacity: 0.5 },
+          "100%": { right: 0, opacity: 1 },
+        },
+        "fade-in": {
+          "0%": { opacity: 0.4 },
+          "100%": { opacity: 1 },
+        },
+      },
+      animation: {
+        rtl: "right-to-left 0.6s ease-in-out",
+        fadeIn: "fade-in 0.4s ease-in-out",
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwindcss-radix")(),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
+  variants: {
+    scrollbar: ["rounded"],
+  },
 };

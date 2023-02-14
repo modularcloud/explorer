@@ -1,22 +1,45 @@
-import { CircleButton } from "../circle-button";
 import { ViewSwitcher } from "../view-switcher";
-import { RightSidebarOff, SearchOff } from "../../icons";
+import { SearchOff } from "../../icons";
+import { DialogPanel } from "../dialog-panel";
+import { RightSidebarOff } from "../../icons";
 
-// TODO: fix padding
-export function Header() {
-    return (
-        <div className="h-[4.25rem] flex flex-col">
-            <div className="flex-grow pb-px flex justify-between items-center px-4 sm:px-6 lg:px-8">
-                <div className="text-[1.125rem] font-medium">CelestiaScan</div>
-                <div className="flex gap-6 items-center">
-                    <ViewSwitcher />
-                    <div className="flex gap-4 items-center lg:hidden">
-                        <CircleButton><SearchOff/></CircleButton>
-                        <CircleButton><RightSidebarOff/></CircleButton>
-                    </div>
-                </div>
-            </div>
-            <div className="w-full h-px bg-night opacity-[.04]"></div>
+interface Props {
+  panelContent?: React.ReactNode;
+  searchInput?: React.ReactNode;
+}
+
+export function Header({ panelContent, searchInput }: Props) {
+  return (
+    <div className="h-[4.25rem] flex flex-col">
+      <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">
+        <img src="/images/CelestiaScan-logo.png" className="max-w-[160px]" />
+        <div className="hidden lg:flex flex-grow max-w-[50%]">
+          {searchInput}
         </div>
-    )
+        <div className="flex gap-6 items-center">
+          <ViewSwitcher />
+          <div className="flex gap-4 items-center lg:hidden">
+            <DialogPanel
+              btnClass="h-7 flex justify-center items-center rounded-full border-mid-dark-100 border p-1 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]"
+              contentClass="block fixed top-12 inset-x-0 animate-fadeIn"
+              triggerIcon={<SearchOff />}
+              removeCloseBtn
+            >
+              <div className="max-w-[80%] m-auto shadow-lg">{searchInput}</div>
+            </DialogPanel>
+
+            <DialogPanel
+              btnClass="h-7 flex justify-center items-center rounded-full border-mid-dark-100 border p-1 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]"
+              contentClass="block fixed top-0 right-0 w-3/4 md:w-4/6 h-full animate-rtl block lg:hidden"
+              overlayClass="block lg:hidden"
+              triggerIcon={<RightSidebarOff />}
+            >
+              {panelContent}
+            </DialogPanel>
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-px bg-night opacity-[.04]"></div>
+    </div>
+  );
 }
