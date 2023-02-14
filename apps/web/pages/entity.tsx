@@ -8,6 +8,7 @@ import {
   KeyValueList,
   Card,
   CardList,
+  Table,
 } from "@modularcloud/design-system";
 
 import { CubesOff } from "@modularcloud/design-system";
@@ -143,6 +144,7 @@ export default function Entity() {
             />
           </Card>
         </CardList>
+        <Table />
       </div>
       <EntityPanel classes="hidden lg:flex" />
     </div>
