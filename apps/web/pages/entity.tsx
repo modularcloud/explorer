@@ -51,7 +51,7 @@ const transactionData: [string, string][] = [
   ["ffv", "1"],
   ["aee", "Mamaki"],
   ["vbx", "245588"],
-  ["wef", "Failed"],
+  ["wef", "Failure"],
   ["ghf", "Oct 1, 2022 at 4:09:00 PM"],
   ["qqw", "8.09/19.98"],
   ["qwe", "1225"],
@@ -131,22 +131,10 @@ export default function Entity() {
               entries={transactionData}
             />
           </Card>
-          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
-            <KeyValueList
-              entryLabels={transactionLabels}
-              entries={transactionData}
-            />
-          </Card>
-          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
-            <KeyValueList
-              entryLabels={transactionLabels}
-              entries={transactionData}
-            />
-          </Card>
         </CardList>
         <Table />
       </div>
-      <EntityPanel classes="hidden lg:flex" />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" />
     </div>
   );
 }
