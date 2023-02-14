@@ -2,7 +2,7 @@ import { CircleButton } from "../circle-button";
 import { ViewSwitcher } from "../view-switcher";
 import { RightSidebarOff, SearchOff } from "../../icons";
 
-
+// TODO: fix padding
 export function Header() {
     return (
         <div className="h-[4.25rem] flex flex-col">

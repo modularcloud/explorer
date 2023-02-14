@@ -1,4 +1,4 @@
-import { TopBar, Header } from "@modularcloud/design-system"
+import { TopBar, Header, Table } from "@modularcloud/design-system"
 
 export default function Entity() {
     return <div>
@@ -6,5 +6,6 @@ export default function Entity() {
             <TopBar />
         </div>
         <Header />
+        <Table />
     </div>
 }
