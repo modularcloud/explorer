@@ -24,7 +24,7 @@ export function DialogPanel({
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-mid-dark opacity-60 backdrop-blur-sm" />
+        <Dialog.Overlay className="fixed inset-0 bg-night/50 backdrop-blur-sm" />
         <Dialog.Content className={contentClass}>
           {children}
           <Dialog.Close asChild>
