@@ -52,6 +52,7 @@ export function getMessages(txstr: string): Entity[] {
 
     const decodedMessages: Entity[] = [];
     tx.body.messages.forEach((message, index) => {
+      try {
         const decodedMsg = registry.decode(message);
         decodedMessages.push({
           uniqueIdentifier: convertToName(message.typeUrl),
@@ -64,6 +65,21 @@ export function getMessages(txstr: string): Entity[] {
           },
           raw: JSON.stringify(decodedMsg),
         });
+      } catch {
+        decodedMessages.push({
+          uniqueIdentifier: "Unknown",
+          uniqueIdentifierLabel: "Type",
+          metadata: {
+            index: String(index)
+          },
+          computed: {},
+          context: {
+            network: "N/A", // TODO: replace network with path 
+            entityTypeName: "Message"
+          },
+          raw: JSON.stringify(message),
+        });
+      }
       })
       return decodedMessages;
     
