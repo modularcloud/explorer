@@ -17,33 +17,21 @@ const dataGroups = [
     label: "Celestia",
     options: [
       {
-        name: "Mamaki",
-        value: "MMK",
-      },
-      {
         name: "Mocha",
         value: "MCA",
-      },
-      {
-        name: "Arabic",
-        value: "ARB",
       },
     ],
   },
   {
-    label: "Celestia2",
+    label: "Dymension",
     options: [
       {
-        name: "Mamaki2",
+        name: "Hub",
         value: "MMK2",
       },
       {
-        name: "Mocha2",
+        name: "RollApp X",
         value: "MCA2",
-      },
-      {
-        name: "Arabic2",
-        value: "ARB2",
       },
     ],
   },
@@ -80,15 +68,8 @@ export default function Homepage({ mode = "light" }: Props) {
             selectHandler={handleSelect}
           />
         </div>
-        <Link href="/">
-          <LatestBlock block={258306} />
-        </Link>
       </div>
-      <Footer>
-        <Link href="/">About</Link>
-        <Link href="/">Terms</Link>
-        <Link href="/">Policy</Link>
-      </Footer>
+      <Footer />
     </div>
   );
 }
