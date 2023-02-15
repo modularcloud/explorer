@@ -224,6 +224,45 @@ async function getTransactionsByHeight(height: string, networkBase: string, netw
   }
 }
 
+async function getRollAppXTransactionByHash(hash: string) {
+  const base = "https://rpc-rollappx-35c.dymension.xyz/tx?prove=false&hash=";
+  try {
+    const response = await fetch(
+      base+hash
+    );
+    if (!response.ok) {
+      throw Error(`Response code ${response.status}: ${response.statusText}`);
+    }
+
+    const txResponse = (await response.json()) as JSONRPCResponse<Transaction>;
+    const Messages = getMessages(txResponse.result.tx);
+    const txEntity: Entity = {
+      uniqueIdentifier: txResponse.result.hash,
+      uniqueIdentifierLabel: "Hash",
+      metadata: {
+        Height: txResponse.result.height,
+        Index: String(txResponse.result.index),
+        Status: txResponse.result.tx_result.code ? "Failed" : "Success",
+        "Gas (used/wanted)":
+          txResponse.result.tx_result.gas_used +
+          "/" +
+          txResponse.result.tx_result.gas_wanted,
+      },
+      computed: {
+        Messages
+      },
+      context: {
+        network: DYMENSION_ROLLAPP_X,
+        entityTypeName: "Transaction",
+      },
+      raw: JSON.stringify(txResponse, null, 2),
+    };
+    return txEntity;
+  } catch {
+    return null;
+  }
+} 
+
 ServiceManager.addNetwork({
   label: CELESTIA_MOCHA,
   entityTypes: [
@@ -276,6 +315,21 @@ ServiceManager.addNetwork({
         {
           field: "height",
           getMany: (height: string) => getTransactionsByHeight(height, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
+        },
+      ],
+    },
+  ],
+});
+
+ServiceManager.addNetwork({
+  label: DYMENSION_ROLLAPP_X,
+  entityTypes: [
+    {
+      name: "Transaction",
+      getters: [
+        {
+          field: "hash",
+          getOne: (hash: string) => getRollAppXTransactionByHash(hash),
         },
       ],
     },

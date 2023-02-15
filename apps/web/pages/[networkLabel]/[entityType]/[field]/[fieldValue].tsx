@@ -16,7 +16,7 @@ import {
   CardList,
   Table,
 } from "@modularcloud/design-system";
-import Image from 'next/image';
+import Image from "next/image";
 
 import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
@@ -90,7 +90,7 @@ export const getServerSideProps: GetServerSideProps<{
     );
   }
 
-  if(entity.computed.Messages) {
+  if (entity.computed.Messages) {
     associated.push(...entity.computed.Messages);
   }
 
@@ -111,18 +111,50 @@ function EntityPage({
   const [selectedItem, setSelectedItem] = useState(
     SearchOptions[0].options[0].value
   );
-  const [view, setView] = useState(entity.context.entityTypeName === "Transaction" || associated.length < 3 ? "cards" : "table");
+
+  const [openPopover, setOpenPopover] = useState(false);
+
+  const [view, setView] = useState(
+    entity.context.entityTypeName === "Transaction" || associated.length < 3
+      ? "cards"
+      : "table"
+  );
 
   const handleSelect = (selectedItem: React.SetStateAction<string>) => {
     console.log(selectedItem);
     setSelectedItem(selectedItem);
   };
 
+  const handleOpen = (openPopover: React.SetStateAction<boolean>) => {
+    // set to true if no search results
+    openPopover = false;
+    setOpenPopover(openPopover);
+  };
+
   return (
     <div className="flex">
       <div className="grow">
         <div className="lg:hidden">
-          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}>{entity.context.network === "Mocha" ? <Image key="celestia" src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /> : <Image key="dymension" src="/images/dymension-logo.png" alt="Dymension" height="32" width="150" />}</TopBar>
+          <TopBar
+            type={entity.context.entityTypeName}
+            id={entity.uniqueIdentifier}
+          >
+            {entity.context.network === "Mocha" ? (
+              <Image
+                src="/images/Celestia-icon-logo.png"
+                alt="Celestia"
+                height="32"
+                width="119"
+              />
+            ) : (
+              <Image
+                src="/images/dymension-logo.png"
+                alt="Dymension"
+                height="32"
+                width="136"
+              />
+            )}
+          </TopBar>
         </div>
         <Header
           searchInput={
@@ -132,24 +164,43 @@ function EntityPage({
               optionGroups={SearchOptions}
               selectedItem={selectedItem}
               selectHandler={handleSelect}
+              isOpen={openPopover}
+              handleOpen={handleOpen}
             />
           }
-          panelContent={<EntityPanel classes="flex lg:hidden" network={entity.context.network} type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
+          panelContent={
+            <EntityPanel
+              classes="flex lg:hidden"
+              type={entity.context.entityTypeName}
+              id={entity.uniqueIdentifier}
+              metadata={entity.metadata}
+              network={entity.context.network}
+            />
+          }
           onSwitchView={(view: string) => setView(view)}
           defaultView={view}
           whitelabel={whitelabel}
         />
-        { view === "cards" ? <CardList>
-          {associated.map((entity) =>
-            <Card key={entity.uniqueIdentifier} type={entity.context.entityTypeName} badgeText={entity.uniqueIdentifier} badgeIcon="reward">
-            <KeyValueList
-              entryLabels={Object.keys(entity.metadata)}
-              entries={Object.entries(entity.metadata)}
-            />
-          </Card>
-          )}
-        </CardList> : null }
-        { view === "table" ? <Table data={associated} onRowClick={(row)=>console.log(row)} /> : null }
+        {view === "cards" ? (
+          <CardList>
+            {associated.map((entity) => (
+              <Card
+                key={entity.uniqueIdentifier}
+                type={entity.context.entityTypeName}
+                badgeText={entity.uniqueIdentifier}
+                badgeIcon="reward"
+              >
+                <KeyValueList
+                  entryLabels={Object.keys(entity.metadata)}
+                  entries={Object.entries(entity.metadata)}
+                />
+              </Card>
+            ))}
+          </CardList>
+        ) : null}
+        {view === "table" ? (
+          <Table data={associated} onRowClick={(row) => console.log(row)} />
+        ) : null}
       </div>
       <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} network={entity.context.network} />
     </div>
