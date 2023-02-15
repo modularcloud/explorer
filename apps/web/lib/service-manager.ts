@@ -232,9 +232,9 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "height",
-          getOne: (height: string) => getBlockBy("height", height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod", CELESTIA_MOCHA),
+          getOne: (height: string) => getBlockBy("height", height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod", CELESTIA_MOCHA) },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA) },
       ],
     },
     {
@@ -242,11 +242,11 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod", CELESTIA_MOCHA),
+          getOne: (hash: string) => getTransactionByHash(hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
         {
           field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod", CELESTIA_MOCHA),
+          getMany: (height: string) => getTransactionsByHeight(height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
       ],
     },
