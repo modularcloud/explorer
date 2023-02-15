@@ -25,15 +25,17 @@ interface PanelProps {
   classes: string;
   type: string,
   id: string,
-  metadata: { [key: string]: string }
+  metadata: { [key: string]: string },
+  network: string
 }
 
-const EntityPanel = ({ classes, type, id, metadata }: PanelProps) => (
+const EntityPanel = ({ classes, type, id, metadata, network }: PanelProps) => (
   <RightPanel className={classes}>
     <EntityDetails
       iconType={<CubesOff />}
       type={type}
       hash={id}
+      network={network}
     />
     <KeyValueList
       header="Block Information"
@@ -116,7 +118,7 @@ function EntityPage({
     <div className="flex">
       <div className="grow">
         <div className="lg:hidden">
-          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}>{entity.context.network === "Mocha" ? <Image src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /> : <Image src="/images/dymension-logo.png" alt="Dymension" height="32" width="136" />}</TopBar>
+          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}>{entity.context.network === "Mocha" ? <Image key="celestia" src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /> : <Image key="dymension" src="/images/dymension-logo.png" alt="Dymension" height="32" width="150" />}</TopBar>
         </div>
         <Header
           searchInput={
@@ -128,7 +130,7 @@ function EntityPage({
               selectHandler={handleSelect}
             />
           }
-          panelContent={<EntityPanel classes="flex lg:hidden" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
+          panelContent={<EntityPanel classes="flex lg:hidden" network={entity.context.network} type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
           onSwitchView={(view: string) => setView(view)}
           defaultView={view}
         />
@@ -144,7 +146,7 @@ function EntityPage({
         </CardList> : null }
         { view === "table" ? <Table data={associated} onRowClick={(row)=>console.log(row)} /> : null }
       </div>
-      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} network={entity.context.network} />
     </div>
   );
 }
