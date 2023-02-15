@@ -116,7 +116,7 @@ function EntityPage({
     <div className="flex">
       <div className="grow">
         <div className="lg:hidden">
-          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}><Image src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /></TopBar>
+          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}>{entity.context.network === "Mocha" ? <Image src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /> : <Image src="/images/dymension-logo.png" alt="Dymension" height="32" width="136" />}</TopBar>
         </div>
         <Header
           searchInput={
