@@ -8,10 +8,10 @@ interface Props {
 export function BigLogo({ mode, whitelabel }: Props) {
   let name = "Explorer";
   if(whitelabel === "celestia") {
-    name = "CelestiaScan";
+    name = "Celestia";
   }
   if(whitelabel === "dymension") {
-    name = "DymScan"
+    name = "Dym"
   }
   return (
     <div className="text-center">
@@ -24,7 +24,7 @@ export function BigLogo({ mode, whitelabel }: Props) {
       >
         Modular Cloud
       </span>
-      <div className="font-logo font-[700] text-[2.5rem] leading-[3rem]">{name}</div>
+      <div className="font-logo font-[700] text-[2.5rem] leading-[3rem]">{name}{whitelabel ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div>
     </div>
   );
 }

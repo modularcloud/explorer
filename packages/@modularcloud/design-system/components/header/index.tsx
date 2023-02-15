@@ -14,15 +14,15 @@ interface Props {
 export function Header({ panelContent, searchInput, onSwitchView, defaultView, whitelabel }: Props) {
   let name = "Explorer";
   if(whitelabel === "celestia") {
-    name = "CelestiaScan";
+    name = "Celestia";
   }
   if(whitelabel === "dymension") {
-    name = "DymScan"
+    name = "Dym"
   }
   return (
     <div className="h-[4.25rem] flex flex-col">
       <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">
-        <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">{name}</div>
+        <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">{name}{whitelabel ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div>
         <div className="hidden lg:flex flex-grow max-w-[50%]">
           {searchInput}
         </div>
