@@ -5,10 +5,11 @@ import { useState } from "react";
 
 type Props = {
   onSwitchView: (view: string) => void
+  defaultView: string
 }
 
-export function ViewSwitcher({ onSwitchView }: Props) {
-    const [value, setValue] = useState("table");
+export function ViewSwitcher({ onSwitchView, defaultView }: Props) {
+    const [value, setValue] = useState(defaultView);
 
     return (
         <ToggleGroup.Root

@@ -45,6 +45,7 @@ export function Table(props?: Props) {
       network: "Mocha",
       entityTypeName: "Transaction",
     },
+    computed: {},
     raw: "blah blah blah",
   },
   {
@@ -58,6 +59,7 @@ export function Table(props?: Props) {
       network: "Mocha",
       entityTypeName: "Transaction",
     },
+    computed: {},
     raw: "blah blah blah",
   },
   {
@@ -71,6 +73,7 @@ export function Table(props?: Props) {
       network: "Mocha",
       entityTypeName: "Transaction",
     },
+    computed: {},
     raw: "blah blah blah",
   }
   ];

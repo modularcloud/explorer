@@ -164,7 +164,7 @@ function EntityPage({
   const [selectedItem, setSelectedItem] = useState(
     dataGroups[0].options[0].value
   );
-  const [view, setView] = useState("table");
+  const [view, setView] = useState(associated.length > 2 ? "table": "cards");
 
   const handleSelect = (selectedItem: React.SetStateAction<string>) => {
     console.log(selectedItem);
@@ -189,14 +189,17 @@ function EntityPage({
           }
           panelContent={<EntityPanel classes="flex lg:hidden" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
           onSwitchView={(view: string) => setView(view)}
+          defaultView={view}
         />
         { view === "cards" ? <CardList>
-          <Card type="Transaction" badgeText="Get Reward" badgeIcon="reward">
+          {entity.computed.Messages ? entity.computed.Messages.map((message: any) =>
+            <Card key={message.type} type="Message" badgeText={message.type} badgeIcon="reward">
             <KeyValueList
-              entryLabels={transactionLabels}
-              entries={transactionData}
+              entryLabels={Object.keys(message.data)}
+              entries={Object.entries(message.data)}
             />
           </Card>
+          ) : null}
         </CardList> : null }
         { view === "table" ? <Table /> : null }
       </div>
