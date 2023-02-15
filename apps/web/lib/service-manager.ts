@@ -1,3 +1,4 @@
+import { getMessages } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
 
@@ -127,6 +128,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
         "Square Size": blockResponse.result.block.data.square_size,
         Proposer: blockResponse.result.block.header.proposer_address,
       },
+      computed: {},
       context: {
         network: "Mocha",
         entityTypeName: "Block",
@@ -151,6 +153,7 @@ async function getTransactionByHash(hash: string, networkBase: string) {
     }
 
     const txResponse = (await response.json()) as JSONRPCResponse<Transaction>;
+    const Messages = getMessages(txResponse.result.tx);
     const txEntity: Entity = {
       uniqueIdentifier: txResponse.result.hash,
       uniqueIdentifierLabel: "Hash",
@@ -162,6 +165,9 @@ async function getTransactionByHash(hash: string, networkBase: string) {
           txResponse.result.tx_result.gas_used +
           "/" +
           txResponse.result.tx_result.gas_wanted,
+      },
+      computed: {
+        Messages
       },
       context: {
         network: "Mocha",
@@ -186,6 +192,7 @@ async function getTransactionsByHeight(height: string, networkBase: string) {
 
     const txsResponse = (await response.json()) as JSONRPCResponse<TxSearch>;
     return txsResponse.result.txs.map((tx) => {
+      const Messages = getMessages(tx.tx);
       const txEntity: Entity = {
         uniqueIdentifier: tx.hash,
         uniqueIdentifierLabel: "Hash",
@@ -195,6 +202,9 @@ async function getTransactionsByHeight(height: string, networkBase: string) {
           Status: tx.tx_result.code ? "Failed" : "Success",
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
+        },
+        computed: {
+          Messages
         },
         context: {
           network: "Mocha",

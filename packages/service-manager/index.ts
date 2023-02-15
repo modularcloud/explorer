@@ -1,1 +1,2 @@
-import "./manager";
+export * from "./manager";
+export * from "./utils";
