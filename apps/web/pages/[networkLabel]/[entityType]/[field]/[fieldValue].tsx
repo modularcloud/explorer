@@ -20,17 +20,24 @@ import Image from "next/image";
 
 import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
+import { Whitelabel } from "../../../../lib/whitelabel";
 
 interface PanelProps {
   classes: string;
-  type: string;
-  id: string;
-  metadata: { [key: string]: string };
+  type: string,
+  id: string,
+  metadata: { [key: string]: string },
+  network: string
 }
 
-const EntityPanel = ({ classes, type, id, metadata }: PanelProps) => (
+const EntityPanel = ({ classes, type, id, metadata, network }: PanelProps) => (
   <RightPanel className={classes}>
-    <EntityDetails iconType={<CubesOff />} type={type} hash={id} />
+    <EntityDetails
+      iconType={<CubesOff />}
+      type={type}
+      hash={id}
+      network={network}
+    />
     <KeyValueList
       header="Block Information"
       entryLabels={Object.keys(metadata)}
@@ -42,6 +49,7 @@ const EntityPanel = ({ classes, type, id, metadata }: PanelProps) => (
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
   associated: Entity[];
+  whitelabel?: string;
 }> = async ({ params }) => {
   const { networkLabel, entityType, field, fieldValue } = params ?? {};
   if (
@@ -90,6 +98,7 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       entity,
       associated,
+      whitelabel: Whitelabel
     },
   };
 };
@@ -97,6 +106,7 @@ export const getServerSideProps: GetServerSideProps<{
 function EntityPage({
   entity,
   associated,
+  whitelabel
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedItem, setSelectedItem] = useState(
     SearchOptions[0].options[0].value
@@ -164,10 +174,12 @@ function EntityPage({
               type={entity.context.entityTypeName}
               id={entity.uniqueIdentifier}
               metadata={entity.metadata}
+              network={entity.context.network}
             />
           }
           onSwitchView={(view: string) => setView(view)}
           defaultView={view}
+          whitelabel={whitelabel}
         />
         {view === "cards" ? (
           <CardList>
@@ -190,12 +202,7 @@ function EntityPage({
           <Table data={associated} onRowClick={(row) => console.log(row)} />
         ) : null}
       </div>
-      <EntityPanel
-        classes="sticky top-0 hidden lg:flex"
-        type={entity.context.entityTypeName}
-        id={entity.uniqueIdentifier}
-        metadata={entity.metadata}
-      />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} network={entity.context.network} />
     </div>
   );
 }

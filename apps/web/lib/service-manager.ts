@@ -1,6 +1,7 @@
 import { getMessages } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
+import { DYMENSION_HUB, DYMENSION_ROLLAPP_X, CELESTIA_MOCHA } from "./network-names";
 
 export const ServiceManager = createServiceManager();
 
@@ -106,7 +107,7 @@ type TxSearch = {
   total_count: string;
 };
 
-async function getBlockBy(queryType: "hash" | "height", queryValue: string, networkBase: string) {
+async function getBlockBy(queryType: "hash" | "height", queryValue: string, networkBase: string, networkName: string) {
   const baseUrl =
     queryType === "height"
       ? `${networkBase}/block?height=`
@@ -134,7 +135,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
       },
       computed: {},
       context: {
-        network: "Mocha",
+        network: networkName,
         entityTypeName: "Block",
       },
       raw: JSON.stringify(blockResponse, null, 2),
@@ -146,7 +147,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
   }
 }
 
-async function getTransactionByHash(hash: string, networkBase: string) {
+async function getTransactionByHash(hash: string, networkBase: string, networkName: string) {
   try {
     const response = await fetch(
       `${networkBase}/tx?hash=0x${hash}`
@@ -174,7 +175,7 @@ async function getTransactionByHash(hash: string, networkBase: string) {
         Messages
       },
       context: {
-        network: "Mocha",
+        network: networkName,
         entityTypeName: "Transaction",
       },
       raw: JSON.stringify(txResponse, null, 2),
@@ -185,7 +186,7 @@ async function getTransactionByHash(hash: string, networkBase: string) {
   }
 }
 
-async function getTransactionsByHeight(height: string, networkBase: string) {
+async function getTransactionsByHeight(height: string, networkBase: string, networkName: string) {
   try {
     const response = await fetch(
       `${networkBase}/tx_search?query="tx.height=${height}"`
@@ -211,7 +212,7 @@ async function getTransactionsByHeight(height: string, networkBase: string) {
           Messages
         },
         context: {
-          network: "Mocha",
+          network: networkName,
           entityTypeName: "Transaction",
         },
         raw: JSON.stringify(tx, null, 2), // TODO: this will not return the full RPC request for the individual tx
@@ -224,16 +225,16 @@ async function getTransactionsByHeight(height: string, networkBase: string) {
 }
 
 ServiceManager.addNetwork({
-  label: "Mocha",
+  label: CELESTIA_MOCHA,
   entityTypes: [
     {
       name: "Block",
       getters: [
         {
           field: "height",
-          getOne: (height: string) => getBlockBy("height", height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
+          getOne: (height: string) => getBlockBy("height", height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod") },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA) },
       ],
     },
     {
@@ -241,11 +242,11 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
+          getOne: (hash: string) => getTransactionByHash(hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
         {
           field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
+          getMany: (height: string) => getTransactionsByHeight(height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
         },
       ],
     },
@@ -253,16 +254,16 @@ ServiceManager.addNetwork({
 });
 
 ServiceManager.addNetwork({
-  label: "Dymension Hub",
+  label: DYMENSION_HUB,
   entityTypes: [
     {
       name: "Block",
       getters: [
         {
           field: "height",
-          getOne: (height: string) => getBlockBy("height", height, "https://rpc-hub-35c.dymension.xyz"),
+          getOne: (height: string) => getBlockBy("height", height, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
         },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://rpc-hub-35c.dymension.xyz") },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB) },
       ],
     },
     {
@@ -270,11 +271,11 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, "https://rpc-hub-35c.dymension.xyz"),
+          getOne: (hash: string) => getTransactionByHash(hash, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
         },
         {
           field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, "https://rpc-hub-35c.dymension.xyz"),
+          getMany: (height: string) => getTransactionsByHeight(height, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
         },
       ],
     },

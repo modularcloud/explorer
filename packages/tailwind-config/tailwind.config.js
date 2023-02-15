@@ -29,6 +29,7 @@ module.exports = {
         bold: "656",
       },
       fontFamily: {
+        logo: ["logo", ...fontFamily.sans],
         sans: ["var(--font-inter)", ...fontFamily.sans],
       },
       backgroundImage: () => ({
