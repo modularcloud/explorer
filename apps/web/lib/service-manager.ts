@@ -217,9 +217,9 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "height",
-          getOne: (height: string) => getBlockBy("height", height, "http://rpc-mocha.pops.one:26657"),
+          getOne: (height: string) => getBlockBy("height", height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
         },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "http://rpc-mocha.pops.one:26657") },
+        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod") },
       ],
     },
     {
@@ -227,11 +227,11 @@ ServiceManager.addNetwork({
       getters: [
         {
           field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, "http://rpc-mocha.pops.one:26657"),
+          getOne: (hash: string) => getTransactionByHash(hash, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
         },
         {
           field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, "http://rpc-mocha.pops.one:26657"),
+          getMany: (height: string) => getTransactionsByHeight(height, "https://okbccojtyl.execute-api.us-west-2.amazonaws.com/prod"),
         },
       ],
     },
