@@ -1,6 +1,7 @@
 import { fromBase64 } from "@cosmjs/encoding";
 import { decodeTxRaw, Registry } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes } from "@cosmjs/stargate";
+import { Entity } from "../types/entity.type";
 
 function fixCapsAndSpacing(camel: string): string {
   const letters = camel.split("");
@@ -44,23 +45,42 @@ function convertToKeyValue(obj: {[key: string]: any}): {[key: string]: string} {
   return KV;
 }
 
-export type Message = {
-  type: string,
-  data: {[key: string]: string }
-}
-
-export function getMessages(txstr: string): Message[] {
+export function getMessages(txstr: string): Entity[] {
     const registry = new Registry(defaultRegistryTypes);
     const raw = fromBase64(txstr);
     const tx = decodeTxRaw(raw);
 
-    const decodedMessages = [];
-    for (const message of tx.body.messages) {
+    const decodedMessages: Entity[] = [];
+    tx.body.messages.forEach((message, index) => {
+      try {
         const decodedMsg = registry.decode(message);
         decodedMessages.push({
-          type: convertToName(message.typeUrl),
-          data: convertToKeyValue(decodedMsg),
+          uniqueIdentifier: convertToName(message.typeUrl),
+          uniqueIdentifierLabel: "Type",
+          metadata: convertToKeyValue(decodedMsg),
+          computed: {},
+          context: {
+            network: "N/A", // TODO: replace network with path 
+            entityTypeName: "Message"
+          },
+          raw: JSON.stringify(decodedMsg),
+        });
+      } catch {
+        decodedMessages.push({
+          uniqueIdentifier: "Unknown",
+          uniqueIdentifierLabel: "Type",
+          metadata: {
+            index: String(index)
+          },
+          computed: {},
+          context: {
+            network: "N/A", // TODO: replace network with path 
+            entityTypeName: "Message"
+          },
+          raw: JSON.stringify(message),
         });
       }
+      })
       return decodedMessages;
+    
 }

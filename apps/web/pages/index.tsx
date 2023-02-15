@@ -1,82 +1,51 @@
-import { getEntity } from "service-manager/types/network.type";
-import { BoxedValue, Button } from "@modularcloud/design-system";
-import { ServiceManager } from "../lib/service-manager";
+import React, { useState } from "react";
+import clsx from "clsx";
+import {
+  SearchInput,
+  Footer,
+  LatestBlock,
+  BigLogo,
+} from "@modularcloud/design-system";
+import Link from "next/link";
+import { SearchOptions } from "../lib/search-options";
 
-type Example = {
-  description: string;
-  result: string;
-};
-
-type Props = {
-  examples: Example[];
-};
-
-export async function getServerSideProps() {
-  const network = ServiceManager.getNetwork("Mocha");
-  const examples: Example[] = [];
-  if (network) {
-    const blockByHeight = await getEntity(network, "Block", "height", "5");
-    examples.push({
-      description: "Block by height (5)",
-      result: blockByHeight?.raw ?? "",
-    });
-
-    const blockByHash = await getEntity(
-      network,
-      "Block",
-      "hash",
-      blockByHeight?.uniqueIdentifier ?? ""
-    );
-    examples.push({
-      description: `Same block, retrieved by hash (${blockByHeight?.uniqueIdentifier})`,
-      result: blockByHash?.raw ?? "",
-    });
-
-    const transactionByHash = await getEntity(
-      network,
-      "Transaction",
-      "hash",
-      "C12DA33E2AF01882260063550DBDF0B23241D1116797D87D60E270BCF406D95D"
-    );
-    examples.push({
-      description:
-        "Transaction by hash (C12DA33E2AF01882260063550DBDF0B23241D1116797D87D60E270BCF406D95D)",
-      result: transactionByHash?.raw ?? "",
-    });
-  }
-  return {
-    props: {
-      examples,
-    },
-  };
+interface Props {
+  mode: "light" | "dark";
 }
 
-export default function Web(props: Props) {
+export default function Homepage({ mode = "light" }: Props) {
+  const [selectedItem, setSelectedItem] = useState(
+    SearchOptions[0].options[0].value
+  );
+
+  const handleSelect = (selectedItem: React.SetStateAction<string>) => {
+    setSelectedItem(selectedItem);
+  };
+
   return (
-    <div>
-      <h1 className="text-xl">Networks</h1>
-      <BoxedValue value="Pay For Data" />
-      {ServiceManager.listNetworks().map((value) => {
-        const network = ServiceManager.getNetwork(value);
-        return (
-          <div key={value}>
-            <h2>{value}</h2>
-            <ul>
-              {network?.entityTypes.map((entityType) => (
-                <li key={entityType.name}>{entityType.name}</li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
-      <h1>Examples</h1>
-      {props.examples.map((example) => (
-        <div key={example.description}>
-          <p>{example.description}</p>
-          <code>{example.result}</code>
+    <div
+      className={clsx(
+        "flex flex-col items-center justify-center mx-auto min-h-screen p-4",
+        {
+          "text-white bg-night": mode === "dark",
+          "bg-gray-100 sm:bg-[url('/images/home-img-bg.png')] bg-no-repeat bg-top":
+            mode === "light",
+        }
+      )}
+    >
+      <div className="container flex flex-col items-center justify-center w-full">
+        <BigLogo mode={mode} />
+        <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
+          <SearchInput
+            mode={mode}
+            placeholder="Go to hash or height"
+            optionGroups={SearchOptions}
+            selectedItem={selectedItem}
+            selectHandler={handleSelect}
+          />
         </div>
-      ))}
-      <Button />
+      </div>
+      <Footer />
     </div>
   );
 }

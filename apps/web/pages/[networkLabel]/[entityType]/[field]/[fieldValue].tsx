@@ -16,73 +16,10 @@ import {
   CardList,
   Table,
 } from "@modularcloud/design-system";
+import Image from 'next/image';
 
 import { CubesOff } from "@modularcloud/design-system";
-
-const entryLabels = [
-  "Chain ID",
-  "Transactions",
-  "Height",
-  "Block time",
-  "Block time",
-  "Gas (used/wanted)",
-  "Block Round",
-  "Transactions",
-];
-
-const entriesData: [string, string][] = [
-  ["1212", "Mamaki 5411"],
-  ["2323", "4"],
-  ["3434", "245588"],
-  ["4545", "245588"],
-  ["5656", "Oct 1, 2022 at 4:09:00 PM"],
-  ["6767", "8.09/19.98"],
-  ["7878", "1225"],
-  ["8989", "Liam Scales"],
-];
-
-const transactionLabels = [
-  "Index",
-  "Chain ID",
-  "Height",
-  "Status",
-  "Block time",
-  "Time",
-  "Fee",
-  "Gas",
-  "Messages",
-];
-
-const transactionData: [string, string][] = [
-  ["ffv", "1"],
-  ["aee", "Mamaki"],
-  ["vbx", "245588"],
-  ["wef", "Failure"],
-  ["ghf", "Oct 1, 2022 at 4:09:00 PM"],
-  ["qqw", "8.09/19.98"],
-  ["qwe", "1225"],
-  ["sdf", "4"],
-];
-
-const dataGroups = [
-  {
-    label: "Celestia",
-    options: [
-      {
-        name: "Mamaki",
-        value: "MMK",
-      },
-      {
-        name: "Mocha",
-        value: "MCA",
-      },
-      {
-        name: "Arabic",
-        value: "ARB",
-      },
-    ],
-  },
-];
+import { SearchOptions } from "../../../../lib/search-options";
 
 interface PanelProps {
   classes: string;
@@ -149,6 +86,10 @@ export const getServerSideProps: GetServerSideProps<{
     );
   }
 
+  if(entity.computed.Messages) {
+    associated.push(...entity.computed.Messages);
+  }
+
   return {
     props: {
       entity,
@@ -162,9 +103,9 @@ function EntityPage({
   associated,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedItem, setSelectedItem] = useState(
-    dataGroups[0].options[0].value
+    SearchOptions[0].options[0].value
   );
-  const [view, setView] = useState(associated.length > 2 ? "table": "cards");
+  const [view, setView] = useState(entity.context.entityTypeName === "Transaction" || associated.length < 3 ? "cards" : "table");
 
   const handleSelect = (selectedItem: React.SetStateAction<string>) => {
     console.log(selectedItem);
@@ -175,14 +116,14 @@ function EntityPage({
     <div className="flex">
       <div className="grow">
         <div className="lg:hidden">
-          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier} />
+          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}><Image src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /></TopBar>
         </div>
         <Header
           searchInput={
             <SearchInput
               mode="light"
               placeholder="Go to hash or height"
-              optionGroups={dataGroups}
+              optionGroups={SearchOptions}
               selectedItem={selectedItem}
               selectHandler={handleSelect}
             />
@@ -192,16 +133,16 @@ function EntityPage({
           defaultView={view}
         />
         { view === "cards" ? <CardList>
-          {entity.computed.Messages ? entity.computed.Messages.map((message: any) =>
-            <Card key={message.type} type="Message" badgeText={message.type} badgeIcon="reward">
+          {associated.map((entity) =>
+            <Card key={entity.uniqueIdentifier} type={entity.context.entityTypeName} badgeText={entity.uniqueIdentifier} badgeIcon="reward">
             <KeyValueList
-              entryLabels={Object.keys(message.data)}
-              entries={Object.entries(message.data)}
+              entryLabels={Object.keys(entity.metadata)}
+              entries={Object.entries(entity.metadata)}
             />
           </Card>
-          ) : null}
+          )}
         </CardList> : null }
-        { view === "table" ? <Table /> : null }
+        { view === "table" ? <Table data={associated} onRowClick={(row)=>console.log(row)} /> : null }
       </div>
       <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />
     </div>
