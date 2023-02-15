@@ -12,7 +12,7 @@ import { Status } from "../status";
 import * as React from 'react';
 
 type Props = {
-  data?: Entity[];
+  data: Entity[];
   onRowClick?: (row: Entity) => void;
 };
 
@@ -33,53 +33,15 @@ type TableSection = {
   label: string;
 }
 
-export function Table(props?: Props) {
-  const data: Entity[] = [{
-    uniqueIdentifierLabel: "Hash",
-    uniqueIdentifier: "E9A41C60FA1DCBA5B9CE560325FDB6F456464",
-    metadata: { 
-      type: "Get Reward",
-      status: "Success"
-     },
-    context: {
-      network: "Mocha",
-      entityTypeName: "Transaction",
-    },
-    computed: {},
-    raw: "blah blah blah",
-  },
-  {
-    uniqueIdentifierLabel: "Hash",
-    uniqueIdentifier: "09A41C60FA1DCBA5B9CE560325FDB6F456466",
-    metadata: { 
-      type: "IBC Update Client,IBC Acknowledgement",
-      status: "Success"
-     },
-    context: {
-      network: "Mocha",
-      entityTypeName: "Transaction",
-    },
-    computed: {},
-    raw: "blah blah blah",
-  },
-  {
-    uniqueIdentifierLabel: "Hash",
-    uniqueIdentifier: "F9A41C60FA1DCBA5B9CE560325FDB6F456465",
-    metadata: { 
-      type: "Pay For Data",
-      status: "Failure"
-     },
-    context: {
-      network: "Mocha",
-      entityTypeName: "Transaction",
-    },
-    computed: {},
-    raw: "blah blah blah",
+export function Table({ data, onRowClick }: Props) {
+  // temporarily before we have multi-entity tables
+  if(!data.length) {
+    return null;
   }
-  ];
-
-  const section: TableSection = {
-    rows: data,
+  const type = data[0].context.entityTypeName;
+  const filterData = data.filter(entity => entity.context.entityTypeName === type);
+  const section: TableSection = type === "Transaction" ? {
+    rows: filterData,
     label: "Transactions",
     columns: [
       {
@@ -98,13 +60,35 @@ export function Table(props?: Props) {
         id: "type",
         header: "Type",
         rightJustifyOnXS: true,
-        getCell: (entity: Entity) => <Badge list={entity.metadata.type?.split(",")} />
+        getCell: (entity: Entity) => <Badge list={entity.computed.Messages?.map((message: any) => message.uniqueIdentifier)} />
       },
       {
         id: "status",
         header: "Status",
         hideOnXS: true,
         getCell: (entity: Entity) => <Status status={entity.metadata.status} />
+      },
+      {
+        id: "menu",
+        isIcon: true,
+        getCell: (entity: Entity) => <ElipsHorizOff />
+      },
+    ]
+  }  : {
+    rows: filterData,
+    label: "Messages", // TODO: make generic
+    columns: [
+      /*{
+        id: "icon",
+        isIcon: true,
+        showOnXS: true,
+        getCell: (entity: Entity) => <Status status={entity.metadata.status} mode="icon" />
+      },*/
+      {
+        id: "id",
+        header: "Messages", // TODO: Make generic
+        isPrimaryKey: true,
+        getCell: (entity: Entity) => entity.uniqueIdentifier
       },
       {
         id: "menu",

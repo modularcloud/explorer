@@ -53,7 +53,7 @@ type Block = {
         // TODO: remove any
         msgs: null | any[];
       };
-      square_size: string;
+      square_size?: string;
     };
     last_commit: {
       height: string;
@@ -122,10 +122,14 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
     const blockEntity: Entity = {
       uniqueIdentifier: blockResponse.result.block_id.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: {
+      metadata: blockResponse.result.block.data.square_size ? {
         Height: blockResponse.result.block.header.height,
         Time: blockResponse.result.block.header.time,
         "Square Size": blockResponse.result.block.data.square_size,
+        Proposer: blockResponse.result.block.header.proposer_address,
+      } : {
+        Height: blockResponse.result.block.header.height,
+        Time: blockResponse.result.block.header.time,
         Proposer: blockResponse.result.block.header.proposer_address,
       },
       computed: {},
