@@ -78,6 +78,7 @@ export default function Homepage({ mode = "light" }: Props) {
             optionGroups={dataGroups}
             selectedItem={selectedItem}
             selectHandler={handleSelect}
+            noResults
           />
         </div>
         <Link href="/">
