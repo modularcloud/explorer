@@ -13,7 +13,8 @@
     },
     "web#build": {
       "env": [
-        "WHITELABEL"
+        "WHITELABEL",
+        "CELESTIA_MOCHA_RPC"
       ]
     }
   }
