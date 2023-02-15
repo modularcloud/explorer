@@ -20,6 +20,7 @@ import Image from 'next/image';
 
 import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
+import { Whitelabel } from "../../../../lib/whitelabel";
 
 interface PanelProps {
   classes: string;
@@ -48,6 +49,7 @@ const EntityPanel = ({ classes, type, id, metadata, network }: PanelProps) => (
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
   associated: Entity[];
+  whitelabel?: string;
 }> = async ({ params }) => {
   const { networkLabel, entityType, field, fieldValue } = params ?? {};
   if (
@@ -96,6 +98,7 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       entity,
       associated,
+      whitelabel: Whitelabel
     },
   };
 };
@@ -103,6 +106,7 @@ export const getServerSideProps: GetServerSideProps<{
 function EntityPage({
   entity,
   associated,
+  whitelabel
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedItem, setSelectedItem] = useState(
     SearchOptions[0].options[0].value
@@ -133,6 +137,7 @@ function EntityPage({
           panelContent={<EntityPanel classes="flex lg:hidden" network={entity.context.network} type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} />}
           onSwitchView={(view: string) => setView(view)}
           defaultView={view}
+          whitelabel={whitelabel}
         />
         { view === "cards" ? <CardList>
           {associated.map((entity) =>

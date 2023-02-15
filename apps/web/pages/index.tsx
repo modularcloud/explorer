@@ -8,14 +8,25 @@ import {
 } from "@modularcloud/design-system";
 import Link from "next/link";
 import { SearchOptions } from "../lib/search-options";
+import { Whitelabel } from "../lib/whitelabel"
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-interface Props {
-  mode: "light" | "dark";
+export const getServerSideProps: GetServerSideProps<{
+  whitelabel?: string,
+  searchOptions: any,
+}> = async ({ params }) => {
+  return {
+     props: {
+      whitelabel: Whitelabel,
+    searchOptions: SearchOptions  
+     }
+  }
 }
 
-export default function Homepage({ mode = "light" }: Props) {
+export default function Homepage({ whitelabel, searchOptions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const mode = "light";
   const [selectedItem, setSelectedItem] = useState(
-    SearchOptions[0].options[0].value
+    searchOptions[0].options[0].value
   );
 
   const handleSelect = (selectedItem: React.SetStateAction<string>) => {
@@ -27,19 +38,19 @@ export default function Homepage({ mode = "light" }: Props) {
       className={clsx(
         "flex flex-col items-center justify-center mx-auto min-h-screen p-4",
         {
-          "text-white bg-night": mode === "dark",
-          "bg-gray-100 sm:bg-[url('/images/home-img-bg.png')] bg-no-repeat bg-top":
+         /* "text-white bg-night": mode === "dark",*/
+          "bg-gray-100 bg-[url('/images/home-img-bg.png')] bg-repeat-x bg-top":
             mode === "light",
         }
       )}
     >
       <div className="container flex flex-col items-center justify-center w-full">
-        <BigLogo mode={mode} />
+        <BigLogo mode={mode} whitelabel={whitelabel} />
         <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
           <SearchInput
             mode={mode}
             placeholder="Go to hash or height"
-            optionGroups={SearchOptions}
+            optionGroups={searchOptions}
             selectedItem={selectedItem}
             selectHandler={handleSelect}
           />

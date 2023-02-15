@@ -8,13 +8,21 @@ interface Props {
   searchInput?: React.ReactNode;
   onSwitchView: (view: string) => void;
   defaultView: string;
+  whitelabel?: string;
 }
 
-export function Header({ panelContent, searchInput, onSwitchView, defaultView }: Props) {
+export function Header({ panelContent, searchInput, onSwitchView, defaultView, whitelabel }: Props) {
+  let name = "Explorer";
+  if(whitelabel === "celestia") {
+    name = "CelestiaScan";
+  }
+  if(whitelabel === "dymension") {
+    name = "DymScan"
+  }
   return (
     <div className="h-[4.25rem] flex flex-col">
       <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">
-        <img src="/images/CelestiaScan-logo.png" className="max-w-[160px]" />
+        <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">{name}</div>
         <div className="hidden lg:flex flex-grow max-w-[50%]">
           {searchInput}
         </div>

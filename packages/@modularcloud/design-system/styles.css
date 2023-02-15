@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: logo;
+    src: url(https://modular-cloud-explorer-fonts.s3.us-west-2.amazonaws.com/GT-America-Standard-Medium.woff2);
+    font-weight: medium;
+  }
+
+  @font-face {
+    font-family: logo;
+    src: url(https://modular-cloud-explorer-fonts.s3.us-west-2.amazonaws.com/GT-America-Standard-Bold.woff2);
+    font-weight: bold;
+  }
