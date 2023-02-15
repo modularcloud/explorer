@@ -16,28 +16,10 @@ import {
   CardList,
   Table,
 } from "@modularcloud/design-system";
+import Image from 'next/image';
 
 import { CubesOff } from "@modularcloud/design-system";
-
-const dataGroups = [
-  {
-    label: "Celestia",
-    options: [
-      {
-        name: "Mamaki",
-        value: "MMK",
-      },
-      {
-        name: "Mocha",
-        value: "MCA",
-      },
-      {
-        name: "Arabic",
-        value: "ARB",
-      },
-    ],
-  },
-];
+import { SearchOptions } from "../../../../lib/search-options";
 
 interface PanelProps {
   classes: string;
@@ -121,7 +103,7 @@ function EntityPage({
   associated,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedItem, setSelectedItem] = useState(
-    dataGroups[0].options[0].value
+    SearchOptions[0].options[0].value
   );
   const [view, setView] = useState(entity.context.entityTypeName === "Transaction" || associated.length < 3 ? "cards" : "table");
 
@@ -134,14 +116,14 @@ function EntityPage({
     <div className="flex">
       <div className="grow">
         <div className="lg:hidden">
-          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier} />
+          <TopBar type={entity.context.entityTypeName} id={entity.uniqueIdentifier}><Image src="/images/Celestia-icon-logo.png" alt="Celestia" height="32" width="119" /></TopBar>
         </div>
         <Header
           searchInput={
             <SearchInput
               mode="light"
               placeholder="Go to hash or height"
-              optionGroups={dataGroups}
+              optionGroups={SearchOptions}
               selectedItem={selectedItem}
               selectHandler={handleSelect}
             />

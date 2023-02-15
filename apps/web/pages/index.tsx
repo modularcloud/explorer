@@ -7,39 +7,15 @@ import {
   BigLogo,
 } from "@modularcloud/design-system";
 import Link from "next/link";
+import { SearchOptions } from "../lib/search-options";
 
 interface Props {
   mode: "light" | "dark";
 }
 
-const dataGroups = [
-  {
-    label: "Celestia",
-    options: [
-      {
-        name: "Mocha",
-        value: "MCA",
-      },
-    ],
-  },
-  {
-    label: "Dymension",
-    options: [
-      {
-        name: "Hub",
-        value: "MMK2",
-      },
-      {
-        name: "RollApp X",
-        value: "MCA2",
-      },
-    ],
-  },
-];
-
 export default function Homepage({ mode = "light" }: Props) {
   const [selectedItem, setSelectedItem] = useState(
-    dataGroups[0].options[0].value
+    SearchOptions[0].options[0].value
   );
 
   const handleSelect = (selectedItem: React.SetStateAction<string>) => {
@@ -63,7 +39,7 @@ export default function Homepage({ mode = "light" }: Props) {
           <SearchInput
             mode={mode}
             placeholder="Go to hash or height"
-            optionGroups={dataGroups}
+            optionGroups={SearchOptions}
             selectedItem={selectedItem}
             selectHandler={handleSelect}
           />
