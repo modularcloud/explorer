@@ -129,12 +129,21 @@ function EntityPage({
             type={entity.context.entityTypeName}
             id={entity.uniqueIdentifier}
           >
-            <Image
-              src="/images/Celestia-icon-logo.png"
-              alt="Celestia"
-              height="32"
-              width="119"
-            />
+            {entity.context.network === "Mocha" ? (
+              <Image
+                src="/images/Celestia-icon-logo.png"
+                alt="Celestia"
+                height="32"
+                width="119"
+              />
+            ) : (
+              <Image
+                src="/images/dymension-logo.png"
+                alt="Dymension"
+                height="32"
+                width="136"
+              />
+            )}
           </TopBar>
         </div>
         <Header
