@@ -14,7 +14,9 @@
     "web#build": {
       "env": [
         "WHITELABEL",
-        "CELESTIA_MOCHA_RPC"
+        "CELESTIA_MOCHA_RPC",
+        "DYMENSION_HUB_RPC",
+        "DYMENSION_ROLLAPP_X_RPC"
       ]
     }
   }
