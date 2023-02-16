@@ -22,11 +22,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^3.0.1",
     "esbuild": "0.17.8",
     "react": "^18.2.0",
-    "tailwind-config": "^0.0.0",
-    "vite": "^4.0.4"
+    "tailwind-config": "^0.0.0"
   },
   "packageManager": "npm@8.19.2"
 }
