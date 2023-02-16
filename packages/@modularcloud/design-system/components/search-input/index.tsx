@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
@@ -15,21 +15,21 @@ interface Props {
       value: string;
     }[];
   }[];
-  selectedItem?: string;
-  selectHandler?: React.Dispatch<React.SetStateAction<string>>;
   isOpen?: boolean;
   handleOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  onSearch: (network: string, term: string) => void
 }
 
 export const SearchInput = ({
   mode = "light",
   placeholder = "Go to hash or height",
   optionGroups,
-  selectedItem,
-  selectHandler,
   isOpen,
   handleOpen,
+  onSearch
 }: Props) => {
+  const [ option, setOption ] = useState(optionGroups?.[0]?.options[0]?.value ?? "");
+  const [ term, setTerm ] = useState("");
   return (
     <Popover.Root open={isOpen} onOpenChange={handleOpen}>
       <Popover.Anchor>
@@ -41,7 +41,7 @@ export const SearchInput = ({
               mode === "light",
           })}
         >
-          <Select.Root value={selectedItem} onValueChange={selectHandler}>
+          <Select.Root value={option} onValueChange={(value) => setOption(value)}>
             <Select.Trigger
               className={clsx(
                 "select-none flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold sm:min-w-[98px] truncate",
@@ -55,8 +55,8 @@ export const SearchInput = ({
               aria-label="SearchType"
             >
               <Select.Value
-                aria-label={selectedItem}
-                defaultValue={selectedItem}
+                aria-label={option}
+                defaultValue={option}
               ></Select.Value>
               <Select.Icon className="ml-2">
                 <ChevronDownIcon />
@@ -104,6 +104,8 @@ export const SearchInput = ({
             </Select.Portal>
           </Select.Root>
           <input
+            onChange={(event: any) => setTerm(event.target.value)}
+            onKeyDown={(event: any) => { if(event.code === "Enter") onSearch(option, term)}}
             className={clsx("w-full p-2 focus:outline-none peer", {
               "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
                 mode === "dark",
@@ -114,6 +116,7 @@ export const SearchInput = ({
           />
           <Popover.Trigger asChild>
             <button
+              onClick={() => onSearch(option, term)}
               className={clsx(
                 "p-2 px-2.5 text-gray border-l rounded-r-lg sm:border-l-0",
                 {
@@ -134,9 +137,9 @@ export const SearchInput = ({
           <div className="block py-3 m-auto">
             <CubesOn />
           </div>
-          <span className="font-bold text-md">Block doesn't exist.</span>
+          <span className="font-bold text-md">Not found.</span>
           <p className="flex flex-wrap text-slate my-2">
-            Something went wrong - we don't think that block exists yet.
+            Something went wrong - we could not find this result.
           </p>
           <span className="font-bold">Please try again.</span>
           <button className="border border-gray-200 p-2 px-3 rounded-full block sm:hidden">

@@ -10,6 +10,8 @@ import Link from "next/link";
 import { SearchOptions } from "../lib/search-options";
 import { Whitelabel } from "../lib/whitelabel"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
+import { isSearchable } from "../lib/search";
 
 export const getServerSideProps: GetServerSideProps<{
   whitelabel?: string,
@@ -25,13 +27,8 @@ export const getServerSideProps: GetServerSideProps<{
 
 export default function Homepage({ whitelabel, searchOptions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const mode = "light";
-  const [selectedItem, setSelectedItem] = useState(
-    searchOptions[0].options[0].value
-  );
-
-  const handleSelect = (selectedItem: React.SetStateAction<string>) => {
-    setSelectedItem(selectedItem);
-  };
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
@@ -51,8 +48,24 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
             mode={mode}
             placeholder="Go to hash or height"
             optionGroups={searchOptions}
-            selectedItem={selectedItem}
-            selectHandler={handleSelect}
+            isOpen={isOpen}
+            handleOpen={setIsOpen}
+            onSearch={(network: string, term: string) => {
+              if(isSearchable(term)) {
+                fetch(`/api/path/${network}/${term}`)
+                  .then((response) => {
+                    if(!response.ok) {
+                      throw new Error("No path found.")
+                    }
+                    return response.json()
+                  })
+                  .then(data => {
+                    if(typeof data.path === "string") {
+                      router.push(data.path)
+                    }
+                  }).catch(() => setIsOpen(true))
+              }
+            }}
           />
         </div>
       </div>

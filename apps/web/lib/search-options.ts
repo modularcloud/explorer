@@ -1,3 +1,4 @@
+import { CELESTIA_MOCHA, DYMENSION_HUB, DYMENSION_ROLLAPP_X } from "./network-names";
 import { Whitelabel } from "./whitelabel";
 export const SearchOptions = Whitelabel === "dymension" ? [
     {
@@ -5,11 +6,11 @@ export const SearchOptions = Whitelabel === "dymension" ? [
         options: [
             {
                 name: "Hub",
-                value: "hub",
+                value: DYMENSION_ROLLAPP_X,
             },
             {
                 name: "RollApp X",
-                value: "rollappx",
+                value: DYMENSION_HUB,
             },
         ],
     },
@@ -18,7 +19,7 @@ export const SearchOptions = Whitelabel === "dymension" ? [
         options: [
             {
                 name: "Mocha",
-                value: "celestia-mocha",
+                value: CELESTIA_MOCHA,
             },
         ],
     },
@@ -28,7 +29,7 @@ export const SearchOptions = Whitelabel === "dymension" ? [
         options: [
             {
                 name: "Mocha",
-                value: "MCA",
+                value: CELESTIA_MOCHA,
             },
         ],
     },
@@ -37,11 +38,11 @@ export const SearchOptions = Whitelabel === "dymension" ? [
         options: [
             {
                 name: "Hub",
-                value: "dymension-hub",
+                value: DYMENSION_HUB,
             },
             {
                 name: "RollApp X",
-                value: "dymension-rollappx",
+                value: DYMENSION_ROLLAPP_X,
             },
         ],
     },

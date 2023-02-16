@@ -162,10 +162,8 @@ function EntityPage({
               mode="light"
               placeholder="Go to hash or height"
               optionGroups={SearchOptions}
-              selectedItem={selectedItem}
-              selectHandler={handleSelect}
               isOpen={openPopover}
-              handleOpen={handleOpen}
+              onSearch={(a: any, b: any) => console.log(a, b)}
             />
           }
           panelContent={

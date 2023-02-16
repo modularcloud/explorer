@@ -4,5 +4,4 @@ export * from "./components/top-bar";
 export * from "./components/header";
 export * from "./atoms/boxed-value";
 export * from "./components";
-export * from "./pages";
 export * from "./icons";
