@@ -27,19 +27,22 @@ interface PanelProps {
   type: string,
   id: string,
   metadata: { [key: string]: string },
-  network: string
+  context: {
+    network: string,
+    entityTypeName: string
+  }
 }
 
-const EntityPanel = ({ classes, type, id, metadata, network }: PanelProps) => (
+const EntityPanel = ({ classes, type, id, metadata, context }: PanelProps) => (
   <RightPanel className={classes}>
     <EntityDetails
       iconType={<CubesOff />}
       type={type}
       hash={id}
-      network={network}
+      network={context.network}
     />
     <KeyValueList
-      header="Block Information"
+      header={`${context.entityTypeName} Information`}
       entryLabels={Object.keys(metadata)}
       entries={Object.entries(metadata)}
     />
@@ -172,7 +175,7 @@ function EntityPage({
               type={entity.context.entityTypeName}
               id={entity.uniqueIdentifier}
               metadata={entity.metadata}
-              network={entity.context.network}
+              context={entity.context}
             />
           }
           onSwitchView={(view: string) => setView(view)}
@@ -200,7 +203,7 @@ function EntityPage({
           <Table data={associated} onRowClick={(row) => console.log(row)} />
         ) : null}
       </div>
-      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} network={entity.context.network} />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} context={entity.context} />
     </div>
   );
 }
