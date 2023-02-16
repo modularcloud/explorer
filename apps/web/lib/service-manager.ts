@@ -111,7 +111,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
   const baseUrl =
     queryType === "height"
       ? `${networkBase}/block?height=`
-      : `${networkBase}/block_by_hash?hash=0x`;
+      : `${networkBase}/block_by_hash?hash=`;
   try {
     const response = await fetch(baseUrl + queryValue);
 
@@ -150,7 +150,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
 async function getTransactionByHash(hash: string, networkBase: string, networkName: string) {
   try {
     const response = await fetch(
-      `${networkBase}/tx?hash=0x${hash}`
+      `${networkBase}/tx?hash=${hash}`
     );
 
     if (!response.ok) {
@@ -224,114 +224,98 @@ async function getTransactionsByHeight(height: string, networkBase: string, netw
   }
 }
 
-async function getRollAppXTransactionByHash(hash: string) {
-  const base = "https://rpc-rollappx-35c.dymension.xyz/tx?prove=false&hash=";
-  try {
-    const response = await fetch(
-      base+hash
-    );
-    if (!response.ok) {
-      throw Error(`Response code ${response.status}: ${response.statusText}`);
-    }
-
-    const txResponse = (await response.json()) as JSONRPCResponse<Transaction>;
-    const Messages = getMessages(txResponse.result.tx);
-    const txEntity: Entity = {
-      uniqueIdentifier: txResponse.result.hash,
-      uniqueIdentifierLabel: "Hash",
-      metadata: {
-        Height: txResponse.result.height,
-        Index: String(txResponse.result.index),
-        Status: txResponse.result.tx_result.code ? "Failed" : "Success",
-        "Gas (used/wanted)":
-          txResponse.result.tx_result.gas_used +
-          "/" +
-          txResponse.result.tx_result.gas_wanted,
+const CELESTIA_MOCHA_RPC = process.env.CELESTIA_MOCHA_RPC
+if(CELESTIA_MOCHA_RPC) {
+  ServiceManager.addNetwork({
+    label: CELESTIA_MOCHA,
+    entityTypes: [
+      {
+        name: "Block",
+        getters: [
+          {
+            field: "height",
+            getOne: (height: string) => getBlockBy("height", height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+          },
+          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA) },
+        ],
       },
-      computed: {
-        Messages
+      {
+        name: "Transaction",
+        getters: [
+          {
+            field: "hash",
+            getOne: (hash: string) => getTransactionByHash(hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+          },
+          {
+            field: "height",
+            getMany: (height: string) => getTransactionsByHeight(height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+          },
+        ],
       },
-      context: {
-        network: DYMENSION_ROLLAPP_X,
-        entityTypeName: "Transaction",
+    ],
+  });
+}
+
+const DYMENSION_HUB_RPC = process.env.DYMENSION_HUB_RPC;
+if(DYMENSION_HUB_RPC) {
+  ServiceManager.addNetwork({
+    label: DYMENSION_HUB,
+    entityTypes: [
+      {
+        name: "Block",
+        getters: [
+          {
+            field: "height",
+            getOne: (height: string) => getBlockBy("height", height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+          },
+          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_HUB_RPC, DYMENSION_HUB) },
+        ],
       },
-      raw: JSON.stringify(txResponse, null, 2),
-    };
-    return txEntity;
-  } catch {
-    return null;
-  }
-} 
-
-ServiceManager.addNetwork({
-  label: CELESTIA_MOCHA,
-  entityTypes: [
-    {
-      name: "Block",
-      getters: [
-        {
-          field: "height",
-          getOne: (height: string) => getBlockBy("height", height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
-        },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA) },
-      ],
-    },
-    {
-      name: "Transaction",
-      getters: [
-        {
-          field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
-        },
-        {
-          field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, process.env.CELESTIA_MOCHA_RPC ?? "", CELESTIA_MOCHA),
-        },
-      ],
-    },
-  ],
-});
-
-ServiceManager.addNetwork({
-  label: DYMENSION_HUB,
-  entityTypes: [
-    {
-      name: "Block",
-      getters: [
-        {
-          field: "height",
-          getOne: (height: string) => getBlockBy("height", height, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
-        },
-        { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB) },
-      ],
-    },
-    {
-      name: "Transaction",
-      getters: [
-        {
-          field: "hash",
-          getOne: (hash: string) => getTransactionByHash(hash, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
-        },
-        {
-          field: "height",
-          getMany: (height: string) => getTransactionsByHeight(height, "https://rpc-hub-35c.dymension.xyz", DYMENSION_HUB),
-        },
-      ],
-    },
-  ],
-});
-
-ServiceManager.addNetwork({
-  label: DYMENSION_ROLLAPP_X,
-  entityTypes: [
-    {
-      name: "Transaction",
-      getters: [
-        {
-          field: "hash",
-          getOne: (hash: string) => getRollAppXTransactionByHash(hash),
-        },
-      ],
-    },
-  ],
-});
+      {
+        name: "Transaction",
+        getters: [
+          {
+            field: "hash",
+            getOne: (hash: string) => getTransactionByHash(hash, DYMENSION_HUB_RPC, DYMENSION_HUB),
+          },
+          {
+            field: "height",
+            getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+          },
+        ],
+      },
+    ],
+  });
+}
+const DYMESNION_ROLLAPP_X_RPC = process.env.DYMESNION_ROLLAPP_X_RPC;
+if(DYMESNION_ROLLAPP_X_RPC) {
+  ServiceManager.addNetwork({
+    label: DYMENSION_ROLLAPP_X,
+    entityTypes: [
+      {
+        name: "Block",
+        getters: [
+          {
+            field: "height",
+            getOne: (height: string) => getBlockBy("height", height, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+          },
+          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X) },
+        ],
+      },
+      {
+        name: "Transaction",
+        getters: [
+          {
+            field: "hash",
+            getOne: (hash: string) => getTransactionByHash(hash, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+          },
+          {
+            field: "height",
+            getMany: (height: string) => getTransactionsByHeight(height, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+          },
+        ],
+      },
+    ],
+  });
+  
+}
