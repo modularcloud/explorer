@@ -6,11 +6,11 @@ export const SearchOptions = Whitelabel === "dymension" ? [
         options: [
             {
                 name: "Hub",
-                value: DYMENSION_ROLLAPP_X,
+                value: DYMENSION_HUB,
             },
             {
                 name: "RollApp X",
-                value: DYMENSION_HUB,
+                value: DYMENSION_ROLLAPP_X,
             },
         ],
     },

@@ -21,6 +21,7 @@ import Image from "next/image";
 import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
 import { Whitelabel } from "../../../../lib/whitelabel";
+import { isSearchable } from "../../../../lib/search";
 
 interface PanelProps {
   classes: string;
@@ -52,6 +53,7 @@ export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
   associated: Entity[];
   whitelabel?: string;
+  searchOptions: any
 }> = async ({ params }) => {
   const { networkLabel, entityType, field, fieldValue } = params ?? {};
   if (
@@ -100,7 +102,8 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       entity,
       associated,
-      whitelabel: Whitelabel
+      whitelabel: Whitelabel,
+      searchOptions: SearchOptions
     },
   };
 };
@@ -108,30 +111,18 @@ export const getServerSideProps: GetServerSideProps<{
 function EntityPage({
   entity,
   associated,
-  whitelabel
+  whitelabel,
+  searchOptions
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [selectedItem, setSelectedItem] = useState(
-    SearchOptions[0].options[0].value
-  );
-
-  const [openPopover, setOpenPopover] = useState(false);
+  const mode = "light";
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false);
 
   const [view, setView] = useState(
     entity.context.entityTypeName === "Transaction" || associated.length < 3
       ? "cards"
       : "table"
   );
-
-  const handleSelect = (selectedItem: React.SetStateAction<string>) => {
-    console.log(selectedItem);
-    setSelectedItem(selectedItem);
-  };
-
-  const handleOpen = (openPopover: React.SetStateAction<boolean>) => {
-    // set to true if no search results
-    openPopover = false;
-    setOpenPopover(openPopover);
-  };
 
   return (
     <div className="flex">
@@ -161,12 +152,28 @@ function EntityPage({
         <Header
           searchInput={
             <SearchInput
-              mode="light"
-              placeholder="Go to hash or height"
-              optionGroups={SearchOptions}
-              isOpen={openPopover}
-              onSearch={(a: any, b: any) => console.log(a, b)}
-            />
+            mode={mode}
+            placeholder="Go to hash or height"
+            optionGroups={searchOptions}
+            isOpen={isOpen}
+            handleOpen={setIsOpen}
+            onSearch={(searchNetwork: string, term: string) => {
+              if(isSearchable(term)) {
+                fetch(`/api/path/${searchNetwork}/${term}`)
+                  .then((response) => {
+                    if(!response.ok) {
+                      throw new Error("No path found.")
+                    }
+                    return response.json()
+                  })
+                  .then(data => {
+                    if(typeof data.path === "string") {
+                      router.push(data.path)
+                    }
+                  }).catch(() => setIsOpen(true))
+              }
+            }}
+          />
           }
           panelContent={
             <EntityPanel
