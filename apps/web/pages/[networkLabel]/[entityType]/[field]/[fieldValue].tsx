@@ -24,7 +24,6 @@ import { Whitelabel } from "../../../../lib/whitelabel";
 
 interface PanelProps {
   classes: string;
-  type: string,
   id: string,
   metadata: { [key: string]: string },
   context: {
@@ -33,11 +32,11 @@ interface PanelProps {
   }
 }
 
-const EntityPanel = ({ classes, type, id, metadata, context }: PanelProps) => (
+const EntityPanel = ({ classes, id, metadata, context }: PanelProps) => (
   <RightPanel className={classes}>
     <EntityDetails
       iconType={<CubesOff />}
-      type={type}
+      type={context.entityTypeName}
       hash={id}
       network={context.network}
     />
@@ -172,7 +171,6 @@ function EntityPage({
           panelContent={
             <EntityPanel
               classes="flex lg:hidden"
-              type={entity.context.entityTypeName}
               id={entity.uniqueIdentifier}
               metadata={entity.metadata}
               context={entity.context}
@@ -203,7 +201,7 @@ function EntityPage({
           <Table data={associated} onRowClick={(row) => console.log(row)} />
         ) : null}
       </div>
-      <EntityPanel classes="sticky top-0 hidden lg:flex" type={entity.context.entityTypeName} id={entity.uniqueIdentifier} metadata={entity.metadata} context={entity.context} />
+      <EntityPanel classes="sticky top-0 hidden lg:flex" id={entity.uniqueIdentifier} metadata={entity.metadata} context={entity.context} />
     </div>
   );
 }
