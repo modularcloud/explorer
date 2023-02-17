@@ -15,6 +15,7 @@ interface Props {
       value: string;
     }[];
   }[];
+  defaultSelected?: string;
   isOpen?: boolean;
   handleOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   onSearch: (network: string, term: string) => void
@@ -26,9 +27,10 @@ export const SearchInput = ({
   optionGroups,
   isOpen,
   handleOpen,
-  onSearch
+  onSearch,
+  defaultSelected
 }: Props) => {
-  const [ option, setOption ] = useState(optionGroups?.[0]?.options[0]?.value ?? "");
+  const [ option, setOption ] = useState(defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
   const [ term, setTerm ] = useState("");
   return (
     <Popover.Root open={isOpen} onOpenChange={handleOpen}>

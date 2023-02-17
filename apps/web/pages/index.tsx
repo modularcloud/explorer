@@ -61,7 +61,7 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
                   })
                   .then(data => {
                     if(typeof data.path === "string") {
-                      router.push(data.path)
+                      router.push(data.path.toLowerCase())
                     }
                   }).catch(() => setIsOpen(true))
               }

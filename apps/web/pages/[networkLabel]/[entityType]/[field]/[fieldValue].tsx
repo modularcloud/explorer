@@ -157,6 +157,7 @@ function EntityPage({
             optionGroups={searchOptions}
             isOpen={isOpen}
             handleOpen={setIsOpen}
+            defaultSelected={entity.context.network}
             onSearch={(searchNetwork: string, term: string) => {
               if(isSearchable(term)) {
                 fetch(`/api/path/${searchNetwork}/${term}`)
@@ -168,7 +169,7 @@ function EntityPage({
                   })
                   .then(data => {
                     if(typeof data.path === "string") {
-                      router.push(data.path)
+                      router.push(data.path.toLowerCase())
                     }
                   }).catch(() => setIsOpen(true))
               }
