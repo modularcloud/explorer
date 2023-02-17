@@ -4,25 +4,18 @@ import { DialogPanel } from "../dialog-panel";
 import { RightSidebarOff } from "../../icons";
 
 interface Props {
+  logo: React.ReactNode;
   panelContent?: React.ReactNode;
   searchInput?: React.ReactNode;
   onSwitchView: (view: string) => void;
   defaultView: string;
-  whitelabel?: string;
 }
 
-export function Header({ panelContent, searchInput, onSwitchView, defaultView, whitelabel }: Props) {
-  let name = "Explorer";
-  if(whitelabel === "celestia") {
-    name = "Celestia";
-  }
-  if(whitelabel === "dymension") {
-    name = "Dym"
-  }
+export function Header({ panelContent, searchInput, onSwitchView, defaultView, logo }: Props) {
   return (
     <div className="h-[4.25rem] flex flex-col">
       <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">
-        <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">{name}{whitelabel ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div>
+        {logo}
         <div className="hidden lg:flex flex-grow max-w-[50%]">
           {searchInput}
         </div>

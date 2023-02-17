@@ -22,6 +22,7 @@ import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
 import { Whitelabel } from "../../../../lib/whitelabel";
 import { isSearchable } from "../../../../lib/search";
+import Link from "next/link";
 
 interface PanelProps {
   classes: string;
@@ -124,6 +125,14 @@ function EntityPage({
       : "table"
   );
 
+  let name = "Explorer";
+  if(whitelabel === "celestia") {
+    name = "Celestia";
+  }
+  if(whitelabel === "dymension") {
+    name = "Dym"
+  }
+
   return (
     <div className="flex">
       <div className="grow">
@@ -150,6 +159,7 @@ function EntityPage({
           </TopBar>
         </div>
         <Header
+          logo={<Link href="/"><div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">{name}{whitelabel ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div></Link>}
           searchInput={
             <SearchInput
             mode={mode}
