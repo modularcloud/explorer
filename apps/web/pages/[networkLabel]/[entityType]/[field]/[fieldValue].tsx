@@ -196,7 +196,6 @@ function EntityPage({
           }
           onSwitchView={(view: string) => setView(view)}
           defaultView={view}
-          whitelabel={whitelabel}
         />
         {view === "cards" ? (
           <CardList>
