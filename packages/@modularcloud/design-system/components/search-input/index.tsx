@@ -116,7 +116,6 @@ export const SearchInput = ({
             type="text"
             placeholder={placeholder}
           />
-          <Popover.Trigger asChild>
             <button
               onClick={() => onSearch(option, term)}
               className={clsx(
@@ -131,7 +130,6 @@ export const SearchInput = ({
             >
               <MagnifyingGlassIcon />
             </button>
-          </Popover.Trigger>
         </div>
       </Popover.Anchor>
       <Popover.Content className="min-w-[90%]">
