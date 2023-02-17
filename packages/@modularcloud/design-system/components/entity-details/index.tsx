@@ -15,7 +15,7 @@ export function EntityDetails({ iconType, type, hash, network }: Props) {
           alt="Celestia"
         /> : <img
         className="lg:w-[130px] w-[180px]"
-        src="/images/dymension-logo.png"
+        src="/images/dymension-bigger.png"
         alt="Dymension"
       />
       }
