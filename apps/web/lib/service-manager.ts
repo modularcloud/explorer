@@ -1,4 +1,4 @@
-import { getMessages } from "service-manager";
+import { getMessages, txStringToHash } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
 import { DYMENSION_HUB, DYMENSION_ROLLAPP_X, CELESTIA_MOCHA } from "./network-names";
@@ -238,6 +238,10 @@ if(CELESTIA_MOCHA_RPC) {
           },
           { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA) },
         ],
+        getAssociated: async (entity: Entity) => {
+          const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
+          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), CELESTIA_MOCHA_RPC, CELESTIA_MOCHA)));
+        }
       },
       {
         name: "Transaction",
@@ -251,6 +255,7 @@ if(CELESTIA_MOCHA_RPC) {
             getMany: (height: string) => getTransactionsByHeight(height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
           },
         ],
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
       },
     ],
   });
@@ -270,6 +275,10 @@ if(DYMENSION_HUB_RPC) {
           },
           { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_HUB_RPC, DYMENSION_HUB) },
         ],
+        getAssociated: async (entity: Entity) => {
+          const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
+          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_HUB_RPC, DYMENSION_HUB)));
+        }
       },
       {
         name: "Transaction",
@@ -283,6 +292,7 @@ if(DYMENSION_HUB_RPC) {
             getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_HUB_RPC, DYMENSION_HUB),
           },
         ],
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
       },
     ],
   });
@@ -301,6 +311,10 @@ if(DYMENSION_ROLLAPP_X_RPC) {
           },
           { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X) },
         ],
+        getAssociated: async (entity: Entity) => {
+          const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
+          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X)));
+        }
       },
       {
         name: "Transaction",
@@ -314,6 +328,7 @@ if(DYMENSION_ROLLAPP_X_RPC) {
             getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
           },
         ],
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
       },
     ],
   });

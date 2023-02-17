@@ -7,6 +7,7 @@ type GetManyFn = (query: string) => Promise<Entity[]>;
 type EntityType = {
   name: string;
   getters: { field: string; getOne?: GetOneFn; getMany?: GetManyFn }[];
+  getAssociated: (entity: Entity) => Entity[]
 };
 
 export type Network = {
@@ -63,4 +64,18 @@ export async function getEntities(
   }
 
   return getter.getMany(fieldValue);
+}
+
+export async function getAssociated(
+  network: Network,
+  entity: Entity
+): Promise<Entity[]> {
+  const entityType = network.entityTypes.find(
+    (entityType) => slugify(entityType.name) === slugify(entity.context.entityTypeName)
+  );
+  if (!entityType) {
+    return [];
+  }
+
+  return entityType.getAssociated(entity);
 }

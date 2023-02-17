@@ -17,6 +17,7 @@ import {
   Table,
 } from "@modularcloud/design-system";
 import Image from "next/image";
+import useSWR from "swr";
 
 import { CubesOff } from "@modularcloud/design-system";
 import { SearchOptions } from "../../../../lib/search-options";
@@ -53,7 +54,6 @@ const EntityPanel = ({ classes, id, metadata, context }: PanelProps) => (
 
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
-  associated: Entity[];
   whitelabel?: string;
   searchOptions: any
 }> = async ({ params }) => {
@@ -83,27 +83,10 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  // temporary
-  const associated: Entity[] = [];
-  if (entityType.toLowerCase() === "block") {
-    associated.push(
-      ...(await getEntities(
-        network,
-        "transaction",
-        "height",
-        entity.metadata["Height"]
-      ))
-    );
-  }
-
-  if (entity.computed.Messages) {
-    associated.push(...entity.computed.Messages);
-  }
 
   return {
     props: {
       entity,
-      associated,
       whitelabel: Whitelabel,
       searchOptions: SearchOptions
     },
@@ -112,13 +95,14 @@ export const getServerSideProps: GetServerSideProps<{
 
 function EntityPage({
   entity,
-  associated,
   whitelabel,
   searchOptions
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const mode = "light";
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
+  const swrResponse = useSWR("/api/associated", (url) => fetch(url, { method: "POST", body: JSON.stringify(entity) }).then((res) => res.json()));
+  const associated: Entity[] = swrResponse.data ?? []; // TODO validation
 
   const [view, setView] = useState(
     entity.context.entityTypeName === "Transaction" || associated.length < 3

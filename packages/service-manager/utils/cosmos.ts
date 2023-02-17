@@ -1,3 +1,4 @@
+import { sha256 } from "@cosmjs/crypto";
 import { fromBase64 } from "@cosmjs/encoding";
 import { decodeTxRaw, Registry } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes } from "@cosmjs/stargate";
@@ -43,6 +44,11 @@ function convertToKeyValue(obj: {[key: string]: any}): {[key: string]: string} {
     }
   });
   return KV;
+}
+
+export function txStringToHash(txstr: string) {
+  const raw = fromBase64(txstr);
+  return Buffer.from(sha256(raw)).toString("hex");
 }
 
 export function getMessages(txstr: string): Entity[] {
