@@ -134,17 +134,17 @@ function EntityPage({
           >
             {entity.context.network === "Mocha" ? (
               <Image
-                src="/images/Celestia-icon-logo.png"
+                src="/images/celestia-topbar.png"
                 alt="Celestia"
                 height="32"
-                width="119"
+                width="150"
               />
             ) : (
               <Image
-                src="/images/dymension-logo.png"
+                src="/images/dymension-topbar.png"
                 alt="Dymension"
                 height="32"
-                width="136"
+                width="150"
               />
             )}
           </TopBar>
