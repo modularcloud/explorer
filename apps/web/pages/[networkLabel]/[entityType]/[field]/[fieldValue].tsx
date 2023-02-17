@@ -23,6 +23,7 @@ import { SearchOptions } from "../../../../lib/search-options";
 import { Whitelabel } from "../../../../lib/whitelabel";
 import { isSearchable } from "../../../../lib/search";
 import Link from "next/link";
+import Head from "next/head";
 
 interface PanelProps {
   classes: string;
@@ -132,9 +133,13 @@ function EntityPage({
   if(whitelabel === "dymension") {
     name = "Dym"
   }
+  const shortId = entity.uniqueIdentifier.length > 6 ? entity.uniqueIdentifier.substring(0, 6) + "..." : entity.uniqueIdentifier;
 
   return (
     <div className="flex">
+      <Head>
+        <title>{`${entity.context.entityTypeName} (${shortId}) on ${entity.context.network === "RollAppX" ? "RollApp X" : entity.context.network} - ${name}${whitelabel ? "Scan" : ""}`}</title>
+      </Head>
       <div className="grow">
         <div className="lg:hidden">
           <TopBar

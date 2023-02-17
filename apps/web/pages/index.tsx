@@ -6,7 +6,7 @@ import {
   LatestBlock,
   BigLogo,
 } from "@modularcloud/design-system";
-import Link from "next/link";
+import Head from "next/head";
 import { SearchOptions } from "../lib/search-options";
 import { Whitelabel } from "../lib/whitelabel"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
@@ -29,7 +29,13 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
   const mode = "light";
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
-
+  let name = "Explorer";
+  if(whitelabel === "celestia") {
+    name = "CelestiaScan";
+  }
+  if(whitelabel === "dymension") {
+    name = "DymScan"
+  }
   return (
     <div
       className={clsx(
@@ -41,6 +47,9 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
         }
       )}
     >
+      <Head>
+        <title>{name} by Modular Cloud</title>
+      </Head>
       <div className="container flex flex-col items-center justify-center w-full">
         <BigLogo mode={mode} whitelabel={whitelabel} />
         <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
