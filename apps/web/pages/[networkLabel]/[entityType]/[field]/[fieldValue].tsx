@@ -158,8 +158,9 @@ function EntityPage({
             handleOpen={setIsOpen}
             defaultSelected={entity.context.network}
             onSearch={(searchNetwork: string, term: string) => {
-              if(isSearchable(term)) {
-                fetch(`/api/path/${searchNetwork}/${term}`)
+              const id = term.trim()
+              if(isSearchable(id)) {
+                fetch(`/api/path/${searchNetwork}/${id}`)
                   .then((response) => {
                     if(!response.ok) {
                       throw new Error("No path found.")

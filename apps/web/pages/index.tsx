@@ -60,8 +60,9 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
             isOpen={isOpen}
             handleOpen={setIsOpen}
             onSearch={(network: string, term: string) => {
-              if(isSearchable(term)) {
-                fetch(`/api/path/${network}/${term}`)
+              const id = term.trim()
+              if(isSearchable(id)) {
+                fetch(`/api/path/${network}/${id}`)
                   .then((response) => {
                     if(!response.ok) {
                       throw new Error("No path found.")
