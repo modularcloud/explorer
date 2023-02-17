@@ -240,7 +240,7 @@ if(CELESTIA_MOCHA_RPC) {
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), CELESTIA_MOCHA_RPC, CELESTIA_MOCHA)));
+          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), CELESTIA_MOCHA_RPC, CELESTIA_MOCHA)))).filter(notnull => notnull);
         }
       },
       {
@@ -277,7 +277,7 @@ if(DYMENSION_HUB_RPC) {
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_HUB_RPC, DYMENSION_HUB)));
+          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_HUB_RPC, DYMENSION_HUB)))).filter(notnull => notnull);
         }
       },
       {
@@ -313,7 +313,7 @@ if(DYMENSION_ROLLAPP_X_RPC) {
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X)));
+          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X)))).filter(notnull => notnull);
         }
       },
       {
