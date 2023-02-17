@@ -113,7 +113,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
       ? `${networkBase}/block?height=`
       : `${networkBase}/block_by_hash?hash=`;
   try {
-    const response = await fetch(baseUrl + queryValue);
+    const response = await fetch(baseUrl + queryValue.toUpperCase());
 
     if (!response.ok) {
       throw Error(`Response code ${response.status}: ${response.statusText}`);
@@ -150,7 +150,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
 async function getTransactionByHash(hash: string, networkBase: string, networkName: string) {
   try {
     const response = await fetch(
-      `${networkBase}/tx?hash=${hash}`
+      `${networkBase}/tx?hash=${hash.toUpperCase()}`
     );
 
     if (!response.ok) {
