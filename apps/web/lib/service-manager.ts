@@ -287,8 +287,8 @@ if(DYMENSION_HUB_RPC) {
     ],
   });
 }
-const DYMESNION_ROLLAPP_X_RPC = process.env.DYMESNION_ROLLAPP_X_RPC;
-if(DYMESNION_ROLLAPP_X_RPC) {
+const DYMENSION_ROLLAPP_X_RPC = process.env.DYMENSION_ROLLAPP_X_RPC;
+if(DYMENSION_ROLLAPP_X_RPC) {
   ServiceManager.addNetwork({
     label: DYMENSION_ROLLAPP_X,
     entityTypes: [
@@ -297,9 +297,9 @@ if(DYMESNION_ROLLAPP_X_RPC) {
         getters: [
           {
             field: "height",
-            getOne: (height: string) => getBlockBy("height", height, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getOne: (height: string) => getBlockBy("height", height, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
           },
-          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X) },
+          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X) },
         ],
       },
       {
@@ -307,11 +307,11 @@ if(DYMESNION_ROLLAPP_X_RPC) {
         getters: [
           {
             field: "hash",
-            getOne: (hash: string) => getTransactionByHash(hash, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getOne: (hash: string) => getTransactionByHash(hash, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
           },
           {
             field: "height",
-            getMany: (height: string) => getTransactionsByHeight(height, DYMESNION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
           },
         ],
       },
