@@ -50,7 +50,7 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 export function txStringToHash(txstr: string) {
   let raw = fromBase64(txstr);
   try {
-    console.log(decodeTxRaw(raw));
+    decodeTxRaw(raw);
   } catch { 
     raw = MalleatedTx.decode(raw).tx;
   }
