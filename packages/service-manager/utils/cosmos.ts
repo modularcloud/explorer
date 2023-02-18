@@ -50,7 +50,7 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 export function txStringToHash(txstr: string) {
   let raw = fromBase64(txstr);
   try {
-    decodeTxRaw(raw);
+    decodeTxRaw(raw); // detecting if normal transaction, if PFB it catches
   } catch { 
     raw = MalleatedTx.decode(raw).tx;
   }
