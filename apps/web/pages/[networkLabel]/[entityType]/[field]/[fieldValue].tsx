@@ -207,6 +207,7 @@ function EntityPage({
         {view === "table" ? (
           <Table data={associated} onRowClick={(row) => console.log(row)} />
         ) : null}
+        { !associated.length ? <p className="w-full text-slate text-center">This {entity.context.entityTypeName.toLowerCase()} is empty.</p> : null }
       </div>
       <EntityPanel classes="sticky top-0 hidden lg:flex" id={entity.uniqueIdentifier} metadata={entity.metadata} context={entity.context} />
     </div>
