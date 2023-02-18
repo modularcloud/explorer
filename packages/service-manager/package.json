@@ -5,6 +5,7 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
+    "gen:proto": "protoc --plugin=../../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=. ./proto/*.proto --ts_proto_opt=esModuleInterop=true",
     "lint": "TIMING=1 eslint \"**/*.ts*\""
   },
   "devDependencies": {
@@ -17,6 +18,7 @@
     "@cosmjs/crypto": "^0.29.5",
     "@cosmjs/encoding": "^0.29.5",
     "@cosmjs/proto-signing": "^0.29.5",
-    "@cosmjs/stargate": "^0.29.5"
+    "@cosmjs/stargate": "^0.29.5",
+    "ts-proto": "^1.139.0"
   }
 }
