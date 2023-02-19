@@ -205,7 +205,7 @@ function EntityPage({
           </CardList>
         ) : null}
         {view === "table" ? (
-          <Table data={associated} onRowClick={(row) => console.log(row)} />
+          <Table data={associated} router={router} />
         ) : null}
         { !associated.length ? <p className="w-full text-slate text-center">{ swrResponse.isLoading ? "Loading..." : `This ${entity.context.entityTypeName.toLowerCase()} is empty.` }</p> : null }
       </div>

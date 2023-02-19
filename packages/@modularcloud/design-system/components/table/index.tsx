@@ -13,7 +13,7 @@ import * as React from 'react';
 
 type Props = {
   data: Entity[];
-  onRowClick?: (row: Entity) => void;
+  router: any
 };
 
 type EntityColumn<T extends React.ReactNode> = {
@@ -33,7 +33,7 @@ type TableSection = {
   label: string;
 }
 
-export function Table({ data, onRowClick }: Props) {
+export function Table({ data, router }: Props) {
   // temporarily before we have multi-entity tables
   if(!data.length) {
     return null;
@@ -141,7 +141,7 @@ export function Table({ data, onRowClick }: Props) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer" key={row.id} onClick={() => console.log(row.id)}>
+            <tr className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer" key={row.id} onClick={() => row.original.context.network === "N/A" ? null : router.push(`/${row.original.context.network}/${row.original.context.entityTypeName}/${row.original.uniqueIdentifierLabel}/${row.original.uniqueIdentifier}`)}>
               {row.getVisibleCells().map((cell, index) => {
                 const rules = section.columns[index];
                 return <td className={clsx("py-3 text-mid-dark", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:pl-4 sm:pl-6 md:pl-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", (index === maxXSLeftPadding || index == maxXSRightPadding) && "max-xs:px-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={cell.id}>
