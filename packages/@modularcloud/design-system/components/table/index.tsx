@@ -66,7 +66,7 @@ export function Table({ data, router }: Props) {
         id: "status",
         header: "Status",
         hideOnXS: true,
-        getCell: (entity: Entity) => <Status status={entity.metadata.status} />
+        getCell: (entity: Entity) => <Status status={entity.metadata.Status} />
       },
       {
         id: "menu",
