@@ -195,6 +195,7 @@ function EntityPage({
                 type={entity.context.entityTypeName}
                 badgeText={entity.uniqueIdentifier}
                 badgeIcon="reward"
+                navTo={entity.context.network === "N/A" ? undefined : () => router.push(`/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`)}
               >
                 <KeyValueList
                   entryLabels={Object.keys(entity.metadata)}
