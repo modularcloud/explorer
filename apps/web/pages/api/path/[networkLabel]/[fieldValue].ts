@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getEntity } from 'service-manager/types/network.type';
-import { isHash, isHeight } from '../../../../lib/search';
+import { isAddress, isHash, isHeight } from '../../../../lib/search';
 import { ServiceManager } from '../../../../lib/service-manager';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -14,6 +14,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const network = ServiceManager.getNetwork(networkLabel);
     if (!network) {
         return res.status(404).end();
+    }
+
+    // Try address
+    if(isAddress(fieldValue)) {
+        const account = await getEntity(network, "account", "address", fieldValue);
+        if (account) {
+            res.json({
+                path: `/${networkLabel}/account/address/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
     }
 
     // Try height

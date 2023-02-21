@@ -114,7 +114,7 @@ export const SearchInput = ({
               "placeholder:text-slate-800": mode === "light",
             })}
             type="text"
-            placeholder={placeholder}
+            placeholder={option.indexOf('ub') !== -1 ? "Go to hash, height, or address" : placeholder}
           />
             <button
               onClick={() => onSearch(option, term)}
