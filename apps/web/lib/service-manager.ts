@@ -224,6 +224,68 @@ async function getTransactionsByHeight(height: string, networkBase: string, netw
   }
 }
 
+async function getTransactionsByAddress(address: string, networkBase: string, networkName: string) {
+  try {
+    const sendResponse = await fetch(
+      `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
+    );
+    const receiveResponse = await fetch(
+      `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
+    );
+    if (!sendResponse.ok) {
+      throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+    }
+    const sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
+    const receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
+    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort((a, b) => Number(a.height) - Number(b.height));
+    return allTxs.map((tx) => {
+      const Messages = getMessages(tx.tx);
+      const txEntity: Entity = {
+        uniqueIdentifier: tx.hash,
+        uniqueIdentifierLabel: "Hash",
+        metadata: {
+          Height: tx.height,
+          Index: String(tx.index),
+          Status: tx.tx_result.code ? "Failed" : "Success",
+          "Gas (used/wanted)":
+            tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
+        },
+        computed: {
+          Messages
+        },
+        context: {
+          network: networkName,
+          entityTypeName: "Transaction",
+        },
+        raw: JSON.stringify(tx, null, 2), // TODO: this will not return the full RPC request for the individual tx
+      };
+      return txEntity;
+    });
+  } catch {
+    return [];
+  }
+}
+
+async function getAccountByAddress(address: string, networkBase: string, networkName: string) {
+  if(!address.match(/^dym\w{39}$/)) {
+    console.log('invalid address');
+    return null;
+  }
+  return {
+    uniqueIdentifier: address,
+    uniqueIdentifierLabel: "Address",
+    metadata: {
+      Dym: "Balance coming soon"
+    },
+    computed: {},
+    context: {
+      network: networkName,
+      entityTypeName: "Account"
+    },
+    raw: JSON.stringify({address})
+  }
+}
+
 const CELESTIA_MOCHA_RPC = process.env.CELESTIA_MOCHA_RPC
 if(CELESTIA_MOCHA_RPC) {
   ServiceManager.addNetwork({
@@ -293,6 +355,18 @@ if(DYMENSION_HUB_RPC) {
           },
         ],
         getAssociated: (entity: Entity) => entity.computed.Messages ?? []
+      },
+      {
+        name: "Account",
+        getters: [
+          {
+            field: "address",
+            getOne: (address: string) => getAccountByAddress(address, DYMENSION_HUB_RPC, DYMENSION_HUB),
+          },
+        ],
+        getAssociated: async (entity: Entity) => {
+          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB_RPC, DYMENSION_HUB);
+        }
       },
     ],
   });
