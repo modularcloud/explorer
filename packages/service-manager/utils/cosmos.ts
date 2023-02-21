@@ -4,6 +4,7 @@ import { decodeTxRaw, Registry } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes } from "@cosmjs/stargate";
 import { MalleatedTx, MsgPayForBlobs } from "../proto/celestia";
 import { Entity } from "../types/entity.type";
+import { QueryBalanceRequest, QueryBalanceResponse } from "../proto/cosmos";
 
 function fixCapsAndSpacing(camel: string): string {
   const letters = camel.split("");
@@ -56,6 +57,18 @@ export function txStringToHash(txstr: string) {
   }
 
   return Buffer.from(sha256(raw)).toString("hex");
+}
+
+export function getBalanceQueryData(address: string, denom: string) {
+  const QBR = QueryBalanceRequest.fromJSON({ address, denom });
+  const bytes = QueryBalanceRequest.encode(QBR).finish()
+  return Buffer.from(bytes).toString("hex");
+}
+
+export function parseBalance(str: string) {
+  const bytes = Buffer.from(str, "base64");
+  const response = QueryBalanceResponse.decode(bytes);
+  return response.balance?.amount;
 }
 
 export function getMessages(txstr: string): Entity[] {

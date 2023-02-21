@@ -1,4 +1,4 @@
-import { getMessages, txStringToHash } from "service-manager";
+import { getBalanceQueryData, getMessages, parseBalance, txStringToHash } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
 import { DYMENSION_HUB, DYMENSION_ROLLAPP_X, CELESTIA_MOCHA } from "./network-names";
@@ -10,6 +10,20 @@ type JSONRPCResponse<T> = {
   id: number;
   result: T;
 };
+
+type ABCIResponse = {
+  response: {
+      code: number;
+      log: string;
+      info: string;
+      index: string;
+      key: any;
+      value: string;
+      proofOps: any;
+      height: string;
+      codespace: string;
+  }
+}
 
 type Block = {
   block_id: {
@@ -268,14 +282,19 @@ async function getTransactionsByAddress(address: string, networkBase: string, ne
 
 async function getAccountByAddress(address: string, networkBase: string, networkName: string) {
   if(!address.match(/^dym\w{39}$/)) {
-    console.log('invalid address');
     return null;
   }
+  const data = getBalanceQueryData(address, "udym");
+  const response = await fetch(
+    `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`
+  );
+  const json = await response.json() as JSONRPCResponse<ABCIResponse>;
+  const balance = (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
     metadata: {
-      Dym: "Balance coming soon"
+      Balance: `${balance} DYM`
     },
     computed: {},
     context: {
