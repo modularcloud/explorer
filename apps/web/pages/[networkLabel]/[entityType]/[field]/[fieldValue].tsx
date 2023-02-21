@@ -101,14 +101,13 @@ function EntityPage({
   const mode = "light";
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
-  const swrResponse = useSWR("/api/associated#" + entity.uniqueIdentifier, (url) => fetch(url, { method: "POST", body: JSON.stringify(entity) }).then((res) => res.json()));
-  const associated: Entity[] = swrResponse.data ?? []; // TODO validation
-
   const [view, setView] = useState(
-    entity.context.entityTypeName === "Transaction" || associated.length < 3
+    entity.context.entityTypeName === "Transaction"
       ? "cards"
       : "table"
   );
+  const swrResponse = useSWR("/api/associated#" + entity.uniqueIdentifier, (url) => fetch(url, { method: "POST", body: JSON.stringify(entity) }).then((res) => res.json()), { onSuccess: (data) => { if(data.length < 3) setView("cards") }});
+  const associated: Entity[] = swrResponse.data ?? []; // TODO validation
 
   let name = "Explorer";
   if(whitelabel === "celestia") {

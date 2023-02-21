@@ -294,7 +294,7 @@ async function getAccountByAddress(address: string, networkBase: string, network
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
     metadata: {
-      Balance: `${balance} DYM`
+      Spendable: `${balance} DYM`
     },
     computed: {},
     context: {
