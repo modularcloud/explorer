@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { isSearchable } from "../lib/search";
 
 export const getServerSideProps: GetServerSideProps<{
-  whitelabel?: string,
+  whitelabel?: string | null,
   searchOptions: any,
 }> = async ({ params }) => {
   return {

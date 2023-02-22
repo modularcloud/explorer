@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 interface Props {
   mode: "light" | "dark";
-  whitelabel?: string;
+  whitelabel?: string | null;
 }
 
 export function BigLogo({ mode, whitelabel }: Props) {
