@@ -12,7 +12,7 @@ import {
   CELESTIA_MOCHA,
 } from "./network-names";
 import { z } from "zod";
-import { json } from "stream/consumers";
+import Decimal from "decimal.js";
 
 export const ServiceManager = createServiceManager();
 
@@ -601,6 +601,18 @@ const EthTransactionSchema = z.object({
   s: z.string(),
 });
 
+function stringWithConvertedHex(str: string | null | undefined) {
+  if(!str) {
+    return null;
+  }
+
+  if(str.indexOf("0x") === 0) {
+    return String(Number(str));
+  }
+
+  return str;
+}
+
 async function getEVMBlockBy(
   key: "hash" | "height",
   value: string,
@@ -658,6 +670,18 @@ async function getEVMBlockBy(
   }
 }
 
+function buildMetadata(obj: { [key: string]: any }): { [key: string]: string } {
+  const metadata: { [key: string]: string } = {};
+
+  Object.entries(obj).forEach(entry => {
+    if(typeof entry[1] === "number" || typeof entry[1] === "string") {
+      metadata[entry[0]] = String(entry[1]);
+    }
+  });
+
+  return metadata;
+}
+
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
@@ -691,11 +715,13 @@ async function getEVMTransactionByHash(
   return { 
     uniqueIdentifier: tx.hash,
     uniqueIdentifierLabel: "hash",
-    metadata: {
-      Height: String(tx.blockNumber),
+    metadata: buildMetadata({
+      Height: stringWithConvertedHex(tx.blockNumber),
       From: tx.from,
-      Fee: tx.gas
-    },
+      To: tx.to,
+      //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
+      "Gas Price": new Decimal(tx.gasPrice).dividedBy("1000000000000000000").toFixed()
+    }),
     context: {
       network: networkName,
       entityTypeName: "Transaction"
