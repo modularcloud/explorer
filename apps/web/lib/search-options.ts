@@ -25,6 +25,24 @@ export const SearchOptions = Whitelabel === "dymension" ? [
     },
 ] : [
     {
+        label: "Nautilus",
+        options: [
+            {
+                name: "Triton",
+                value: "Triton"
+            }
+        ]
+    },
+    {
+        label: "Dev",
+        options: [
+            {
+                name: "Ethereum",
+                value: "Ethereum"
+            }
+        ]
+    },
+    {
         label: "Celestia",
         options: [
             {

@@ -54,7 +54,7 @@ const EntityPanel = ({ classes, id, metadata, context }: PanelProps) => (
 
 export const getServerSideProps: GetServerSideProps<{
   entity: Entity;
-  whitelabel?: string;
+  whitelabel?: string | null;
   searchOptions: any
 }> = async ({ params }) => {
   const { networkLabel, entityType, field, fieldValue } = params ?? {};
@@ -129,21 +129,12 @@ function EntityPage({
             type={entity.context.entityTypeName}
             id={entity.uniqueIdentifier}
           >
-            {entity.context.network === "Mocha" ? (
               <Image
                 src="/images/celestia-bigger.png"
                 alt="Celestia"
                 height="28"
                 width="142"
               />
-            ) : (
-                <Image
-                  src="/images/dymension-bigger.png"
-                  alt="Dymension"
-                  height="28"
-                  width="142"
-                />
-            )}
           </TopBar>
         </div>
         <Header
