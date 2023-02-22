@@ -601,7 +601,7 @@ const EthTransactionSchema = z.object({
   s: z.string(),
 });
 
-function stringWithConvertedHex(str: string | null | undefined) {
+function convertHex(str: string | null | undefined) {
   if(!str) {
     return null;
   }
@@ -651,12 +651,15 @@ async function getEVMBlockBy(
   return { 
     uniqueIdentifier: block.hash ?? key,
     uniqueIdentifierLabel: key,
-    metadata: {
-      Height: String(Number(block.number)),
-      Timestamp: new Date(Number(block.timestamp)).toDateString(),
-      "Gas Used": String(Number(block.gasUsed)),
-      "Gas Limit": String(Number(block.gasLimit)),
-    },
+    metadata: buildMetadata({
+      Height: convertHex(block.number),
+      Timestamp: new Date(Number(block.timestamp) * 1000).toUTCString().replace("GMT", "UTC"),
+      "Gas Used": convertHex(block.gasUsed),
+      "Gas Limit": convertHex(block.gasLimit),
+      Size: convertHex(block.size) + (Number(block.size) === 1 ? " byte" : " bytes"),
+      "Fee Recipient": block.miner,
+      //"Extra Data": block.extraData
+    }),
     context: {
       network: networkName,
       entityTypeName: "Block"
@@ -716,7 +719,7 @@ async function getEVMTransactionByHash(
     uniqueIdentifier: tx.hash,
     uniqueIdentifierLabel: "hash",
     metadata: buildMetadata({
-      Height: stringWithConvertedHex(tx.blockNumber),
+      Height: convertHex(tx.blockNumber),
       From: tx.from,
       To: tx.to,
       //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
