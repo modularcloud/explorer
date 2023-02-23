@@ -7,7 +7,7 @@ import {
   BigLogo,
 } from "@modularcloud/design-system";
 import Head from "next/head";
-import { SearchOptions } from "../lib/search-options";
+import { getSearchOptions } from "../lib/search-options";
 import { Whitelabel } from "../lib/whitelabel"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<{
   return {
      props: {
       whitelabel: Whitelabel,
-    searchOptions: SearchOptions  
+      searchOptions: await getSearchOptions()  
      }
   }
 }

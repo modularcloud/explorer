@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { getEntities, getEntity } from "service-manager/types/network.type";
-import { ServiceManager } from "../../../../lib/service-manager";
+import { loadDynamicNetworks, ServiceManager } from "../../../../lib/service-manager";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import {
@@ -20,7 +20,7 @@ import Image from "next/image";
 import useSWR from "swr";
 
 import { CubesOff } from "@modularcloud/design-system";
-import { SearchOptions } from "../../../../lib/search-options";
+import { getSearchOptions } from "../../../../lib/search-options";
 import { Whitelabel } from "../../../../lib/whitelabel";
 import { isSearchable } from "../../../../lib/search";
 import Link from "next/link";
@@ -69,7 +69,8 @@ export const getServerSideProps: GetServerSideProps<{
       `Misconfigured parameters: network=${networkLabel}, entityType=${entityType}, field=${field}. fieldValue=${fieldValue}`
     );
   }
-
+  
+  await loadDynamicNetworks();
   const network = ServiceManager.getNetwork(networkLabel);
   if (!network) {
     return {
@@ -88,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       entity,
       whitelabel: Whitelabel,
-      searchOptions: SearchOptions,
+      searchOptions: await getSearchOptions(),
     },
   };
 };

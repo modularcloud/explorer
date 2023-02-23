@@ -2,6 +2,7 @@ import {
   getBalanceQueryData,
   getMessages,
   parseBalance,
+  slugify,
   txStringToHash,
 } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
@@ -19,6 +20,7 @@ export const ServiceManager = createServiceManager();
 export const RemoteServiceRequestSchema = z.object({
   provider: z.literal("eclipse"),
   name: z.string(),
+  id: z.string(),
   type: z.enum(["evm", "svm"]),
   endpoint: z.string(),
 });
@@ -789,19 +791,30 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
       ],
     });
   }
-  if (network.type === "svm") {
+  else if (network.type === "svm") {
+    //throw Error("SVM not yet supported");
+  } else {
+    throw Error("Type not supported");
   }
 }
 
-addRemote({
+/*addRemote({
   provider: "eclipse",
   type: "evm",
   name: "Ethereum",
+  id: slugify("Ethereum"),
   endpoint: "https://rpc.ankr.com/eth"
 })
 addRemote({
   provider: "eclipse",
   type: "evm",
   name: "Triton",
+  id: slugify("Triton"),
   endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana"
-})
+})*/
+export async function loadDynamicNetworks() {
+  const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT
+  if(ADD_NETWORK_ENDPOINT) {
+    await fetch(ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((configs) => configs.result.forEach((config: any) => addRemote(config)));
+  }
+}

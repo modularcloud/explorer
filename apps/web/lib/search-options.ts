@@ -1,6 +1,6 @@
 import { CELESTIA_MOCHA, DYMENSION_HUB, DYMENSION_ROLLAPP_X } from "./network-names";
 import { Whitelabel } from "./whitelabel";
-export const SearchOptions = Whitelabel === "dymension" ? [
+export const getSearchOptions = async () => Whitelabel === "dymension" ? [
     {
         label: "Dymension",
         options: [
@@ -25,13 +25,8 @@ export const SearchOptions = Whitelabel === "dymension" ? [
     },
 ] : [
     {
-        label: "Nautilus",
-        options: [
-            {
-                name: "Triton",
-                value: "Triton"
-            }
-        ]
+        label: "Eclipse",
+        options: await fetch(process.env.ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((json) => json.result.map((network: any) => { return { name: network.name, value: network.name } }))
     },
     {
         label: "Dev",
