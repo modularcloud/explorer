@@ -35,17 +35,31 @@ function convertToName(typeUrl: string): string {
 function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string } {
   const KV: { [key: string]: string } = {};
   Object.entries(obj).forEach((entry) => {
-    if (typeof entry[1] === "object") {
 
-      // Flatten nested objects into top level keys
-      Object.entries(entry[1]).forEach((subentry) => {
-        KV[`${fixCapsAndSpacing(entry[0])} ${fixCapsAndSpacing(subentry[0])}`] = String(subentry[1]);
-      });
+    if (typeof entry[1] === "object") {
+      if(entry[0] == "amount") {
+        KV[fixCapsAndSpacing(entry[0])] = getAmountString(entry[1])
+      } else {
+        // Flatten nested objects into top level keys
+        Object.entries(entry[1]).forEach((subentry) => {
+          KV[`${fixCapsAndSpacing(entry[0])} ${fixCapsAndSpacing(subentry[0])}`] = String(subentry[1]);
+        });
+      }
     } else {
       KV[fixCapsAndSpacing(entry[0])] = String(entry[1]);
     }
   });
   return KV;
+}
+
+// amount has schema:
+// "amount": [ { denom: 'udym', amount: '6000000' } ]
+function getAmountString(obJ: object) : string {
+  let result = ""
+  Object.entries(obJ).forEach((subentry) => {
+    result = subentry[1]["amount"] + " " + subentry[1]["denom"].substring(1)
+  });
+  return result;
 }
 
 export function txStringToHash(txstr: string) {
