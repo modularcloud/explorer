@@ -31,19 +31,20 @@ interface PanelProps {
   classes: string;
   id: string;
   metadata: { [key: string]: string };
+  img: string;
   context: {
     network: string;
     entityTypeName: string;
   };
 }
 
-const EntityPanel = ({ classes, id, metadata, context }: PanelProps) => (
+const EntityPanel = ({ classes, id, metadata, context, img }: PanelProps) => (
   <RightPanel className={classes}>
     <EntityDetails
       iconType={<CubesOff />}
       type={context.entityTypeName}
       hash={id}
-      network={context.network}
+      network={img}
     />
     <KeyValueList
       header={`${context.entityTypeName} Information`}
@@ -119,6 +120,21 @@ function EntityPage({
   );
   const associated: Entity[] = swrResponse.data ?? []; // TODO validation
 
+  const isCelestiaEntity = entity.context.network.toLowerCase() === "mocha";
+  const isDymensionEntity = !!entity.context.network.toLowerCase().match(/(^hub$)|rollapp|dymension/);
+  const isEclipseEntity = !isCelestiaEntity && !isDymensionEntity;
+
+  let img = "";
+  if(isCelestiaEntity) {
+    img = "Celestia";
+  }
+  if(isDymensionEntity) {
+    img = "Dymension";
+  }
+  if(isEclipseEntity) {
+    img = "Eclipse";
+  }
+
   let name = "Explorer";
   if (whitelabel === "celestia") {
     name = "Celestia";
@@ -163,8 +179,8 @@ function EntityPage({
               id={entity.uniqueIdentifier}
             >
               <Image
-                src="/images/celestia-bigger.png"
-                alt="Celestia"
+                src={`/images/${img.toLowerCase()}-bigger.png`}
+                alt={img}
                 height="28"
                 width="142"
               />
@@ -217,6 +233,7 @@ function EntityPage({
                 id={entity.uniqueIdentifier}
                 metadata={entity.metadata}
                 context={entity.context}
+                img={img}
               />
             }
             onSwitchView={(view: string) => setView(view)}
@@ -263,6 +280,7 @@ function EntityPage({
           id={entity.uniqueIdentifier}
           metadata={entity.metadata}
           context={entity.context}
+          img={img}
         />
       </div>
     </>
