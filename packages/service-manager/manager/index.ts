@@ -15,8 +15,6 @@ function listNetworks(): string[] {
 }
 
 function getNetwork(label: string): Network | null {
-  console.log(label);
-  console.log(networks);
   return networks.get(slugify(label)) ?? null;
 }
 

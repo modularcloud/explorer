@@ -973,8 +973,8 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
         },
       ],
     });
-  } else if (SVM) {
-    //throw Error("SVM not yet supported");
+  }
+  if (SVM) {
     ServiceManager.addNetwork({
       label: network.name,
       entityTypes: [
