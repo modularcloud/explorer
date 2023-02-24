@@ -1,5 +1,11 @@
-import { CELESTIA_MOCHA, DYMENSION_HUB, DYMENSION_ROLLAPP_X } from "./network-names";
-import { Whitelabel } from "./whitelabel";
+import {
+  CELESTIA_MOCHA,
+  DYMENSION_HUB,
+  DYMENSION_ROLLAPP_X,
+  SOLANA_HUB,
+} from './network-names';
+import { Whitelabel } from './whitelabel';
+
 export const SearchOptions = Whitelabel === "dymension" ? [
     {
         label: "Dymension",
@@ -23,6 +29,15 @@ export const SearchOptions = Whitelabel === "dymension" ? [
             },
         ],
     },
+    {
+      label: "Solana",
+      options: [
+        {
+          name: "Solana",
+          value: SOLANA_HUB,
+        }
+      ]
+    }
 ] : [
     {
         label: "Celestia",
@@ -45,5 +60,14 @@ export const SearchOptions = Whitelabel === "dymension" ? [
                 value: DYMENSION_ROLLAPP_X,
             },
         ],
+    },
+    {
+      label: "Solana",
+      options: [
+        {
+          name: "Solana",
+          value: SOLANA_HUB,
+        }
+      ]
     },
 ];

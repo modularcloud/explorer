@@ -22,6 +22,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@solana/spl-token-registry": "^0.2.4574",
     "esbuild": "0.17.8",
     "react": "^18.2.0",
     "tailwind-config": "^0.0.0"

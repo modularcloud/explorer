@@ -1,6 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
 import { getEntity } from 'service-manager/types/network.type';
-import { isAddress, isHash, isHeight } from '../../../../lib/search';
+
+import {
+  isAddress,
+  isHash,
+  isHeight,
+} from '../../../../lib/search';
 import { ServiceManager } from '../../../../lib/service-manager';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -11,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (typeof fieldValue !== "string") {
         return res.status(404).end()
     }
+
+
     const network = ServiceManager.getNetwork(networkLabel);
     if (!network) {
         return res.status(404).end();

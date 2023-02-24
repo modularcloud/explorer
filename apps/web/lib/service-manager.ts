@@ -1,7 +1,17 @@
-import { getBalanceQueryData, getMessages, parseBalance, txStringToHash } from "service-manager";
-import { createServiceManager } from "service-manager/manager";
-import { Entity } from "service-manager/types/entity.type";
-import { DYMENSION_HUB, DYMENSION_ROLLAPP_X, CELESTIA_MOCHA } from "./network-names";
+import {
+  getBalanceQueryData,
+  getMessages,
+  parseBalance,
+  txStringToHash,
+} from 'service-manager';
+import { createServiceManager } from 'service-manager/manager';
+import { Entity } from 'service-manager/types/entity.type';
+
+import {
+  CELESTIA_MOCHA,
+  DYMENSION_HUB,
+  DYMENSION_ROLLAPP_X,
+} from './network-names';
 
 export const ServiceManager = createServiceManager();
 
@@ -343,9 +353,10 @@ if(CELESTIA_MOCHA_RPC) {
 }
 
 const DYMENSION_HUB_RPC = process.env.DYMENSION_HUB_RPC;
+const SOLANA_HUB = "Solana"
 if(DYMENSION_HUB_RPC) {
   ServiceManager.addNetwork({
-    label: DYMENSION_HUB,
+    label: SOLANA_HUB,
     entityTypes: [
       {
         name: "Block",
@@ -425,5 +436,51 @@ if(DYMENSION_ROLLAPP_X_RPC) {
       },
     ],
   });
-  
+  if(DYMENSION_HUB_RPC) {
+    ServiceManager.addNetwork({
+      label: DYMENSION_HUB,
+      entityTypes: [
+        {
+          name: "Block",
+          getters: [
+            {
+              field: "height",
+              getOne: (height: string) => getBlockBy("height", height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            },
+          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_HUB_RPC, DYMENSION_HUB) },
+          ],
+          getAssociated: async (entity: Entity) => {
+            const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
+            return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_HUB_RPC, DYMENSION_HUB)))).filter(notnull => notnull);
+          }
+        },
+        {
+          name: "Transaction",
+          getters: [
+            {
+              field: "hash",
+              getOne: (hash: string) => getTransactionByHash(hash, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            },
+            {
+              field: "height",
+              getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            },
+          ],
+          getAssociated: (entity: Entity) => entity.computed.Messages ?? []
+        },
+        {
+          name: "Account",
+          getters: [
+            {
+              field: "address",
+              getOne: (address: string) => getAccountByAddress(address, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB_RPC, DYMENSION_HUB);
+          }
+        },
+      ],
+    });
+  }
 }

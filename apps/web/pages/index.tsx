@@ -1,41 +1,45 @@
-import React, { useState } from "react";
-import clsx from "clsx";
 import {
-  SearchInput,
+  BigLogo,
   Footer,
   LatestBlock,
-  BigLogo,
-} from "@modularcloud/design-system";
-import Head from "next/head";
-import { SearchOptions } from "../lib/search-options";
-import { Whitelabel } from "../lib/whitelabel"
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { useRouter } from "next/router";
-import { isSearchable } from "../lib/search";
+  SearchInput,
+} from '@modularcloud/design-system';
+import clsx from 'clsx';
+import {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+} from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+
+import { isSearchable } from '../lib/search';
+import { SearchOptions } from '../lib/search-options';
+import { Whitelabel } from '../lib/whitelabel';
 
 export const getServerSideProps: GetServerSideProps<{
-  whitelabel?: string,
+  //whitelabel?: string,
   searchOptions: any,
 }> = async ({ params }) => {
   return {
      props: {
-      whitelabel: Whitelabel,
+     // whitelabel: Whitelabel,
     searchOptions: SearchOptions  
      }
   }
 }
 
-export default function Homepage({ whitelabel, searchOptions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Homepage({ /*whitelabel*/ searchOptions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const mode = "light";
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
   let name = "Explorer";
-  if(whitelabel === "celestia") {
+  /*if(whitelabel === "celestia") {
     name = "CelestiaScan";
   }
   if(whitelabel === "dymension") {
     name = "DymScan"
-  }
+  }*/
   return (
     <div
       className={clsx(
@@ -48,10 +52,10 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
       )}
     >
       <Head>
-        <title>{name} by Modular Cloud</title>
+        <title>{name as string} by Modular Cloud</title>
       </Head>
       <div className="container flex flex-col items-center justify-center w-full">
-        <BigLogo mode={mode} whitelabel={whitelabel} />
+        <BigLogo mode={mode} />
         <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
           <SearchInput
             mode={mode}
@@ -62,18 +66,33 @@ export default function Homepage({ whitelabel, searchOptions }: InferGetServerSi
             onSearch={(network: string, term: string) => {
               const id = term.trim()
               if(isSearchable(id)) {
-                fetch(`/api/path/${network}/${id}`)
-                  .then((response) => {
-                    if(!response.ok) {
-                      throw new Error("No path found.")
-                    }
-                    return response.json()
-                  })
-                  .then(data => {
-                    if(typeof data.path === "string") {
-                      router.push(data.path.toLowerCase())
-                    }
-                  }).catch(() => setIsOpen(true))
+                if (network === "Solana") {
+                  fetch(`/api/path/sol`)
+                    .then((response) => {
+                      if(!response.ok) {
+                        throw new Error("No path found.")
+                      }
+                      return response.json()
+                    })
+                    .then(data => {
+                      console.log(data)
+                    }).catch(() => setIsOpen(true))
+                  
+                } else {
+                  fetch(`/api/path/${network}/${id}`)
+                    .then((response) => {
+                      if(!response.ok) {
+                        throw new Error("No path found.")
+                      }
+                      return response.json()
+                    })
+                    .then(data => {
+                      if(typeof data.path === "string") {
+                        router.push(data.path.toLowerCase())
+                      }
+                    }).catch(() => setIsOpen(true))
+
+                }
               }
             }}
           />
