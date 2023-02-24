@@ -39,16 +39,13 @@ export function Table({ data, router }: Props) {
     return null;
   }
   const type = data[0].context.entityTypeName;
-  const isEVM = !!(
-    data[0].context.network === "Triton" ||
-    data[0].context.network === "Ethereum"
-  );
+  const isNotCosmos = !data[0].context.network.toLowerCase().match(/(^hub$)|rollapp|dymension|mocha/);
   const filterData = data.filter(
     (entity) => entity.context.entityTypeName === type
   );
   let section: TableSection;
   if (type === "Transaction") {
-    if (isEVM) {
+    if (isNotCosmos) {
       section = {
         rows: filterData,
         label: "Transactions",
