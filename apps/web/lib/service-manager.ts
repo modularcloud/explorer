@@ -2,7 +2,6 @@ import {
   getBalanceQueryData,
   getMessages,
   parseBalance,
-  slugify,
   txStringToHash,
 } from "service-manager";
 import { createServiceManager } from "service-manager/manager";

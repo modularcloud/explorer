@@ -1,3 +1,5 @@
+import _slugify from "slugify";
+
 export function slugify(str: string): string {
-  return str.replace(/\s+/, "-").replace(/\w|-/, "").toLowerCase();
+  return _slugify(str, { lower: true, strict: true });
 }
