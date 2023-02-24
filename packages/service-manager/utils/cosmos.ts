@@ -35,17 +35,36 @@ function convertToName(typeUrl: string): string {
 function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string } {
   const KV: { [key: string]: string } = {};
   Object.entries(obj).forEach((entry) => {
-    if (typeof entry[1] === "object") {
 
-      // Flatten nested objects into top level keys
-      Object.entries(entry[1]).forEach((subentry) => {
-        KV[`${fixCapsAndSpacing(entry[0])} ${fixCapsAndSpacing(subentry[0])}`] = String(subentry[1]);
-      });
+    if (typeof entry[1] === "object") {
+      if(entry[0] == "amount") {
+        KV[fixCapsAndSpacing(entry[0])] = getAmountString(entry[1])
+      } else {
+        // Flatten nested objects into top level keys
+        Object.entries(entry[1]).forEach((subentry) => {
+          KV[`${fixCapsAndSpacing(entry[0])} ${fixCapsAndSpacing(subentry[0])}`] = String(subentry[1]);
+        });
+      }
     } else {
       KV[fixCapsAndSpacing(entry[0])] = String(entry[1]);
     }
   });
   return KV;
+}
+
+// amount has schema:
+// "amount": [ { denom: 'udym', amount: '6000000' } ]
+function getAmountString(obJ: any) : string {
+  let denom, amount
+  if("udym" === obJ[0]["denom"]) {
+    // special case for dymension 
+    denom = obJ[0]["denom"].substring(1)
+    amount = (Number(obJ[0]["amount"]) / 1000000).toString()
+  } else {
+    denom = obJ[0]["denom"]
+    amount = obJ[0]["amount"]
+  }
+  return amount + " " + denom
 }
 
 export function txStringToHash(txstr: string) {
