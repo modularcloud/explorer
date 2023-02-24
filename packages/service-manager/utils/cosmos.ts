@@ -56,9 +56,7 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 // "amount": [ { denom: 'udym', amount: '6000000' } ]
 function getAmountString(obJ: object) : string {
   let result = ""
-  Object.entries(obJ).forEach((subentry) => {
-    result = subentry[1]["amount"] + " " + subentry[1]["denom"].substring(1)
-  });
+  result = obJ[0]["amount"] + " " + obJ[0]["denom"].substring(1)
   return result;
 }
 
