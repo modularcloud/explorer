@@ -55,9 +55,16 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 // amount has schema:
 // "amount": [ { denom: 'udym', amount: '6000000' } ]
 function getAmountString(obJ: object) : string {
-  let result = ""
-  result = obJ[0]["amount"] + " " + obJ[0]["denom"].substring(1)
-  return result;
+  let denom, amount
+  if("udym" === obJ[0]["denom"]) {
+    // special case for dymension 
+    denom = obJ[0]["denom"].substring(1)
+    amount = (Number(obJ[0]["amount"]) / 1000000).toString()
+  } else {
+    denom = obJ[0]["denom"].substring(1)
+    amount = obJ[0]["amount"]
+  }
+  return amount + " " + denom
 }
 
 export function txStringToHash(txstr: string) {
