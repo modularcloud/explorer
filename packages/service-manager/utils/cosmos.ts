@@ -61,7 +61,7 @@ function getAmountString(obJ: object) : string {
     denom = obJ[0]["denom"].substring(1)
     amount = (Number(obJ[0]["amount"]) / 1000000).toString()
   } else {
-    denom = obJ[0]["denom"].substring(1)
+    denom = obJ[0]["denom"]
     amount = obJ[0]["amount"]
   }
   return amount + " " + denom
