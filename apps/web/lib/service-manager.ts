@@ -756,7 +756,6 @@ async function getEVMBlockBy(
       raw: JSON.stringify(block),
     };
   } catch (e) {
-    console.log(e);
     return null;
   }
 }
@@ -800,9 +799,7 @@ async function getEVMTransactionByHash(
     const data = await fetch(endpoint, requestOptions).then((response) =>
       response.json()
     );
-    console.log("data", data);
     const tx = EthTransactionSchema.parse(data.result);
-    console.log("tx", tx);
     return {
       uniqueIdentifier: tx.hash,
       uniqueIdentifierLabel: "hash",
@@ -823,7 +820,6 @@ async function getEVMTransactionByHash(
       raw: JSON.stringify(tx),
     };
   } catch (e) {
-    //console.log(e);
     return null;
   }
 }
@@ -853,9 +849,7 @@ async function getSVMBlockBySlot(
     const data = await fetch(endpoint, requestOptions).then((response) =>
       response.json()
     );
-    console.log("data", data);
     const block = SolBlockSchema.parse(data.result);
-    console.log("block", block);
     return {
       uniqueIdentifier: block.blockhash,
       uniqueIdentifierLabel: "hash",
@@ -873,7 +867,6 @@ async function getSVMBlockBySlot(
       raw: JSON.stringify(block),
     };
   } catch (e) {
-    console.log(e);
     return null;
   }
 }
@@ -903,9 +896,7 @@ async function getSVMTransactionBySignature(
     const data = await fetch(endpoint, requestOptions).then((response) =>
       response.json()
     );
-    console.log("data", data);
     const tx = SolTransactionSchema.parse(data.result);
-    console.log("tx", tx);
     return {
       uniqueIdentifier: signature,
       uniqueIdentifierLabel: "signature",
@@ -922,7 +913,6 @@ async function getSVMTransactionBySignature(
       raw: JSON.stringify(tx),
     };
   } catch (e) {
-    console.log(e);
     return null;
   }
 }
