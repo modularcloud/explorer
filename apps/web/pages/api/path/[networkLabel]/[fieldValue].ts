@@ -19,8 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (typeof fieldValue !== "string") {
         return res.status(404).end()
     }
-
-
     const network = ServiceManager.getNetwork(networkLabel);
     if (!network) {
         return res.status(404).end();
