@@ -25,6 +25,10 @@ export const getSearchOptions = async () => Whitelabel === "dymension" ? [
     },
 ] : [
     {
+        label: "Dev",
+        options: [{ name: "Ethereum", value: "ethereum" }]
+    },
+    {
         label: "Eclipse",
         options: await fetch(process.env.ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((json) => json.result.map((network: any) => { return { name: network.name, value: network.name } }))
     },

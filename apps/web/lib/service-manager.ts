@@ -1027,20 +1027,12 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
   }
 }
 
-/*addRemote({
-  provider: "eclipse",
-  type: "evm",
-  name: "Ethereum",
-  id: slugify("Ethereum"),
-  endpoint: "https://rpc.ankr.com/eth"
-})
 addRemote({
   provider: "eclipse",
-  type: "evm",
-  name: "Triton",
-  id: slugify("Triton"),
-  endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana"
-})*/
+  name: "Ethereum",
+  id: "ethereum",
+  endpoints: { evm: "https://rpc.ankr.com/eth" }
+});
 
 export async function loadDynamicNetworks() {
   const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;
