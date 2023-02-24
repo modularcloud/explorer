@@ -54,7 +54,7 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 
 // amount has schema:
 // "amount": [ { denom: 'udym', amount: '6000000' } ]
-function getAmountString(obJ: object) : string {
+function getAmountString(obJ: any) : string {
   let denom, amount
   if("udym" === obJ[0]["denom"]) {
     // special case for dymension 
