@@ -12,7 +12,7 @@ import {
   DYMENSION_ROLLAPP_X,
   CELESTIA_MOCHA,
 } from "./network-names";
-import { z } from "zod";
+import { any, z } from "zod";
 import Decimal from "decimal.js";
 
 export const ServiceManager = createServiceManager();
@@ -603,12 +603,91 @@ const EthTransactionSchema = z.object({
   s: z.string(),
 });
 
+const SolRewardsSchema = z.object({
+  pubkey: z.string(),
+  lamports: z.number(),
+  postBalance: z.number(),
+  rewardType: z.string().optional(),
+  comission: z.number().optional(),
+})
+
+const SolBlockSchema = z.object({
+  blockHeight: z.number().nullable(),
+  blockTime: z.number().nullable(),
+  blockhash: z.string(),
+  parentSlot: z.number(),
+  previousBlockhash: z.string(),
+  signatures: z.string().array(),
+  rewards: SolRewardsSchema.array(),
+});
+
+const SolTokenBalanceSchema = z.object({
+  accountIndex: z.number(),
+  mint: z.string(),
+  owner: z.string().optional(),
+  programId: z.string().optional(),
+  uiTokenAmount: z.object({
+    amount: z.string(),
+    decimals: z.number(),
+    uiAmount: z.number().nullable(),
+    uiAmountString: z.string()
+  })
+});
+
+const SolInstructionSchema = z.object({
+  programIdIndex: z.number(),
+  accounts: z.number().array(),
+  data: z.string()
+});
+
+const SolTransactionSchema = z.object({
+  blockTime: z.number().nullable(),
+  meta: z.object({
+    err: z.any(), // todo add schema
+    fee: z.number(),
+    innerInstructions: z.object({
+      index: z.number(),
+      instructions: SolInstructionSchema.array()
+    }).array(),
+    postBalances: z.number().array(),
+    postTokenBalances: SolTokenBalanceSchema.array(),
+    preBalances: z.number().array(),
+    preTokenBalances: SolTokenBalanceSchema.array(),
+    rewards: SolRewardsSchema.array(),
+    status: z.any(), // deprecated
+    logMessages: z.string().array().nullish(),
+    returnData: z.object({
+      programId: z.string(),
+      data: z.string(),
+    }).optional(),
+    loadedAddresses: z.object({
+      writeable: z.string().array().optional(),
+      readonly: z.string().array().optional()
+    }).optional(),
+    computeUnitsConsumed: z.number().optional()
+  }),
+  slot: z.number(),
+  transaction: z.object({
+    message: z.object({
+      accountKeys: z.string().array(),
+      header: z.object({
+        numReadonlySignedAccounts: z.number(),
+        numReadonlyUnsignedAccounts: z.number(),
+        numRequiredSignatures: z.number(),
+      }),
+      instructions: SolInstructionSchema.array(),
+      recentBlockhash: z.string(),
+    }),
+    signatures: z.string().array(),
+  }),
+});
+
 function convertHex(str: string | null | undefined) {
-  if(!str) {
+  if (!str) {
     return null;
   }
 
-  if(str.indexOf("0x") === 0) {
+  if (str.indexOf("0x") === 0) {
     return String(Number(str));
   }
 
@@ -622,54 +701,61 @@ async function getEVMBlockBy(
   networkName: string
 ): Promise<Entity | null> {
   try {
-  const hexHeight = Number(value).toString(16);
+    const hexHeight = Number(value).toString(16);
 
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-  var raw = key === "height" ? JSON.stringify({
-    method: "eth_getBlockByNumber",
-    params: ["0x" + hexHeight, false],
-    id: 1,
-    jsonrpc: "2.0",
-  })  : JSON.stringify({
-    method: "eth_getBlockByHash",
-    params: ["0x" + value, false],
-    id: 1,
-    jsonrpc: "2.0",
-  });
+    var raw =
+      key === "height"
+        ? JSON.stringify({
+            method: "eth_getBlockByNumber",
+            params: ["0x" + hexHeight, false],
+            id: 1,
+            jsonrpc: "2.0",
+          })
+        : JSON.stringify({
+            method: "eth_getBlockByHash",
+            params: ["0x" + value, false],
+            id: 1,
+            jsonrpc: "2.0",
+          });
 
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-  };
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
 
-  const data = await fetch(endpoint, requestOptions).then((response) =>
-    response.json()
-  );
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
 
-  const block = EthBlockSchema.parse(data.result);
-  return { 
-    uniqueIdentifier: block.hash ?? key,
-    uniqueIdentifierLabel: key,
-    metadata: buildMetadata({
-      Height: convertHex(block.number),
-      Timestamp: new Date(Number(block.timestamp) * 1000).toUTCString().replace("GMT", "UTC"),
-      "Gas Used": convertHex(block.gasUsed),
-      "Gas Limit": convertHex(block.gasLimit),
-      Size: convertHex(block.size) + (Number(block.size) === 1 ? " byte" : " bytes"),
-      "Fee Recipient": block.miner,
-      //"Extra Data": block.extraData
-    }),
-    context: {
-      network: networkName,
-      entityTypeName: "Block"
-    },
-    computed: {},
-    raw: JSON.stringify(block)
-  }
-  } catch(e) {
+    const block = EthBlockSchema.parse(data.result);
+    return {
+      uniqueIdentifier: block.hash ?? key,
+      uniqueIdentifierLabel: key,
+      metadata: buildMetadata({
+        Height: convertHex(block.number),
+        Timestamp: new Date(Number(block.timestamp) * 1000)
+          .toUTCString()
+          .replace("GMT", "UTC"),
+        "Gas Used": convertHex(block.gasUsed),
+        "Gas Limit": convertHex(block.gasLimit),
+        Size:
+          convertHex(block.size) +
+          (Number(block.size) === 1 ? " byte" : " bytes"),
+        "Fee Recipient": block.miner,
+        //"Extra Data": block.extraData
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Block",
+      },
+      computed: {},
+      raw: JSON.stringify(block),
+    };
+  } catch (e) {
     console.log(e);
     return null;
   }
@@ -678,8 +764,8 @@ async function getEVMBlockBy(
 function buildMetadata(obj: { [key: string]: any }): { [key: string]: string } {
   const metadata: { [key: string]: string } = {};
 
-  Object.entries(obj).forEach(entry => {
-    if(typeof entry[1] === "number" || typeof entry[1] === "string") {
+  Object.entries(obj).forEach((entry) => {
+    if (typeof entry[1] === "number" || typeof entry[1] === "string") {
       metadata[entry[0]] = String(entry[1]);
     }
   });
@@ -693,49 +779,150 @@ async function getEVMTransactionByHash(
   networkName: string
 ): Promise<Entity | null> {
   try {
-  const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
+    const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
 
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-  var raw = JSON.stringify({
-    method: "eth_getTransactionByHash",
-    params: [prefixedHash],
-    id: 1,
-    jsonrpc: "2.0",
-  });
+    var raw = JSON.stringify({
+      method: "eth_getTransactionByHash",
+      params: [prefixedHash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
 
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-  };
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
 
-  const data = await fetch(endpoint, requestOptions).then((response) =>
-    response.json()
-  );
-  console.log('data', data);
-  const tx = EthTransactionSchema.parse(data.result);
-  console.log('tx', tx)
-  return { 
-    uniqueIdentifier: tx.hash,
-    uniqueIdentifierLabel: "hash",
-    metadata: buildMetadata({
-      Height: convertHex(tx.blockNumber),
-      From: tx.from,
-      To: tx.to,
-      //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
-      "Gas Price": new Decimal(tx.gasPrice).dividedBy("1000000000000000000").toFixed()
-    }),
-    context: {
-      network: networkName,
-      entityTypeName: "Transaction"
-    },
-    computed: {},
-    raw: JSON.stringify(tx)
-  }
-  } catch(e) {
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    console.log("data", data);
+    const tx = EthTransactionSchema.parse(data.result);
+    console.log("tx", tx);
+    return {
+      uniqueIdentifier: tx.hash,
+      uniqueIdentifierLabel: "hash",
+      metadata: buildMetadata({
+        Height: convertHex(tx.blockNumber),
+        From: tx.from,
+        To: tx.to,
+        //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
+        "Gas Price": new Decimal(tx.gasPrice)
+          .dividedBy("1000000000000000000")
+          .toFixed(),
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Transaction",
+      },
+      computed: {},
+      raw: JSON.stringify(tx),
+    };
+  } catch (e) {
     //console.log(e);
+    return null;
+  }
+}
+
+async function getSVMBlockBySlot(
+  slot: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "getBlock",
+      params: [Number(slot), { transactionDetails: "signatures" }],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    console.log("data", data);
+    const block = SolBlockSchema.parse(data.result);
+    console.log("block", block);
+    return {
+      uniqueIdentifier: block.blockhash,
+      uniqueIdentifierLabel: "hash",
+      metadata: buildMetadata({
+        Slot: slot,
+        Time: block.blockTime && new Date(block.blockTime).toTimeString(),
+        "Parent Slot": block.parentSlot,
+        "Previous Blockhash": block.previousBlockhash,
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Block",
+      },
+      computed: {},
+      raw: JSON.stringify(block),
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+async function getSVMTransactionBySignature(
+  signature: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "getTransaction",
+      params: [signature],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    console.log("data", data);
+    const tx = SolTransactionSchema.parse(data.result);
+    console.log("tx", tx);
+    return {
+      uniqueIdentifier: signature,
+      uniqueIdentifierLabel: "signature",
+      metadata: buildMetadata({
+        Slot: tx.slot,
+        Signer: tx.transaction.signatures[0],
+        Fee: tx.meta.fee
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Transaction",
+      },
+      computed: {},
+      raw: JSON.stringify(tx),
+    };
+  } catch (e) {
+    console.log(e);
     return null;
   }
 }
@@ -762,39 +949,87 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const block = EthBlockSchema.parse(JSON.parse(entity.raw));
-            return (
-              await Promise.all(
-                block.transactions.map(
-                  async (tx) =>
-                    await getEVMTransactionByHash(
-                      tx,
-                      network.endpoint,
-                      network.name
-                    )
+              return (
+                await Promise.all(
+                  block.transactions.map(
+                    async (tx) =>
+                      await getEVMTransactionByHash(
+                        tx,
+                        network.endpoint,
+                        network.name
+                      )
+                  )
                 )
-              )
-            ).filter((notnull) => notnull) as Entity[];
+              ).filter((notnull) => notnull) as Entity[];
             } catch {
-              return []
+              return [];
             }
           },
         },
         {
           name: "Transaction",
-          getters: [{
-            field: "hash",
-            getOne: (hash: string) =>
-              getEVMTransactionByHash(hash, network.endpoint, network.name),
-          },],
+          getters: [
+            {
+              field: "hash",
+              getOne: (hash: string) =>
+                getEVMTransactionByHash(hash, network.endpoint, network.name),
+            },
+          ],
           getAssociated: async (entity: Entity) => [],
         },
       ],
     });
-  }
-  else if (network.type === "svm") {
+  } else if (network.type === "svm") {
     //throw Error("SVM not yet supported");
-  } else {
-    throw Error("Type not supported");
+    ServiceManager.addNetwork({
+      label: network.name,
+      entityTypes: [
+        {
+          name: "Block",
+          getters: [
+            {
+              field: "slot",
+              getOne: (slot: string) =>
+                getSVMBlockBySlot(slot, network.endpoint, network.name),
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const block = SolBlockSchema.parse(JSON.parse(entity.raw));
+              return (
+                await Promise.all(
+                  block.signatures.map(
+                    async (signature) =>
+                      await getSVMTransactionBySignature(
+                        signature,
+                        network.endpoint,
+                        network.name
+                      )
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: "Transaction",
+          getters: [
+            {
+              field: "signature",
+              getOne: (signature: string) =>
+                getSVMTransactionBySignature(
+                  signature,
+                  network.endpoint,
+                  network.name
+                ),
+            },
+          ],
+          getAssociated: async (entity: Entity) => [],
+        },
+      ],
+    });
   }
 }
 
@@ -812,9 +1047,14 @@ addRemote({
   id: slugify("Triton"),
   endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana"
 })*/
+
 export async function loadDynamicNetworks() {
-  const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT
-  if(ADD_NETWORK_ENDPOINT) {
-    await fetch(ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((configs) => configs.result.forEach((config: any) => addRemote(config)));
+  const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;
+  if (ADD_NETWORK_ENDPOINT) {
+    await fetch(ADD_NETWORK_ENDPOINT + "/chain-config")
+      .then((res) => res.json())
+      .then((configs) =>
+        configs.result.forEach((config: any) => addRemote(config))
+      );
   }
 }
