@@ -4,7 +4,8 @@ import useSWR from "swr";
 export default function AddNetwork() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [endpoint, setEndpoint] = useState("");
+  const [evmEndpoint, setEvmEndpoint] = useState("");
+  const [svmEndpoint, setSvmEndpoint] = useState("");
   const {
     isLoading: isLoadingList,
     data: list,
@@ -23,9 +24,11 @@ export default function AddNetwork() {
   }
 
   async function handleSubmit(e: FormEvent) {
-    console.log("here");
     e.preventDefault();
-    console.log("there");
+    const endpoints: any = {};
+    if(evmEndpoint) endpoints.evm = evmEndpoint;
+    if(svmEndpoint) endpoints.svm = svmEndpoint;
+    if((!evmEndpoint && !svmEndpoint) || !name ) return;
     await fetch("/api/chain-config", {
       method: "POST",
       headers: {
@@ -33,13 +36,12 @@ export default function AddNetwork() {
       },
       body: JSON.stringify({
         name,
-        endpoint,
+        endpoints,
         provider: "eclipse",
-        type: "evm",
       }),
     });
     setName("");
-    setEndpoint("");
+    setEvmEndpoint("");
     mutate("/api/chain-config");
   }
 
@@ -59,7 +61,7 @@ export default function AddNetwork() {
       <ul>
         {(list?.result ?? []).map((network: any) => (
           <li key={network.id}>
-            {`${network.name}: ${network.endpoint} `}
+            {`${network.name}: EVM (${network.endpoints?.evm}), SVM(${network.endpoints?.svm}) `}
             <button className="border" onClick={() => deleteNetwork(network.provider, network.id)}>
               Delete
             </button>
@@ -79,12 +81,21 @@ export default function AddNetwork() {
           />
         </label>
         <label>
-          Endpoint:
+          EVM Endpoint (Optional):
           <input
             type="text"
-            value={endpoint}
+            value={evmEndpoint}
             className="border"
-            onChange={(e) => setEndpoint(e.target.value)}
+            onChange={(e) => setEvmEndpoint(e.target.value)}
+          />
+        </label>
+        <label>
+          SVM Endpoint (Optional):
+          <input
+            type="text"
+            value={svmEndpoint}
+            className="border"
+            onChange={(e) => setSvmEndpoint(e.target.value)}
           />
         </label>
         <input className="border" type="submit" value="Submit" />

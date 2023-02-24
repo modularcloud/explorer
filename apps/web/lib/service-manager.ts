@@ -20,8 +20,10 @@ export const RemoteServiceRequestSchema = z.object({
   provider: z.literal("eclipse"),
   name: z.string(),
   id: z.string(),
-  type: z.enum(["evm", "svm"]),
-  endpoint: z.string(),
+  endpoints: z.object({
+    evm: z.string().optional(),
+    svm: z.string().optional(),
+  }),
 });
 
 export const RemoteServiceResponseSchema = RemoteServiceRequestSchema.extend({
@@ -917,22 +919,25 @@ async function getSVMTransactionBySignature(
 }
 
 export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
-  if (network.type === "evm") {
+  const EVM = network.endpoints.evm;
+  const SVM = network.endpoints.svm;
+  const needsPrefix = EVM && SVM;
+  if (EVM) {
     ServiceManager.addNetwork({
       label: network.name,
       entityTypes: [
         {
-          name: "Block",
+          name: needsPrefix ? "EVM Block" : "Block",
           getters: [
             {
               field: "height",
               getOne: (height: string) =>
-                getEVMBlockBy("height", height, network.endpoint, network.name),
+                getEVMBlockBy("height", height, EVM, network.name),
             },
             {
               field: "hash",
               getOne: (hash: string) =>
-                getEVMBlockBy("hash", hash, network.endpoint, network.name),
+                getEVMBlockBy("hash", hash, EVM, network.name),
             },
           ],
           getAssociated: async (entity: Entity) => {
@@ -944,7 +949,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     async (tx) =>
                       await getEVMTransactionByHash(
                         tx,
-                        network.endpoint,
+                        EVM,
                         network.name
                       )
                   )
@@ -956,30 +961,30 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           },
         },
         {
-          name: "Transaction",
+          name: needsPrefix ? "EVM Transaction" : "Transaction",
           getters: [
             {
               field: "hash",
               getOne: (hash: string) =>
-                getEVMTransactionByHash(hash, network.endpoint, network.name),
+                getEVMTransactionByHash(hash, EVM, network.name),
             },
           ],
           getAssociated: async (entity: Entity) => [],
         },
       ],
     });
-  } else if (network.type === "svm") {
+  } else if (SVM) {
     //throw Error("SVM not yet supported");
     ServiceManager.addNetwork({
       label: network.name,
       entityTypes: [
         {
-          name: "Block",
+          name: needsPrefix ? "SVM Block" : "Block",
           getters: [
             {
               field: "slot",
               getOne: (slot: string) =>
-                getSVMBlockBySlot(slot, network.endpoint, network.name),
+                getSVMBlockBySlot(slot, SVM, network.name),
             },
           ],
           getAssociated: async (entity: Entity) => {
@@ -991,7 +996,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     async (signature) =>
                       await getSVMTransactionBySignature(
                         signature,
-                        network.endpoint,
+                        SVM,
                         network.name
                       )
                   )
@@ -1003,14 +1008,14 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           },
         },
         {
-          name: "Transaction",
+          name: needsPrefix ? "SVM Transaction" : "Transaction",
           getters: [
             {
               field: "signature",
               getOne: (signature: string) =>
                 getSVMTransactionBySignature(
                   signature,
-                  network.endpoint,
+                  SVM,
                   network.name
                 ),
             },
