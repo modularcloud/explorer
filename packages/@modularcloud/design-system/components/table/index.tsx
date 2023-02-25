@@ -134,7 +134,7 @@ export function Table({ data, router }: Props) {
             <tr className="max-xs:hidden border-b border-b-night-100 h-10 font-bold" key={headerGroup.id}>
               {headerGroup.headers.map((header, index) => {
                 const rules = section.columns[index];
-                return <th className={clsx(rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:pl-4 sm:pl-6 md:pl-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", index === maxXSLeftPadding && "max-xs:pl-4", index == maxXSRightPadding && "max-xs:pr-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={header.id}>
+                return <th className={clsx("px-1", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:pl-4 sm:pl-6 md:pl-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", index === maxXSLeftPadding && "max-xs:pl-4", index == maxXSRightPadding && "max-xs:pr-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={header.id}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
