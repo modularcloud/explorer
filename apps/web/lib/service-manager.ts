@@ -253,9 +253,11 @@ async function getTransactionsByAddress(address: string, networkName: string) {
       }
     } else if (DYMENSION_ROLLAPP_X == networkName) {
       sendResponse = await fetch(
+        // make api return all results in single response for now
         `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
       );
       receiveResponse = await fetch(
+        // make api return all results in single response for now
         `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
       );
       if (!sendResponse.ok) {
