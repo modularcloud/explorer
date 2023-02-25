@@ -37,7 +37,7 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
   Object.entries(obj).forEach((entry) => {
 
     if (typeof entry[1] === "object") {
-      if(entry[0] == "amount") {
+      if (entry[0] == "amount") {
         KV[fixCapsAndSpacing(entry[0])] = getAmountString(entry[1])
       } else {
         // Flatten nested objects into top level keys
@@ -54,9 +54,9 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string
 
 // amount has schema:
 // "amount": [ { denom: 'udym', amount: '6000000' } ]
-function getAmountString(obJ: any) : string {
+function getAmountString(obJ: any): string {
   let denom, amount
-  if("udym" === obJ[0]["denom"]) {
+  if ("udym" === obJ[0]["denom"]) {
     // special case for dymension 
     denom = obJ[0]["denom"].substring(1)
     amount = (Number(obJ[0]["amount"]) / 1000000).toString()
@@ -71,7 +71,7 @@ export function txStringToHash(txstr: string) {
   let raw = fromBase64(txstr);
   try {
     decodeTxRaw(raw); // detecting if normal transaction, if PFB it catches
-  } catch { 
+  } catch {
     raw = MalleatedTx.decode(raw).tx;
   }
 

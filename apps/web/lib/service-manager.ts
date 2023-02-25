@@ -13,15 +13,15 @@ type JSONRPCResponse<T> = {
 
 type ABCIResponse = {
   response: {
-      code: number;
-      log: string;
-      info: string;
-      index: string;
-      key: any;
-      value: string;
-      proofOps: any;
-      height: string;
-      codespace: string;
+    code: number;
+    log: string;
+    info: string;
+    index: string;
+    key: any;
+    value: string;
+    proofOps: any;
+    height: string;
+    codespace: string;
   }
 }
 
@@ -238,16 +238,31 @@ async function getTransactionsByHeight(height: string, networkBase: string, netw
   }
 }
 
-async function getTransactionsByAddress(address: string, networkBase: string, networkName: string) {
+async function getTransactionsByAddress(address: string, networkName: string) {
   try {
-    const sendResponse = await fetch(
-      `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
-    );
-    const receiveResponse = await fetch(
-      `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
-    );
-    if (!sendResponse.ok) {
-      throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+    let sendResponse, receiveResponse
+    if (DYMENSION_HUB == networkName) {
+      sendResponse = await fetch(
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
+      );
+      receiveResponse = await fetch(
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
+      );
+      if (!sendResponse.ok) {
+        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+      }
+    } else if (DYMENSION_ROLLAPP_X == networkName) {
+      sendResponse = await fetch(
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+      );
+      receiveResponse = await fetch(
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+      );
+      if (!sendResponse.ok) {
+        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+      }
+    } else {
+      return null
     }
     const sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
     const receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
@@ -281,32 +296,40 @@ async function getTransactionsByAddress(address: string, networkBase: string, ne
 }
 
 async function getAccountByAddress(address: string, networkBase: string, networkName: string) {
-  if(!address.match(/^dym\w{39}$/)) {
+  let queryInput, denom
+  if (address.match(/^dym\w{39}$/)) {
+    // dymension hub
+    const data = getBalanceQueryData(address, "udym");
+    queryInput = `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
+    denom = "DYM"
+  } else if (address.match(/^rol\w{39}$/)) {
+    // dymension rollappX
+    const data = getBalanceQueryData(address, "urax");
+    queryInput = `https://rpc-rollappx-35c.dymension.xyz/abci_query?path=/cosmos.bank.v1beta1.Query/Balance&data=${data}&height=0&prove=false`;
+    denom = "RAX"
+  } else {
     return null;
   }
-  const data = getBalanceQueryData(address, "udym");
-  const response = await fetch(
-    `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`
-  );
+  const response = await fetch(queryInput);
   const json = await response.json() as JSONRPCResponse<ABCIResponse>;
   const balance = (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
     metadata: {
-      Spendable: `${balance} DYM`
+      Spendable: `${balance} ${denom}`
     },
     computed: {},
     context: {
       network: networkName,
       entityTypeName: "Account"
     },
-    raw: JSON.stringify({address})
+    raw: JSON.stringify({ address })
   }
 }
 
 const CELESTIA_MOCHA_RPC = process.env.CELESTIA_MOCHA_RPC
-if(CELESTIA_MOCHA_RPC) {
+if (CELESTIA_MOCHA_RPC) {
   ServiceManager.addNetwork({
     label: CELESTIA_MOCHA,
     entityTypes: [
@@ -343,7 +366,7 @@ if(CELESTIA_MOCHA_RPC) {
 }
 
 const DYMENSION_HUB_RPC = process.env.DYMENSION_HUB_RPC;
-if(DYMENSION_HUB_RPC) {
+if (DYMENSION_HUB_RPC) {
   ServiceManager.addNetwork({
     label: DYMENSION_HUB,
     entityTypes: [
@@ -384,14 +407,14 @@ if(DYMENSION_HUB_RPC) {
           },
         ],
         getAssociated: async (entity: Entity) => {
-          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB_RPC, DYMENSION_HUB);
+          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB);
         }
       },
     ],
   });
 }
 const DYMENSION_ROLLAPP_X_RPC = process.env.DYMENSION_ROLLAPP_X_RPC;
-if(DYMENSION_ROLLAPP_X_RPC) {
+if (DYMENSION_ROLLAPP_X_RPC) {
   ServiceManager.addNetwork({
     label: DYMENSION_ROLLAPP_X,
     entityTypes: [
@@ -423,7 +446,19 @@ if(DYMENSION_ROLLAPP_X_RPC) {
         ],
         getAssociated: (entity: Entity) => entity.computed.Messages ?? []
       },
+      {
+        name: "Account",
+        getters: [
+          {
+            field: "address",
+            getOne: (address: string) => getAccountByAddress(address, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+          },
+        ],
+        getAssociated: async (entity: Entity) => {
+          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_ROLLAPP_X);
+        }
+      }
     ],
   });
-  
+
 }
