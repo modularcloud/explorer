@@ -268,7 +268,7 @@ async function getTransactionsByAddress(address: string, networkName: string) {
     }
     const sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
     const receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
-    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort((a, b) => Number(a.height) - Number(b.height));
+    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort((a, b) => Number(b.height) - Number(a.height));
     return allTxs.map((tx) => {
       const Messages = getMessages(tx.tx);
       const txEntity: Entity = {

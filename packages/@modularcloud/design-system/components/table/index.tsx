@@ -39,7 +39,9 @@ export function Table({ data, router }: Props) {
     return null;
   }
   const type = data[0].context.entityTypeName;
+  const height = data[0].metadata.Height;
   const filterData = data.filter(entity => entity.context.entityTypeName === type);
+  const differentHeight = !!data.find(entity => entity.metadata.Height !== height );
   const section: TableSection = type === "Transaction" ? {
     rows: filterData,
     label: "Transactions",
@@ -56,6 +58,11 @@ export function Table({ data, router }: Props) {
         isPrimaryKey: true,
         getCell: (entity: Entity) => entity.uniqueIdentifier
       },
+      differentHeight ? {
+        id: "height",
+        header: "Height",
+        getCell: (entity: Entity) => entity.metadata.Height
+      } : null,
       {
         id: "type",
         header: "Type",
@@ -73,7 +80,7 @@ export function Table({ data, router }: Props) {
         isIcon: true,
         getCell: (entity: Entity) => <ElipsHorizOff />
       },
-    ]
+    ].filter(notnull => notnull) as EntityColumn<any>[]
   }  : {
     rows: filterData,
     label: "Messages", // TODO: make generic
@@ -144,7 +151,7 @@ export function Table({ data, router }: Props) {
             <tr className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer" key={row.id} onClick={() => row.original.context.network === "N/A" ? null : router.push(`/${row.original.context.network}/${row.original.context.entityTypeName}/${row.original.uniqueIdentifierLabel}/${row.original.uniqueIdentifier}`)}>
               {row.getVisibleCells().map((cell, index) => {
                 const rules = section.columns[index];
-                return <td className={clsx("py-3 text-mid-dark", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:pl-4 sm:pl-6 md:pl-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", (index === maxXSLeftPadding || index == maxXSRightPadding) && "max-xs:px-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={cell.id}>
+                return <td className={clsx("py-3 px-1 text-mid-dark", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:pl-4 sm:pl-6 md:pl-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", (index === maxXSLeftPadding || index == maxXSRightPadding) && "max-xs:px-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={cell.id}>
                   <div className={clsx(rules.isPrimaryKey && "max-sm:w-20 truncate")}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
                 </td>
               })}
