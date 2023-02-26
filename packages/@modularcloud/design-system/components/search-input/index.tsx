@@ -30,8 +30,8 @@ export const SearchInput = ({
   onSearch,
   defaultSelected
 }: Props) => {
-  const [ option, setOption ] = useState(defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
-  const [ term, setTerm ] = useState("");
+  const [option, setOption] = useState(defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
+  const [term, setTerm] = useState("");
   return (
     <Popover.Root open={isOpen} onOpenChange={handleOpen}>
       <Popover.Anchor>
@@ -107,7 +107,7 @@ export const SearchInput = ({
           </Select.Root>
           <input
             onChange={(event: any) => setTerm(event.target.value)}
-            onKeyDown={(event: any) => { if(event.code === "Enter") onSearch(option, term)}}
+            onKeyDown={(event: any) => { if (event.code === "Enter" || event.code === "NumpadEnter") onSearch(option, term) }}
             className={clsx("w-full p-2 focus:outline-none peer", {
               "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
                 mode === "dark",
@@ -116,20 +116,20 @@ export const SearchInput = ({
             type="text"
             placeholder={option.toLowerCase().match(/^hub$|dymension|rollapp/) ? "Go to hash, height, or address" : placeholder}
           />
-            <button
-              onClick={() => onSearch(option, term)}
-              className={clsx(
-                "p-2 px-2.5 text-gray border-l rounded-r-lg sm:border-l-0",
-                {
-                  "bg-mid-dark border-l-mid-dark-900 hover:bg-night-900 peer-hover:bg-night-900 peer-focus:bg-night-900":
-                    mode === "dark",
-                  "border-l-gray-300 text-slate-800 bg-transparent hover:text-mid-dark peer-hover:text-mid-dark peer-focus:text-mid-dark":
-                    mode === "light",
-                }
-              )}
-            >
-              <MagnifyingGlassIcon />
-            </button>
+          <button
+            onClick={() => onSearch(option, term)}
+            className={clsx(
+              "p-2 px-2.5 text-gray border-l rounded-r-lg sm:border-l-0",
+              {
+                "bg-mid-dark border-l-mid-dark-900 hover:bg-night-900 peer-hover:bg-night-900 peer-focus:bg-night-900":
+                  mode === "dark",
+                "border-l-gray-300 text-slate-800 bg-transparent hover:text-mid-dark peer-hover:text-mid-dark peer-focus:text-mid-dark":
+                  mode === "light",
+              }
+            )}
+          >
+            <MagnifyingGlassIcon />
+          </button>
         </div>
       </Popover.Anchor>
       <Popover.Content className="min-w-[90%]">
