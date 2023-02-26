@@ -143,7 +143,6 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
         Time: blockResponse.result.block.header.time,
         "Square Size": blockResponse.result.block.data.square_size,
         Proposer: blockResponse.result.block.header.proposer_address,
-
       } : {
         "Chain Id": blockResponse.result.block.header.chain_id,
         Height: blockResponse.result.block.header.height,
