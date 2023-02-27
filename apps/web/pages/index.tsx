@@ -18,12 +18,12 @@ import { SearchOptions } from '../lib/search-options';
 import { Whitelabel } from '../lib/whitelabel';
 
 export const getServerSideProps: GetServerSideProps<{
-  //whitelabel?: string,
+  whitelabel?: string,
   searchOptions: any,
 }> = async ({ params }) => {
   return {
      props: {
-     // whitelabel: Whitelabel,
+     whitelabel: Whitelabel,
     searchOptions: SearchOptions  
      }
   }
@@ -34,12 +34,12 @@ export default function Homepage({ /*whitelabel*/ searchOptions }: InferGetServe
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
   let name = "Explorer";
-  /*if(whitelabel === "celestia") {
+  if(whitelabel === "celestia") {
     name = "CelestiaScan";
   }
   if(whitelabel === "dymension") {
     name = "DymScan"
-  }*/
+  }
   return (
     <div
       className={clsx(
