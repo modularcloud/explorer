@@ -110,10 +110,10 @@ export function Table({ data, router }: Props) {
         ],
       };
     }
-  } else if (type === "Message") {
+  } else {
     section = {
       rows: filterData,
-      label: "Messages", // TODO: make generic
+      label: type + "s", // TODO: handle plural better
       columns: [
         /*{
         id: "icon",
@@ -123,7 +123,7 @@ export function Table({ data, router }: Props) {
       },*/
         {
           id: "id",
-          header: "Messages", // TODO: Make generic
+          header: type + "s", // TODO: handle plural better
           isPrimaryKey: true,
           getCell: (entity: Entity) => entity.uniqueIdentifier,
         },
@@ -134,8 +134,6 @@ export function Table({ data, router }: Props) {
         },
       ],
     };
-  } else {
-    return null;
   }
 
   const columnHelper = createColumnHelper<Entity>();
