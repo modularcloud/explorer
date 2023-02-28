@@ -598,7 +598,7 @@ const EthTransactionSchema = z.object({
   transactionIndex: z.string().nullable(),
   value: z.string(),
   type: z.string(),
-  chainId: z.string(),
+  chainId: z.string().optional(),
   v: z.string(),
   r: z.string(),
   s: z.string(),
