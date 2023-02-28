@@ -1,18 +1,23 @@
+import web3 from '@solana/web3.js';
+import Decimal from 'decimal.js';
 import {
   getBalanceQueryData,
   getMessages,
   parseBalance,
   txStringToHash,
-} from "service-manager";
-import { createServiceManager } from "service-manager/manager";
-import { Entity } from "service-manager/types/entity.type";
+} from 'service-manager';
+import { createServiceManager } from 'service-manager/manager';
+import { Entity } from 'service-manager/types/entity.type';
 import {
+  any,
+  z,
+} from 'zod';
+
+import {
+  CELESTIA_MOCHA,
   DYMENSION_HUB,
   DYMENSION_ROLLAPP_X,
-  CELESTIA_MOCHA,
-} from "./network-names";
-import { any, z } from "zod";
-import Decimal from "decimal.js";
+} from './network-names';
 
 export const ServiceManager = createServiceManager();
 
@@ -489,6 +494,7 @@ if (DYMENSION_HUB_RPC) {
     ],
   });
 }
+
 const DYMENSION_ROLLAPP_X_RPC = process.env.DYMENSION_ROLLAPP_X_RPC;
 if (DYMENSION_ROLLAPP_X_RPC) {
   ServiceManager.addNetwork({
@@ -773,6 +779,52 @@ function buildMetadata(obj: { [key: string]: any }): { [key: string]: string } {
   return metadata;
 }
 
+async function getEVMLogsByAddress(
+  hash: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity[]> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "eth_getLogs",
+      params: [{
+        blockHash: hash
+      }],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await ( await fetch(endpoint, requestOptions)).json();
+   
+    return await data.result.map((obj: any) => {
+      return {
+        uniqueIdentifier: obj.transactionHash,
+        uniqueIdentifierLabel: "hash",
+        metadata: buildMetadata({
+          Height: convertHex(obj.blockNumber),
+        }),
+        context: {
+          network: networkName,
+          entityTypeName: "Transaction",
+        },
+        computed: {},
+        raw: JSON.stringify(obj)
+      }
+    })
+  } catch (e) {
+    return [];
+  }
+}
+
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
@@ -869,6 +921,54 @@ async function getSVMBlockBySlot(
     };
   } catch (e) {
     return null;
+  }
+}
+
+async function getSVMLogsBySignature(
+  signature: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity[]> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      // getParsedTransaction is also a possible method we could use
+      method: "getTransaction",
+      params: [signature],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await ( await fetch(endpoint, requestOptions)).json();
+
+    console.log(data.result.meta.logMessages)
+
+    return await data.result.meta.preTokenBalances.map((obj: any) => {
+      return {
+        uniqueIdentifier: obj.owner,
+        uniqueIdentifierLabel: "owner",
+        metadata: buildMetadata({
+          Height: convertHex(undefined),
+        }),
+        context: {
+          network: networkName,
+          entityTypeName: "Transaction",
+        },
+        computed: {},
+        raw: JSON.stringify(obj)
+      }
+    })
+  } catch (e) {
+    console.error(e)
+    return [];
   }
 }
 
@@ -969,7 +1069,21 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 getEVMTransactionByHash(hash, EVM, network.name),
             },
           ],
-          getAssociated: async (entity: Entity) => [],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const block = EthTransactionSchema.parse(JSON.parse(entity.raw));
+
+              return (
+                await getEVMLogsByAddress(
+                  block.blockHash as string,
+                  EVM,
+                  network.name
+                )
+              )
+            } catch {
+              return [];
+            }
+          },
         },
       ],
     });
@@ -1020,12 +1134,33 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 ),
             },
           ],
-          getAssociated: async (entity: Entity) => [],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const signature = JSON.parse(entity.raw).transaction.signatures[0];
+
+              return (
+                await getSVMLogsBySignature(
+                  signature,
+                  SVM,
+                  network.name
+                )
+              )
+            } catch {
+              return [];
+            }
+          },
         },
       ],
     });
   }
 }
+
+addRemote({
+  provider: "eclipse",
+  name: "Solana",
+  id: "solana",
+  endpoints: { svm: process.env.SOLANA_RPC }
+});
 
 addRemote({
   provider: "eclipse",
