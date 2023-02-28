@@ -1032,7 +1032,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     uniqueIdentifier: String(receipt.contractAddress),
                     uniqueIdentifierLabel: "address",
                     metadata: {
-                      Event: "Created"
+                      Event: "Contract Created"
                     },
                     computed: {},
                     context: {
