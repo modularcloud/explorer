@@ -158,7 +158,7 @@ function EntityPage({
       </Head>
       { entity.context.network === "Triton" ? <>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-MPKBCE2GRT"
+          src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -167,7 +167,7 @@ function EntityPage({
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-MPKBCE2GRT');
+            gtag('config', 'G-WM976PHBGC');
           `}
         </Script>
       </> : null }
