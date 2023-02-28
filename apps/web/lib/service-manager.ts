@@ -604,13 +604,41 @@ const EthTransactionSchema = z.object({
   s: z.string(),
 });
 
+const EthTransactionReceiptSchema = z.object({
+  transactionHash: z.string(),
+  transactionIndex: z.coerce.number(),
+  type: z.coerce.number(),
+  blockHash: z.string(),
+  blockNumber: z.coerce.number(),
+  from: z.string(),
+  to: z.string().nullable(),
+  gasUsed: z.coerce.number(),
+  cumulativeGasUsed: z.coerce.number(),
+  contractAddress: z.string().nullable(),
+  logs: z
+    .object({
+      address: z.string(),
+      topics: z.string().array(),
+      data: z.string(),
+      blockNumber: z.coerce.number(),
+      transactionHash: z.string(),
+      transactionIndex: z.coerce.number(),
+      blockHash: z.string(),
+      logIndex: z.coerce.number(),
+      removed: z.boolean(),
+    })
+    .array(),
+  status: z.coerce.number(),
+  logsBloom: z.string(),
+});
+
 const SolRewardsSchema = z.object({
   pubkey: z.string(),
   lamports: z.number(),
   postBalance: z.number(),
   rewardType: z.string().optional(),
   comission: z.number().optional(),
-})
+});
 
 const SolBlockSchema = z.object({
   blockHeight: z.number().nullable(),
@@ -631,14 +659,14 @@ const SolTokenBalanceSchema = z.object({
     amount: z.string(),
     decimals: z.number(),
     uiAmount: z.number().nullable(),
-    uiAmountString: z.string()
-  })
+    uiAmountString: z.string(),
+  }),
 });
 
 const SolInstructionSchema = z.object({
   programIdIndex: z.number(),
   accounts: z.number().array(),
-  data: z.string()
+  data: z.string(),
 });
 
 const SolTransactionSchema = z.object({
@@ -646,10 +674,12 @@ const SolTransactionSchema = z.object({
   meta: z.object({
     err: z.any(), // todo add schema
     fee: z.number(),
-    innerInstructions: z.object({
-      index: z.number(),
-      instructions: SolInstructionSchema.array()
-    }).array(),
+    innerInstructions: z
+      .object({
+        index: z.number(),
+        instructions: SolInstructionSchema.array(),
+      })
+      .array(),
     postBalances: z.number().array(),
     postTokenBalances: SolTokenBalanceSchema.array(),
     preBalances: z.number().array(),
@@ -657,15 +687,19 @@ const SolTransactionSchema = z.object({
     rewards: SolRewardsSchema.array(),
     status: z.any(), // deprecated
     logMessages: z.string().array().nullish(),
-    returnData: z.object({
-      programId: z.string(),
-      data: z.string(),
-    }).optional(),
-    loadedAddresses: z.object({
-      writeable: z.string().array().optional(),
-      readonly: z.string().array().optional()
-    }).optional(),
-    computeUnitsConsumed: z.number().optional()
+    returnData: z
+      .object({
+        programId: z.string(),
+        data: z.string(),
+      })
+      .optional(),
+    loadedAddresses: z
+      .object({
+        writeable: z.string().array().optional(),
+        readonly: z.string().array().optional(),
+      })
+      .optional(),
+    computeUnitsConsumed: z.number().optional(),
   }),
   slot: z.number(),
   transaction: z.object({
@@ -801,6 +835,24 @@ async function getEVMTransactionByHash(
       response.json()
     );
     const tx = EthTransactionSchema.parse(data.result);
+
+    var raw = JSON.stringify({
+      method: "eth_getTransactionReceipt",
+      params: [prefixedHash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const receiptData = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
     return {
       uniqueIdentifier: tx.hash,
       uniqueIdentifierLabel: "hash",
@@ -812,15 +864,19 @@ async function getEVMTransactionByHash(
         "Gas Price": new Decimal(tx.gasPrice)
           .dividedBy("1000000000000000000")
           .toFixed(),
+        Status: receipt.status,
       }),
       context: {
         network: networkName,
         entityTypeName: "Transaction",
       },
-      computed: {},
+      computed: {
+        Receipt: receipt,
+      },
       raw: JSON.stringify(tx),
     };
   } catch (e) {
+    console.log(e);
     return null;
   }
 }
@@ -904,7 +960,7 @@ async function getSVMTransactionBySignature(
       metadata: buildMetadata({
         Slot: tx.slot,
         Signer: tx.transaction.signatures[0],
-        Fee: tx.meta.fee
+        Fee: tx.meta.fee,
       }),
       context: {
         network: networkName,
@@ -947,11 +1003,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 await Promise.all(
                   block.transactions.map(
                     async (tx) =>
-                      await getEVMTransactionByHash(
-                        tx,
-                        EVM,
-                        network.name
-                      )
+                      await getEVMTransactionByHash(tx, EVM, network.name)
                   )
                 )
               ).filter((notnull) => notnull) as Entity[];
@@ -969,7 +1021,50 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 getEVMTransactionByHash(hash, EVM, network.name),
             },
           ],
-          getAssociated: async (entity: Entity) => [],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const receipt = EthTransactionReceiptSchema.parse(
+                entity.computed.Receipt
+              );
+              if(!EthTransactionSchema.parse(JSON.parse(entity.raw)).to) {
+                return [
+                  {
+                    uniqueIdentifier: String(receipt.contractAddress),
+                    uniqueIdentifierLabel: "address",
+                    metadata: {
+                      Event: "Created"
+                    },
+                    computed: {},
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Contract",
+                    },
+                    raw: "",
+                  }
+                ];
+              }
+              return receipt.logs.map((log) => {
+                return {
+                  uniqueIdentifier: String(log.logIndex),
+                  uniqueIdentifierLabel: "index",
+                  metadata: {
+                    Data: log.data,
+                    Topics: log.topics.join(", "),
+                    Removed: String(log.removed),
+                  },
+                  computed: {},
+                  context: {
+                    network: network.name,
+                    entityTypeName: "Log",
+                  },
+                  raw: JSON.stringify(log),
+                };
+              });
+            } catch(e) {
+              console.log(e)
+              return [];
+            }
+          },
         },
       ],
     });
@@ -1013,11 +1108,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             {
               field: "signature",
               getOne: (signature: string) =>
-                getSVMTransactionBySignature(
-                  signature,
-                  SVM,
-                  network.name
-                ),
+                getSVMTransactionBySignature(signature, SVM, network.name),
             },
           ],
           getAssociated: async (entity: Entity) => [],
