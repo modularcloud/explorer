@@ -18,7 +18,8 @@ interface Props {
   defaultSelected?: string;
   isOpen?: boolean;
   handleOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  onSearch: (network: string, term: string) => void
+  onSearch: (network: string, term: string) => void;
+  fixedOption?: string;
 }
 
 export const SearchInput = ({
@@ -28,9 +29,10 @@ export const SearchInput = ({
   isOpen,
   handleOpen,
   onSearch,
-  defaultSelected
+  defaultSelected,
+  fixedOption
 }: Props) => {
-  const [ option, setOption ] = useState(defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
+  const [ option, setOption ] = useState(fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
   const [ term, setTerm ] = useState("");
   return (
     <Popover.Root open={isOpen} onOpenChange={handleOpen}>
@@ -43,7 +45,7 @@ export const SearchInput = ({
               mode === "light",
           })}
         >
-          <Select.Root value={option} onValueChange={(value) => setOption(value)}>
+          {!fixedOption ? <Select.Root value={option} onValueChange={(value) => setOption(value)}>
             <Select.Trigger
               className={clsx(
                 "select-none flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold sm:min-w-[98px] truncate",
@@ -104,11 +106,12 @@ export const SearchInput = ({
                 </div>
               </Select.Content>
             </Select.Portal>
-          </Select.Root>
+          </Select.Root> : null
+          }
           <input
             onChange={(event: any) => setTerm(event.target.value)}
             onKeyDown={(event: any) => { if(event.code === "Enter") onSearch(option, term)}}
-            className={clsx("w-full p-2 focus:outline-none peer", {
+            className={clsx("w-full p-2 focus:outline-none peer", fixedOption && "rounded-lg", {
               "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
                 mode === "dark",
               "placeholder:text-slate-800": mode === "light",
