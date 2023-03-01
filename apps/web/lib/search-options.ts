@@ -40,6 +40,19 @@ export const getSearchOptions = async () => {
         ]
     } else {
         return [
+            Whitelabel === "dev" ? {
+                label: "Dev",
+                options: [
+                    {
+                        name: "Ethereum",
+                        value: "Ethereum",
+                    },
+                    {
+                        name: "Solana",
+                        value: "Solana",
+                    },
+                ]
+            } : null,
             {
                 label: "Celestia",
                 options: [
@@ -66,6 +79,6 @@ export const getSearchOptions = async () => {
                     },
                 ],
             },
-        ];
+        ].filter(notnull => notnull);
     }
 }

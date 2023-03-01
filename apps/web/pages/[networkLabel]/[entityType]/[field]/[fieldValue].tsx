@@ -194,7 +194,7 @@ function EntityPage({
               <Link href="/">
                 <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">
                   {name}
-                  {whitelabel ? (
+                  {whitelabel && whitelabel !== "dev" ? (
                     <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">
                       Scan
                     </span>
