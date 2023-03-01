@@ -13,6 +13,7 @@ import {
 } from "./network-names";
 import { any, z } from "zod";
 import Decimal from "decimal.js";
+import { isAddress } from "./search";
 
 export const ServiceManager = createServiceManager();
 
@@ -1004,6 +1005,100 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   block.transactions.map(
                     async (tx) =>
                       await getEVMTransactionByHash(tx, EVM, network.name)
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: needsPrefix ? "EVM Account" : "Account",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                if(!isAddress(address)) {
+                  return null;
+                }
+                return {
+                  uniqueIdentifier: address,
+                  uniqueIdentifierLabel: "address",
+                  metadata: {
+                    Balances: "Coming soon"
+                  },
+                  context: {
+                    network: network.name,
+                    entityTypeName: needsPrefix ? "EVM Account" : "Account",
+                  },
+                  computed: {},
+                  raw: ""
+                }
+              },
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const txIds = await fetch(`https://5i0kwsyeq8.execute-api.us-west-2.amazonaws.com/prod/${network.provider}/${network.id}`, {
+                method: "POST",
+                body: JSON.stringify({
+                  method: "mc_getTransactionsByAddress",
+                  params: [entity.uniqueIdentifier]
+                })
+              }).then((res) => res.json() );
+              return (
+                await Promise.all(
+                  txIds.result.txs.map(
+                    async (tx: any) =>
+                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: "Contract",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                if(!isAddress(address)) {
+                  return null;
+                }
+                return {
+                  uniqueIdentifier: address,
+                  uniqueIdentifierLabel: "address",
+                  metadata: {
+                    Balances: "Coming soon"
+                  },
+                  context: {
+                    network: network.name,
+                    entityTypeName: "Contract",
+                  },
+                  computed: {},
+                  raw: ""
+                }
+              },
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const txIds = await fetch(`https://5i0kwsyeq8.execute-api.us-west-2.amazonaws.com/prod/${network.provider}/${network.id}`, {
+                method: "POST",
+                body: JSON.stringify({
+                  method: "mc_getTransactionsByAddress",
+                  params: [entity.uniqueIdentifier]
+                })
+              }).then((res) => res.json() );
+              return (
+                await Promise.all(
+                  txIds.result.txs.map(
+                    async (tx: any) =>
+                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
                   )
                 )
               ).filter((notnull) => notnull) as Entity[];
