@@ -1043,14 +1043,16 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   }
                 ];
               }
-              return receipt.logs.map((log) => {
+              return Promise.all(receipt.logs.map(async (log) => {
+                const results = await fetch(`https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`).then((res) => res.json());
+                const name = results?.result?.event?.[log.topics[0]]?.[0]?.name ?? log.topics[0];
                 return {
-                  uniqueIdentifier: String(log.logIndex),
-                  uniqueIdentifierLabel: "index",
+                  uniqueIdentifier: name,
+                  uniqueIdentifierLabel: "event",
                   metadata: {
-                    Data: log.data,
+                    Address: log.address,
                     Topics: log.topics.join(", "),
-                    Removed: String(log.removed),
+                    Data: log.data,
                   },
                   computed: {},
                   context: {
@@ -1059,7 +1061,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   },
                   raw: JSON.stringify(log),
                 };
-              });
+              }));
             } catch(e) {
               console.log(e)
               return [];
