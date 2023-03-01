@@ -9,7 +9,7 @@ type Props = {
 };
 
 export function Status({ children, status, mode }: Props) {
-    const isSuccess = !!status && status !== "Failure";
+    const isSuccess = !!status && (status !== "Failure" || Number(status) === 0);
     
     return mode === "icon" ? (isSuccess ? <GreenTick /> : <RedCross />) :
     

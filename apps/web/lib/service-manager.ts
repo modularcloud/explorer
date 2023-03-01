@@ -1054,7 +1054,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   },
                   computed: {},
                   context: {
-                    network: network.name,
+                    network: "N/A", // TODO handle differently
                     entityTypeName: "Log",
                   },
                   raw: JSON.stringify(log),
