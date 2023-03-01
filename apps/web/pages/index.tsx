@@ -39,6 +39,9 @@ export default function Homepage({
   if (whitelabel === "dymension") {
     name = "DymScan";
   }
+  if (whitelabel === "nautilus") {
+    name = "NautScan";
+  }
   return (
     <>
       <Head>

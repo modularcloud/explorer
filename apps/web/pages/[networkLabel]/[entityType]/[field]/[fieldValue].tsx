@@ -142,6 +142,9 @@ function EntityPage({
   if (whitelabel === "dymension") {
     name = "Dym";
   }
+  if (whitelabel === "nautilus") {
+    name = "Naut";
+  }
   const shortId =
     entity.uniqueIdentifier.length > 6
       ? entity.uniqueIdentifier.substring(0, 6) + "..."
