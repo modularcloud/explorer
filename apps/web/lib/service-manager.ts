@@ -1040,7 +1040,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           ],
           getAssociated: async (entity: Entity) => {
             try {
-              const txIds = await fetch(`https://5i0kwsyeq8.execute-api.us-west-2.amazonaws.com/prod/${network.provider}/${network.id}`, {
+              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
                 method: "POST",
                 body: JSON.stringify({
                   method: "mc_getTransactionsByAddress",
@@ -1087,7 +1087,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           ],
           getAssociated: async (entity: Entity) => {
             try {
-              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`, {
+              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
                 method: "POST",
                 body: JSON.stringify({
                   method: "mc_getTransactionsByAddress",
