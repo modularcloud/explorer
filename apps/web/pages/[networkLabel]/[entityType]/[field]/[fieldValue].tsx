@@ -104,7 +104,7 @@ function EntityPage({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState(
-    entity.context.entityTypeName === "Transaction" ? "cards" : "table"
+    entity.context.entityTypeName === "Transaction" || entity.context.entityTypeName === "Account" ? "cards" : "table"
   );
   const swrResponse = useSWR(
     "/api/associated#" + entity.uniqueIdentifier,
