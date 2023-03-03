@@ -1,9 +1,37 @@
-import { getBalanceQueryData, getMessages, parseBalance, txStringToHash } from "service-manager";
+import {
+  getBalanceQueryData,
+  getMessages,
+  parseBalance,
+  txStringToHash,
+  ValueSchema,
+  ValueSchemaType,
+} from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
-import { DYMENSION_HUB, DYMENSION_ROLLAPP_X, CELESTIA_MOCHA } from "./network-names";
+import {
+  DYMENSION_HUB,
+  DYMENSION_ROLLAPP_X,
+  CELESTIA_MOCHA,
+} from "./network-names";
+import { z } from "zod";
+import Decimal from "decimal.js";
+import { isAddress } from "./search";
 
 export const ServiceManager = createServiceManager();
+
+export const RemoteServiceRequestSchema = z.object({
+  provider: z.literal("eclipse"),
+  name: z.string(),
+  id: z.string(),
+  endpoints: z.object({
+    evm: z.string().optional(),
+    svm: z.string().optional(),
+  }),
+});
+
+export const RemoteServiceResponseSchema = RemoteServiceRequestSchema.extend({
+  rpcId: z.string(),
+}).array();
 
 type JSONRPCResponse<T> = {
   jsonrpc: string;
@@ -121,7 +149,12 @@ type TxSearch = {
   total_count: string;
 };
 
-async function getBlockBy(queryType: "hash" | "height", queryValue: string, networkBase: string, networkName: string) {
+async function getBlockBy(
+  queryType: "hash" | "height",
+  queryValue: string,
+  networkBase: string,
+  networkName: string
+) {
   const baseUrl =
     queryType === "height"
       ? `${networkBase}/block?height=`
@@ -137,7 +170,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
     const blockEntity: Entity = {
       uniqueIdentifier: blockResponse.result.block_id.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: blockResponse.result.block.data.square_size ? {
+      metadata: buildMetadata(blockResponse.result.block.data.square_size ? {
         "Chain Id": blockResponse.result.block.header.chain_id,
         Height: blockResponse.result.block.header.height,
         Time: blockResponse.result.block.header.time,
@@ -148,7 +181,7 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
         Height: blockResponse.result.block.header.height,
         Time: blockResponse.result.block.header.time,
         Proposer: blockResponse.result.block.header.proposer_address,
-      },
+      }),
       computed: {},
       context: {
         network: networkName,
@@ -163,7 +196,11 @@ async function getBlockBy(queryType: "hash" | "height", queryValue: string, netw
   }
 }
 
-async function getTransactionByHash(hash: string, networkBase: string, networkName: string) {
+async function getTransactionByHash(
+  hash: string,
+  networkBase: string,
+  networkName: string
+) {
   try {
     const response = await fetch(
       `${networkBase}/tx?hash=${hash.toUpperCase()}`
@@ -178,17 +215,17 @@ async function getTransactionByHash(hash: string, networkBase: string, networkNa
     const txEntity: Entity = {
       uniqueIdentifier: txResponse.result.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: {
+      metadata: buildMetadata({
         Height: txResponse.result.height,
         Index: String(txResponse.result.index),
-        Status: txResponse.result.tx_result.code ? "Failed" : "Success",
+        Status: { type: "status", payload: !txResponse.result.tx_result.code },
         "Gas (used/wanted)":
           txResponse.result.tx_result.gas_used +
           "/" +
           txResponse.result.tx_result.gas_wanted,
-      },
+      }),
       computed: {
-        Messages
+        Messages,
       },
       context: {
         network: networkName,
@@ -202,7 +239,11 @@ async function getTransactionByHash(hash: string, networkBase: string, networkNa
   }
 }
 
-async function getTransactionsByHeight(height: string, networkBase: string, networkName: string) {
+async function getTransactionsByHeight(
+  height: string,
+  networkBase: string,
+  networkName: string
+) {
   try {
     const response = await fetch(
       `${networkBase}/tx_search?query="tx.height=${height}"`
@@ -217,15 +258,15 @@ async function getTransactionsByHeight(height: string, networkBase: string, netw
       const txEntity: Entity = {
         uniqueIdentifier: tx.hash,
         uniqueIdentifierLabel: "Hash",
-        metadata: {
+        metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: tx.tx_result.code ? "Failed" : "Success",
+          Status: { type: "status", payload: !tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
-        },
+        }),
         computed: {
-          Messages
+          Messages,
         },
         context: {
           network: networkName,
@@ -276,15 +317,15 @@ async function getTransactionsByAddress(address: string, networkName: string) {
       const txEntity: Entity = {
         uniqueIdentifier: tx.hash,
         uniqueIdentifierLabel: "Hash",
-        metadata: {
+        metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: tx.tx_result.code ? "Failed" : "Success",
+          Status: { type: "status", payload: !tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
-        },
+        }),
         computed: {
-          Messages
+          Messages,
         },
         context: {
           network: networkName,
@@ -320,19 +361,19 @@ async function getAccountByAddress(address: string, networkBase: string, network
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
-    metadata: {
+    metadata: buildMetadata({
       Spendable: `${balance} ${denom}`
-    },
+    }),
     computed: {},
     context: {
       network: networkName,
-      entityTypeName: "Account"
+      entityTypeName: "Account",
     },
-    raw: JSON.stringify({ address })
-  }
+    raw: JSON.stringify({ address }),
+  };
 }
 
-const CELESTIA_MOCHA_RPC = process.env.CELESTIA_MOCHA_RPC
+const CELESTIA_MOCHA_RPC = process.env.CELESTIA_MOCHA_RPC;
 if (CELESTIA_MOCHA_RPC) {
   ServiceManager.addNetwork({
     label: CELESTIA_MOCHA,
@@ -342,28 +383,50 @@ if (CELESTIA_MOCHA_RPC) {
         getters: [
           {
             field: "height",
-            getOne: (height: string) => getBlockBy("height", height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+            getOne: (height: string) =>
+              getBlockBy("height", height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
           },
-          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA) },
+          {
+            field: "hash",
+            getOne: (hash: string) =>
+              getBlockBy("hash", hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+          },
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), CELESTIA_MOCHA_RPC, CELESTIA_MOCHA)))).filter(notnull => notnull);
-        }
+          return (
+            await Promise.all(
+              data.result.block.data.txs.map(
+                async (tx) =>
+                  await getTransactionByHash(
+                    txStringToHash(tx).toUpperCase(),
+                    CELESTIA_MOCHA_RPC,
+                    CELESTIA_MOCHA
+                  )
+              )
+            )
+          ).filter((notnull) => notnull);
+        },
       },
       {
         name: "Transaction",
         getters: [
           {
             field: "hash",
-            getOne: (hash: string) => getTransactionByHash(hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+            getOne: (hash: string) =>
+              getTransactionByHash(hash, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
           },
           {
             field: "height",
-            getMany: (height: string) => getTransactionsByHeight(height, CELESTIA_MOCHA_RPC, CELESTIA_MOCHA),
+            getMany: (height: string) =>
+              getTransactionsByHeight(
+                height,
+                CELESTIA_MOCHA_RPC,
+                CELESTIA_MOCHA
+              ),
           },
         ],
-        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? [],
       },
     ],
   });
@@ -379,39 +442,58 @@ if (DYMENSION_HUB_RPC) {
         getters: [
           {
             field: "height",
-            getOne: (height: string) => getBlockBy("height", height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            getOne: (height: string) =>
+              getBlockBy("height", height, DYMENSION_HUB_RPC, DYMENSION_HUB),
           },
-          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_HUB_RPC, DYMENSION_HUB) },
+          {
+            field: "hash",
+            getOne: (hash: string) =>
+              getBlockBy("hash", hash, DYMENSION_HUB_RPC, DYMENSION_HUB),
+          },
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_HUB_RPC, DYMENSION_HUB)))).filter(notnull => notnull);
-        }
+          return (
+            await Promise.all(
+              data.result.block.data.txs.map(
+                async (tx) =>
+                  await getTransactionByHash(
+                    txStringToHash(tx).toUpperCase(),
+                    DYMENSION_HUB_RPC,
+                    DYMENSION_HUB
+                  )
+              )
+            )
+          ).filter((notnull) => notnull) as Entity[];
+        },
       },
       {
         name: "Transaction",
         getters: [
           {
             field: "hash",
-            getOne: (hash: string) => getTransactionByHash(hash, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            getOne: (hash: string) =>
+              getTransactionByHash(hash, DYMENSION_HUB_RPC, DYMENSION_HUB),
           },
           {
             field: "height",
-            getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            getMany: (height: string) =>
+              getTransactionsByHeight(height, DYMENSION_HUB_RPC, DYMENSION_HUB),
           },
         ],
-        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? [],
       },
       {
         name: "Account",
         getters: [
           {
             field: "address",
-            getOne: (address: string) => getAccountByAddress(address, DYMENSION_HUB_RPC, DYMENSION_HUB),
+            getOne: (address: string) =>
+              getAccountByAddress(address, DYMENSION_HUB_RPC, DYMENSION_HUB),
           },
         ],
         getAssociated: async (entity: Entity) => {
-          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB);
+          return (await getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB)) ?? [];
         }
       },
     ],
@@ -427,28 +509,64 @@ if (DYMENSION_ROLLAPP_X_RPC) {
         getters: [
           {
             field: "height",
-            getOne: (height: string) => getBlockBy("height", height, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getOne: (height: string) =>
+              getBlockBy(
+                "height",
+                height,
+                DYMENSION_ROLLAPP_X_RPC,
+                DYMENSION_ROLLAPP_X
+              ),
           },
-          { field: "hash", getOne: (hash: string) => getBlockBy("hash", hash, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X) },
+          {
+            field: "hash",
+            getOne: (hash: string) =>
+              getBlockBy(
+                "hash",
+                hash,
+                DYMENSION_ROLLAPP_X_RPC,
+                DYMENSION_ROLLAPP_X
+              ),
+          },
         ],
         getAssociated: async (entity: Entity) => {
           const data: JSONRPCResponse<Block> = JSON.parse(entity.raw);
-          return (await Promise.all(data.result.block.data.txs.map(async (tx) => await getTransactionByHash(txStringToHash(tx).toUpperCase(), DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X)))).filter(notnull => notnull);
-        }
+          return (
+            await Promise.all(
+              data.result.block.data.txs.map(
+                async (tx) =>
+                  await getTransactionByHash(
+                    txStringToHash(tx).toUpperCase(),
+                    DYMENSION_ROLLAPP_X_RPC,
+                    DYMENSION_ROLLAPP_X
+                  )
+              )
+            )
+          ).filter((notnull) => notnull);
+        },
       },
       {
         name: "Transaction",
         getters: [
           {
             field: "hash",
-            getOne: (hash: string) => getTransactionByHash(hash, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getOne: (hash: string) =>
+              getTransactionByHash(
+                hash,
+                DYMENSION_ROLLAPP_X_RPC,
+                DYMENSION_ROLLAPP_X
+              ),
           },
           {
             field: "height",
-            getMany: (height: string) => getTransactionsByHeight(height, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getMany: (height: string) =>
+              getTransactionsByHeight(
+                height,
+                DYMENSION_ROLLAPP_X_RPC,
+                DYMENSION_ROLLAPP_X
+              ),
           },
         ],
-        getAssociated: (entity: Entity) => entity.computed.Messages ?? []
+        getAssociated: (entity: Entity) => entity.computed.Messages ?? [],
       },
       {
         name: "Account",
@@ -464,5 +582,688 @@ if (DYMENSION_ROLLAPP_X_RPC) {
       }
     ],
   });
+}
 
+const EthBlockSchema = z.object({
+  difficulty: z.string(),
+  extraData: z.string(),
+  gasLimit: z.string(),
+  gasUsed: z.string(),
+  hash: z.string().nullable(),
+  logsBloom: z.string().nullable(),
+  miner: z.string(),
+  mixHash: z.string(),
+  nonce: z.string().nullable(),
+  number: z.string().nullable(),
+  parentHash: z.string(),
+  receiptsRoot: z.string(),
+  sha3Uncles: z.string(),
+  size: z.string(),
+  stateRoot: z.string(),
+  timestamp: z.string(),
+  totalDifficulty: z.string(),
+  transactions: z.string().array(),
+  transactionsRoot: z.string(),
+  uncles: z.string().array(),
+});
+
+const EthTransactionSchema = z.object({
+  blockHash: z.string().nullable(),
+  blockNumber: z.string().nullable(),
+  from: z.string(),
+  gas: z.string(),
+  gasPrice: z.string(),
+  hash: z.string(),
+  input: z.string(),
+  nonce: z.string(),
+  to: z.string().nullable(),
+  transactionIndex: z.string().nullable(),
+  value: z.string(),
+  type: z.string(),
+  chainId: z.string().optional(),
+  v: z.string(),
+  r: z.string(),
+  s: z.string(),
+});
+
+const EthTransactionReceiptSchema = z.object({
+  transactionHash: z.string(),
+  transactionIndex: z.coerce.number(),
+  type: z.coerce.number(),
+  blockHash: z.string(),
+  blockNumber: z.coerce.number(),
+  from: z.string(),
+  to: z.string().nullable(),
+  gasUsed: z.coerce.number(),
+  cumulativeGasUsed: z.coerce.number(),
+  contractAddress: z.string().nullable(),
+  logs: z
+    .object({
+      address: z.string(),
+      topics: z.string().array(),
+      data: z.string(),
+      blockNumber: z.coerce.number(),
+      transactionHash: z.string(),
+      transactionIndex: z.coerce.number(),
+      blockHash: z.string(),
+      logIndex: z.coerce.number(),
+      removed: z.boolean(),
+    })
+    .array(),
+  status: z.coerce.number(),
+  logsBloom: z.string(),
+});
+
+const SolRewardsSchema = z.object({
+  pubkey: z.string(),
+  lamports: z.number(),
+  postBalance: z.number(),
+  rewardType: z.string().optional(),
+  comission: z.number().optional(),
+});
+
+const SolBlockSchema = z.object({
+  blockHeight: z.number().nullable(),
+  blockTime: z.number().nullable(),
+  blockhash: z.string(),
+  parentSlot: z.number(),
+  previousBlockhash: z.string(),
+  signatures: z.string().array(),
+  rewards: SolRewardsSchema.array(),
+});
+
+const SolTokenBalanceSchema = z.object({
+  accountIndex: z.number(),
+  mint: z.string(),
+  owner: z.string().optional(),
+  programId: z.string().optional(),
+  uiTokenAmount: z.object({
+    amount: z.string(),
+    decimals: z.number(),
+    uiAmount: z.number().nullable(),
+    uiAmountString: z.string(),
+  }),
+});
+
+const SolInstructionSchema = z.object({
+  programIdIndex: z.number(),
+  accounts: z.number().array(),
+  data: z.string(),
+});
+
+const SolTransactionSchema = z.object({
+  blockTime: z.number().nullable(),
+  meta: z.object({
+    err: z.any(), // todo add schema
+    fee: z.number(),
+    innerInstructions: z
+      .object({
+        index: z.number(),
+        instructions: SolInstructionSchema.array(),
+      })
+      .array(),
+    postBalances: z.number().array(),
+    postTokenBalances: SolTokenBalanceSchema.array(),
+    preBalances: z.number().array(),
+    preTokenBalances: SolTokenBalanceSchema.array(),
+    rewards: SolRewardsSchema.array(),
+    status: z.any(), // deprecated
+    logMessages: z.string().array().nullish(),
+    returnData: z
+      .object({
+        programId: z.string(),
+        data: z.string(),
+      })
+      .optional(),
+    loadedAddresses: z
+      .object({
+        writeable: z.string().array().optional(),
+        readonly: z.string().array().optional(),
+      })
+      .optional(),
+    computeUnitsConsumed: z.number().optional(),
+  }),
+  slot: z.number(),
+  transaction: z.object({
+    message: z.object({
+      accountKeys: z.string().array(),
+      header: z.object({
+        numReadonlySignedAccounts: z.number(),
+        numReadonlyUnsignedAccounts: z.number(),
+        numRequiredSignatures: z.number(),
+      }),
+      instructions: SolInstructionSchema.array(),
+      recentBlockhash: z.string(),
+    }),
+    signatures: z.string().array(),
+  }),
+});
+
+function convertHex(str: string | null | undefined) {
+  if (!str) {
+    return null;
+  }
+
+  if (str.indexOf("0x") === 0) {
+    return String(Number(str));
+  }
+
+  return str;
+}
+
+async function getEVMBlockBy(
+  key: "hash" | "height",
+  value: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    const hexHeight = Number(value).toString(16);
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw =
+      key === "height"
+        ? JSON.stringify({
+            method: "eth_getBlockByNumber",
+            params: ["0x" + hexHeight, false],
+            id: 1,
+            jsonrpc: "2.0",
+          })
+        : JSON.stringify({
+            method: "eth_getBlockByHash",
+            params: ["0x" + value, false],
+            id: 1,
+            jsonrpc: "2.0",
+          });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+
+    const block = EthBlockSchema.parse(data.result);
+    return {
+      uniqueIdentifier: block.hash ?? key,
+      uniqueIdentifierLabel: key,
+      metadata: buildMetadata({
+        Height: convertHex(block.number),
+        Timestamp: new Date(Number(block.timestamp) * 1000)
+          .toUTCString()
+          .replace("GMT", "UTC"),
+        "Gas Used": convertHex(block.gasUsed),
+        "Gas Limit": convertHex(block.gasLimit),
+        Size:
+          convertHex(block.size) +
+          (Number(block.size) === 1 ? " byte" : " bytes"),
+        "Fee Recipient": block.miner,
+        //"Extra Data": block.extraData
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Block",
+      },
+      computed: {},
+      raw: JSON.stringify(block),
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+function buildMetadata(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
+  const metadata: { [key: string]: ValueSchemaType } = {};
+
+  Object.entries(obj).forEach((entry) => {
+    if (typeof entry[1] === "number" || typeof entry[1] === "string") {
+      metadata[entry[0]] = { type: "string", payload: String(entry[1]) };
+    } else {
+      try{
+        metadata[entry[0]] = ValueSchema.parse(entry[1])
+      } catch {}
+    }
+  });
+
+  return metadata;
+}
+
+async function getEVMTransactionByHash(
+  hash: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "eth_getTransactionByHash",
+      params: [prefixedHash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const tx = EthTransactionSchema.parse(data.result);
+
+    var raw = JSON.stringify({
+      method: "eth_getTransactionReceipt",
+      params: [prefixedHash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const receiptData = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
+    return {
+      uniqueIdentifier: tx.hash,
+      uniqueIdentifierLabel: "hash",
+      metadata: buildMetadata({
+        Height: convertHex(tx.blockNumber),
+        From: tx.from,
+        To: tx.to,
+        //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
+        "Gas Price": new Decimal(tx.gasPrice)
+          .dividedBy("1000000000000000000")
+          .toFixed(),
+        Status: { type: "status", payload: receipt.status },
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Transaction",
+      },
+      computed: {
+        Receipt: receipt,
+      },
+      raw: JSON.stringify(tx),
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+async function getSVMBlockBySlot(
+  slot: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "getBlock",
+      params: [Number(slot), { transactionDetails: "signatures" }],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const block = SolBlockSchema.parse(data.result);
+    return {
+      uniqueIdentifier: block.blockhash,
+      uniqueIdentifierLabel: "hash",
+      metadata: buildMetadata({
+        Slot: slot,
+        Time: block.blockTime && new Date(block.blockTime).toTimeString(),
+        "Parent Slot": block.parentSlot,
+        "Previous Blockhash": block.previousBlockhash,
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Block",
+      },
+      computed: {},
+      raw: JSON.stringify(block),
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function getSVMTransactionBySignature(
+  signature: string,
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      method: "getTransaction",
+      params: [signature],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const data = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const tx = SolTransactionSchema.parse(data.result);
+    return {
+      uniqueIdentifier: signature,
+      uniqueIdentifierLabel: "signature",
+      metadata: buildMetadata({
+        Slot: tx.slot,
+        Signer: tx.transaction.signatures[0],
+        Fee: tx.meta.fee,
+      }),
+      context: {
+        network: networkName,
+        entityTypeName: "Transaction",
+      },
+      computed: {},
+      raw: JSON.stringify(tx),
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
+  const EVM = network.endpoints.evm;
+  const SVM = network.endpoints.svm;
+  const needsPrefix = EVM && SVM;
+  if (EVM) {
+    ServiceManager.addNetwork({
+      label: network.name,
+      entityTypes: [
+        {
+          name: needsPrefix ? "EVM Block" : "Block",
+          getters: [
+            {
+              field: "height",
+              getOne: (height: string) =>
+                getEVMBlockBy("height", height, EVM, network.name),
+            },
+            {
+              field: "hash",
+              getOne: (hash: string) =>
+                getEVMBlockBy("hash", hash, EVM, network.name),
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const block = EthBlockSchema.parse(JSON.parse(entity.raw));
+              return (
+                await Promise.all(
+                  block.transactions.map(
+                    async (tx) =>
+                      await getEVMTransactionByHash(tx, EVM, network.name)
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: needsPrefix ? "EVM Account" : "Account",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                if(!isAddress(address)) {
+                  return null;
+                }
+                return {
+                  uniqueIdentifier: address,
+                  uniqueIdentifierLabel: "address",
+                  metadata: buildMetadata({
+                    Balances: "Coming soon"
+                  }),
+                  context: {
+                    network: network.name,
+                    entityTypeName: needsPrefix ? "EVM Account" : "Account",
+                  },
+                  computed: {},
+                  raw: ""
+                }
+              },
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
+                method: "POST",
+                body: JSON.stringify({
+                  method: "mc_getTransactionsByAddress",
+                  params: [entity.uniqueIdentifier]
+                })
+              }).then((res) => res.json() );
+              return (
+                await Promise.all(
+                  txIds.result.txs.map(
+                    async (tx: any) =>
+                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: "Contract",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                if(!isAddress(address)) {
+                  return null;
+                }
+                return {
+                  uniqueIdentifier: address,
+                  uniqueIdentifierLabel: "address",
+                  metadata: buildMetadata({
+                    Balances: "Coming soon"
+                  }),
+                  context: {
+                    network: network.name,
+                    entityTypeName: "Contract",
+                  },
+                  computed: {},
+                  raw: ""
+                }
+              },
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
+                method: "POST",
+                body: JSON.stringify({
+                  method: "mc_getTransactionsByAddress",
+                  params: [entity.uniqueIdentifier]
+                })
+              }).then((res) => res.json() );
+              return (
+                await Promise.all(
+                  txIds.result.txs.map(
+                    async (tx: any) =>
+                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: needsPrefix ? "EVM Transaction" : "Transaction",
+          getters: [
+            {
+              field: "hash",
+              getOne: (hash: string) =>
+                getEVMTransactionByHash(hash, EVM, network.name),
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const receipt = EthTransactionReceiptSchema.parse(
+                entity.computed.Receipt
+              );
+              if(!EthTransactionSchema.parse(JSON.parse(entity.raw)).to) {
+                return [
+                  {
+                    uniqueIdentifier: String(receipt.contractAddress),
+                    uniqueIdentifierLabel: "address",
+                    metadata: buildMetadata({
+                      Event: "Contract Created"
+                    }),
+                    computed: {},
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Contract",
+                    },
+                    raw: "",
+                  }
+                ];
+              }
+              return Promise.all(receipt.logs.map(async (log) => {
+                const results = await fetch(`https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`).then((res) => res.json());
+                const name = results?.result?.event?.[log.topics[0]]?.[0]?.name ?? log.topics[0];
+                return {
+                  uniqueIdentifier: name,
+                  uniqueIdentifierLabel: "event",
+                  metadata: buildMetadata({
+                    Address: log.address,
+                    Topics: { type: "list", payload: log.topics },
+                    Data: log.data,
+                  }),
+                  computed: {},
+                  context: {
+                    network: "N/A", // TODO handle differently
+                    entityTypeName: "Log",
+                  },
+                  raw: JSON.stringify(log),
+                };
+              }));
+            } catch(e) {
+              console.log(e)
+              return [];
+            }
+          },
+        },
+      ],
+    });
+  }
+  if (SVM) {
+    ServiceManager.addNetwork({
+      label: network.name,
+      entityTypes: [
+        {
+          name: needsPrefix ? "SVM Block" : "Block",
+          getters: [
+            {
+              field: "slot",
+              getOne: (slot: string) =>
+                getSVMBlockBySlot(slot, SVM, network.name),
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const block = SolBlockSchema.parse(JSON.parse(entity.raw));
+              return (
+                await Promise.all(
+                  block.signatures.map(
+                    async (signature) =>
+                      await getSVMTransactionBySignature(
+                        signature,
+                        SVM,
+                        network.name
+                      )
+                  )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: needsPrefix ? "SVM Transaction" : "Transaction",
+          getters: [
+            {
+              field: "signature",
+              getOne: (signature: string) =>
+                getSVMTransactionBySignature(signature, SVM, network.name),
+            },
+          ],
+          getAssociated: async (entity: Entity) => [],
+        },
+      ],
+    });
+  }
+}
+
+addRemote({
+  provider: "eclipse",
+  name: "Ethereum",
+  id: "ethereum",
+  endpoints: {
+    evm: "https://rpc.ankr.com/eth"
+  }
+})
+addRemote({
+  provider: "eclipse",
+  name: "Solana",
+  id: "solana",
+  endpoints: {
+    svm: process.env.SOLANA_RPC ?? ""
+  }
+})
+
+export async function loadDynamicNetworks() {
+  const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;
+  if (ADD_NETWORK_ENDPOINT) {
+    await fetch(ADD_NETWORK_ENDPOINT + "/chain-config")
+      .then((res) => res.json())
+      .then((configs) =>
+        configs.result.forEach((config: any) => addRemote(config))
+      );
+  }
 }

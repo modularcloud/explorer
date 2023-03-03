@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { slugify } from 'service-manager';
 import { getEntity } from 'service-manager/types/network.type';
-import { isAddress, isHash, isHeight } from '../../../../lib/search';
-import { ServiceManager } from '../../../../lib/service-manager';
+import { isAddress, isHash, isHeight, isSignature } from '../../../../lib/search';
+import { loadDynamicNetworks, ServiceManager } from '../../../../lib/service-manager';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { networkLabel, fieldValue } = req.query;
@@ -11,9 +12,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (typeof fieldValue !== "string") {
         return res.status(404).end()
     }
+    
+    await loadDynamicNetworks();
     const network = ServiceManager.getNetwork(networkLabel);
     if (!network) {
         return res.status(404).end();
+    }
+
+    // Try signature
+    if(isSignature(fieldValue)) {
+        // Try transaction
+        const transaction = await getEntity(network, "transaction", "signature", fieldValue);
+        if (transaction) {
+            res.json({
+                path: `/${networkLabel}/transaction/signature/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
+
+        // Try svm transaction
+        const svmTransaction = await getEntity(network, "svm-transaction", "signature", fieldValue);
+        if (svmTransaction) {
+            res.json({
+                path: `/${networkLabel}/svm-transaction/signature/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
     }
 
     // Try address
@@ -29,10 +53,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Try height
     if (isHeight(fieldValue)) {
-        const block = await getEntity(network, "block", "height", fieldValue);
-        if (block) {
+        // Try height
+        const hBlock = await getEntity(network, "block", "height", fieldValue);
+        if (hBlock) {
             res.json({
                 path: `/${networkLabel}/block/height/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
+
+        // Try height - with evm
+        const heBlock = await getEntity(network, "evm-block", "height", fieldValue);
+        if (heBlock) {
+            res.json({
+                path: `/${networkLabel}/evm-block/height/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
+
+        // Try slot
+        const sBlock = await getEntity(network, "block", "slot", fieldValue);
+        if (sBlock) {
+            res.json({
+                path: `/${networkLabel}/block/slot/${fieldValue}`,
+            })
+            return res.status(200).end();
+        }
+
+        // Try slot - with svm
+        const ssBlock = await getEntity(network, "svm-block", "slot", fieldValue);
+        if (ssBlock) {
+            res.json({
+                path: `/${networkLabel}/svm-block/slot/${fieldValue}`,
             })
             return res.status(200).end();
         }

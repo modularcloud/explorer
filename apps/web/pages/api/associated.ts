@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ServiceManager } from "../../lib/service-manager";
+import { loadDynamicNetworks, ServiceManager } from "../../lib/service-manager";
 import { getAssociated } from "service-manager/types/network.type";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -14,6 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).end()
       }
 
+      await loadDynamicNetworks();
       const network = ServiceManager.getNetwork(networkLabel);
       if (!network) {
         return res.status(404).end();

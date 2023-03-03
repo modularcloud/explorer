@@ -6,7 +6,7 @@ type Props = {
 };
 
 export function Badge({ list, long }: Props) {
-    const count = list.length;
+    const count = list?.length ?? 0;
     const hasExtra = count > 1;
 
     if(count === 0) {

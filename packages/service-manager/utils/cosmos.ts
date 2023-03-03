@@ -5,6 +5,7 @@ import { defaultRegistryTypes } from "@cosmjs/stargate";
 import { MalleatedTx, MsgPayForBlobs } from "../proto/celestia";
 import { Entity } from "../types/entity.type";
 import { QueryBalanceRequest, QueryBalanceResponse } from "../proto/cosmos";
+import { ValueSchemaType } from "../types/valueschema.type";
 
 function fixCapsAndSpacing(camel: string): string {
   const letters = camel.split("");
@@ -32,21 +33,26 @@ function convertToName(typeUrl: string): string {
   return (typeUrl.indexOf("ibc") !== -1 ? "IBC " : "") + fixCapsAndSpacing(name);
 }
 
-function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: string } {
-  const KV: { [key: string]: string } = {};
+function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
+  const KV: { [key: string]: ValueSchemaType } = {};
   Object.entries(obj).forEach((entry) => {
+    // we are converting the way amount is display, this occurs only when the value is an object or array
+    const isAmount = entry[0] === "amount";
 
-    if (typeof entry[1] === "object") {
-      if (entry[0] == "amount") {
-        KV[fixCapsAndSpacing(entry[0])] = getAmountString(entry[1])
+    if(Array.isArray(entry[1])) {
+      KV[fixCapsAndSpacing(entry[0])] = { type: "list", payload: entry[1].map(val => isAmount ? getAmountString(val) : String(val)) }
+    } else if (typeof entry[1] === "object") {
+      if(isAmount) {
+        KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: getAmountString(entry[1]) };
       } else {
-        // Flatten nested objects into top level keys
+        let properties = { type: "list" as "list", payload: [] as string[] }
         Object.entries(entry[1]).forEach((subentry) => {
-          KV[`${fixCapsAndSpacing(entry[0])} ${fixCapsAndSpacing(subentry[0])}`] = String(subentry[1]);
+          properties.payload.push(`${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`)
         });
+        KV[fixCapsAndSpacing(entry[0])] = properties;
       }
     } else {
-      KV[fixCapsAndSpacing(entry[0])] = String(entry[1]);
+      KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: String(entry[1]) };
     }
   });
   return KV;
@@ -126,7 +132,7 @@ export function getMessages(txstr: string): Entity[] {
         uniqueIdentifier: "Unknown",
         uniqueIdentifierLabel: "Type",
         metadata: {
-          index: String(index)
+          index: { type: "string", payload: String(index) }
         },
         computed: {},
         context: {

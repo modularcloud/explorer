@@ -7,7 +7,7 @@ type GetManyFn = (query: string) => Promise<Entity[]>;
 type EntityType = {
   name: string;
   getters: { field: string; getOne?: GetOneFn; getMany?: GetManyFn }[];
-  getAssociated: (entity: Entity) => Entity[]
+  getAssociated: (entity: Entity) => Promise<Entity[]>
 };
 
 export type Network = {

@@ -16,7 +16,11 @@
         "WHITELABEL",
         "CELESTIA_MOCHA_RPC",
         "DYMENSION_HUB_RPC",
-        "DYMENSION_ROLLAPP_X_RPC"
+        "DYMENSION_ROLLAPP_X_RPC",
+        "ADD_NETWORK_PASS",
+        "ADD_NETWORK_ENDPOINT",
+        "EVM_CHAIN_DATA_SERVICE",
+        "SOLANA_RPC"
       ]
     }
   }

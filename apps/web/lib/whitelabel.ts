@@ -1,1 +1,1 @@
-export const Whitelabel = process.env.WHITELABEL;
+export const Whitelabel = process.env.WHITELABEL ?? null;

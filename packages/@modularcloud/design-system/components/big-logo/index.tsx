@@ -2,17 +2,11 @@ import clsx from "clsx";
 
 interface Props {
   mode: "light" | "dark";
-  whitelabel?: string;
+  name?: string;
 }
 
-export function BigLogo({ mode, whitelabel }: Props) {
-  let name = "Explorer";
-  if(whitelabel === "celestia") {
-    name = "Celestia";
-  }
-  if(whitelabel === "dymension") {
-    name = "Dym"
-  }
+export function BigLogo({ mode, name = "Explorer" }: Props) {
+  let match: RegExpMatchArray | null = name.match(/^(\w+)Scan$/);
   return (
     <div className="text-center">
       <span
@@ -24,7 +18,7 @@ export function BigLogo({ mode, whitelabel }: Props) {
       >
         Modular Cloud
       </span>
-      <div className="font-logo font-[700] text-[2.5rem] leading-[3rem]">{name}{whitelabel ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div>
+      <div className="font-logo font-[700] text-[2.5rem] leading-[3rem]">{ match ? match[1] : name }{match ? <span className="bg-gradient-to-r from-ocean to-royal bg-clip-text text-transparent">Scan</span> : null}</div>
     </div>
   );
 }
