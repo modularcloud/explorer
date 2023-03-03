@@ -40,7 +40,7 @@ export const getSearchOptions = async () => {
         ]
     } else {
         return [
-            Whitelabel === "dev" ? {
+            ...(Whitelabel === "dev" ? [{
                 label: "Dev",
                 options: [
                     {
@@ -52,7 +52,10 @@ export const getSearchOptions = async () => {
                         value: "Solana",
                     },
                 ]
-            } : null,
+            }, {
+                label: "Eclipse",
+                options: await fetch(process.env.ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((json) => json.result.map((network: any) => { return { name: network.name, value: network.name } }))
+            }] : []),
             {
                 label: "Celestia",
                 options: [
@@ -61,10 +64,6 @@ export const getSearchOptions = async () => {
                         value: CELESTIA_MOCHA,
                     },
                 ],
-            },
-            {
-                label: "Eclipse",
-                options: await fetch(process.env.ADD_NETWORK_ENDPOINT + "/chain-config").then((res) => res.json()).then((json) => json.result.map((network: any) => { return { name: network.name, value: network.name } }))
             },
             {
                 label: "Dymension",
@@ -79,6 +78,6 @@ export const getSearchOptions = async () => {
                     },
                 ],
             },
-        ].filter(notnull => notnull);
+        ];
     }
 }
