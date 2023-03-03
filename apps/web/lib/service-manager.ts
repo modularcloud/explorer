@@ -50,8 +50,8 @@ type ABCIResponse = {
     proofOps: any;
     height: string;
     codespace: string;
-  };
-};
+  }
+}
 
 type Block = {
   block_id: {
@@ -170,18 +170,18 @@ async function getBlockBy(
     const blockEntity: Entity = {
       uniqueIdentifier: blockResponse.result.block_id.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: buildMetadata(blockResponse.result.block.data.square_size
-        ? {
-            Height: blockResponse.result.block.header.height,
-            Time: blockResponse.result.block.header.time,
-            "Square Size": blockResponse.result.block.data.square_size,
-            Proposer: blockResponse.result.block.header.proposer_address,
-          }
-        : {
-            Height: blockResponse.result.block.header.height,
-            Time: blockResponse.result.block.header.time,
-            Proposer: blockResponse.result.block.header.proposer_address,
-          }),
+      metadata: buildMetadata(blockResponse.result.block.data.square_size ? {
+        "Chain Id": blockResponse.result.block.header.chain_id,
+        Height: blockResponse.result.block.header.height,
+        Time: blockResponse.result.block.header.time,
+        "Square Size": blockResponse.result.block.data.square_size,
+        Proposer: blockResponse.result.block.header.proposer_address,
+      } : {
+        "Chain Id": blockResponse.result.block.header.chain_id,
+        Height: blockResponse.result.block.header.height,
+        Time: blockResponse.result.block.header.time,
+        Proposer: blockResponse.result.block.header.proposer_address,
+      }),
       computed: {},
       context: {
         network: networkName,
@@ -218,7 +218,7 @@ async function getTransactionByHash(
       metadata: buildMetadata({
         Height: txResponse.result.height,
         Index: String(txResponse.result.index),
-        Status: { type: "status", payload: txResponse.result.tx_result.code },
+        Status: { type: "status", payload: !txResponse.result.tx_result.code },
         "Gas (used/wanted)":
           txResponse.result.tx_result.gas_used +
           "/" +
@@ -261,7 +261,7 @@ async function getTransactionsByHeight(
         metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: { type: "status", payload: tx.tx_result.code },
+          Status: { type: "status", payload: !tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
         }),
@@ -281,29 +281,37 @@ async function getTransactionsByHeight(
   }
 }
 
-async function getTransactionsByAddress(
-  address: string,
-  networkBase: string,
-  networkName: string
-) {
+async function getTransactionsByAddress(address: string, networkName: string) {
   try {
-    const sendResponse = await fetch(
-      `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
-    );
-    const receiveResponse = await fetch(
-      `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
-    );
-    if (!sendResponse.ok) {
-      throw Error(
-        `Response code ${sendResponse.status}: ${sendResponse.statusText}`
+    let sendResponse, receiveResponse
+    if (DYMENSION_HUB == networkName) {
+      sendResponse = await fetch(
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
       );
+      receiveResponse = await fetch(
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
+      );
+      if (!sendResponse.ok) {
+        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+      }
+    } else if (DYMENSION_ROLLAPP_X == networkName) {
+      sendResponse = await fetch(
+        // make api return all results in single response for now
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+      );
+      receiveResponse = await fetch(
+        // make api return all results in single response for now
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+      );
+      if (!sendResponse.ok) {
+        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+      }
+    } else {
+      return null
     }
     const sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
-    const receiveTxs =
-      (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
-    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort(
-      (a, b) => Number(a.height) - Number(b.height)
-    );
+    const receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
+    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort((a, b) => Number(b.height) - Number(a.height));
     return allTxs.map((tx) => {
       const Messages = getMessages(tx.tx);
       const txEntity: Entity = {
@@ -312,7 +320,7 @@ async function getTransactionsByAddress(
         metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: { type: "status", payload: tx.tx_result.code },
+          Status: { type: "status", payload: !tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
         }),
@@ -332,26 +340,29 @@ async function getTransactionsByAddress(
   }
 }
 
-async function getAccountByAddress(
-  address: string,
-  networkBase: string,
-  networkName: string
-) {
-  if (!address.match(/^dym\w{39}$/)) {
+async function getAccountByAddress(address: string, networkBase: string, networkName: string) {
+  let queryInput, denom
+  if (address.match(/^dym\w{39}$/)) {
+    // dymension hub
+    const data = getBalanceQueryData(address, "udym");
+    queryInput = `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
+    denom = "DYM"
+  } else if (address.match(/^rol\w{39}$/)) {
+    // dymension rollappX
+    const data = getBalanceQueryData(address, "urax");
+    queryInput = `https://rpc-rollappx-35c.dymension.xyz/abci_query?path=/cosmos.bank.v1beta1.Query/Balance&data=${data}&height=0&prove=false`;
+    denom = "RAX"
+  } else {
     return null;
   }
-  const data = getBalanceQueryData(address, "udym");
-  const response = await fetch(
-    `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`
-  );
-  const json = (await response.json()) as JSONRPCResponse<ABCIResponse>;
-  const balance =
-    (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
+  const response = await fetch(queryInput);
+  const json = await response.json() as JSONRPCResponse<ABCIResponse>;
+  const balance = (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
     metadata: buildMetadata({
-      Spendable: `${balance} DYM`,
+      Spendable: `${balance} ${denom}`
     }),
     computed: {},
     context: {
@@ -482,12 +493,8 @@ if (DYMENSION_HUB_RPC) {
           },
         ],
         getAssociated: async (entity: Entity) => {
-          return getTransactionsByAddress(
-            entity.uniqueIdentifier,
-            DYMENSION_HUB_RPC,
-            DYMENSION_HUB
-          );
-        },
+          return (await getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB)) ?? [];
+        }
       },
     ],
   });
@@ -561,6 +568,18 @@ if (DYMENSION_ROLLAPP_X_RPC) {
         ],
         getAssociated: (entity: Entity) => entity.computed.Messages ?? [],
       },
+      {
+        name: "Account",
+        getters: [
+          {
+            field: "address",
+            getOne: (address: string) => getAccountByAddress(address, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+          },
+        ],
+        getAssociated: async (entity: Entity) => {
+          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_ROLLAPP_X);
+        }
+      }
     ],
   });
 }

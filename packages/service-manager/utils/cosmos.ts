@@ -36,14 +36,21 @@ function convertToName(typeUrl: string): string {
 function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
   const KV: { [key: string]: ValueSchemaType } = {};
   Object.entries(obj).forEach((entry) => {
+    // we are converting the way amount is display, this occurs only when the value is an object or array
+    const isAmount = entry[0] === "amount";
+
     if(Array.isArray(entry[1])) {
-      KV[fixCapsAndSpacing(entry[0])] = { type: "list", payload: entry[1].map(val => String(val)) }
+      KV[fixCapsAndSpacing(entry[0])] = { type: "list", payload: entry[1].map(val => isAmount ? getAmountString(val) : String(val)) }
     } else if (typeof entry[1] === "object") {
-      let properties = { type: "list" as "list", payload: [] as string[] }
-      Object.entries(entry[1]).forEach((subentry) => {
-        properties.payload.push(`${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`)
-      });
-      KV[fixCapsAndSpacing(entry[0])] = properties;
+      if(isAmount) {
+        KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: getAmountString(entry[1]) };
+      } else {
+        let properties = { type: "list" as "list", payload: [] as string[] }
+        Object.entries(entry[1]).forEach((subentry) => {
+          properties.payload.push(`${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`)
+        });
+        KV[fixCapsAndSpacing(entry[0])] = properties;
+      }
     } else {
       KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: String(entry[1]) };
     }
@@ -51,11 +58,31 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: ValueS
   return KV;
 }
 
+// amount has schema:
+// "amount": [ { denom: 'udym', amount: '6000000' } ]
+// or
+// "amount": { denom: 'udym', amount: '6000000' }
+function getAmountString(obJ: any) : string {
+  let denom = obJ[0]?.denom ?? obJ.denom;
+  let amount = obJ[0]?.amount ?? obJ.amount;
+
+  if(!denom || !amount) {
+    return "Unknown";
+  }
+  
+  if(denom === "udym") {
+    denom = "DYM";
+    amount = String(Number(amount) / 1000000)
+  }
+  
+  return amount + " " + denom
+}
+
 export function txStringToHash(txstr: string) {
   let raw = fromBase64(txstr);
   try {
     decodeTxRaw(raw); // detecting if normal transaction, if PFB it catches
-  } catch { 
+  } catch {
     raw = MalleatedTx.decode(raw).tx;
   }
 
