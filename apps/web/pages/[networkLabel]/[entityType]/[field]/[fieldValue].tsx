@@ -1,6 +1,7 @@
 import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
+import { ValueSchemaType } from "service-manager";
 import { getEntities, getEntity } from "service-manager/types/network.type";
 import { loadDynamicNetworks, ServiceManager } from "../../../../lib/service-manager";
 import { useRouter } from "next/router";
@@ -30,7 +31,7 @@ import Script from "next/script";
 interface PanelProps {
   classes: string;
   id: string;
-  metadata: { [key: string]: string };
+  metadata: { [key: string]: ValueSchemaType };
   img: string;
   context: {
     network: string;
@@ -48,7 +49,6 @@ const EntityPanel = ({ classes, id, metadata, context, img }: PanelProps) => (
     />
     <KeyValueList
       header={`${context.entityTypeName} Information`}
-      entryLabels={Object.keys(metadata)}
       entries={Object.entries(metadata)}
     />
   </RightPanel>
@@ -260,7 +260,6 @@ function EntityPage({
                   }
                 >
                   <KeyValueList
-                    entryLabels={Object.keys(entity.metadata)}
                     entries={Object.entries(entity.metadata)}
                   />
                 </Card>

@@ -20,6 +20,7 @@
     "@cosmjs/proto-signing": "^0.29.5",
     "@cosmjs/stargate": "^0.29.5",
     "slugify": "^1.6.5",
-    "ts-proto": "^1.139.0"
+    "ts-proto": "^1.139.0",
+    "zod": "^3.20.6"
   }
 }

@@ -3,6 +3,8 @@ import {
   getMessages,
   parseBalance,
   txStringToHash,
+  ValueSchema,
+  ValueSchemaType,
 } from "service-manager";
 import { createServiceManager } from "service-manager/manager";
 import { Entity } from "service-manager/types/entity.type";
@@ -11,7 +13,7 @@ import {
   DYMENSION_ROLLAPP_X,
   CELESTIA_MOCHA,
 } from "./network-names";
-import { any, z } from "zod";
+import { z } from "zod";
 import Decimal from "decimal.js";
 import { isAddress } from "./search";
 
@@ -168,7 +170,7 @@ async function getBlockBy(
     const blockEntity: Entity = {
       uniqueIdentifier: blockResponse.result.block_id.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: blockResponse.result.block.data.square_size
+      metadata: buildMetadata(blockResponse.result.block.data.square_size
         ? {
             Height: blockResponse.result.block.header.height,
             Time: blockResponse.result.block.header.time,
@@ -179,7 +181,7 @@ async function getBlockBy(
             Height: blockResponse.result.block.header.height,
             Time: blockResponse.result.block.header.time,
             Proposer: blockResponse.result.block.header.proposer_address,
-          },
+          }),
       computed: {},
       context: {
         network: networkName,
@@ -213,15 +215,15 @@ async function getTransactionByHash(
     const txEntity: Entity = {
       uniqueIdentifier: txResponse.result.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: {
+      metadata: buildMetadata({
         Height: txResponse.result.height,
         Index: String(txResponse.result.index),
-        Status: txResponse.result.tx_result.code ? "Failed" : "Success",
+        Status: { type: "status", payload: txResponse.result.tx_result.code },
         "Gas (used/wanted)":
           txResponse.result.tx_result.gas_used +
           "/" +
           txResponse.result.tx_result.gas_wanted,
-      },
+      }),
       computed: {
         Messages,
       },
@@ -256,13 +258,13 @@ async function getTransactionsByHeight(
       const txEntity: Entity = {
         uniqueIdentifier: tx.hash,
         uniqueIdentifierLabel: "Hash",
-        metadata: {
+        metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: tx.tx_result.code ? "Failed" : "Success",
+          Status: { type: "status", payload: tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
-        },
+        }),
         computed: {
           Messages,
         },
@@ -307,13 +309,13 @@ async function getTransactionsByAddress(
       const txEntity: Entity = {
         uniqueIdentifier: tx.hash,
         uniqueIdentifierLabel: "Hash",
-        metadata: {
+        metadata: buildMetadata({
           Height: tx.height,
           Index: String(tx.index),
-          Status: tx.tx_result.code ? "Failed" : "Success",
+          Status: { type: "status", payload: tx.tx_result.code },
           "Gas (used/wanted)":
             tx.tx_result.gas_used + "/" + tx.tx_result.gas_wanted,
-        },
+        }),
         computed: {
           Messages,
         },
@@ -348,9 +350,9 @@ async function getAccountByAddress(
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
-    metadata: {
+    metadata: buildMetadata({
       Spendable: `${balance} DYM`,
-    },
+    }),
     computed: {},
     context: {
       network: networkName,
@@ -451,7 +453,7 @@ if (DYMENSION_HUB_RPC) {
                   )
               )
             )
-          ).filter((notnull) => notnull);
+          ).filter((notnull) => notnull) as Entity[];
         },
       },
       {
@@ -796,12 +798,16 @@ async function getEVMBlockBy(
   }
 }
 
-function buildMetadata(obj: { [key: string]: any }): { [key: string]: string } {
-  const metadata: { [key: string]: string } = {};
+function buildMetadata(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
+  const metadata: { [key: string]: ValueSchemaType } = {};
 
   Object.entries(obj).forEach((entry) => {
     if (typeof entry[1] === "number" || typeof entry[1] === "string") {
-      metadata[entry[0]] = String(entry[1]);
+      metadata[entry[0]] = { type: "string", payload: String(entry[1]) };
+    } else {
+      try{
+        metadata[entry[0]] = ValueSchema.parse(entry[1])
+      } catch {}
     }
   });
 
@@ -865,7 +871,7 @@ async function getEVMTransactionByHash(
         "Gas Price": new Decimal(tx.gasPrice)
           .dividedBy("1000000000000000000")
           .toFixed(),
-        Status: receipt.status,
+        Status: { type: "status", payload: receipt.status },
       }),
       context: {
         network: networkName,
@@ -1025,9 +1031,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
-                  metadata: {
+                  metadata: buildMetadata({
                     Balances: "Coming soon"
-                  },
+                  }),
                   context: {
                     network: network.name,
                     entityTypeName: needsPrefix ? "EVM Account" : "Account",
@@ -1072,9 +1078,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
-                  metadata: {
+                  metadata: buildMetadata({
                     Balances: "Coming soon"
-                  },
+                  }),
                   context: {
                     network: network.name,
                     entityTypeName: "Contract",
@@ -1126,9 +1132,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   {
                     uniqueIdentifier: String(receipt.contractAddress),
                     uniqueIdentifierLabel: "address",
-                    metadata: {
+                    metadata: buildMetadata({
                       Event: "Contract Created"
-                    },
+                    }),
                     computed: {},
                     context: {
                       network: network.name,
@@ -1144,11 +1150,11 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 return {
                   uniqueIdentifier: name,
                   uniqueIdentifierLabel: "event",
-                  metadata: {
+                  metadata: buildMetadata({
                     Address: log.address,
-                    Topics: log.topics.join(", "),
+                    Topics: { type: "list", payload: log.topics },
                     Data: log.data,
-                  },
+                  }),
                   computed: {},
                   context: {
                     network: "N/A", // TODO handle differently
