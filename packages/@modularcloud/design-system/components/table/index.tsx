@@ -39,7 +39,9 @@ export function Table({ data, router }: Props) {
     return null;
   }
   const type = data[0].context.entityTypeName;
-  const isNotCosmos = !data[0].context.network.toLowerCase().match(/(^hub$)|rollapp|dymension|mocha/);
+  const isNotCosmos = !data[0].context.network
+    .toLowerCase()
+    .match(/(^hub$)|rollapp|dymension|mocha/);
   const filterData = data.filter(
     (entity) => entity.context.entityTypeName === type
   );
@@ -65,7 +67,9 @@ export function Table({ data, router }: Props) {
       };
     } else {
       const height = data[0].metadata.Height.payload;
-      const differentHeight = !!data.find(entity => entity.metadata.Height.payload !== height );
+      const differentHeight = !!data.find(
+        (entity) => entity.metadata.Height.payload !== height
+      );
       section = {
         rows: filterData,
         label: "Transactions",
@@ -75,7 +79,10 @@ export function Table({ data, router }: Props) {
             isIcon: true,
             showOnXS: true,
             getCell: (entity: Entity) => (
-              <Status status={Boolean(entity.metadata.Status.payload)} mode="icon" />
+              <Status
+                status={Boolean(entity.metadata.Status.payload)}
+                mode="icon"
+              />
             ),
           },
           {
@@ -84,11 +91,13 @@ export function Table({ data, router }: Props) {
             isPrimaryKey: true,
             getCell: (entity: Entity) => entity.uniqueIdentifier,
           },
-          differentHeight ? {
-            id: "height",
-            header: "Height",
-            getCell: (entity: Entity) => entity.metadata.Height.payload
-          } : null,
+          differentHeight
+            ? {
+                id: "height",
+                header: "Height",
+                getCell: (entity: Entity) => entity.metadata.Height.payload,
+              }
+            : null,
           {
             id: "type",
             header: "Type",
@@ -114,7 +123,7 @@ export function Table({ data, router }: Props) {
             isIcon: true,
             getCell: (entity: Entity) => <ElipsHorizOff />,
           },
-        ].filter(notnull => notnull) as EntityColumn<any>[],
+        ].filter((notnull) => notnull) as EntityColumn<any>[],
       };
     }
   } else {
@@ -183,20 +192,36 @@ export function Table({ data, router }: Props) {
             >
               {headerGroup.headers.map((header, index) => {
                 const rules = section.columns[index];
-                return <th className={clsx("px-1", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:px-4 sm:px-6 md:px-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", index === maxXSLeftPadding && "max-xs:pl-4", index == maxXSRightPadding && "max-xs:pr-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                return (
+                  <th
+                    className={clsx(
+                      "px-1",
+                      rules.showOnXS && "xs:hidden",
+                      rules.hideOnXS && "max-xs:hidden",
+                      rules.rightJustifyOnXS &&
+                        "max-xs:flex max-xs:justify-end",
+                      index === minXSLeftPadding && "xs:px-4 sm:px-6 md:px-8",
+                      index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8",
+                      index === maxXSLeftPadding && "max-xs:pl-4",
+                      index == maxXSRightPadding && "max-xs:pr-4",
+                      !rules.isPrimaryKey &&
+                        !rules.isIcon &&
+                        "sm:w-[167px] md:w-[175px]",
+                      rules.isIcon && "w-5"
+                    )}
+                    key={header.id}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
                         )}
                   </th>
-              }
-                )
-              }
-              </tr>
-            ))
-            }
+                );
+              })}
+            </tr>
+          ))}
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
@@ -213,9 +238,38 @@ export function Table({ data, router }: Props) {
             >
               {row.getVisibleCells().map((cell, index) => {
                 const rules = section.columns[index];
-                return <td className={clsx("py-3 px-1 text-mid-dark", rules.showOnXS && "xs:hidden", rules.hideOnXS && "max-xs:hidden", rules.rightJustifyOnXS && "max-xs:flex max-xs:justify-end", index === minXSLeftPadding && "xs:px-4 sm:px-6 md:px-8", index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8", (index === maxXSLeftPadding || index == maxXSRightPadding) && "max-xs:px-4", (!rules.isPrimaryKey && !rules.isIcon) && "sm:w-[167px] md:w-[175px]", rules.isIcon && "w-5")} key={cell.id}>
-                  <div className={clsx(rules.isPrimaryKey && "max-sm:w-20 truncate")}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
-                </td>
+                return (
+                  <td
+                    className={clsx(
+                      "py-3 px-1 text-mid-dark",
+                      rules.showOnXS && "xs:hidden",
+                      rules.hideOnXS && "max-xs:hidden",
+                      rules.rightJustifyOnXS &&
+                        "max-xs:flex max-xs:justify-end",
+                      index === minXSLeftPadding && "xs:px-4 sm:px-6 md:px-8",
+                      index == minXSRightPadding && "xs:pr-4 sm:pr-6 md:pr-8",
+                      (index === maxXSLeftPadding ||
+                        index == maxXSRightPadding) &&
+                        "max-xs:px-4",
+                      !rules.isPrimaryKey &&
+                        !rules.isIcon &&
+                        "sm:w-[167px] md:w-[175px]",
+                      rules.isIcon && "w-5"
+                    )}
+                    key={cell.id}
+                  >
+                    <div
+                      className={clsx(
+                        rules.isPrimaryKey && "max-sm:w-20 truncate"
+                      )}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </div>
+                  </td>
+                );
               })}
             </tr>
           ))}

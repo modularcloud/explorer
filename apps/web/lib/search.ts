@@ -4,5 +4,5 @@ export const isAddress = (term: string) => !!term.match(/^\w{42}$/);
 export const isSignature = (term: string) => !!term.match(/^\w{88}$/);
 
 export function isSearchable(term: string): boolean {
-    return isHeight(term) || isHash(term) || isAddress(term) || isSignature(term);
+  return isHeight(term) || isHash(term) || isAddress(term) || isSignature(term);
 }

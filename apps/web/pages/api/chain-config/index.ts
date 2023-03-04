@@ -21,8 +21,8 @@ export default async function handler(
       if (authorization !== ADD_NETWORK_PASS) {
         return res.status(403).end();
       }
-      
-      const parsed = JSON.parse(req.body); 
+
+      const parsed = JSON.parse(req.body);
 
       const network = RemoteServiceRequestSchema.parse({
         id: slugify(parsed.name),
@@ -49,7 +49,7 @@ export default async function handler(
     } else {
       return res.status(400).end();
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     return res.status(400).end();
   }

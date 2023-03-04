@@ -25,11 +25,20 @@ export interface MalleatedTx {
 }
 
 function createBaseMsgPayForBlobs(): MsgPayForBlobs {
-  return { signer: "", namespaceIds: [], blobSizes: [], shareCommitments: [], shareVersions: [] };
+  return {
+    signer: "",
+    namespaceIds: [],
+    blobSizes: [],
+    shareCommitments: [],
+    shareVersions: [],
+  };
 }
 
 export const MsgPayForBlobs = {
-  encode(message: MsgPayForBlobs, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: MsgPayForBlobs,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
     if (message.signer !== "") {
       writer.uint32(10).string(message.signer);
     }
@@ -99,12 +108,18 @@ export const MsgPayForBlobs = {
   fromJSON(object: any): MsgPayForBlobs {
     return {
       signer: isSet(object.signer) ? String(object.signer) : "",
-      namespaceIds: Array.isArray(object?.namespaceIds) ? object.namespaceIds.map((e: any) => bytesFromBase64(e)) : [],
-      blobSizes: Array.isArray(object?.blobSizes) ? object.blobSizes.map((e: any) => Number(e)) : [],
+      namespaceIds: Array.isArray(object?.namespaceIds)
+        ? object.namespaceIds.map((e: any) => bytesFromBase64(e))
+        : [],
+      blobSizes: Array.isArray(object?.blobSizes)
+        ? object.blobSizes.map((e: any) => Number(e))
+        : [],
       shareCommitments: Array.isArray(object?.shareCommitments)
         ? object.shareCommitments.map((e: any) => bytesFromBase64(e))
         : [],
-      shareVersions: Array.isArray(object?.shareVersions) ? object.shareVersions.map((e: any) => Number(e)) : [],
+      shareVersions: Array.isArray(object?.shareVersions)
+        ? object.shareVersions.map((e: any) => Number(e))
+        : [],
     };
   },
 
@@ -112,7 +127,9 @@ export const MsgPayForBlobs = {
     const obj: any = {};
     message.signer !== undefined && (obj.signer = message.signer);
     if (message.namespaceIds) {
-      obj.namespaceIds = message.namespaceIds.map((e) => base64FromBytes(e !== undefined ? e : new Uint8Array()));
+      obj.namespaceIds = message.namespaceIds.map((e) =>
+        base64FromBytes(e !== undefined ? e : new Uint8Array())
+      );
     } else {
       obj.namespaceIds = [];
     }
@@ -136,11 +153,15 @@ export const MsgPayForBlobs = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(base?: I): MsgPayForBlobs {
+  create<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(
+    base?: I
+  ): MsgPayForBlobs {
     return MsgPayForBlobs.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(object: I): MsgPayForBlobs {
+  fromPartial<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(
+    object: I
+  ): MsgPayForBlobs {
     const message = createBaseMsgPayForBlobs();
     message.signer = object.signer ?? "";
     message.namespaceIds = object.namespaceIds?.map((e) => e) || [];
@@ -156,7 +177,10 @@ function createBaseMalleatedTx(): MalleatedTx {
 }
 
 export const MalleatedTx = {
-  encode(message: MalleatedTx, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: MalleatedTx,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
     if (message.originalTxHash.length !== 0) {
       writer.uint32(10).bytes(message.originalTxHash);
     }
@@ -189,7 +213,9 @@ export const MalleatedTx = {
 
   fromJSON(object: any): MalleatedTx {
     return {
-      originalTxHash: isSet(object.originalTxHash) ? bytesFromBase64(object.originalTxHash) : new Uint8Array(),
+      originalTxHash: isSet(object.originalTxHash)
+        ? bytesFromBase64(object.originalTxHash)
+        : new Uint8Array(),
       tx: isSet(object.tx) ? bytesFromBase64(object.tx) : new Uint8Array(),
     };
   },
@@ -198,9 +224,14 @@ export const MalleatedTx = {
     const obj: any = {};
     message.originalTxHash !== undefined &&
       (obj.originalTxHash = base64FromBytes(
-        message.originalTxHash !== undefined ? message.originalTxHash : new Uint8Array(),
+        message.originalTxHash !== undefined
+          ? message.originalTxHash
+          : new Uint8Array()
       ));
-    message.tx !== undefined && (obj.tx = base64FromBytes(message.tx !== undefined ? message.tx : new Uint8Array()));
+    message.tx !== undefined &&
+      (obj.tx = base64FromBytes(
+        message.tx !== undefined ? message.tx : new Uint8Array()
+      ));
     return obj;
   },
 
@@ -208,7 +239,9 @@ export const MalleatedTx = {
     return MalleatedTx.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<MalleatedTx>, I>>(object: I): MalleatedTx {
+  fromPartial<I extends Exact<DeepPartial<MalleatedTx>, I>>(
+    object: I
+  ): MalleatedTx {
     const message = createBaseMalleatedTx();
     message.originalTxHash = object.originalTxHash ?? new Uint8Array();
     message.tx = object.tx ?? new Uint8Array();
@@ -260,16 +293,31 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends Array<infer U>
+  ? Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U>
+  ? ReadonlyArray<DeepPartial<U>>
+  : T extends {}
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

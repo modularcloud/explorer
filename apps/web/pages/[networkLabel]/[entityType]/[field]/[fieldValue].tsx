@@ -3,7 +3,10 @@ import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { ValueSchemaType } from "service-manager";
 import { getEntities, getEntity } from "service-manager/types/network.type";
-import { loadDynamicNetworks, ServiceManager } from "../../../../lib/service-manager";
+import {
+  loadDynamicNetworks,
+  ServiceManager,
+} from "../../../../lib/service-manager";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import {
@@ -70,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<{
       `Misconfigured parameters: network=${networkLabel}, entityType=${entityType}, field=${field}. fieldValue=${fieldValue}`
     );
   }
-  
+
   await loadDynamicNetworks();
   const network = ServiceManager.getNetwork(networkLabel);
   if (!network) {
@@ -104,7 +107,10 @@ function EntityPage({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState(
-    entity.context.entityTypeName === "Transaction" || entity.context.entityTypeName === "Account" ? "cards" : "table"
+    entity.context.entityTypeName === "Transaction" ||
+      entity.context.entityTypeName === "Account"
+      ? "cards"
+      : "table"
   );
   const swrResponse = useSWR(
     "/api/associated#" + entity.uniqueIdentifier,
@@ -121,17 +127,19 @@ function EntityPage({
   const associated: Entity[] = swrResponse.data ?? []; // TODO validation
 
   const isCelestiaEntity = entity.context.network.toLowerCase() === "mocha";
-  const isDymensionEntity = !!entity.context.network.toLowerCase().match(/(^hub$)|rollapp|dymension/);
+  const isDymensionEntity = !!entity.context.network
+    .toLowerCase()
+    .match(/(^hub$)|rollapp|dymension/);
   const isEclipseEntity = !isCelestiaEntity && !isDymensionEntity;
 
   let img = "";
-  if(isCelestiaEntity) {
+  if (isCelestiaEntity) {
     img = "Celestia";
   }
-  if(isDymensionEntity) {
+  if (isDymensionEntity) {
     img = "Dymension";
   }
-  if(isEclipseEntity) {
+  if (isEclipseEntity) {
     img = "Eclipse";
   }
 
@@ -159,21 +167,23 @@ function EntityPage({
             : entity.context.network
         } - ${name}${whitelabel ? "Scan" : ""}`}</title>
       </Head>
-      { entity.context.network === "Triton" ? <>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
+      {entity.context.network === "Triton" ? (
+        <>
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
 
             gtag('config', 'G-WM976PHBGC');
           `}
-        </Script>
-      </> : null }
+          </Script>
+        </>
+      ) : null}
       <div className="flex">
         <div className="grow">
           <div className="lg:hidden">
@@ -259,9 +269,7 @@ function EntityPage({
                           )
                   }
                 >
-                  <KeyValueList
-                    entries={Object.entries(entity.metadata)}
-                  />
+                  <KeyValueList entries={Object.entries(entity.metadata)} />
                 </Card>
               ))}
             </CardList>

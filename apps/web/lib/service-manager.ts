@@ -50,8 +50,8 @@ type ABCIResponse = {
     proofOps: any;
     height: string;
     codespace: string;
-  }
-}
+  };
+};
 
 type Block = {
   block_id: {
@@ -170,18 +170,22 @@ async function getBlockBy(
     const blockEntity: Entity = {
       uniqueIdentifier: blockResponse.result.block_id.hash,
       uniqueIdentifierLabel: "Hash",
-      metadata: buildMetadata(blockResponse.result.block.data.square_size ? {
-        "Chain Id": blockResponse.result.block.header.chain_id,
-        Height: blockResponse.result.block.header.height,
-        Time: blockResponse.result.block.header.time,
-        "Square Size": blockResponse.result.block.data.square_size,
-        Proposer: blockResponse.result.block.header.proposer_address,
-      } : {
-        "Chain Id": blockResponse.result.block.header.chain_id,
-        Height: blockResponse.result.block.header.height,
-        Time: blockResponse.result.block.header.time,
-        Proposer: blockResponse.result.block.header.proposer_address,
-      }),
+      metadata: buildMetadata(
+        blockResponse.result.block.data.square_size
+          ? {
+              "Chain Id": blockResponse.result.block.header.chain_id,
+              Height: blockResponse.result.block.header.height,
+              Time: blockResponse.result.block.header.time,
+              "Square Size": blockResponse.result.block.data.square_size,
+              Proposer: blockResponse.result.block.header.proposer_address,
+            }
+          : {
+              "Chain Id": blockResponse.result.block.header.chain_id,
+              Height: blockResponse.result.block.header.height,
+              Time: blockResponse.result.block.header.time,
+              Proposer: blockResponse.result.block.header.proposer_address,
+            }
+      ),
       computed: {},
       context: {
         network: networkName,
@@ -283,7 +287,7 @@ async function getTransactionsByHeight(
 
 async function getTransactionsByAddress(address: string, networkName: string) {
   try {
-    let sendResponse, receiveResponse
+    let sendResponse, receiveResponse;
     if (DYMENSION_HUB == networkName) {
       sendResponse = await fetch(
         `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
@@ -292,7 +296,9 @@ async function getTransactionsByAddress(address: string, networkName: string) {
         `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
       );
       if (!sendResponse.ok) {
-        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+        throw Error(
+          `Response code ${sendResponse.status}: ${sendResponse.statusText}`
+        );
       }
     } else if (DYMENSION_ROLLAPP_X == networkName) {
       sendResponse = await fetch(
@@ -304,14 +310,19 @@ async function getTransactionsByAddress(address: string, networkName: string) {
         `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
       );
       if (!sendResponse.ok) {
-        throw Error(`Response code ${sendResponse.status}: ${sendResponse.statusText}`);
+        throw Error(
+          `Response code ${sendResponse.status}: ${sendResponse.statusText}`
+        );
       }
     } else {
-      return null
+      return null;
     }
     const sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
-    const receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
-    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort((a, b) => Number(b.height) - Number(a.height));
+    const receiveTxs =
+      (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
+    const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort(
+      (a, b) => Number(b.height) - Number(a.height)
+    );
     return allTxs.map((tx) => {
       const Messages = getMessages(tx.tx);
       const txEntity: Entity = {
@@ -340,29 +351,34 @@ async function getTransactionsByAddress(address: string, networkName: string) {
   }
 }
 
-async function getAccountByAddress(address: string, networkBase: string, networkName: string) {
-  let queryInput, denom
+async function getAccountByAddress(
+  address: string,
+  networkBase: string,
+  networkName: string
+) {
+  let queryInput, denom;
   if (address.match(/^dym\w{39}$/)) {
     // dymension hub
     const data = getBalanceQueryData(address, "udym");
     queryInput = `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
-    denom = "DYM"
+    denom = "DYM";
   } else if (address.match(/^rol\w{39}$/)) {
     // dymension rollappX
     const data = getBalanceQueryData(address, "urax");
     queryInput = `https://rpc-rollappx-35c.dymension.xyz/abci_query?path=/cosmos.bank.v1beta1.Query/Balance&data=${data}&height=0&prove=false`;
-    denom = "RAX"
+    denom = "RAX";
   } else {
     return null;
   }
   const response = await fetch(queryInput);
-  const json = await response.json() as JSONRPCResponse<ABCIResponse>;
-  const balance = (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
+  const json = (await response.json()) as JSONRPCResponse<ABCIResponse>;
+  const balance =
+    (Number(parseBalance(json.result.response.value)) || 0) / 1000000;
   return {
     uniqueIdentifier: address,
     uniqueIdentifierLabel: "Address",
     metadata: buildMetadata({
-      Spendable: `${balance} ${denom}`
+      Spendable: `${balance} ${denom}`,
     }),
     computed: {},
     context: {
@@ -493,8 +509,13 @@ if (DYMENSION_HUB_RPC) {
           },
         ],
         getAssociated: async (entity: Entity) => {
-          return (await getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_HUB)) ?? [];
-        }
+          return (
+            (await getTransactionsByAddress(
+              entity.uniqueIdentifier,
+              DYMENSION_HUB
+            )) ?? []
+          );
+        },
       },
     ],
   });
@@ -573,13 +594,21 @@ if (DYMENSION_ROLLAPP_X_RPC) {
         getters: [
           {
             field: "address",
-            getOne: (address: string) => getAccountByAddress(address, DYMENSION_ROLLAPP_X_RPC, DYMENSION_ROLLAPP_X),
+            getOne: (address: string) =>
+              getAccountByAddress(
+                address,
+                DYMENSION_ROLLAPP_X_RPC,
+                DYMENSION_ROLLAPP_X
+              ),
           },
         ],
         getAssociated: async (entity: Entity) => {
-          return getTransactionsByAddress(entity.uniqueIdentifier, DYMENSION_ROLLAPP_X);
-        }
-      }
+          return getTransactionsByAddress(
+            entity.uniqueIdentifier,
+            DYMENSION_ROLLAPP_X
+          );
+        },
+      },
     ],
   });
 }
@@ -817,15 +846,17 @@ async function getEVMBlockBy(
   }
 }
 
-function buildMetadata(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
+function buildMetadata(obj: { [key: string]: any }): {
+  [key: string]: ValueSchemaType;
+} {
   const metadata: { [key: string]: ValueSchemaType } = {};
 
   Object.entries(obj).forEach((entry) => {
     if (typeof entry[1] === "number" || typeof entry[1] === "string") {
       metadata[entry[0]] = { type: "string", payload: String(entry[1]) };
     } else {
-      try{
-        metadata[entry[0]] = ValueSchema.parse(entry[1])
+      try {
+        metadata[entry[0]] = ValueSchema.parse(entry[1]);
       } catch {}
     }
   });
@@ -1044,34 +1075,37 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             {
               field: "address",
               getOne: async (address: string) => {
-                if(!isAddress(address)) {
+                if (!isAddress(address)) {
                   return null;
                 }
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    Balances: "Coming soon"
+                    Balances: "Coming soon",
                   }),
                   context: {
                     network: network.name,
                     entityTypeName: needsPrefix ? "EVM Account" : "Account",
                   },
                   computed: {},
-                  raw: ""
-                }
+                  raw: "",
+                };
               },
             },
           ],
           getAssociated: async (entity: Entity) => {
             try {
-              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
-                method: "POST",
-                body: JSON.stringify({
-                  method: "mc_getTransactionsByAddress",
-                  params: [entity.uniqueIdentifier]
-                })
-              }).then((res) => res.json() );
+              const txIds = await fetch(
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`,
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    method: "mc_getTransactionsByAddress",
+                    params: [entity.uniqueIdentifier],
+                  }),
+                }
+              ).then((res) => res.json());
               return (
                 await Promise.all(
                   txIds.result.txs.map(
@@ -1091,34 +1125,37 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             {
               field: "address",
               getOne: async (address: string) => {
-                if(!isAddress(address)) {
+                if (!isAddress(address)) {
                   return null;
                 }
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    Balances: "Coming soon"
+                    Balances: "Coming soon",
                   }),
                   context: {
                     network: network.name,
                     entityTypeName: "Contract",
                   },
                   computed: {},
-                  raw: ""
-                }
+                  raw: "",
+                };
               },
             },
           ],
           getAssociated: async (entity: Entity) => {
             try {
-              const txIds = await fetch(`${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`, {
-                method: "POST",
-                body: JSON.stringify({
-                  method: "mc_getTransactionsByAddress",
-                  params: [entity.uniqueIdentifier]
-                })
-              }).then((res) => res.json() );
+              const txIds = await fetch(
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`,
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    method: "mc_getTransactionsByAddress",
+                    params: [entity.uniqueIdentifier],
+                  }),
+                }
+              ).then((res) => res.json());
               return (
                 await Promise.all(
                   txIds.result.txs.map(
@@ -1146,13 +1183,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
               const receipt = EthTransactionReceiptSchema.parse(
                 entity.computed.Receipt
               );
-              if(!EthTransactionSchema.parse(JSON.parse(entity.raw)).to) {
+              if (!EthTransactionSchema.parse(JSON.parse(entity.raw)).to) {
                 return [
                   {
                     uniqueIdentifier: String(receipt.contractAddress),
                     uniqueIdentifierLabel: "address",
                     metadata: buildMetadata({
-                      Event: "Contract Created"
+                      Event: "Contract Created",
                     }),
                     computed: {},
                     context: {
@@ -1160,30 +1197,36 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                       entityTypeName: "Contract",
                     },
                     raw: "",
-                  }
+                  },
                 ];
               }
-              return Promise.all(receipt.logs.map(async (log) => {
-                const results = await fetch(`https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`).then((res) => res.json());
-                const name = results?.result?.event?.[log.topics[0]]?.[0]?.name ?? log.topics[0];
-                return {
-                  uniqueIdentifier: name,
-                  uniqueIdentifierLabel: "event",
-                  metadata: buildMetadata({
-                    Address: log.address,
-                    Topics: { type: "list", payload: log.topics },
-                    Data: log.data,
-                  }),
-                  computed: {},
-                  context: {
-                    network: "N/A", // TODO handle differently
-                    entityTypeName: "Log",
-                  },
-                  raw: JSON.stringify(log),
-                };
-              }));
-            } catch(e) {
-              console.log(e)
+              return Promise.all(
+                receipt.logs.map(async (log) => {
+                  const results = await fetch(
+                    `https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`
+                  ).then((res) => res.json());
+                  const name =
+                    results?.result?.event?.[log.topics[0]]?.[0]?.name ??
+                    log.topics[0];
+                  return {
+                    uniqueIdentifier: name,
+                    uniqueIdentifierLabel: "event",
+                    metadata: buildMetadata({
+                      Address: log.address,
+                      Topics: { type: "list", payload: log.topics },
+                      Data: log.data,
+                    }),
+                    computed: {},
+                    context: {
+                      network: "N/A", // TODO handle differently
+                      entityTypeName: "Log",
+                    },
+                    raw: JSON.stringify(log),
+                  };
+                })
+              );
+            } catch (e) {
+              console.log(e);
               return [];
             }
           },
@@ -1245,17 +1288,17 @@ addRemote({
   name: "Ethereum",
   id: "ethereum",
   endpoints: {
-    evm: "https://rpc.ankr.com/eth"
-  }
-})
+    evm: "https://rpc.ankr.com/eth",
+  },
+});
 addRemote({
   provider: "eclipse",
   name: "Solana",
   id: "solana",
   endpoints: {
-    svm: process.env.SOLANA_RPC ?? ""
-  }
-})
+    svm: process.env.SOLANA_RPC ?? "",
+  },
+});
 
 export async function loadDynamicNetworks() {
   const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;

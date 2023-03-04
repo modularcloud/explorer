@@ -22,17 +22,16 @@ export function KeyValueList({ header, entries }: Props) {
                 {key}
               </label>
               <span className="lg:w-1/2 truncate">
-                { type === "status" ? <Status status={value} /> : null }
-                { type === "list" ? value.map(
-                    (value, index) => (
+                {type === "status" ? <Status status={value} /> : null}
+                {type === "list"
+                  ? value.map((value, index) => (
                       <>
                         {index ? <br /> : null}
                         <span>{value}</span>
                       </>
-                    )
-                  ) : null
-                }
-                { type === "string" ? value : null}
+                    ))
+                  : null}
+                {type === "string" ? value : null}
               </span>
             </div>
           );

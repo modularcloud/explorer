@@ -30,10 +30,12 @@ export const SearchInput = ({
   handleOpen,
   onSearch,
   defaultSelected,
-  fixedOption
+  fixedOption,
 }: Props) => {
-  const [ option, setOption ] = useState(fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "");
-  const [ term, setTerm ] = useState("");
+  const [option, setOption] = useState(
+    fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? ""
+  );
+  const [term, setTerm] = useState("");
   return (
     <Popover.Root open={isOpen} onOpenChange={handleOpen}>
       <Popover.Anchor>
@@ -45,79 +47,94 @@ export const SearchInput = ({
               mode === "light",
           })}
         >
-          {!fixedOption ? <Select.Root value={option} onValueChange={(value) => setOption(value)}>
-            <Select.Trigger
-              className={clsx(
-                "select-none flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold sm:min-w-[98px] truncate",
-                {
-                  "border-r-mid-dark-900 bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white":
-                    mode === "dark",
-                  "border-r-gray-300 hover:bg-gray-100 focus:bg-gray-100":
-                    mode === "light",
-                }
-              )}
-              aria-label="SearchType"
+          {!fixedOption ? (
+            <Select.Root
+              value={option}
+              onValueChange={(value) => setOption(value)}
             >
-              <Select.Value
-                aria-label={option}
-                defaultValue={option}
-              ></Select.Value>
-              <Select.Icon className="ml-2">
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Select.Trigger>
-            <Select.Portal>
-              <Select.Content
+              <Select.Trigger
                 className={clsx(
-                  "shadow-md rounded-lg max-h-[150px] min-w-[160px] text-sleek",
+                  "select-none flex items-center justify-center p-2 sm:px-4 focus:outline-none rounded-l-lg border-r font-bold sm:min-w-[98px] truncate",
                   {
-                    "bg-mid-dark text-white": mode === "dark",
-                    "border border-gray-400 bg-white": mode === "light",
+                    "border-r-mid-dark-900 bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white":
+                      mode === "dark",
+                    "border-r-gray-300 hover:bg-gray-100 focus:bg-gray-100":
+                      mode === "light",
                   }
                 )}
-                position="popper"
-                sideOffset={8}
+                aria-label="SearchType"
               >
-                <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
-                  <Select.Viewport className="font-sans">
-                    {optionGroups?.map((grp, index) => (
-                      <Select.Group key={index}>
-                        <Select.Label
-                          className={clsx("font-bold p-2", {
-                            "bg-slate-100 border-y border-y-slate-200":
-                              mode === "light",
-                            "border-b border-b-mid-dark-900": mode === "dark",
-                          })}
-                        >
-                          {grp.label}
-                        </Select.Label>
-                        {grp.options.map((opt, idx) => (
-                          <Select.Item
-                            className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
-                            key={idx}
-                            value={opt.value}
+                <Select.Value
+                  aria-label={option}
+                  defaultValue={option}
+                ></Select.Value>
+                <Select.Icon className="ml-2">
+                  <ChevronDownIcon />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  className={clsx(
+                    "shadow-md rounded-lg max-h-[150px] min-w-[160px] text-sleek",
+                    {
+                      "bg-mid-dark text-white": mode === "dark",
+                      "border border-gray-400 bg-white": mode === "light",
+                    }
+                  )}
+                  position="popper"
+                  sideOffset={8}
+                >
+                  <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
+                    <Select.Viewport className="font-sans">
+                      {optionGroups?.map((grp, index) => (
+                        <Select.Group key={index}>
+                          <Select.Label
+                            className={clsx("font-bold p-2", {
+                              "bg-slate-100 border-y border-y-slate-200":
+                                mode === "light",
+                              "border-b border-b-mid-dark-900": mode === "dark",
+                            })}
                           >
-                            <Select.ItemText>{opt.name}</Select.ItemText>
-                          </Select.Item>
-                        ))}
-                      </Select.Group>
-                    ))}
-                  </Select.Viewport>
-                </div>
-              </Select.Content>
-            </Select.Portal>
-          </Select.Root> : null
-          }
+                            {grp.label}
+                          </Select.Label>
+                          {grp.options.map((opt, idx) => (
+                            <Select.Item
+                              className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
+                              key={idx}
+                              value={opt.value}
+                            >
+                              <Select.ItemText>{opt.name}</Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select.Group>
+                      ))}
+                    </Select.Viewport>
+                  </div>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
+          ) : null}
           <input
             onChange={(event: any) => setTerm(event.target.value)}
-            onKeyDown={(event: any) => { if (event.code === "Enter" || event.code === "NumpadEnter") onSearch(option, term) }}
-            className={clsx("w-full p-2 focus:outline-none peer", fixedOption && "rounded-lg", {
-              "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
-                mode === "dark",
-              "placeholder:text-slate-800": mode === "light",
-            })}
+            onKeyDown={(event: any) => {
+              if (event.code === "Enter" || event.code === "NumpadEnter")
+                onSearch(option, term);
+            }}
+            className={clsx(
+              "w-full p-2 focus:outline-none peer",
+              fixedOption && "rounded-lg",
+              {
+                "bg-mid-dark hover:bg-night-900 focus:bg-night-900 text-white placeholder:text-mid-dark-600":
+                  mode === "dark",
+                "placeholder:text-slate-800": mode === "light",
+              }
+            )}
             type="text"
-            placeholder={option.toLowerCase().match(/^hub$|dymension|rollapp/) ? "Go to hash, height, or address" : placeholder}
+            placeholder={
+              option.toLowerCase().match(/^hub$|dymension|rollapp/)
+                ? "Go to hash, height, or address"
+                : placeholder
+            }
           />
           <button
             onClick={() => onSearch(option, term)}

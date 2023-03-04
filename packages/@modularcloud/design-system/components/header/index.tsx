@@ -11,7 +11,13 @@ interface Props {
   defaultView: string;
 }
 
-export function Header({ panelContent, searchInput, onSwitchView, defaultView, logo }: Props) {
+export function Header({
+  panelContent,
+  searchInput,
+  onSwitchView,
+  defaultView,
+  logo,
+}: Props) {
   return (
     <div className="h-[4.25rem] flex flex-col">
       <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">

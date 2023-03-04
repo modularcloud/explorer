@@ -7,9 +7,11 @@ assignees: ""
 ---
 
 # Description
+
 <!-- Describe the component here -->
 
 # Design
+
 <!-- Add or remove breakpoints as needed -->
 <!-- Include images, all styles, and states for each breakpoint -->
 
@@ -26,7 +28,9 @@ assignees: ""
 ## 375
 
 # Subcomponents
+
 <!-- Link to subcomponents, if any -->
 
 # Implementation notes
+
 <!-- (Optional) Remove this section if not needed -->

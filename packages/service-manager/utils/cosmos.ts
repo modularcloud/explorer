@@ -14,7 +14,9 @@ function fixCapsAndSpacing(camel: string): string {
   letters[0] = letters[0].toUpperCase();
 
   // Add a space before capital latters (new words)
-  const characters = letters.map(letter => letter === letter.toUpperCase() ? ` ${letter}` : letter);
+  const characters = letters.map((letter) =>
+    letter === letter.toUpperCase() ? ` ${letter}` : letter
+  );
 
   return characters.join("").trim();
 }
@@ -30,29 +32,46 @@ function convertToName(typeUrl: string): string {
   }
 
   // Add IBC prefix if needed and return (properly formatted)
-  return (typeUrl.indexOf("ibc") !== -1 ? "IBC " : "") + fixCapsAndSpacing(name);
+  return (
+    (typeUrl.indexOf("ibc") !== -1 ? "IBC " : "") + fixCapsAndSpacing(name)
+  );
 }
 
-function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: ValueSchemaType } {
+function convertToKeyValue(obj: { [key: string]: any }): {
+  [key: string]: ValueSchemaType;
+} {
   const KV: { [key: string]: ValueSchemaType } = {};
   Object.entries(obj).forEach((entry) => {
     // we are converting the way amount is display, this occurs only when the value is an object or array
     const isAmount = entry[0] === "amount";
 
-    if(Array.isArray(entry[1])) {
-      KV[fixCapsAndSpacing(entry[0])] = { type: "list", payload: entry[1].map(val => isAmount ? getAmountString(val) : String(val)) }
+    if (Array.isArray(entry[1])) {
+      KV[fixCapsAndSpacing(entry[0])] = {
+        type: "list",
+        payload: entry[1].map((val) =>
+          isAmount ? getAmountString(val) : String(val)
+        ),
+      };
     } else if (typeof entry[1] === "object") {
-      if(isAmount) {
-        KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: getAmountString(entry[1]) };
+      if (isAmount) {
+        KV[fixCapsAndSpacing(entry[0])] = {
+          type: "string",
+          payload: getAmountString(entry[1]),
+        };
       } else {
-        let properties = { type: "list" as "list", payload: [] as string[] }
+        let properties = { type: "list" as "list", payload: [] as string[] };
         Object.entries(entry[1]).forEach((subentry) => {
-          properties.payload.push(`${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`)
+          properties.payload.push(
+            `${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`
+          );
         });
         KV[fixCapsAndSpacing(entry[0])] = properties;
       }
     } else {
-      KV[fixCapsAndSpacing(entry[0])] = { type: "string", payload: String(entry[1]) };
+      KV[fixCapsAndSpacing(entry[0])] = {
+        type: "string",
+        payload: String(entry[1]),
+      };
     }
   });
   return KV;
@@ -62,20 +81,20 @@ function convertToKeyValue(obj: { [key: string]: any }): { [key: string]: ValueS
 // "amount": [ { denom: 'udym', amount: '6000000' } ]
 // or
 // "amount": { denom: 'udym', amount: '6000000' }
-function getAmountString(obJ: any) : string {
+function getAmountString(obJ: any): string {
   let denom = obJ[0]?.denom ?? obJ.denom;
   let amount = obJ[0]?.amount ?? obJ.amount;
 
-  if(!denom || !amount) {
+  if (!denom || !amount) {
     return "Unknown";
   }
-  
-  if(denom === "udym") {
+
+  if (denom === "udym") {
     denom = "DYM";
-    amount = String(Number(amount) / 1000000)
+    amount = String(Number(amount) / 1000000);
   }
-  
-  return amount + " " + denom
+
+  return amount + " " + denom;
 }
 
 export function txStringToHash(txstr: string) {
@@ -91,7 +110,7 @@ export function txStringToHash(txstr: string) {
 
 export function getBalanceQueryData(address: string, denom: string) {
   const QBR = QueryBalanceRequest.fromJSON({ address, denom });
-  const bytes = QueryBalanceRequest.encode(QBR).finish()
+  const bytes = QueryBalanceRequest.encode(QBR).finish();
   return Buffer.from(bytes).toString("hex");
 }
 
@@ -122,8 +141,8 @@ export function getMessages(txstr: string): Entity[] {
         metadata: convertToKeyValue(decodedMsg),
         computed: {},
         context: {
-          network: "N/A", // TODO: replace network with path 
-          entityTypeName: "Message"
+          network: "N/A", // TODO: replace network with path
+          entityTypeName: "Message",
         },
         raw: JSON.stringify(decodedMsg),
       });
@@ -132,17 +151,16 @@ export function getMessages(txstr: string): Entity[] {
         uniqueIdentifier: "Unknown",
         uniqueIdentifierLabel: "Type",
         metadata: {
-          index: { type: "string", payload: String(index) }
+          index: { type: "string", payload: String(index) },
         },
         computed: {},
         context: {
-          network: "N/A", // TODO: replace network with path 
-          entityTypeName: "Message"
+          network: "N/A", // TODO: replace network with path
+          entityTypeName: "Message",
         },
         raw: JSON.stringify(message),
       });
     }
-  })
+  });
   return decodedMessages;
-
 }

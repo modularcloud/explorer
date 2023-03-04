@@ -20,11 +20,9 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ params }) => {
   const { networkLabel } = params ?? {};
   if (typeof networkLabel !== "string") {
-    throw Error(
-      `Misconfigured parameters: network=${networkLabel}`
-    );
+    throw Error(`Misconfigured parameters: network=${networkLabel}`);
   }
-  
+
   await loadDynamicNetworks();
   const network = ServiceManager.getNetwork(networkLabel);
   if (!network) {
@@ -42,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
 
 export default function Homepage({
   searchOptions,
-  name
+  name,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const mode = "light";
   const router = useRouter();
@@ -52,21 +50,23 @@ export default function Homepage({
       <Head>
         <title>{`${name} by Modular Cloud`}</title>
       </Head>
-      { name === "Triton" ? <>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
+      {name === "Triton" ? (
+        <>
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
 
             gtag('config', 'G-WM976PHBGC');
           `}
-        </Script>
-      </> : null }
+          </Script>
+        </>
+      ) : null}
       <div
         className={clsx(
           "flex flex-col items-center justify-center mx-auto min-h-screen p-4",

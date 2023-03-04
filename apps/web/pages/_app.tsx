@@ -1,13 +1,13 @@
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
-import { Inter } from '@next/font/google';
-import { Analytics } from '@vercel/analytics/react';
+import { Inter } from "@next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import Head from "next/head";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-})
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -18,5 +18,5 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
       <Analytics />
     </main>
-  )
+  );
 }

@@ -9,7 +9,7 @@ interface Props {
   badgeText?: string;
   badgeIcon?: string;
   children?: React.ReactNode;
-  navTo?: () => void
+  navTo?: () => void;
 }
 
 function renderIcon(icon: string | undefined) {
@@ -28,16 +28,21 @@ export function Card({ type, badgeText, badgeIcon, children, navTo }: Props) {
         {type}
       </div>
       <div className="p-4">
-        {
-          navTo ? <div onClick={navTo} className={clsx({ hidden: !badgeText || !badgeIcon })}>
+        {navTo ? (
+          <div
+            onClick={navTo}
+            className={clsx({ hidden: !badgeText || !badgeIcon })}
+          >
             <CircleButton>
               <div className="flex flex-row space-x-1 items-center p-2.5">
                 {renderIcon(badgeIcon)}
                 <span className="font-bold">{badgeText}</span>
               </div>
             </CircleButton>
-          </div> : <Badge long={true} list={[badgeText ?? "Unknown"]} />
-        }
+          </div>
+        ) : (
+          <Badge long={true} list={[badgeText ?? "Unknown"]} />
+        )}
         {children}
       </div>
     </div>

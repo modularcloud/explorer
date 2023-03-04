@@ -26,9 +26,9 @@ export default function AddNetwork() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const endpoints: any = {};
-    if(evmEndpoint) endpoints.evm = evmEndpoint;
-    if(svmEndpoint) endpoints.svm = svmEndpoint;
-    if((!evmEndpoint && !svmEndpoint) || !name ) return;
+    if (evmEndpoint) endpoints.evm = evmEndpoint;
+    if (svmEndpoint) endpoints.svm = svmEndpoint;
+    if ((!evmEndpoint && !svmEndpoint) || !name) return;
     await fetch("/api/chain-config", {
       method: "POST",
       headers: {
@@ -62,7 +62,10 @@ export default function AddNetwork() {
         {(list?.result ?? []).map((network: any) => (
           <li key={network.id}>
             {`${network.name}: EVM (${network.endpoints?.evm}), SVM(${network.endpoints?.svm}) `}
-            <button className="border" onClick={() => deleteNetwork(network.provider, network.id)}>
+            <button
+              className="border"
+              onClick={() => deleteNetwork(network.provider, network.id)}
+            >
               Delete
             </button>
           </li>
