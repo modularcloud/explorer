@@ -1035,10 +1035,10 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
   const EVM = network.endpoints.evm;
   const SVM = network.endpoints.svm;
   const needsPrefix = EVM && SVM;
+  const entityTypes = [];
   if (EVM) {
-    ServiceManager.addNetwork({
-      label: network.name,
-      entityTypes: [
+    entityTypes.push(
+      ...[
         {
           name: needsPrefix ? "EVM Block" : "Block",
           getters: [
@@ -1231,13 +1231,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             }
           },
         },
-      ],
-    });
+      ]
+    );
   }
+
   if (SVM) {
-    ServiceManager.addNetwork({
-      label: network.name,
-      entityTypes: [
+    entityTypes.push(
+      ...[
         {
           name: needsPrefix ? "SVM Block" : "Block",
           getters: [
@@ -1278,9 +1278,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           ],
           getAssociated: async (entity: Entity) => [],
         },
-      ],
-    });
+      ]
+    );
   }
+  ServiceManager.addNetwork({
+    label: network.name,
+    entityTypes,
+  });
 }
 
 addRemote({
