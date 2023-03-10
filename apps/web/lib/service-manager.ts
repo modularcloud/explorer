@@ -1032,8 +1032,8 @@ async function getSVMTransactionBySignature(
 }
 
 export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
-  if(network.id === "triton") {
-    network.id = "91002"
+  if (network.id === "triton") {
+    network.id = "91002";
   }
   const EVM = network.endpoints.evm;
   const SVM = network.endpoints.svm;
@@ -1081,11 +1081,31 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 if (!isAddress(address)) {
                   return null;
                 }
+                const balances: any = {};
+                try {
+                  const balanceResponse = await fetch(
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        method: "mc_getTokenBalancesByAddress",
+                        params: [address],
+                      }),
+                    }
+                  ).then((res) => res.json());
+                  balanceResponse.result.balances.forEach((val: any) => {
+                    balances[val.token.symbol] = new Decimal(val.balance)
+                      .dividedBy(new Decimal(10).pow(val.token.decimals))
+                      .toString();
+                  });
+                } catch {}
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    Balances: "Coming soon",
+                    Balances:
+                      Object.keys(balances).length === 0 ? "None" : null,
+                    ...balances,
                   }),
                   context: {
                     network: network.name,
