@@ -4,26 +4,8 @@ import {
   createComponentSchema,
 } from "./component";
 import { z } from "zod";
-import { StringLiteral } from "./utilities";
 
-export type Archetype<T extends Component<any, any>> = T[];
-
-const a = z.object({ test: z.string() });
-const b = z.object({ idl: z.string().array() });
-
-const as = createComponentSchema(a, "tesert");
-const bs = createComponentSchema(b, "teser4444t");
-
-const ac: Component<typeof a, "tesert"> = {
-  typeId: "tesert",
-  data: { test: "test1" },
-};
-const bc: Component<typeof b, "teser4444t"> = {
-  typeId: "teser4444t",
-  data: { idl: ["test2"] },
-};
-
-//const archetype = [as, bs];
+export type AnyArchteype = { [componentName: string]: z.ZodTypeAny };
 
 function buildArchetype<TypeId extends string, Component, ExistingComponents>(
   typeId: TypeId,
@@ -59,10 +41,9 @@ function buildArchetype<TypeId extends string, Component, ExistingComponents>(
       );
     },
     finish: () => {
-        // @ts-ignore
-        let { __BUILDING__, ...final } = components;
-        type PrettyType<T> = { [key in keyof T]: T[key] };
-        return newComponents as PrettyType<typeof final>;
+      // @ts-ignore
+      let { __BUILDING__, ...final } = newComponents;
+      return final;
     },
   };
 }
@@ -71,11 +52,49 @@ export function createArchetype() {
   return buildArchetype("__BUILDING__", true, {});
 }
 
-const archetype = createArchetype().addComponent("tesert", as)
-  .addComponent("teser4444t", bs)
+export function verifyArchetype<T extends AnyArchteype>(
+  archetype: T,
+  entity: { [component: string]: any }
+): { [key in keyof T]: z.infer<T[key]> } {
+  let verifiedEntity = {} as { [key in keyof T]: z.infer<T[key]> };
+  for (const [componentName, component] of Object.entries(archetype)) {
+    const entityComponent = entity[componentName];
+    if (!entityComponent) {
+      throw new Error(`Missing component ${componentName}`);
+    }
+    const key = componentName as keyof T;
+    verifiedEntity[key] = component.parse(entityComponent);
+  }
+  return verifiedEntity;
+}
+
+// Example
+const a = z.object({ test: z.string() });
+const b = z.object({ tests: z.string().array() });
+
+const as = createComponentSchema(a, "hello");
+const bs = createComponentSchema(b, "world");
+
+const ac: Component<typeof a, "hello"> = {
+  typeId: "hello",
+  data: { test: "test1" },
+};
+const bc: Component<typeof b, "world"> = {
+  typeId: "world",
+  data: { tests: ["test2"] },
+};
+
+const archetype = createArchetype()
+  .addComponent("hello", as)
+  .addComponent("world", bs)
   .finish();
-type arche = typeof archetype;
-type PrettyType<T> = { [key in keyof T]: T[key] };
-type PrettyArchetype = PrettyType<arche>;
-//type arche = (typeof archetype)["_output"];
-//const archetype = createArchetype(as);
+
+try {
+  const verifiedArchetype = verifyArchetype(archetype, {
+    hello: { test: "test1" },
+    world: { tests: ["test2"] },
+  });
+} catch {
+  // if it fails, it will throw an error like Zod
+}
+
