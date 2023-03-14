@@ -131,7 +131,7 @@ export const SearchInput = ({
             )}
             type="text"
             placeholder={
-              option.toLowerCase().match(/^hub$|dymension|rollapp/)
+              option.toLowerCase().match(/^hub$|dymension|rollapp|triton/)
                 ? "Go to hash, height, or address"
                 : placeholder
             }
