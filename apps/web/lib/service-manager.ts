@@ -1082,6 +1082,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   return null;
                 }
                 const balances: any = {};
+                let nativeTokenBalance = "0";
                 try {
                   const balanceResponse = await fetch(
                     `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
@@ -1098,13 +1099,18 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                       .dividedBy(new Decimal(10).pow(val.token.decimals))
                       .toString();
                   });
+                  nativeTokenBalance =
+                    balanceResponse.result.nativeTokenBalance;
                 } catch {}
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    Balances:
-                      Object.keys(balances).length === 0 ? "None" : null,
+                    [network.name.toLowerCase() === "triton"
+                      ? "ZBC"
+                      : "Native"]: new Decimal(nativeTokenBalance)
+                      .dividedBy(new Decimal(10).pow(18))
+                      .toString(),
                     ...balances,
                   }),
                   context: {
