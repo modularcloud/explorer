@@ -1094,11 +1094,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                       }),
                     }
                   ).then((res) => res.json());
-                  balanceResponse.result.balances.forEach((val: any) => {
-                    balances[val.token.symbol] = new Decimal(val.balance)
-                      .dividedBy(new Decimal(10).pow(val.token.decimals))
-                      .toString();
-                  });
+                  if (balanceResponse.result.balances) {
+                    balanceResponse.result.balances.forEach((val: any) => {
+                      balances[val.token.symbol] = new Decimal(val.balance)
+                        .dividedBy(new Decimal(10).pow(val.token.decimals))
+                        .toString();
+                    });
+                  }
                   nativeTokenBalance =
                     balanceResponse.result.nativeTokenBalance;
                 } catch {}
