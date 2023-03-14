@@ -35,7 +35,7 @@ interface PanelProps {
   classes: string;
   id: string;
   metadata: { [key: string]: ValueSchemaType };
-  img: string;
+  img?: string;
   context: {
     network: string;
     entityTypeName: string;
@@ -191,12 +191,14 @@ function EntityPage({
               type={entity.context.entityTypeName}
               id={entity.uniqueIdentifier}
             >
-              <Image
-                src={`/images/${img.toLowerCase()}-bigger.png`}
-                alt={img}
-                height="28"
-                width="142"
-              />
+              {whitelabel?.toLowerCase() === "nautilus" ? null : (
+                <Image
+                  src={`/images/${img.toLowerCase()}-bigger.png`}
+                  alt={img}
+                  height="28"
+                  width="142"
+                />
+              )}
             </TopBar>
           </div>
           <Header
@@ -246,7 +248,7 @@ function EntityPage({
                 id={entity.uniqueIdentifier}
                 metadata={entity.metadata}
                 context={entity.context}
-                img={img}
+                img={whitelabel?.toLowerCase() === "nautilus" ? undefined : img}
               />
             }
             onSwitchView={(view: string) => setView(view)}
@@ -290,7 +292,7 @@ function EntityPage({
           id={entity.uniqueIdentifier}
           metadata={entity.metadata}
           context={entity.context}
-          img={img}
+          img={whitelabel?.toLowerCase() === "nautilus" ? undefined : img}
         />
       </div>
     </>
