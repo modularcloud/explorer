@@ -1,11 +1,22 @@
-import {
-  Component,
-  ComponentSchemaType,
-  createComponentSchema,
-} from "./component";
+import { ComponentSchemaType } from "./component";
 import { z } from "zod";
+import { Entity } from "./entity";
 
-export type AnyArchteype = { [componentName: string]: z.ZodTypeAny };
+export type AnyArchetypeSchema = { [componentName: string]: z.ZodTypeAny };
+export type CastField<
+  ParentType,
+  FieldName extends keyof ParentType,
+  NewFieldType
+> = NewFieldType extends ParentType[FieldName]
+  ? {
+      [key in FieldName]: NewFieldType;
+    } & Omit<ParentType, FieldName>
+  : never;
+export type Archetype<T extends AnyArchetypeSchema> = CastField<
+  Entity,
+  "components",
+  { [key in keyof T]: z.infer<T[key]> }
+>;
 
 function buildArchetype<TypeId extends string, Component, ExistingComponents>(
   typeId: TypeId,
@@ -52,23 +63,28 @@ export function createArchetype() {
   return buildArchetype("__BUILDING__", true, {});
 }
 
-export function verifyArchetype<T extends AnyArchteype>(
+export function verifyArchetype<T extends AnyArchetypeSchema>(
   archetype: T,
-  entity: { [component: string]: any }
-): { [key in keyof T]: z.infer<T[key]> } {
-  let verifiedEntity = {} as { [key in keyof T]: z.infer<T[key]> };
+  entity: Entity
+): Archetype<T> {
+  let verifiedComponents = {} as { [key in keyof T]: z.infer<T[key]> };
+  const { components } = entity;
   for (const [componentName, component] of Object.entries(archetype)) {
-    const entityComponent = entity[componentName];
+    const entityComponent = components[componentName];
     if (!entityComponent) {
       throw new Error(`Missing component ${componentName}`);
     }
     const key = componentName as keyof T;
-    verifiedEntity[key] = component.parse(entityComponent);
+    verifiedComponents[key] = component.parse(entityComponent);
   }
-  return verifiedEntity;
+  return {
+    ...entity,
+    components: verifiedComponents,
+  } as Archetype<T>;
 }
 
 // Example
+/* import { Component, createComponentSchema } from "./component";
 const a = z.object({ test: z.string() });
 const b = z.object({ tests: z.string().array() });
 
@@ -91,10 +107,12 @@ const archetype = createArchetype()
 
 try {
   const verifiedArchetype = verifyArchetype(archetype, {
-    hello: { test: "test1" },
-    world: { tests: ["test2"] },
+    id: "1",
+    components: {
+      hello: { test: "test1" },
+      world: { tests: ["test2"] },
+    },
   });
 } catch {
   // if it fails, it will throw an error like Zod
-}
-
+} */
