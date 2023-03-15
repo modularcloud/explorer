@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-function EntityPage({
+export function EntityPage({
   entity,
   whitelabel,
   searchOptions,
