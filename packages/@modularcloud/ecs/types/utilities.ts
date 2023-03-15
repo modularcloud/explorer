@@ -6,9 +6,9 @@ export type StringLiteralOrUnion<T> = string extends T
   ? T // must be wider than string
   : never;
 
-export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
-) => void
+export type UnionToIntersection<U> = (
+  U extends any ? (k: U) => void : never
+) extends (k: infer I) => void
   ? I
   : never;
 

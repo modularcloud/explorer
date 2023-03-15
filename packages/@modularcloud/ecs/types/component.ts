@@ -11,7 +11,11 @@ export function createComponentSchema<T extends z.ZodTypeAny, K extends string>(
   });
 }
 
-export type ComponentSchemaType<T extends z.ZodTypeAny, K extends string> = ReturnType<typeof createComponentSchema<T, K>>;
+export type ComponentSchemaType<
+  T extends z.ZodTypeAny,
+  K extends string
+> = ReturnType<typeof createComponentSchema<T, K>>;
 
-export type Component<T extends z.ZodTypeAny, K extends string> = z.infer<ComponentSchemaType<T, K>
+export type Component<T extends z.ZodTypeAny, K extends string> = z.infer<
+  ComponentSchemaType<T, K>
 >;

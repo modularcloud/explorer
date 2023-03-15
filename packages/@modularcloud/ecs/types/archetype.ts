@@ -3,20 +3,6 @@ import { z } from "zod";
 import { Entity } from "./entity";
 
 export type AnyArchetypeSchema = { [componentName: string]: z.ZodTypeAny };
-export type CastField<
-  ParentType,
-  FieldName extends keyof ParentType,
-  NewFieldType
-> = NewFieldType extends ParentType[FieldName]
-  ? {
-      [key in FieldName]: NewFieldType;
-    } & Omit<ParentType, FieldName>
-  : never;
-export type Archetype<T extends AnyArchetypeSchema> = CastField<
-  Entity,
-  "components",
-  { [key in keyof T]: z.infer<T[key]> }
->;
 
 function buildArchetype<TypeId extends string, Component, ExistingComponents>(
   typeId: TypeId,
@@ -66,7 +52,7 @@ export function createArchetype() {
 export function verifyArchetype<T extends AnyArchetypeSchema>(
   archetype: T,
   entity: Entity
-): Archetype<T> {
+): Entity<T> {
   let verifiedComponents = {} as { [key in keyof T]: z.infer<T[key]> };
   const { components } = entity;
   for (const [componentName, component] of Object.entries(archetype)) {
@@ -80,7 +66,7 @@ export function verifyArchetype<T extends AnyArchetypeSchema>(
   return {
     ...entity,
     components: verifiedComponents,
-  } as Archetype<T>;
+  };
 }
 
 // Example
