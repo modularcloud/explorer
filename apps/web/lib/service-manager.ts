@@ -919,7 +919,10 @@ async function getEVMTransactionByHash(
         From: tx.from,
         To: tx.to,
         Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
-        Fee: new Decimal(tx.gasPrice).times(receipt.gasUsed).dividedBy("1000000000000000000").toFixed(),
+        Fee: new Decimal(tx.gasPrice)
+          .times(receipt.gasUsed)
+          .dividedBy("1000000000000000000")
+          .toFixed(),
         "Gas Price": new Decimal(tx.gasPrice)
           .dividedBy("1000000000000000000")
           .toFixed(),
