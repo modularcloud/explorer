@@ -915,13 +915,18 @@ async function getEVMTransactionByHash(
       uniqueIdentifierLabel: "hash",
       metadata: buildMetadata({
         Height: convertHex(tx.blockNumber),
+        Status: { type: "status", payload: receipt.status },
         From: tx.from,
         To: tx.to,
-        //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
+        Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
+        Fee: new Decimal(tx.gasPrice).times(receipt.gasUsed).dividedBy("1000000000000000000").toFixed(),
         "Gas Price": new Decimal(tx.gasPrice)
           .dividedBy("1000000000000000000")
           .toFixed(),
-        Status: { type: "status", payload: receipt.status },
+        "Gas Limit": convertHex(tx.gas),
+        "Gas Used": receipt.gasUsed,
+        Nonce: convertHex(tx.nonce),
+        Data: tx.input,
       }),
       context: {
         network: networkName,
