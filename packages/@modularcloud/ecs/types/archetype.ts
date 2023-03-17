@@ -1,54 +1,34 @@
-import { ComponentSchemaType } from "./component";
+import { ComponentSchemaType, ExtractKey } from "./component";
 import { z } from "zod";
 import { Entity } from "./entity";
 
 export type AnyArchetypeSchema = { [componentName: string]: z.ZodTypeAny };
 
-function buildArchetype<TypeId extends string, Component, ExistingComponents>(
-  typeId: TypeId,
-  newComponent: Component,
-  components: ExistingComponents
-) {
-  type AllMyTypeKeys<K extends string> = {
-    [key in K]: key;
-  }[K];
-
-  type AllMyTypeEntries<K extends string, V> = {
-    [key in AllMyTypeKeys<K>]: V;
-  };
-  const addon = {
-    [typeId]: newComponent,
-  } as AllMyTypeEntries<TypeId, Component>;
-  const newComponents = { ...components, ...addon };
+function buildArchetype<Prev>(prev: Prev = {} as Prev) {
   return {
     addComponent: <
-      NewTypeId extends string,
-      NewComponent extends ComponentSchemaType<
-        any,
-        NewTypeId extends TypeId ? never : NewTypeId
-      >
+      TypeId extends string,
+      NewComponent extends ComponentSchemaType<any, TypeId>
     >(
-      newTypeId: NewTypeId,
-      component: NewComponent
+      newComponent: NewComponent
     ) => {
-      return buildArchetype<NewTypeId, NewComponent, typeof newComponents>(
-        newTypeId,
-        component,
-        newComponents
-      );
+      const typeId = newComponent.shape.typeId
+        .value as ExtractKey<NewComponent>;
+      return buildArchetype({ ...prev, [typeId]: newComponent } as Prev & {
+        [key in typeof typeId]: NewComponent;
+      });
     },
     finish: () => {
-      // @ts-ignore
-      let { __BUILDING__, ...final } = newComponents;
-      return final;
+      return prev;
     },
   };
 }
 
 export function createArchetype() {
-  return buildArchetype("__BUILDING__", true, {});
+  return buildArchetype();
 }
 
+// TODO: Use Zod
 export function verifyArchetype<T extends AnyArchetypeSchema>(
   archetype: T,
   entity: Entity
@@ -86,10 +66,7 @@ const bc: Component<typeof b, "world"> = {
   data: { tests: ["test2"] },
 };
 
-const archetype = createArchetype()
-  .addComponent("hello", as)
-  .addComponent("world", bs)
-  .finish();
+const archetype = createArchetype().addComponent(as).addComponent(bs).finish();
 
 try {
   const verifiedArchetype = verifyArchetype(archetype, {
