@@ -1,23 +1,23 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { AssociatedComponent } from "../../../ecs/components/associated";
-import { BlockExtract } from ".";
+import { TransactionExtract } from ".";
 
 export const AssociatedTransform = {
   schema: AssociatedComponent,
   transform: async ({
     data,
     metadata,
-  }: TransformInput<typeof BlockExtract>): Promise<
+  }: TransformInput<typeof TransactionExtract>): Promise<
     TransformOutput<typeof AssociatedComponent>
   > => ({
     typeId: "associated",
     data: {
-      Transactions: data.transactions.map((transaction) => ({
+      Logs: data.receipt.logs.map((log, index) => ({
         networkId: metadata.network.id,
-        entityTypeName: "transaction",
+        entityTypeName: "log",
         query: {
-          fieldName: "hash",
-          fieldValue: [transaction],
+          fieldName: "path",
+          fieldValue: [data.hash, String(index)],
         },
       })),
     },

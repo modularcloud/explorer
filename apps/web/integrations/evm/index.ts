@@ -1,9 +1,9 @@
-import { EngineConfig } from "@modularcloud/ecs";
+import { EngineConfig, EngineConfigMetadata } from "@modularcloud/ecs";
 import { BlockLoader } from "./block";
 
-export function CreateEVMConfig(endpoint: string): EngineConfig {
+export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
   return {
-    endpoint,
+    metadata,
     loaders: {
       block: BlockLoader,
     },
