@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { StringLiteral } from "./utilities";
 
 export function createComponentSchema<T extends z.ZodTypeAny, K extends string>(
   schema: T,
-  typeId: StringLiteral<K>
+  typeId: K
 ) {
   return z.object({
     typeId: z.literal(typeId),
