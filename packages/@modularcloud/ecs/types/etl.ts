@@ -1,27 +1,81 @@
-import { Entity, EntityBaseSchema } from "./entity";
+import { AnyComponentSchema, ComponentSchemaType, Component, InferComponent, InferIdentity } from "./component";
+import { Entity } from "./entity";
+import { v4 as uuidv4 } from "uuid";
 
-export type Loader = {
-  extract: (endpoint: string, query: unknown) => Promise<unknown>;
-  transform: (data: unknown) => Promise<Entity>;
-};
+export type ComponentTransform<T> = {
+  schema: InferIdentity<T>;
+  transform: (data: unknown) => Promise<InferComponent<T>>;
+}
 
-export type Config = {
-  endpoint: string;
-  loaders: Record<string, Loader>;
-};
+export type AnyComponentTransform = {
+  schema: AnyComponentSchema;
+  transform: (data: unknown) => Promise<any>;
+}
+
+type Extract = (endpoint: string, query: unknown) => Promise<unknown>
 
 export async function load(
-  config: Config,
-  loader: string,
+  endpoint: string,
+  loader: Loader,
   query: unknown
 ): Promise<Entity> {
-  const { endpoint, loaders } = config;
-  const { extract, transform } = loaders[loader];
+  const { extract, components } = loader.finish();
 
-  const data = await extract(endpoint, query).then(transform);
-
-  // extra validation
-  const entity = EntityBaseSchema.parse(data);
+  const id = uuidv4();
+  const data = await extract(endpoint, query);
+  const entity = {
+    id,
+    components: await Promise.all(
+      components.map((component) =>
+        component.schema.parse(component.transform(data))
+      )
+    ),
+  };
 
   return entity;
 }
+
+function _buildComponentTransforms<T extends AnyComponentTransform>(extract: Extract, componentTransforms: T[] = []) {
+  return {
+    addTransform: <K>(transform: ComponentTransform<K>) => {
+      return _buildComponentTransforms(extract, [...componentTransforms, transform]);
+    },
+    finish: () => {
+      return {
+        extract,
+        components: componentTransforms,
+      };
+    }
+  }
+}
+
+export function createLoader() {
+  return {
+    addExtract: (extract: Extract) => _buildComponentTransforms(extract)
+  }
+}
+export type Loader = ReturnType<ReturnType<typeof createLoader>["addExtract"]>;
+export type Loaders = Record<string, Loader>;
+/*export function createConfig(endpoint: string, loaders: Loaders) {
+  return {
+    endpoint,
+    loaders: loaders.finish(),
+  };
+}*/
+
+// Example
+/* import { createComponentSchema, } from "./component";
+const a = z.object({ test: z.string() });
+const b = z.object({ tests: z.string().array() });
+
+const as = createComponentSchema(a, "hello");
+const bs = createComponentSchema(b, "world");
+
+const ac: Component<typeof a, "hello"> = {
+  typeId: "hello",
+  data: { test: "test1" },
+};
+const bc: Component<typeof b, "world"> = {
+  typeId: "world",
+  data: { tests: ["test2"] },
+}; */
