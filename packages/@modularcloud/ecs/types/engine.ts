@@ -1,14 +1,14 @@
 import { load, Loaders } from "./etl";
 
-type Config = {
+export type EngineConfig = {
   endpoint: string;
   loaders: Loaders;
 };
 
-const _CONFIGS: Record<string, Config> = {};
+const _CONFIGS: Record<string, EngineConfig> = {};
 
 export const Engine = {
-  addConfig: (name: string, config: Config) => {
+  addConfig: (name: string, config: EngineConfig) => {
     _CONFIGS[name] = config;
   },
   load: async (name: string, loader: string, query: unknown) => {

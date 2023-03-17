@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@modularcloud/design-system": "*",
+    "@modularcloud/ecs": "*",
     "@next/font": "^13.1.6",
     "@vercel/analytics": "^0.1.8",
     "clsx": "^1.2.1",
@@ -20,6 +21,7 @@
     "react-dom": "^18.2.0",
     "service-manager": "*",
     "swr": "^2.0.3",
+    "web3": "^1.8.2",
     "ws": "^8.12.1",
     "zod": "^3.20.6"
   },

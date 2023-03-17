@@ -8,24 +8,30 @@ import { z } from "zod";
  * Using a builder in order to ensure type safety but this is not actually needed
  * */
 
-export type ComponentTransform<T extends AnyComponentSchema> = {
+export type ComponentTransform<Input, T extends AnyComponentSchema> = {
   schema: T;
-  transform: (data: unknown) => Promise<z.infer<T>>;
+  transform: (data: Input) => Promise<z.infer<T>>;
 };
 
-export type AnyComponentTransform = {
+export type AnyComponentTransform<Input> = {
   schema: AnyComponentSchema;
-  transform: (data: unknown) => Promise<any>;
+  transform: (data: Input) => Promise<any>;
 };
 
-type Extract = (endpoint: string, query: unknown) => Promise<unknown>;
+export type Extract<T> = (endpoint: string, query: unknown) => Promise<T>;
+
+export type TransformInput<ExtractFn extends (...args: any) => any> = Awaited<
+  ReturnType<ExtractFn>
+>;
+export type TransformOutput<Schema extends AnyComponentSchema> =
+  z.infer<Schema>;
 
 export async function load(
   endpoint: string,
   loader: Loader,
   query: unknown
 ): Promise<Entity> {
-  const { extract, components } = loader.finish();
+  const { extract, components } = loader;
 
   const id = uuidv4();
   const data = await extract(endpoint, query);
@@ -41,13 +47,13 @@ export async function load(
   return entity;
 }
 
-function _buildLoader<T extends AnyComponentTransform>(
-  extract: Extract,
+function _buildLoader<Input, T extends AnyComponentTransform<Input>>(
+  extract: Extract<Input>,
   componentTransforms: T[] = []
 ) {
   return {
     addTransform: <K extends AnyComponentSchema>(
-      transform: ComponentTransform<K>
+      transform: ComponentTransform<Input, K>
     ) => {
       return _buildLoader(extract, [...componentTransforms, transform]);
     },
@@ -62,10 +68,13 @@ function _buildLoader<T extends AnyComponentTransform>(
 
 export function createLoader() {
   return {
-    addExtract: (extract: Extract) => _buildLoader(extract),
+    addExtract: <T>(extract: Extract<T>) => _buildLoader(extract),
   };
 }
-export type Loader = ReturnType<ReturnType<typeof createLoader>["addExtract"]>;
+export type Loader = {
+  extract: Extract<any>;
+  components: AnyComponentTransform<any>[];
+};
 export type Loaders = Record<string, Loader>;
 /*export function createConfig(endpoint: string, loaders: Loaders) {
   return {

@@ -1,0 +1,24 @@
+import { createComponentSchema } from "@modularcloud/ecs";
+import { z } from "zod";
+
+const ValueSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("standard"),
+    payload: z.union([z.string(), z.number()]),
+  }),
+  z.object({ type: z.literal("status"), payload: z.coerce.boolean() }),
+  z.object({ type: z.literal("list"), payload: z.string().array() }),
+]);
+
+const SidebarSchema = z.object({
+  // Entity details at the top
+  chainId: z.string(),
+  entityTypeName: z.string(),
+  entityId: z.string(),
+
+  // Attributes
+  attributesHeader: z.string(),
+  attributes: z.record(ValueSchema),
+});
+
+export const SidebarComponent = createComponentSchema(SidebarSchema, "sidebar");
