@@ -1,4 +1,4 @@
-import { ComponentTransform, createLoader, load, Loaders } from "./etl";
+import { load, Loaders } from "./etl";
 
 type Config = {
   endpoint: string;
@@ -22,8 +22,10 @@ export const Engine = {
 };
 
 // Example
-import { z } from "zod";
+/*import { z } from "zod";
 import { createComponentSchema, Component } from "./component";
+import { ComponentTransform, createLoader } from "./etl";
+
 const a = z.object({ test: z.string() });
 const b = z.object({ tests: z.string().array() });
 
@@ -73,4 +75,4 @@ const loaders = {
     .addTransform(y),
 };
 
-Engine.addConfig("tester", { endpoint: "localhost", loaders: loaders });
+Engine.addConfig("tester", { endpoint: "localhost", loaders: loaders });*/

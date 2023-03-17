@@ -3,6 +3,11 @@ import { Entity } from "./entity";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
+/**
+ * Probably should simplify this whole thing
+ * Using a builder in order to ensure type safety but this is not actually needed
+ * */
+
 export type ComponentTransform<T extends AnyComponentSchema> = {
   schema: T;
   transform: (data: unknown) => Promise<z.infer<T>>;
@@ -36,7 +41,7 @@ export async function load(
   return entity;
 }
 
-function _buildComponentTransforms<T extends AnyComponentTransform>(
+function _buildLoader<T extends AnyComponentTransform>(
   extract: Extract,
   componentTransforms: T[] = []
 ) {
@@ -44,10 +49,7 @@ function _buildComponentTransforms<T extends AnyComponentTransform>(
     addTransform: <K extends AnyComponentSchema>(
       transform: ComponentTransform<K>
     ) => {
-      return _buildComponentTransforms(extract, [
-        ...componentTransforms,
-        transform,
-      ]);
+      return _buildLoader(extract, [...componentTransforms, transform]);
     },
     finish: () => {
       return {
@@ -60,7 +62,7 @@ function _buildComponentTransforms<T extends AnyComponentTransform>(
 
 export function createLoader() {
   return {
-    addExtract: (extract: Extract) => _buildComponentTransforms(extract),
+    addExtract: (extract: Extract) => _buildLoader(extract),
   };
 }
 export type Loader = ReturnType<ReturnType<typeof createLoader>["addExtract"]>;

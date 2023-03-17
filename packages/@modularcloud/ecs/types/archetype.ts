@@ -4,6 +4,7 @@ import { Entity } from "./entity";
 
 export type AnyArchetypeSchema = { [componentName: string]: z.ZodTypeAny };
 
+// TODO: Prevent duplicate typeIds
 function buildArchetype<Prev>(prev: Prev = {} as Prev) {
   return {
     addComponent: <
@@ -50,7 +51,7 @@ export function verifyArchetype<T extends AnyArchetypeSchema>(
 }
 
 // Example
-import { Component, createComponentSchema } from "./component";
+/*import { Component, createComponentSchema } from "./component";
 const a = z.object({ test: z.string() });
 const b = z.object({ tests: z.string().array() });
 
@@ -78,4 +79,4 @@ try {
   });
 } catch {
   // if it fails, it will throw an error like Zod
-}
+}*/
