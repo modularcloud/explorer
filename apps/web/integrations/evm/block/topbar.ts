@@ -4,12 +4,15 @@ import { TopbarComponent } from "../../../ecs/components/topbar";
 
 export const TopbarTransform = {
   schema: TopbarComponent,
-  transform: async (
-    data: TransformInput<typeof BlockExtract>
-  ): Promise<TransformOutput<typeof TopbarComponent>> => ({
+  transform: async ({
+    data,
+    metadata,
+  }: TransformInput<typeof BlockExtract>): Promise<
+    TransformOutput<typeof TopbarComponent>
+  > => ({
     typeId: "topbar",
     data: {
-      chainId: "placeholder", //data.chainId,
+      logo: metadata.network.logoUrl,
       entityTypeName: "Block",
       entityId: data.hash,
     },

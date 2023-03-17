@@ -6,7 +6,7 @@ const AssociatedSchema = z.record(
   z.string(), // Collection name
   z
     .object({
-      chainId: z.string(),
+      networkId: z.string(),
       entityTypeName: z.string(),
       query: QuerySchema,
     })

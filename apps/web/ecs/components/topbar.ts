@@ -2,7 +2,7 @@ import { createComponentSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 
 const TopbarSchema = z.object({
-  chainId: z.string(),
+  logo: z.string(),
   entityTypeName: z.string(),
   entityId: z.string(),
 });

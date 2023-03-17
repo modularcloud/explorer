@@ -1,9 +1,17 @@
 import { load, Loaders } from "./etl";
 
 export type EngineConfig = {
-  endpoint: string;
+  metadata: {
+    endpoint: string;
+    network: {
+      id: string;
+      displayName: string;
+      logoUrl: string;
+    };
+  };
   loaders: Loaders;
 };
+export type EngineConfigMetadata = EngineConfig["metadata"];
 
 const _CONFIGS: Record<string, EngineConfig> = {};
 
@@ -17,7 +25,7 @@ export const Engine = {
       throw new Error(`No config found for ${name}`);
     }
 
-    return await load(config.endpoint, config.loaders[loader], query);
+    return await load(config.metadata, config.loaders[loader], query);
   },
 };
 

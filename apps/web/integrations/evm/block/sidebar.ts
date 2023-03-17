@@ -4,16 +4,23 @@ import { SidebarComponent } from "../../../ecs/components/sidebar";
 
 export const SidebarTransform = {
   schema: SidebarComponent,
-  transform: async (
-    data: TransformInput<typeof BlockExtract>
-  ): Promise<TransformOutput<typeof SidebarComponent>> => ({
+  transform: async ({
+    data,
+    metadata,
+  }: TransformInput<typeof BlockExtract>): Promise<
+    TransformOutput<typeof SidebarComponent>
+  > => ({
     typeId: "sidebar",
     data: {
-      chainId: "placeholder", //data.chainId,
+      logo: metadata.network.logoUrl,
       entityTypeName: "Block",
       entityId: data.hash,
       attributesHeader: "Block Information",
       attributes: {
+        Network: {
+          type: "standard",
+          payload: metadata.network.displayName,
+        },
         "Block Number": {
           type: "standard",
           payload: data.number,

@@ -2,6 +2,7 @@ import { AnyComponentSchema } from "./component";
 import { Entity } from "./entity";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { EngineConfigMetadata } from "./engine";
 
 /**
  * Probably should simplify this whole thing
@@ -10,36 +11,46 @@ import { z } from "zod";
 
 export type ComponentTransform<Input, T extends AnyComponentSchema> = {
   schema: T;
-  transform: (data: Input) => Promise<z.infer<T>>;
+  transform: (props: {
+    data: Input;
+    metadata: EngineConfigMetadata;
+  }) => Promise<z.infer<T>>;
 };
 
 export type AnyComponentTransform<Input> = {
   schema: AnyComponentSchema;
-  transform: (data: Input) => Promise<any>;
+  transform: (props: {
+    data: Input;
+    metadata: EngineConfigMetadata;
+  }) => Promise<any>;
 };
 
-export type Extract<T> = (endpoint: string, query: unknown) => Promise<T>;
+export type Extract<T> = (
+  query: unknown,
+  metadata: EngineConfigMetadata
+) => Promise<T>;
 
-export type TransformInput<ExtractFn extends (...args: any) => any> = Awaited<
-  ReturnType<ExtractFn>
->;
+export type TransformInput<ExtractFn extends (...args: any) => any> = {
+  data: Awaited<ReturnType<ExtractFn>>;
+  metadata: EngineConfigMetadata;
+};
 export type TransformOutput<Schema extends AnyComponentSchema> =
   z.infer<Schema>;
 
 export async function load(
-  endpoint: string,
+  metadata: EngineConfigMetadata,
   loader: Loader,
   query: unknown
 ): Promise<Entity> {
   const { extract, components } = loader;
 
   const id = uuidv4();
-  const data = await extract(endpoint, query);
+  const data = await extract(query, metadata);
   const entity = {
     id,
     components: await Promise.all(
       components.map((component) =>
-        component.schema.parse(component.transform(data))
+        component.schema.parse(component.transform({ data, metadata }))
       )
     ),
   };

@@ -12,7 +12,7 @@ const ValueSchema = z.discriminatedUnion("type", [
 
 const SidebarSchema = z.object({
   // Entity details at the top
-  chainId: z.string(),
+  logo: z.string(),
   entityTypeName: z.string(),
   entityId: z.string(),
 
