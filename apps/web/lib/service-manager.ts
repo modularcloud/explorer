@@ -915,13 +915,21 @@ async function getEVMTransactionByHash(
       uniqueIdentifierLabel: "hash",
       metadata: buildMetadata({
         Height: convertHex(tx.blockNumber),
+        Status: { type: "status", payload: receipt.status },
         From: tx.from,
         To: tx.to,
-        //Fee: Number(tx.gas),//new Decimal(tx.gasPrice).times(tx.gas).dividedBy("1000000000000000000").toFixed(),
+        Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
+        Fee: new Decimal(tx.gasPrice)
+          .times(receipt.gasUsed)
+          .dividedBy("1000000000000000000")
+          .toFixed(),
         "Gas Price": new Decimal(tx.gasPrice)
           .dividedBy("1000000000000000000")
           .toFixed(),
-        Status: { type: "status", payload: receipt.status },
+        "Gas Limit": convertHex(tx.gas),
+        "Gas Used": receipt.gasUsed,
+        Nonce: convertHex(tx.nonce),
+        Data: tx.input,
       }),
       context: {
         network: networkName,
@@ -1032,13 +1040,16 @@ async function getSVMTransactionBySignature(
 }
 
 export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
+  if (network.id === "triton") {
+    network.id = "91002";
+  }
   const EVM = network.endpoints.evm;
   const SVM = network.endpoints.svm;
   const needsPrefix = EVM && SVM;
+  const entityTypes = [];
   if (EVM) {
-    ServiceManager.addNetwork({
-      label: network.name,
-      entityTypes: [
+    entityTypes.push(
+      ...[
         {
           name: needsPrefix ? "EVM Block" : "Block",
           getters: [
@@ -1078,11 +1089,39 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 if (!isAddress(address)) {
                   return null;
                 }
+                const balances: any = {};
+                let nativeTokenBalance = "0";
+                try {
+                  const balanceResponse = await fetch(
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        method: "mc_getTokenBalancesByAddress",
+                        params: [address],
+                      }),
+                    }
+                  ).then((res) => res.json());
+                  if (balanceResponse.result.balances) {
+                    balanceResponse.result.balances.forEach((val: any) => {
+                      balances[val.token.symbol] = new Decimal(val.balance)
+                        .dividedBy(new Decimal(10).pow(val.token.decimals))
+                        .toString();
+                    });
+                  }
+                  nativeTokenBalance =
+                    balanceResponse.result.nativeTokenBalance;
+                } catch {}
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    Balances: "Coming soon",
+                    [network.name.toLowerCase() === "triton"
+                      ? "ZBC"
+                      : "Native"]: new Decimal(nativeTokenBalance)
+                      .dividedBy(new Decimal(10).pow(18))
+                      .toString(),
+                    ...balances,
                   }),
                   context: {
                     network: network.name,
@@ -1097,12 +1136,12 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`,
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
                 {
                   method: "POST",
                   body: JSON.stringify({
                     method: "mc_getTransactionsByAddress",
-                    params: [entity.uniqueIdentifier],
+                    params: [entity.uniqueIdentifier.toLowerCase()],
                   }),
                 }
               ).then((res) => res.json());
@@ -1147,7 +1186,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/91002`,
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
                 {
                   method: "POST",
                   body: JSON.stringify({
@@ -1231,13 +1270,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             }
           },
         },
-      ],
-    });
+      ]
+    );
   }
+
   if (SVM) {
-    ServiceManager.addNetwork({
-      label: network.name,
-      entityTypes: [
+    entityTypes.push(
+      ...[
         {
           name: needsPrefix ? "SVM Block" : "Block",
           getters: [
@@ -1278,9 +1317,13 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           ],
           getAssociated: async (entity: Entity) => [],
         },
-      ],
-    });
+      ]
+    );
   }
+  ServiceManager.addNetwork({
+    label: network.name,
+    entityTypes,
+  });
 }
 
 addRemote({
