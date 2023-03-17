@@ -23,7 +23,7 @@ export const Engine = {
 
 // Example
 import { z } from "zod";
-import { createComponentSchema, Component, AnyComponentSchema } from "./component";
+import { createComponentSchema, Component } from "./component";
 const a = z.object({ test: z.string() });
 const b = z.object({ tests: z.string().array() });
 
@@ -47,30 +47,6 @@ function fetch(endpoint: string) {
         })
     });
 }
-const config = {
-    endpoint: "http://localhost:3000",
-    loaders: {
-        test: {
-            extract: async (endpoint: string, query: unknown) => {
-                return await fetch(endpoint).then((res) => res.json());
-            },
-            components: [
-                {
-                    schema: as,
-                    transform: async (data: unknown): Promise<z.infer<typeof as>> => {
-                        return { typeId: "hello", data: { test: (data as { test: string }).test } };
-                    }
-                },
-                /*{
-                    schema: bs,
-                    transform: async (data: unknown): Promise<z.infer<typeof bs>> => {
-                        return { typeId: "world", data: { tests: (data as { tests: string }).tests } };
-                    }
-                }*/
-            ]
-        }
-    }
-};
 
 const x: ComponentTransform<typeof as> = {
     schema: as,
@@ -95,4 +71,4 @@ const loaders = {
         .addTransform(y)
 }
 
-Engine.addConfig("tester", { endpoint: config.endpoint, loaders: loaders });
+Engine.addConfig("tester", { endpoint: "localhost", loaders: loaders });

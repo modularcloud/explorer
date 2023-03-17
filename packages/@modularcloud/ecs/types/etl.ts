@@ -1,10 +1,11 @@
-import { AnyComponentSchema, ComponentSchemaType, Component, InferComponent, InferIdentity } from "./component";
+import { AnyComponentSchema } from "./component";
 import { Entity } from "./entity";
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
-export type ComponentTransform<T> = {
-  schema: InferIdentity<T>;
-  transform: (data: unknown) => Promise<InferComponent<T>>;
+export type ComponentTransform<T extends AnyComponentSchema> = {
+  schema: T;
+  transform: (data: unknown) => Promise<z.infer<T>>;
 }
 
 export type AnyComponentTransform = {
@@ -37,7 +38,7 @@ export async function load(
 
 function _buildComponentTransforms<T extends AnyComponentTransform>(extract: Extract, componentTransforms: T[] = []) {
   return {
-    addTransform: <K>(transform: ComponentTransform<K>) => {
+    addTransform: <K extends AnyComponentSchema>(transform: ComponentTransform<K>) => {
       return _buildComponentTransforms(extract, [...componentTransforms, transform]);
     },
     finish: () => {
