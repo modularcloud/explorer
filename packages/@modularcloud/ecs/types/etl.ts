@@ -6,14 +6,14 @@ import { z } from "zod";
 export type ComponentTransform<T extends AnyComponentSchema> = {
   schema: T;
   transform: (data: unknown) => Promise<z.infer<T>>;
-}
+};
 
 export type AnyComponentTransform = {
   schema: AnyComponentSchema;
   transform: (data: unknown) => Promise<any>;
-}
+};
 
-type Extract = (endpoint: string, query: unknown) => Promise<unknown>
+type Extract = (endpoint: string, query: unknown) => Promise<unknown>;
 
 export async function load(
   endpoint: string,
@@ -36,24 +36,32 @@ export async function load(
   return entity;
 }
 
-function _buildComponentTransforms<T extends AnyComponentTransform>(extract: Extract, componentTransforms: T[] = []) {
+function _buildComponentTransforms<T extends AnyComponentTransform>(
+  extract: Extract,
+  componentTransforms: T[] = []
+) {
   return {
-    addTransform: <K extends AnyComponentSchema>(transform: ComponentTransform<K>) => {
-      return _buildComponentTransforms(extract, [...componentTransforms, transform]);
+    addTransform: <K extends AnyComponentSchema>(
+      transform: ComponentTransform<K>
+    ) => {
+      return _buildComponentTransforms(extract, [
+        ...componentTransforms,
+        transform,
+      ]);
     },
     finish: () => {
       return {
         extract,
         components: componentTransforms,
       };
-    }
-  }
+    },
+  };
 }
 
 export function createLoader() {
   return {
-    addExtract: (extract: Extract) => _buildComponentTransforms(extract)
-  }
+    addExtract: (extract: Extract) => _buildComponentTransforms(extract),
+  };
 }
 export type Loader = ReturnType<ReturnType<typeof createLoader>["addExtract"]>;
 export type Loaders = Record<string, Loader>;

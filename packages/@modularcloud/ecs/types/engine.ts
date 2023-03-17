@@ -3,7 +3,7 @@ import { ComponentTransform, createLoader, load, Loaders } from "./etl";
 type Config = {
   endpoint: string;
   loaders: Loaders;
-}
+};
 
 const _CONFIGS: Record<string, Config> = {};
 
@@ -40,35 +40,37 @@ const bc: Component<typeof b, "world"> = {
 };
 
 function fetch(endpoint: string) {
-    return Promise.resolve({
-        json: () => ({
-            test: "test1",
-            tests: ["test2"]
-        })
-    });
+  return Promise.resolve({
+    json: () => ({
+      test: "test1",
+      tests: ["test2"],
+    }),
+  });
 }
 
 const x: ComponentTransform<typeof as> = {
-    schema: as,
-    transform: async (data: unknown): Promise<z.infer<typeof as>> => {
-        return { typeId: "hello", data: { test: (data as { test: string }).test } };
-    }
-}
+  schema: as,
+  transform: async (data: unknown): Promise<z.infer<typeof as>> => {
+    return { typeId: "hello", data: { test: (data as { test: string }).test } };
+  },
+};
 const y: ComponentTransform<typeof bs> = {
-    schema: bs,
-    transform: async (data: unknown): Promise<z.infer<typeof bs>> => {
-        return { typeId: "world", data: { tests: (data as { tests: string[] }).tests } };
-    }
-}
+  schema: bs,
+  transform: async (data: unknown): Promise<z.infer<typeof bs>> => {
+    return {
+      typeId: "world",
+      data: { tests: (data as { tests: string[] }).tests },
+    };
+  },
+};
 
 const loaders = {
-    testLoader:
-      createLoader()
-        .addExtract(async (endpoint: string, query: unknown) => {
-          return await fetch(endpoint).then((res) => res.json());
-        })
-        .addTransform(x)
-        .addTransform(y)
-}
+  testLoader: createLoader()
+    .addExtract(async (endpoint: string, query: unknown) => {
+      return await fetch(endpoint).then((res) => res.json());
+    })
+    .addTransform(x)
+    .addTransform(y),
+};
 
 Engine.addConfig("tester", { endpoint: "localhost", loaders: loaders });

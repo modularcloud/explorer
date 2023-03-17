@@ -21,5 +21,9 @@ export type Component<T extends z.ZodTypeAny, K extends string> = z.infer<
   ComponentSchemaType<T, K>
 >;
 
-export type ExtractSchema<T> = T extends ComponentSchemaType<infer U, infer V> ? U : never;
-export type ExtractKey<T> = T extends ComponentSchemaType<infer U, infer V> ? V : never;
+export type ExtractSchema<T> = T extends ComponentSchemaType<infer U, infer V>
+  ? U
+  : never;
+export type ExtractKey<T> = T extends ComponentSchemaType<infer U, infer V>
+  ? V
+  : never;
