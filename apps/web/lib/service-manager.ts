@@ -20,7 +20,7 @@ import { isAddress } from "./search";
 export const ServiceManager = createServiceManager();
 
 export const RemoteServiceRequestSchema = z.object({
-  provider: z.literal("eclipse"),
+  provider: z.string(),
   name: z.string(),
   id: z.string(),
   endpoints: z.object({
