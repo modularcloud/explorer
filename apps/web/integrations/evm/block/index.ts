@@ -5,6 +5,7 @@ import { TopbarTransform } from "./topbar";
 import Web3 from "web3";
 import { AssociatedTransform } from "./associated";
 import { RowTransform } from "./row";
+import { CardTransform } from "./card";
 
 export async function BlockExtract(
   _q: unknown,
@@ -22,5 +23,6 @@ export const BlockLoader = createLoader()
   .addTransform(SidebarTransform)
   .addTransform(TopbarTransform)
   .addTransform(AssociatedTransform)
+  .addTransform(CardTransform)
   .addTransform(RowTransform)
   .finish();

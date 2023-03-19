@@ -3,6 +3,7 @@ import Web3 from "web3";
 import { getEventSignatureName } from "../../../lib/utils";
 import { QuerySchema } from "../../../schemas/query";
 import { AssociatedTransform } from "./associated";
+import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
@@ -32,5 +33,6 @@ export const TransactionLoader = createLoader()
   .addTransform(SidebarTransform)
   .addTransform(TopbarTransform)
   .addTransform(AssociatedTransform)
+  .addTransform(CardTransform)
   .addTransform(RowTransform)
   .finish();

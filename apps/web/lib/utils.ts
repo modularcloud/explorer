@@ -1,3 +1,4 @@
+import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 
 export async function getEventSignatureName(topic: string) {
@@ -7,4 +8,30 @@ export async function getEventSignatureName(topic: string) {
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
   } catch {}
+}
+
+// wrap loading in a fetch request until we figure out how to best cache using next app routing
+type FetchLoadArgs = { network: string, type: string, query: string[] };
+export async function fetchLoad(props: FetchLoadArgs) {
+  const response = await fetch(
+    `${
+      process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"
+    }/api/app/load`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(props),
+    }
+  );
+  if(!response.ok) {
+    console.log("Error loading entity", response)
+    return null;
+  }
+  
+  const entity = EntityBaseSchema.safeParse(await response.json());
+  return entity.success ? entity.data : null;
 }

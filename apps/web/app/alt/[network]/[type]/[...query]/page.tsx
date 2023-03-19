@@ -1,30 +1,11 @@
-import { EntityBaseSchema } from "@modularcloud/ecs";
-
-async function fetchLoad(props: any) {
-  const response = await fetch(
-    `${
-      process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000"
-    }/api/app/load`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(props),
-    }
-  );
-  if(!response.ok) {
-    console.log("Error loading entity", response)
-    return null;
-  }
-  const entity = EntityBaseSchema.safeParse(await response.json());
-  return entity.success ? entity.data : null;
-}
+import { PageArchetype } from "../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../ecs/hooks/use-entity";
 
 export default async function HomePage(props: any) {
-  const entity = await fetchLoad(props.params);
+  const entity = await useEntity({
+    resourcePath: props.params,
+    archetype: PageArchetype,
+  });
   console.log(entity);
   return <div>Home Page</div>;
 }
