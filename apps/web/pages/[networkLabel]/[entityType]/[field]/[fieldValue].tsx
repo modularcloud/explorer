@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next";
 import { Entity } from "service-manager/types/entity.type";
-import { ValueSchemaType } from "service-manager";
+import { slugify, ValueSchemaType } from "service-manager";
 import { getEntities, getEntity } from "service-manager/types/network.type";
 import {
   loadDynamicNetworks,
@@ -221,7 +221,7 @@ export function EntityPage({
                 optionGroups={searchOptions}
                 isOpen={isOpen}
                 handleOpen={setIsOpen}
-                defaultSelected={entity.context.network}
+                defaultSelected={slugify(entity.context.network)}
                 onSearch={(searchNetwork: string, term: string) => {
                   const id = term.trim();
                   if (isSearchable(id)) {

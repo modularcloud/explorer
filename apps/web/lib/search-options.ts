@@ -1,3 +1,4 @@
+import { slugify } from "service-manager";
 import {
   CELESTIA_MOCHA,
   DYMENSION_HUB,
@@ -47,6 +48,36 @@ export const getSearchOptions = async () => {
       ...(Whitelabel === "dev"
         ? [
             {
+              label: "Dymension",
+              options: [
+                ...(await fetch(
+                  process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
+                )
+                  .then((res) => res.json())
+                  .then((json) =>
+                    json.result
+                      .filter(
+                        (network: any) =>
+                          network.id.toLowerCase() === "rollapp1"
+                      )
+                      .map((network: any) => {
+                        return {
+                          name: network.name,
+                          value: slugify(network.name),
+                        };
+                      })
+                  )),
+                  {
+                    name: "Hub",
+                    value: DYMENSION_HUB,
+                  },
+                  {
+                    name: "RollApp X",
+                    value: DYMENSION_ROLLAPP_X,
+                  },
+              ],
+            },
+            {
               label: "Dev",
               options: [
                 {
@@ -66,9 +97,16 @@ export const getSearchOptions = async () => {
               )
                 .then((res) => res.json())
                 .then((json) =>
-                  json.result.map((network: any) => {
-                    return { name: network.name, value: network.name };
-                  })
+                  json.result
+                    .filter(
+                      (network: any) => network.id.toLowerCase() !== "rollapp1"
+                    )
+                    .map((network: any) => {
+                      return {
+                        name: network.name,
+                        value: slugify(network.name),
+                      };
+                    })
                 ),
             },
           ]
@@ -79,19 +117,6 @@ export const getSearchOptions = async () => {
           {
             name: "Mocha",
             value: CELESTIA_MOCHA,
-          },
-        ],
-      },
-      {
-        label: "Dymension",
-        options: [
-          {
-            name: "Hub",
-            value: DYMENSION_HUB,
-          },
-          {
-            name: "RollApp X",
-            value: DYMENSION_ROLLAPP_X,
           },
         ],
       },
