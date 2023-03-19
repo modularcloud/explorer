@@ -14,7 +14,7 @@ export async function BlockExtract(
   const web3 = new Web3(metadata.endpoint);
 
   // TODO: enforce correct field name
-  return await web3.eth.getBlock(query.fieldValue[0]);
+  return await web3.eth.getBlock(query[0]);
 }
 
 export const BlockLoader = createLoader()

@@ -15,10 +15,7 @@ export const AssociatedTransform = {
       Transactions: data.transactions.map((transaction) => ({
         networkId: metadata.network.id,
         entityTypeName: "transaction",
-        query: {
-          fieldName: "hash",
-          fieldValue: [transaction],
-        },
+        query: [transaction],
       })),
     },
   }),

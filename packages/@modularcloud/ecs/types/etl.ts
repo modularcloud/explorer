@@ -48,12 +48,14 @@ export async function load(
   const data = await extract(query, metadata);
   const entity = {
     id,
-    components: await Promise.all(
-      components.map((component) =>
-        component.schema.parse(component.transform({ data, metadata }))
-      )
-    ),
+    components: {} as Record<string, any>,
   };
+  await Promise.all(
+    components.map(async (component) => {
+      entity.components[component.schema.shape.typeId.value] =
+        component.schema.parse(await component.transform({ data, metadata }));
+    })
+  );
 
   return entity;
 }

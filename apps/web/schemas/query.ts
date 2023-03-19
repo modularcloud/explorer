@@ -1,6 +1,3 @@
 import { z } from "zod";
 
-export const QuerySchema = z.object({
-  fieldName: z.string(),
-  fieldValue: z.string().array().nonempty(),
-});
+export const QuerySchema = z.string().array().nonempty();

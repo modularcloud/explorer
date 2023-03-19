@@ -9,8 +9,8 @@ export async function LogExtract(_q: unknown, metadata: EngineConfigMetadata) {
   const query = QuerySchema.parse(_q);
   const web3 = new Web3(metadata.endpoint);
 
-  const receipt = await web3.eth.getTransactionReceipt(query.fieldValue[0]);
-  const log = receipt.logs[Number(query.fieldValue[1])];
+  const receipt = await web3.eth.getTransactionReceipt(query[0]);
+  const log = receipt.logs[Number(query[1])];
 
   const eventSignatureName = await getEventSignatureName(log.topics[0]);
 

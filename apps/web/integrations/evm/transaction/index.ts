@@ -14,8 +14,8 @@ export async function TransactionExtract(
   const query = QuerySchema.parse(_q);
   const web3 = new Web3(metadata.endpoint);
 
-  const transaction = await web3.eth.getTransaction(query.fieldValue[0]);
-  const receipt = await web3.eth.getTransactionReceipt(query.fieldValue[0]);
+  const transaction = await web3.eth.getTransaction(query[0]);
+  const receipt = await web3.eth.getTransactionReceipt(query[0]);
   const eventSignatureName = await getEventSignatureName(
     receipt.logs[0].topics[0]
   );

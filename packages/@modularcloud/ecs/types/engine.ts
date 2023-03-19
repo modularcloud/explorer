@@ -12,6 +12,11 @@ export type EngineConfig = {
   loaders: Loaders;
 };
 export type EngineConfigMetadata = EngineConfig["metadata"];
+export type LoadProps = {
+  network: string;
+  type: string;
+  query: unknown;
+};
 
 const _CONFIGS: Record<string, EngineConfig> = {};
 
@@ -19,13 +24,12 @@ export const Engine = {
   addConfig: (name: string, config: EngineConfig) => {
     _CONFIGS[name] = config;
   },
-  load: async (name: string, loader: string, query: unknown) => {
-    const config = _CONFIGS[name];
+  load: async ({ network, type, query }: LoadProps) => {
+    const config = _CONFIGS[network];
     if (!config) {
-      throw new Error(`No config found for ${name}`);
+      throw new Error(`No config found for ${network}`);
     }
-
-    return await load(config.metadata, config.loaders[loader], query);
+    return await load(config.metadata, config.loaders[type], query);
   },
 };
 
