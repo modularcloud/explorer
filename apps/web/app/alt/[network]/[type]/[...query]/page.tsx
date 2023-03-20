@@ -1,11 +1,12 @@
-import { PageArchetype } from "../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../ecs/hooks/use-entity";
+import Associated from "./associated";
 
-export default async function HomePage(props: any) {
-  const entity = await useEntity({
-    resourcePath: props.params,
-    archetype: PageArchetype,
-  });
-  console.log(entity);
-  return <div>Home Page</div>;
+/**
+ * Note:
+ * Passing resource path to RSCs because there doesn't seem any good way of accessing them directly yet
+ * */
+export default async function EntityPage(props: any) {
+  return <div>
+    {/* @ts-expect-error Async Server Component */}
+    <Associated resourcePath={props.params}/>
+  </div>;
 }
