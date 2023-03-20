@@ -10,3 +10,5 @@ export default async function EntityPage(props: any) {
     <Associated resourcePath={props.params}/>
   </div>;
 }
+
+export const dynamic = "force-dynamic";
