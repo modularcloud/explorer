@@ -33,27 +33,67 @@ type TableSection = {
   label: string;
 };
 
-function forceLength(str: string, len: number) {
+function forceLength(
+  str: string,
+  len: number,
+  strategy: "middle" | "end" = "middle"
+) {
+  const MIN = 4;
   const diff = str.length - len;
   if (diff > 0) {
-    const midpoint = Math.floor(str.length / 2);
-    const removal = Math.floor(diff / 2);
-    const start = str.slice(0, midpoint - removal);
-    const end = str.slice(midpoint + removal);
-    return start + "..." + end;
+    if (strategy === "end") {
+      let shortend = str.slice(-len);
+      if (shortend.length < MIN) {
+        shortend = str.slice(0, MIN);
+      }
+      return shortend + "...";
+    }
+    if (strategy === "middle") {
+      const midpoint = Math.floor(str.length / 2);
+      const removal = Math.floor(diff / 2);
+      let start = str.slice(0, midpoint - removal);
+      let end = str.slice(midpoint + removal);
+      if (start.length + end.length < MIN) {
+        start = str.slice(0, MIN);
+        end = str.slice(-MIN);
+      }
+      return start + "..." + end;
+    }
   }
   return str;
 }
 
-function LongVal({value, max, step}: {value:string, max:number, step:number}) {
-  return <>
-    <div className="hidden xl:block">{forceLength(value, max)}</div>
-    <div className="hidden lg:block xl:hidden">{forceLength(value, max-step)}</div>
-    <div className="hidden md:block lg:hidden">{forceLength(value, max-step*2)}</div>
-    <div className="hidden sm:block md:hidden">{forceLength(value, max-step*3)}</div>
-    <div className="hidden xs:block sm:hidden">{forceLength(value, max-step*4)}</div>
-    <div className="hidden max-xs:block">{forceLength(value, max-step*5)}</div>
-  </>
+function LongVal({
+  value,
+  max,
+  step,
+  strategy,
+}: {
+  value: string;
+  max: number;
+  step: number;
+  strategy?: "middle" | "end";
+}) {
+  return (
+    <>
+      <div className="hidden xl:block">{forceLength(value, max)}</div>
+      <div className="hidden lg:block xl:hidden">
+        {forceLength(value, max - step, strategy)}
+      </div>
+      <div className="hidden md:block lg:hidden">
+        {forceLength(value, max - step * 2, strategy)}
+      </div>
+      <div className="hidden sm:block md:hidden">
+        {forceLength(value, max - step * 3, strategy)}
+      </div>
+      <div className="hidden xs:block sm:hidden">
+        {forceLength(value, max - step * 4, strategy)}
+      </div>
+      <div className="hidden max-xs:block">
+        {forceLength(value, max - step * 5, strategy)}
+      </div>
+    </>
+  );
 }
 
 export function Table({ data, router }: Props) {
@@ -69,7 +109,7 @@ export function Table({ data, router }: Props) {
     (entity) => entity.context.entityTypeName === type
   );
   let section: TableSection;
-  if(type === "ERC20 Event") {
+  if (type === "ERC20 Event") {
     section = {
       rows: filterData,
       label: "Transfers",
@@ -77,17 +117,36 @@ export function Table({ data, router }: Props) {
         {
           id: "from",
           header: "From",
-          getCell: (entity: Entity) => <LongVal value={entity.metadata.From.payload as string} max={40} step={8} />,
+          getCell: (entity: Entity) => (
+            <LongVal
+              value={entity.metadata.From.payload as string}
+              max={40}
+              step={8}
+            />
+          ),
         },
         {
           id: "to",
           header: "To",
-          getCell: (entity: Entity) => <LongVal value={entity.metadata.To.payload as string} max={40} step={8} />,
+          getCell: (entity: Entity) => (
+            <LongVal
+              value={entity.metadata.To.payload as string}
+              max={40}
+              step={8}
+            />
+          ),
         },
         {
           id: "value",
           header: "Value",
-          getCell: (entity: Entity) => entity.metadata.Value.payload,
+          getCell: (entity: Entity) => (
+            <LongVal
+              value={entity.metadata.Value.payload as string}
+              max={20}
+              step={3}
+              strategy={"end"}
+            />
+          ),
         },
         {
           id: "height",
@@ -281,7 +340,11 @@ export function Table({ data, router }: Props) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
-              className={clsx("border-b border-b-[#F0F0F1]", row.original.context.network !== "N/A" && "hover:bg-[#08061505] cursor-pointer")}
+              className={clsx(
+                "border-b border-b-[#F0F0F1]",
+                row.original.context.network !== "N/A" &&
+                  "hover:bg-[#08061505] cursor-pointer"
+              )}
               key={row.id}
               onClick={() =>
                 row.original.context.network === "N/A"
