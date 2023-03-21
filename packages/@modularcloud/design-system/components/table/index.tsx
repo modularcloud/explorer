@@ -33,6 +33,29 @@ type TableSection = {
   label: string;
 };
 
+function forceLength(str: string, len: number) {
+  const diff = str.length - len;
+  if (diff > 0) {
+    const midpoint = Math.floor(str.length / 2);
+    const removal = Math.floor(diff / 2);
+    const start = str.slice(0, midpoint - removal);
+    const end = str.slice(midpoint + removal);
+    return start + "..." + end;
+  }
+  return str;
+}
+
+function LongVal({value, max, step}: {value:string, max:number, step:number}) {
+  return <>
+    <div className="hidden xl:block">{forceLength(value, max)}</div>
+    <div className="hidden lg:block xl:hidden">{forceLength(value, max-step)}</div>
+    <div className="hidden md:block lg:hidden">{forceLength(value, max-step*2)}</div>
+    <div className="hidden sm:block md:hidden">{forceLength(value, max-step*3)}</div>
+    <div className="hidden xs:block sm:hidden">{forceLength(value, max-step*4)}</div>
+    <div className="hidden max-xs:block">{forceLength(value, max-step*5)}</div>
+  </>
+}
+
 export function Table({ data, router }: Props) {
   // temporarily before we have multi-entity tables
   if (!data.length) {
@@ -46,7 +69,39 @@ export function Table({ data, router }: Props) {
     (entity) => entity.context.entityTypeName === type
   );
   let section: TableSection;
-  if (type === "Transaction") {
+  if(type === "ERC20 Event") {
+    section = {
+      rows: filterData,
+      label: "Transfers",
+      columns: [
+        {
+          id: "from",
+          header: "From",
+          getCell: (entity: Entity) => <LongVal value={entity.metadata.From.payload as string} max={40} step={8} />,
+        },
+        {
+          id: "to",
+          header: "To",
+          getCell: (entity: Entity) => <LongVal value={entity.metadata.To.payload as string} max={40} step={8} />,
+        },
+        {
+          id: "value",
+          header: "Value",
+          getCell: (entity: Entity) => entity.metadata.Value.payload,
+        },
+        {
+          id: "height",
+          header: "Height",
+          getCell: (entity: Entity) => entity.metadata.Height.payload,
+        },
+        {
+          id: "menu",
+          isIcon: true,
+          getCell: (entity: Entity) => <ElipsHorizOff />,
+        },
+      ],
+    };
+  } else if (type === "Transaction") {
     if (isNotCosmos) {
       section = {
         rows: filterData,
@@ -226,7 +281,7 @@ export function Table({ data, router }: Props) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
-              className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"
+              className={clsx("border-b border-b-[#F0F0F1]", row.original.context.network !== "N/A" && "hover:bg-[#08061505] cursor-pointer")}
               key={row.id}
               onClick={() =>
                 row.original.context.network === "N/A"

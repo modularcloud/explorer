@@ -946,6 +946,62 @@ async function getEVMTransactionByHash(
   }
 }
 
+async function getEVMLogByPath(
+  path: string[],
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    const [hash, index] = path;
+
+    var raw = JSON.stringify({
+      method: "eth_getTransactionReceipt",
+      params: [hash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const receiptData = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
+    const log = receipt.logs.find((log) => log.logIndex === Number(index));
+    if(!log) return null;
+    return {
+      uniqueIdentifier: "Transfer",
+      uniqueIdentifierLabel: "type",
+      metadata: buildMetadata({
+        From: log.topics[1],
+        To: log.topics[2],
+        Value: new Decimal(log.data).dividedBy("1000000000000000000").toFixed(),
+        Height: log.blockNumber,
+        "Transaction Hash": log.transactionHash,
+        "Log Index": log.logIndex,
+      }),
+      context: {
+        network: "N/A",
+        entityTypeName: "ERC20 Event",
+      },
+      computed: {
+        parentPath: `${networkName}/transactions/${log.transactionHash}`,
+      },
+      raw: "",
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
 async function getSVMBlockBySlot(
   slot: string,
   endpoint: string,
@@ -1151,6 +1207,73 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     async (tx: any) =>
                       await getEVMTransactionByHash(tx.hash, EVM, network.name)
                   )
+                )
+              ).filter((notnull) => notnull) as Entity[];
+            } catch {
+              return [];
+            }
+          },
+        },
+        {
+          name: needsPrefix ? "EVM Token" : "Token",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                const response = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getTokenByAddress",
+                      params: [address],
+                    }),
+                  }
+                );
+                const tokenData = await response.json();
+                return {
+                  uniqueIdentifier: address,
+                  uniqueIdentifierLabel: "address",
+                  metadata: buildMetadata({
+                    Name: tokenData.result.token.name,
+                    Symbol: tokenData.result.token.symbol,
+                    Decimals: tokenData.result.token.decimals,
+                    Type: tokenData.result.token.type.toUpperCase(),
+                    Contract: tokenData.result.token.contract,
+                  }),
+                  context: {
+                    network: network.name,
+                    entityTypeName: "Token",
+                  },
+                  computed: {},
+                  raw: "",
+                };
+              },
+            },
+          ],
+          getAssociated: async (entity: Entity) => {
+            try {
+              const txIds = await fetch(
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    method: "mc_getEventsByTokenAddress",
+                    params: [entity.uniqueIdentifier],
+                  }),
+                }
+              ).then((res) => res.json());
+              return (
+                await Promise.all(
+                  txIds["result"]["events"]
+                    .slice(0, 30)
+                    .map(async (event: any) => {
+                      return getEVMLogByPath(
+                        [event.transactionHash, event.logIndex],
+                        EVM,
+                        network.name
+                      );
+                    })
                 )
               ).filter((notnull) => notnull) as Entity[];
             } catch {
