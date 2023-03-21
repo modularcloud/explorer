@@ -13,8 +13,8 @@ export const AssociatedTransform = {
     typeId: "associated",
     data: {
       Logs: data.receipt.logs.map((log, index) => ({
-        networkId: metadata.network.id,
-        entityTypeName: "log",
+        network: metadata.network.id,
+        type: "log",
         query: [data.hash, String(index)],
       })),
     },

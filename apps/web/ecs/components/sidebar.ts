@@ -14,3 +14,5 @@ const SidebarSchema = z.object({
 });
 
 export const SidebarComponent = createComponentSchema(SidebarSchema, "sidebar");
+
+export type Sidebar = z.infer<typeof SidebarSchema>;

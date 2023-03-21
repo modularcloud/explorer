@@ -13,8 +13,8 @@ export const AssociatedTransform = {
     typeId: "associated",
     data: {
       Transactions: data.transactions.map((transaction) => ({
-        networkId: metadata.network.id,
-        entityTypeName: "transaction",
+        network: metadata.network.id,
+        type: "transaction",
         query: [transaction],
       })),
     },

@@ -8,3 +8,5 @@ const TopbarSchema = z.object({
 });
 
 export const TopbarComponent = createComponentSchema(TopbarSchema, "topbar");
+
+export type Topbar = z.infer<typeof TopbarSchema>;

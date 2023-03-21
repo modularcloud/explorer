@@ -40,3 +40,5 @@ const RowSchema = z
   .array();
 
 export const RowComponent = createComponentSchema(RowSchema, "row");
+
+export type Row = z.infer<typeof RowSchema>;

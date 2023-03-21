@@ -6,8 +6,8 @@ const AssociatedSchema = z.record(
   z.string(), // Collection name
   z
     .object({
-      networkId: z.string(),
-      entityTypeName: z.string(),
+      network: z.string(),
+      type: z.string(),
       query: QuerySchema,
     })
     .array()
@@ -17,3 +17,5 @@ export const AssociatedComponent = createComponentSchema(
   AssociatedSchema,
   "associated"
 );
+
+export type Associated = z.infer<typeof AssociatedSchema>;

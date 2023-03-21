@@ -9,3 +9,5 @@ const CardSchema = z.object({
 });
 
 export const CardComponent = createComponentSchema(CardSchema, "card");
+
+export type Card = z.infer<typeof CardSchema>;
