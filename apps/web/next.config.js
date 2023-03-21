@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
+  transpilePackages: ["@modularcloud/design-system"],
   experimental: {
-    transpilePackages: ["@modularcloud/design-system"],
     appDir: true,
   },
 };
