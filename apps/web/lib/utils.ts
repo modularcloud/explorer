@@ -11,19 +11,24 @@ export async function getEventSignatureName(topic: string) {
 }
 
 // wrap loading in a fetch request until we figure out how to best cache using next app routing
-type FetchLoadArgs = { network: string, type: string, query: string[] };
+type FetchLoadArgs = { network: string; type: string; query: string[] };
 export async function fetchLoad(props: FetchLoadArgs) {
-  const response = await fetch(
-    `${
-      process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000"
-    }/api/app/load/${props.network}/${props.type}/${props.query.join("/")}`);
-  if(!response.ok) {
-    console.log("Error loading entity", response)
+  try {
+    const response = await fetch(
+      `${
+        process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000"
+      }/api/app/load/${props.network}/${props.type}/${props.query.join("/")}`
+    );
+    if (!response.ok) {
+      console.log("Error loading entity", response);
+      return null;
+    }
+
+    return EntityBaseSchema.parse(await response.json());
+  } catch (e) {
+    console.error(e);
     return null;
   }
-  
-  const entity = EntityBaseSchema.safeParse(await response.json());
-  return entity.success ? entity.data : null;
 }

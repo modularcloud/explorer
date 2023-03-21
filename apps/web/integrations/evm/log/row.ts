@@ -18,7 +18,7 @@ export const RowTransform = {
         },
         cell: {
           type: "standard",
-          payload: data.eventSignatureName,
+          payload: data.eventSignatureName ?? data.topics[0],
         },
       },
       {

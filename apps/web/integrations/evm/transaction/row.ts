@@ -14,6 +14,9 @@ export const RowTransform = {
     if (!data.to) {
       type = "Contract Creation";
     }
+    if (data.to && Number(data.value) > 0) {
+      type = "Transfer";
+    }
     if (data.eventSignatureName) {
       type = data.eventSignatureName;
     }

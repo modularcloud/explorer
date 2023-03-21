@@ -34,9 +34,6 @@ export default async function Associated({ resourcePath }: Props) {
               </tr>
             </thead>
             <tbody>
-              <tr aria-hidden={true} className="h-[4.25rem]">
-                {/** For spacing purposes */}
-              </tr>
               {rows.map((row) => (
                 <tr
                   className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"

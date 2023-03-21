@@ -1,3 +1,4 @@
+import { Header } from "./(components)/header";
 import Associated from "./associated";
 
 /**
@@ -6,6 +7,7 @@ import Associated from "./associated";
  * */
 export default async function EntityPage(props: any) {
   return <div>
+    <Header />
     {/* @ts-expect-error Async Server Component */}
     <Associated resourcePath={props.params}/>
   </div>;
