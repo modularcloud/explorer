@@ -33,7 +33,7 @@ export const SearchInput = ({
   fixedOption,
 }: Props) => {
   const [option, setOption] = useState(
-    fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? ""
+    (fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? "").toLowerCase().replace(" ", "-")
   );
   const [term, setTerm] = useState("");
   return (
