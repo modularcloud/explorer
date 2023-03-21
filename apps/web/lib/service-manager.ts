@@ -975,7 +975,7 @@ async function getEVMLogByPath(
     );
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
     const log = receipt.logs.find((log) => log.logIndex === Number(index));
-    if(!log) return null;
+    if (!log) return null;
     return {
       uniqueIdentifier: "Transfer",
       uniqueIdentifierLabel: "type",
@@ -1220,34 +1220,38 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             {
               field: "address",
               getOne: async (address: string) => {
-                const response = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
-                  {
-                    method: "POST",
-                    body: JSON.stringify({
-                      method: "mc_getTokenByAddress",
-                      params: [address],
+                try {
+                  const response = await fetch(
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        method: "mc_getTokenByAddress",
+                        params: [address],
+                      }),
+                    }
+                  );
+                  const tokenData = await response.json();
+                  return {
+                    uniqueIdentifier: address,
+                    uniqueIdentifierLabel: "address",
+                    metadata: buildMetadata({
+                      Name: tokenData.result.token.name,
+                      Symbol: tokenData.result.token.symbol,
+                      Decimals: tokenData.result.token.decimals,
+                      Type: tokenData.result.token.type.toUpperCase(),
+                      Contract: tokenData.result.token.contract,
                     }),
-                  }
-                );
-                const tokenData = await response.json();
-                return {
-                  uniqueIdentifier: address,
-                  uniqueIdentifierLabel: "address",
-                  metadata: buildMetadata({
-                    Name: tokenData.result.token.name,
-                    Symbol: tokenData.result.token.symbol,
-                    Decimals: tokenData.result.token.decimals,
-                    Type: tokenData.result.token.type.toUpperCase(),
-                    Contract: tokenData.result.token.contract,
-                  }),
-                  context: {
-                    network: network.name,
-                    entityTypeName: "Token",
-                  },
-                  computed: {},
-                  raw: "",
-                };
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Token",
+                    },
+                    computed: {},
+                    raw: "",
+                  };
+                } catch {
+                  return null;
+                }
               },
             },
           ],
