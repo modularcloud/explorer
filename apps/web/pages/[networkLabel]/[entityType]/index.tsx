@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Entity } from "service-manager/types/entity.type";
 import { getEntity } from "service-manager/types/network.type";
+import { isAddress, isHash } from "../../../lib/search";
 import { getSearchOptions } from "../../../lib/search-options";
 import {
   loadDynamicNetworks,
@@ -14,38 +15,37 @@ export const getServerSideProps: GetServerSideProps<{
   whitelabel?: string | null;
   searchOptions: any;
 }> = async ({ params }) => {
-  let { networkLabel, entityType: searchTerm } = params ?? {};
-  if (typeof networkLabel !== "string") {
-    throw Error(`Misconfigured parameters: network=${networkLabel}`);
+  let { networkLabel: type, entityType: searchTerm } = params ?? {};
+  if (typeof type !== "string" || typeof searchTerm !== "string") {
+    throw Error(`Misconfigured parameters: Type=${type}, SearchTerm=${searchTerm}`);
   }
 
   const searchOptions = await getSearchOptions();
   const defaultNetworkLabel: string = searchOptions[0].options[0].name;
 
   await loadDynamicNetworks();
-  let network = ServiceManager.getNetwork(networkLabel);
+  let network = ServiceManager.getNetwork(defaultNetworkLabel);
   if (!network) {
-    networkLabel = defaultNetworkLabel;
-    network = ServiceManager.getNetwork(networkLabel);
+    throw Error(`Network not found: ${defaultNetworkLabel}. Explorer is probably misconfigured.`);
   }
-  let path: any;
-  try {
-    path = await fetch(
-      `${
-        process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000"
-      }/api/path/${networkLabel}/${searchTerm}`
-    ).then((res) => res.json());
-  } catch {}
 
-  if (!path || !path.path || !network) {
-    return {
-      notFound: true,
-    };
+  const ENTITY_TYPE_NAME_MAP: Record<string, string> = {
+    "tx": "transaction",
+    "contract": "account",
+    "address": "account",
   }
-  const [_, label, entityType, field, fieldValue] = path.path.split("/");
-  const entity = await getEntity(network, entityType, field, fieldValue);
+
+  let entityType = ENTITY_TYPE_NAME_MAP[type.toLowerCase()] || type;
+
+  let field = "height";
+  if(isHash(searchTerm)) {
+    field = "hash";
+  }
+  if(isAddress(searchTerm)) {
+    field = "address";
+  }
+
+  const entity = await getEntity(network, entityType, field, searchTerm);
   if (!entity) {
     return {
       notFound: true,
