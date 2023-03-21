@@ -4,7 +4,6 @@ import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { CubesOn } from "../../icons";
-import { slugify } from "service-manager";
 
 interface Props {
   mode: "light" | "dark";
@@ -102,7 +101,7 @@ export const SearchInput = ({
                             <Select.Item
                               className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
                               key={idx}
-                              value={slugify(opt.value)}
+                              value={opt.value.toLowerCase().replace(" ", "-")}
                             >
                               <Select.ItemText>{opt.name}</Select.ItemText>
                             </Select.Item>
