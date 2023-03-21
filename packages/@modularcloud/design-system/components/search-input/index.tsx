@@ -4,6 +4,7 @@ import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { CubesOn } from "../../icons";
+import { slugify } from "service-manager";
 
 interface Props {
   mode: "light" | "dark";
@@ -32,6 +33,7 @@ export const SearchInput = ({
   defaultSelected,
   fixedOption,
 }: Props) => {
+  console.log("SearchInput: fixedOption=", fixedOption, ", defaultSelected=", defaultSelected, ", optionGroups=", JSON.stringify(optionGroups))
   const [option, setOption] = useState(
     fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? ""
   );
@@ -101,7 +103,7 @@ export const SearchInput = ({
                             <Select.Item
                               className="p-1.5 px-3 focus:outline-none hover:text-ocean cursor-pointer"
                               key={idx}
-                              value={opt.value}
+                              value={slugify(opt.value)}
                             >
                               <Select.ItemText>{opt.name}</Select.ItemText>
                             </Select.Item>
