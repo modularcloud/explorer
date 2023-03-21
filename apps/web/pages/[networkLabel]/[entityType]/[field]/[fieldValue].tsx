@@ -184,8 +184,8 @@ export function EntityPage({
           </Script>
         </>
       ) : null}
-      <div className="flex">
-        <div className="grow">
+      <div className="lg:flex">
+        <div className="lg:grow">
           <div className="lg:hidden">
             <TopBar
               type={entity.context.entityTypeName}
@@ -288,7 +288,7 @@ export function EntityPage({
           ) : null}
         </div>
         <EntityPanel
-          classes="sticky top-0 hidden lg:flex"
+          classes="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
           id={entity.uniqueIdentifier}
           metadata={entity.metadata}
           context={entity.context}
