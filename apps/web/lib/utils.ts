@@ -32,3 +32,25 @@ export async function fetchLoad(props: FetchLoadArgs) {
     return null;
   }
 }
+
+type WhitelabelType = { name: [string] | [string, string] };
+export function getWhitelabel(): WhitelabelType {
+  switch (process.env.WHITELABEL) {
+    case "nautilus":
+      return {
+        name: ["Naut", "Scan"],
+      };
+    case "celestia":
+      return {
+        name: ["Celestia", "Scan"],
+      };
+    case "dymension":
+      return {
+        name: ["Dym", "Scan"],
+      };
+    default:
+      return {
+        name: ["Modular", "Cloud"],
+      };
+  }
+}

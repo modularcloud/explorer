@@ -1,4 +1,4 @@
-// import { ViewSwitcher } from "../view-switcher";
+import { ViewSwitcher } from "./view-switcher";
 import { MobileActions } from "./mobile-actions";
 
 export function Header() {
@@ -10,7 +10,7 @@ export function Header() {
           Search goes here
         </div>
         <div className="flex gap-6 items-center">
-          {/*<ViewSwitcher />*/}
+          <ViewSwitcher selected="table" />
           <MobileActions />
         </div>
       </div>

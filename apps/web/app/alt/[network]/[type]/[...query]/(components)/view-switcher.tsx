@@ -1,39 +1,22 @@
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import * as Separator from "@radix-ui/react-separator";
-import { ListViewOn, ListViewOff, CardOn, CardOff } from "../../icons";
-import { useState } from "react";
+import ListViewOn from "./(icons)/ListViewOn";
+import ListViewOff from "./(icons)/ListViewOff";
+import CardOn from "./(icons)/CardOn";
+import CardOff from "./(icons)/CardOff";
 
 type Props = {
-  onSwitchView: (view: string) => void;
-  defaultView: string;
+  selected: "table" | "cards";
 };
 
-export function ViewSwitcher({ onSwitchView, defaultView }: Props) {
-  const [value, setValue] = useState(defaultView);
-
+export function ViewSwitcher({ selected }: Props) {
   return (
-    <ToggleGroup.Root
-      type="single"
-      className="flex items-center"
-      value={value}
-      onValueChange={(value) => {
-        if (value) {
-          setValue(value);
-          onSwitchView(value);
-        }
-      }}
-    >
-      <ToggleGroup.Item value="table" className="h-[34px] w-[34px] p-[7px]">
-        {value === "table" ? <ListViewOn /> : <ListViewOff />}
-      </ToggleGroup.Item>
-      <Separator.Root
-        className="SeparatorRoot mx-1 bg-slate-200 w-px h-5"
-        decorative
-        orientation="vertical"
-      />
-      <ToggleGroup.Item value="cards" className="h-[34px] w-[34px] p-[7px]">
-        {value === "cards" ? <CardOn /> : <CardOff />}
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+    <div className="flex items-center">
+      <div className="h-[34px] w-[34px] p-[7px]">
+        {selected === "table" ? <ListViewOn /> : <ListViewOff />}
+      </div>
+      <div className="mx-1 bg-slate-200 w-px h-5" />
+      <div className="h-[34px] w-[34px] p-[7px]">
+        {selected === "cards" ? <CardOn /> : <CardOff />}
+      </div>
+    </div>
   );
 }
