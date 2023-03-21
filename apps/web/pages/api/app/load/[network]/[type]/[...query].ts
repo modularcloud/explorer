@@ -1,6 +1,6 @@
 import { Engine } from "@modularcloud/ecs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateEVMConfig } from "../../../integrations/evm";
+import { CreateEVMConfig } from "../../../../../../integrations/evm";
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,7 +17,7 @@ export default async function handler(
   });
   Engine.addConfig("ethereum", config);
   try {
-    const result = await Engine.load(req.body);
+    const result = await Engine.load(req.query as any);
     res.json(result);
   } catch(e) {
     console.error(e);

@@ -17,6 +17,7 @@ export const RowTransform = {
     if (data.eventSignatureName) {
       type = data.eventSignatureName;
     }
+    type = type.split("(")[0];
     return {
       typeId: "row",
       data: [

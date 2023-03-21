@@ -11,6 +11,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backdropBlur: {
+        xs: '3px',
+      },
       screens: {
         xs: "375px",
         xl: "1440px",
@@ -126,6 +129,9 @@ module.exports = {
           green: "#0DAA76",
           red: "#EF4444",
         },
+        translucent: {
+          DEFAULT: "rgba(255, 255, 255, 0.88)",
+        }
       },
       keyframes: {
         "right-to-left": {

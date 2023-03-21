@@ -18,15 +18,7 @@ export async function fetchLoad(props: FetchLoadArgs) {
       process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000"
-    }/api/app/load`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(props),
-    }
-  );
+    }/api/app/load/${props.network}/${props.type}/${props.query.join("/")}`);
   if(!response.ok) {
     console.log("Error loading entity", response)
     return null;
