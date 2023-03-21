@@ -26,7 +26,7 @@ export default async function Associated({ resourcePath }: Props) {
             <thead>
               <tr>
                 <HeadBox classes="w-4" spacingPurposesOnly={true} />
-                <Suspense fallback={<th>Loading...</th>}>
+                <Suspense fallback={<HeadBox>Loading...</HeadBox>}>
                   {/* @ts-expect-error Async Server Component */}
                   <Row header={true} name={group} row={rows[0]} />
                 </Suspense>
@@ -45,7 +45,7 @@ export default async function Associated({ resourcePath }: Props) {
                   <td aria-hidden={true} className="p-2">
                     {/** For spacing purposes */}
                   </td>
-                  <Suspense fallback={<td>Loading...</td>}>
+                  <Suspense fallback={<td className="h-12">Loading...</td>}>
                     {/* @ts-expect-error Async Server Component */}
                     <Row row={row} />
                   </Suspense>
