@@ -33,7 +33,6 @@ export const SearchInput = ({
   defaultSelected,
   fixedOption,
 }: Props) => {
-  console.log("SearchInput: fixedOption=", fixedOption, ", defaultSelected=", defaultSelected, ", optionGroups=", JSON.stringify(optionGroups))
   const [option, setOption] = useState(
     fixedOption ?? defaultSelected ?? optionGroups?.[0]?.options[0]?.value ?? ""
   );
