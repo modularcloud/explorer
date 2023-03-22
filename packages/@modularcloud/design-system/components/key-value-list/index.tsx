@@ -18,7 +18,7 @@ export function KeyValueList({ header, entries }: Props) {
           const { type, payload: value } = entry[1];
           return (
             <div key={key} className="flex flex-row space-x-5">
-              <label className="lg:w-1/2 xl:w-[30%] font-bold truncate">
+              <label className="lg:w-1/2 xl:w-[30%] font-bold">
                 {key}
               </label>
               <span className="lg:w-1/2 truncate">
