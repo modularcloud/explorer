@@ -1,6 +1,3 @@
-import { CircleButton } from "../circle-button";
-import { CubesOn, ArrowOn } from "../../icons";
-import clsx from "clsx";
 import { Badge } from "../badge";
 
 interface Props {
@@ -12,15 +9,6 @@ interface Props {
   navTo?: () => void;
 }
 
-function renderIcon(icon: string | undefined) {
-  switch (icon) {
-    case "reward":
-      return <ArrowOn />;
-    case "pay":
-      return <CubesOn />;
-  }
-}
-
 export function Card({ type, badgeText, badgeIcon, children, navTo }: Props) {
   return (
     <div className="w-full border border-gray-300 shadow-md rounded-lg">
@@ -28,21 +16,9 @@ export function Card({ type, badgeText, badgeIcon, children, navTo }: Props) {
         {type}
       </div>
       <div className="p-4">
-        {navTo ? (
-          <div
-            onClick={navTo}
-            className={clsx({ hidden: !badgeText || !badgeIcon })}
-          >
-            <CircleButton>
-              <div className="flex flex-row space-x-1 items-center p-2.5">
-                {renderIcon(badgeIcon)}
-                <span className="font-bold">{badgeText}</span>
-              </div>
-            </CircleButton>
-          </div>
-        ) : (
-          <Badge long={true} list={[badgeText ?? "Unknown"]} />
-        )}
+        <div onClick={navTo} className="cursor-pointer">
+          <Badge icon={true} long={true} list={[badgeText ?? "Unknown"]} />
+        </div>
         {children}
       </div>
     </div>
