@@ -952,7 +952,7 @@ async function getEVMTransactionByHash(
         "Gas Limit": convertHex(tx.gas),
         "Gas Used": receipt.gasUsed,
         Nonce: convertHex(tx.nonce),
-        Data: tx.input,
+        //Data: tx.input,
       }),
       context: {
         network: networkName,

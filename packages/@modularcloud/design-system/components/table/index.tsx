@@ -198,10 +198,8 @@ export function Table({ data, router }: Props) {
             header: "Type",
             rightJustifyOnXS: true,
             getCell: (entity: Entity) => (
-              isNotCosmos ? <Badge
-                list={entity.computed.TableType}
-              /> : <Badge
-                list={entity.computed.Messages?.map(
+              <Badge
+                list={entity.computed.TableType ?? entity.computed.Messages?.map(
                   (message: any) => message.uniqueIdentifier
                 )}
               />
