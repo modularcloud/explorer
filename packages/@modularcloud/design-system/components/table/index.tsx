@@ -161,25 +161,6 @@ export function Table({ data, router }: Props) {
       ],
     };
   } else if (type === "Transaction") {
-    if (isNotCosmos) {
-      section = {
-        rows: filterData,
-        label: "Transactions",
-        columns: [
-          {
-            id: "hash",
-            header: "Transactions",
-            isPrimaryKey: true,
-            getCell: (entity: Entity) => entity.uniqueIdentifier,
-          },
-          {
-            id: "menu",
-            isIcon: true,
-            getCell: (entity: Entity) => <ElipsHorizOff />,
-          },
-        ],
-      };
-    } else {
       const height = data[0].metadata.Height.payload;
       const differentHeight = !!data.find(
         (entity) => entity.metadata.Height.payload !== height
@@ -217,7 +198,9 @@ export function Table({ data, router }: Props) {
             header: "Type",
             rightJustifyOnXS: true,
             getCell: (entity: Entity) => (
-              <Badge
+              isNotCosmos ? <Badge
+                list={entity.computed.TableType}
+              /> : <Badge
                 list={entity.computed.Messages?.map(
                   (message: any) => message.uniqueIdentifier
                 )}
@@ -239,7 +222,6 @@ export function Table({ data, router }: Props) {
           },
         ].filter((notnull) => notnull) as EntityColumn<any>[],
       };
-    }
   } else {
     section = {
       rows: filterData,

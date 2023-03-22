@@ -864,6 +864,15 @@ function buildMetadata(obj: { [key: string]: any }): {
   return metadata;
 }
 
+export async function getEventSignatureName(topic: string) {
+  try {
+    const results = await fetch(
+      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
+    ).then((res) => res.json());
+    return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
+  } catch {}
+}
+
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
@@ -910,6 +919,20 @@ async function getEVMTransactionByHash(
       response.json()
     );
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
+    const eventSignatureName = await getEventSignatureName(
+      receipt.logs[0]?.topics?.[0]
+    );
+    let type = "Unknown";
+    if (!tx.to) {
+      type = "Contract Creation";
+    }
+    if (tx.to && Number(tx.value) > 0) {
+      type = "Transfer";
+    }
+    if (eventSignatureName) {
+      type = eventSignatureName;
+    }
+    type = type.split("(")[0];
     return {
       uniqueIdentifier: tx.hash,
       uniqueIdentifierLabel: "hash",
@@ -937,6 +960,7 @@ async function getEVMTransactionByHash(
       },
       computed: {
         Receipt: receipt,
+        TableType: receipt.logs.length ? receipt.logs.map(() => type) : [type],
       },
       raw: JSON.stringify(tx),
     };
