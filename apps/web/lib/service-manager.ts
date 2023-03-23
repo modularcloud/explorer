@@ -1004,8 +1004,8 @@ async function getEVMLogByPath(
       uniqueIdentifier: "Transfer",
       uniqueIdentifierLabel: "type",
       metadata: buildMetadata({
-        From: log.topics[1],
-        To: log.topics[2],
+        From: log.topics[1].replace("000000000000000000000000", ""),
+        To: log.topics[2].replace("000000000000000000000000", ""),
         Value: new Decimal(log.data).dividedBy("1000000000000000000").toFixed(),
         Height: log.blockNumber,
         "Transaction Hash": log.transactionHash,
