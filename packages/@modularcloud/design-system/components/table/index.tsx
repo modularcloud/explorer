@@ -76,7 +76,10 @@ function LongVal({
 }) {
   return (
     <>
-      <div className="hidden xl:block">{forceLength(value, max)}</div>
+      <div className="hidden 2xl:block">{value}</div>
+      <div className="hidden xl:block 2xl:hidden">
+        {forceLength(value, max, strategy)}
+      </div>
       <div className="hidden lg:block xl:hidden">
         {forceLength(value, max - step, strategy)}
       </div>
@@ -151,7 +154,7 @@ export function Table({ data, router }: Props) {
                 value={entity.metadata.Value.payload as string}
                 max={20}
                 step={3}
-                strategy={"end"}
+                strategy="end"
               />
             ),
           },
