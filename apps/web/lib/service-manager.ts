@@ -939,8 +939,8 @@ async function getEVMTransactionByHash(
       metadata: buildMetadata({
         Height: convertHex(tx.blockNumber),
         Status: { type: "status", payload: receipt.status },
-        From: tx.from,
-        To: tx.to,
+        From: tx.from.replace("000000000000000000000000", ""),
+        To: tx.to?.replace("000000000000000000000000", ""),
         Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
         Fee: new Decimal(tx.gasPrice)
           .times(receipt.gasUsed)
