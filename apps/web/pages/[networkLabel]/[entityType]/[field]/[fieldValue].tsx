@@ -19,6 +19,7 @@ import {
   Card,
   CardList,
   Table,
+  Tabs,
 } from "@modularcloud/design-system";
 import Image from "next/image";
 import useSWR from "swr";
@@ -124,7 +125,21 @@ export function EntityPage({
       },
     }
   );
-  const associated: Entity[] = swrResponse.data ?? []; // TODO validation
+  const associated: Record<string, Entity[]> | Entity[] =
+    swrResponse.data ?? ({} as Record<string, Entity[]>); // TODO validation
+  const [keys, record]: [string[], Record<string, Entity[]>] =
+    React.useMemo(() => {
+      if (Array.isArray(associated)) {
+        if (associated.length === 0) return [[], {}];
+        const type = associated[0].context.entityTypeName;
+        return [[associated[0].context.entityTypeName], { [type]: associated }];
+      }
+      return [Object.keys(associated), associated];
+    }, [associated]);
+  const [activeTab, setActiveTab] = React.useState(0);
+  const content = React.useMemo(() => {
+    return record[keys[activeTab]] ?? [];
+  }, [keys, record, activeTab]);
 
   const isCelestiaEntity = entity.context.network.toLowerCase() === "mocha";
   const isDymensionEntity = !!entity.context.network
@@ -256,9 +271,9 @@ export function EntityPage({
           />
           {view === "cards" ? (
             <CardList>
-              {associated.map((entity) => (
+              {content.map((entity, index) => (
                 <Card
-                  key={entity.uniqueIdentifier}
+                  key={`${entity.uniqueIdentifier}-${index}-${activeTab}`}
                   type={entity.context.entityTypeName}
                   badgeText={entity.uniqueIdentifier}
                   badgeIcon="reward"
@@ -276,16 +291,19 @@ export function EntityPage({
               ))}
             </CardList>
           ) : null}
-          {view === "table" ? (
-            <Table data={associated} router={router} />
-          ) : null}
-          {!associated.length ? (
+          {view === "table" ? <Table data={content} router={router} /> : null}
+          {!content.length ? (
             <p className="w-full text-slate text-center">
               {swrResponse.isLoading
                 ? "Loading..."
+                : keys.length
+                ? `No ${keys[
+                    activeTab
+                  ].toLowerCase()} for this ${entity.context.entityTypeName.toLowerCase()}.`
                 : `This ${entity.context.entityTypeName.toLowerCase()} is empty.`}
             </p>
           ) : null}
+          <Tabs list={keys} setActiveTab={setActiveTab} activeTab={activeTab} />
         </div>
         <EntityPanel
           classes="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"

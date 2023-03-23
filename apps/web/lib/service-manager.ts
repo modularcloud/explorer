@@ -1279,34 +1279,81 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
               },
             },
           ],
-          getAssociated: async (entity: Entity) => {
-            try {
-              const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    method: "mc_getEventsByTokenAddress",
-                    params: [entity.uniqueIdentifier],
-                  }),
-                }
-              ).then((res) => res.json());
-              return (
-                await Promise.all(
-                  txIds["result"]["events"]
-                    .slice(0, 30)
-                    .map(async (event: any) => {
-                      return getEVMLogByPath(
-                        [event.transactionHash, event.logIndex],
-                        EVM,
-                        network.name
-                      );
-                    })
-                )
-              ).filter((notnull) => notnull) as Entity[];
-            } catch {
-              return [];
-            }
+          getAssociated: async (
+            entity: Entity
+          ): Promise<Record<string, Entity[]>> => {
+            const getTransfers = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getEventsByTokenAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds["result"]["events"]
+                      .slice(0, 30)
+                      .map(async (event: any) => {
+                        return getEVMLogByPath(
+                          [event.transactionHash, event.logIndex],
+                          EVM,
+                          network.name
+                        );
+                      })
+                  )
+                ).filter((notnull) => notnull) as Entity[];
+              } catch {
+                return [];
+              }
+            };
+            const getHolders = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getAccountBalancesByTokenAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return txIds.result.accountBalances.slice(0, 30).map((account: any) => {
+                  return {
+                    uniqueIdentifier: account.accountAddress,
+                    uniqueIdentifierLabel: "address",
+                    metadata: buildMetadata({
+                      Balance: new Decimal(account.balance)
+                        .dividedBy(
+                          new Decimal(10).pow(
+                            String(entity.metadata["Decimals"].payload)
+                          )
+                        )
+                        .toString(),
+                    }),
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Account",
+                    },
+                    computed: {},
+                    raw: "",
+                  };
+                });
+              } catch(e) {
+                console.log(e)
+                return [];
+              }
+            };
+            const [Transfers, Holders] = await Promise.all([
+              getTransfers(),
+              getHolders(),
+            ]);
+            return { Transfers, Holders };
           },
         },
         {

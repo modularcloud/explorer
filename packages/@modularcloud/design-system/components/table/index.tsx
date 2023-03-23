@@ -97,70 +97,100 @@ function LongVal({
 }
 
 export function Table({ data, router }: Props) {
-  // temporarily before we have multi-entity tables
-  if (!data.length) {
-    return null;
-  }
-  const type = data[0].context.entityTypeName;
-  const isNotCosmos = !data[0].context.network
-    .toLowerCase()
-    .match(/(^hub$)|rollapp|dymension|mocha/);
-  const filterData = data.filter(
-    (entity) => entity.context.entityTypeName === type
+  const push = React.useCallback(
+    (path: any) => {
+      router.push(path);
+    },
+    [router.push]
   );
-  let section: TableSection;
-  if (type === "ERC20 Event") {
-    section = {
-      rows: filterData,
-      label: "Transfers",
-      columns: [
-        {
-          id: "from",
-          header: "From",
-          getCell: (entity: Entity) => (
-            <LongVal
-              value={entity.metadata.From.payload as string}
-              max={40}
-              step={8}
-            />
-          ),
-        },
-        {
-          id: "to",
-          header: "To",
-          getCell: (entity: Entity) => (
-            <LongVal
-              value={entity.metadata.To.payload as string}
-              max={40}
-              step={8}
-            />
-          ),
-        },
-        {
-          id: "value",
-          header: "Value",
-          getCell: (entity: Entity) => (
-            <LongVal
-              value={entity.metadata.Value.payload as string}
-              max={20}
-              step={3}
-              strategy={"end"}
-            />
-          ),
-        },
-        {
-          id: "height",
-          header: "Height",
-          getCell: (entity: Entity) => entity.metadata.Height.payload,
-        },
-        {
-          id: "menu",
-          isIcon: true,
-          getCell: (entity: Entity) => <ElipsHorizOff />,
-        },
-      ],
-    };
-  } else if (type === "Transaction") {
+
+  const section = React.useMemo(() => {
+    if (data.length === 0) {
+      return null;
+    }
+    const type = data[0].context.entityTypeName;
+    const isNotCosmos = !data[0].context.network
+      .toLowerCase()
+      .match(/(^hub$)|rollapp|dymension|mocha/);
+    const filterData = data.filter(
+      (entity) => entity.context.entityTypeName === type
+    );
+    let section: TableSection;
+    if (type === "ERC20 Event") {
+      section = {
+        rows: filterData,
+        label: "Transfers",
+        columns: [
+          {
+            id: "from",
+            header: "From",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.From.payload as string}
+                max={40}
+                step={8}
+              />
+            ),
+          },
+          {
+            id: "to",
+            header: "To",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.To.payload as string}
+                max={40}
+                step={8}
+              />
+            ),
+          },
+          {
+            id: "value",
+            header: "Value",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.Value.payload as string}
+                max={20}
+                step={3}
+                strategy={"end"}
+              />
+            ),
+          },
+          {
+            id: "height",
+            header: "Height",
+            getCell: (entity: Entity) => entity.metadata.Height.payload,
+          },
+          {
+            id: "menu",
+            isIcon: true,
+            getCell: (entity: Entity) => <ElipsHorizOff />,
+          },
+        ],
+      };
+    } else if (type === "Account") {
+      section = {
+        rows: filterData,
+        label: "Accounts",
+        columns: [
+          {
+            id: "address",
+            header: "Address",
+            isPrimaryKey: true,
+            getCell: (entity: Entity) => entity.uniqueIdentifier,
+          },
+          {
+            id: "balance",
+            header: "Balance",
+            getCell: (entity: Entity) => entity.metadata.Balance.payload,
+          },
+          {
+            id: "menu",
+            isIcon: true,
+            getCell: (entity: Entity) => <ElipsHorizOff />,
+          },
+        ],
+      };
+    } else if (type === "Transaction") {
       const height = data[0].metadata.Height.payload;
       const differentHeight = !!data.find(
         (entity) => entity.metadata.Height.payload !== height
@@ -199,9 +229,12 @@ export function Table({ data, router }: Props) {
             rightJustifyOnXS: true,
             getCell: (entity: Entity) => (
               <Badge
-                list={entity.computed.TableType ?? entity.computed.Messages?.map(
-                  (message: any) => message.uniqueIdentifier
-                )}
+                list={
+                  entity.computed.TableType ??
+                  entity.computed.Messages?.map(
+                    (message: any) => message.uniqueIdentifier
+                  )
+                }
               />
             ),
           },
@@ -220,46 +253,54 @@ export function Table({ data, router }: Props) {
           },
         ].filter((notnull) => notnull) as EntityColumn<any>[],
       };
-  } else {
-    section = {
-      rows: filterData,
-      label: type + "s", // TODO: handle plural better
-      columns: [
-        /*{
+    } else {
+      section = {
+        rows: filterData,
+        label: type + "s", // TODO: handle plural better
+        columns: [
+          /*{
         id: "icon",
         isIcon: true,
         showOnXS: true,
         getCell: (entity: Entity) => <Status status={entity.metadata.status} mode="icon" />
       },*/
-        {
-          id: "id",
-          header: type + "s", // TODO: handle plural better
-          isPrimaryKey: true,
-          getCell: (entity: Entity) => entity.uniqueIdentifier,
-        },
-        {
-          id: "menu",
-          isIcon: true,
-          getCell: (entity: Entity) => <ElipsHorizOff />,
-        },
-      ],
-    };
-  }
+          {
+            id: "id",
+            header: type + "s", // TODO: handle plural better
+            isPrimaryKey: true,
+            getCell: (entity: Entity) => entity.uniqueIdentifier,
+          },
+          {
+            id: "menu",
+            isIcon: true,
+            getCell: (entity: Entity) => <ElipsHorizOff />,
+          },
+        ],
+      };
+    }
+    return section;
+  }, [data]);
 
   const columnHelper = createColumnHelper<Entity>();
-  const columns = section.columns.map((col) => {
-    return columnHelper.accessor("uniqueIdentifier", {
-      id: col.id,
-      header: col.header ?? (() => null),
-      cell: (info) => col.getCell(info.row.original),
+
+  const columns = React.useMemo(() => {
+    if (section === null) return null;
+    return section.columns.map((col) => {
+      return columnHelper.accessor("uniqueIdentifier", {
+        id: col.id,
+        header: col.header ?? (() => null),
+        cell: (info) => col.getCell(info.row.original),
+      });
     });
-  });
+  }, [section]);
 
   const table = useReactTable<Entity>({
-    data: section.rows,
-    columns,
+    data: section?.rows || [],
+    columns: columns || [],
     getCoreRowModel: getCoreRowModel(),
   });
+
+  if (section === null) return null;
 
   const maxXSLeftPadding = section.columns.findIndex((col) => !col.hideOnXS);
   const maxXSRightPadding =
@@ -271,6 +312,29 @@ export function Table({ data, router }: Props) {
     section.columns.length -
     1 -
     [...section.columns].reverse().findIndex((col) => !col.showOnXS);
+
+  // const maxXSLeftPadding = React.useMemo(
+  //   () => section.columns.findIndex((col) => !col.hideOnXS),
+  //   [section]
+  // );
+  // const maxXSRightPadding = React.useMemo(
+  //   () =>
+  //     section.columns.length -
+  //     1 -
+  //     [...section.columns].reverse().findIndex((col) => !col.hideOnXS),
+  //   [section]
+  // );
+  // const minXSLeftPadding = React.useMemo(
+  //   () => section.columns.findIndex((col) => !col.showOnXS),
+  //   [section]
+  // );
+  // const minXSRightPadding = React.useMemo(
+  //   () =>
+  //     section.columns.length -
+  //     1 -
+  //     [...section.columns].reverse().findIndex((col) => !col.showOnXS),
+  //   [section]
+  // );
 
   return (
     <div className="w-full overflow-x-hidden">
@@ -329,7 +393,7 @@ export function Table({ data, router }: Props) {
               onClick={() =>
                 row.original.context.network === "N/A"
                   ? null
-                  : router.push(
+                  : push(
                       `/${row.original.context.network}/${row.original.context.entityTypeName}/${row.original.uniqueIdentifierLabel}/${row.original.uniqueIdentifier}`
                     )
               }

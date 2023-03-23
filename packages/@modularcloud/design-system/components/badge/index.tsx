@@ -5,9 +5,10 @@ type Props = {
   list: string[];
   long?: boolean;
   icon?: true;
+  toggled?: boolean;
 };
 
-export function Badge({ list, long, icon }: Props) {
+export function Badge({ list, long, icon, toggled }: Props) {
   const count = list?.length ?? 0;
   const hasExtra = count > 1;
 
@@ -18,7 +19,8 @@ export function Badge({ list, long, icon }: Props) {
   return (
     <div
       className={clsx(
-        "flex gap-2 border rounded-[2.5rem] border-mid-dark-100 pl-3 py-[.1875rem] items-center",
+        toggled ? "border-ocean-700" : "border-mid-dark-100",
+        "bg-white flex gap-2 border rounded-[2.5rem] pl-3 py-[.1875rem] items-center",
         long ? "max-w-min" : "w-max",
         hasExtra ? "pr-[.1875rem]" : "pr-3"
       )}
