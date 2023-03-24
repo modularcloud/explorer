@@ -1214,28 +1214,65 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             },
           ],
           getAssociated: async (entity: Entity) => {
-            try {
-              const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    method: "mc_getTransactionsByAddress",
-                    params: [entity.uniqueIdentifier.toLowerCase()],
-                  }),
-                }
-              ).then((res) => res.json());
-              return (
-                await Promise.all(
-                  txIds.result.txs.map(
-                    async (tx: any) =>
-                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
+            const getTransfers = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getEventsByAccountAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds["result"]["events"]
+                      .slice(0, 30)
+                      .map(async (event: any) => {
+                        return getEVMLogByPath(
+                          [event.transactionHash, event.logIndex],
+                          EVM,
+                          network.name
+                        );
+                      })
                   )
-                )
-              ).filter((notnull) => notnull) as Entity[];
-            } catch {
-              return [];
-            }
+                ).filter((notnull) => notnull) as Entity[];
+              } catch(e) {
+                console.log(e)
+                return [];
+              }
+            };
+            const getTransactions = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getTransactionsByAddress",
+                      params: [entity.uniqueIdentifier.toLowerCase()],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds.result.txs.map(
+                      async (tx: any) =>
+                        await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                    )
+                  )
+                ).filter((notnull) => notnull) as Entity[];
+              } catch {
+                return [];
+              }
+            };
+            const [Transfers, Transactions] = await Promise.all([
+              getTransfers(),
+              getTransactions(),
+            ]);
+            return { Transactions, Transfers };
           },
         },
         {
