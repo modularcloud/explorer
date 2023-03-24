@@ -20,7 +20,6 @@ import {
   CardList,
   Table,
   Tabs,
-  CardKeyValueList,
 } from "@modularcloud/design-system";
 import Image from "next/image";
 import useSWR from "swr";
@@ -52,10 +51,10 @@ const EntityPanel = ({ classes, id, metadata, context, img }: PanelProps) => (
       hash={id}
       network={img}
     />
-    <KeyValueList
-      header={`${context.entityTypeName} Information`}
-      entries={Object.entries(metadata)}
-    />
+    <div>
+      <div className="pb-4 font-bold">{`${context.entityTypeName} Information`}</div>
+      <KeyValueList data={metadata} type="sidebar" />
+    </div>
   </RightPanel>
 );
 
@@ -278,15 +277,17 @@ export function EntityPage({
                   type={entity.context.entityTypeName}
                   badgeText={entity.uniqueIdentifier}
                   navTo={
-                    entity.context.network === "N/A" && !entity.computed.parentPath
+                    entity.context.network === "N/A" &&
+                    !entity.computed.parentPath
                       ? undefined
                       : () =>
                           router.push(
-                            entity.computed.parentPath ?? `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
+                            entity.computed.parentPath ??
+                              `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
                           )
                   }
                 >
-                  <CardKeyValueList data={entity.metadata} />
+                  <KeyValueList data={entity.metadata} type="card" />
                 </Card>
               ))}
             </CardList>
