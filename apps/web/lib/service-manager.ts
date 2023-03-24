@@ -952,7 +952,7 @@ async function getEVMTransactionByHash(
         "Gas Limit": convertHex(tx.gas),
         "Gas Used": receipt.gasUsed,
         Nonce: convertHex(tx.nonce),
-        //Data: tx.input,
+        Data: tx.input,
       }),
       context: {
         network: networkName,
@@ -1488,7 +1488,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     metadata: buildMetadata({
                       Address: log.address,
                       Topics: { type: "list", payload: log.topics },
-                      // Data: log.data,
+                      Data: log.data,
                     }),
                     computed: {},
                     context: {
