@@ -1488,7 +1488,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     metadata: buildMetadata({
                       Address: log.address,
                       Topics: { type: "list", payload: log.topics },
-                      Data: log.data,
+                      // Data: log.data,
                     }),
                     computed: {},
                     context: {
