@@ -20,6 +20,7 @@ import {
   CardList,
   Table,
   Tabs,
+  CardKeyValueList,
 } from "@modularcloud/design-system";
 import Image from "next/image";
 import useSWR from "swr";
@@ -276,17 +277,16 @@ export function EntityPage({
                   key={`${entity.uniqueIdentifier}-${index}-${activeTab}`}
                   type={entity.context.entityTypeName}
                   badgeText={entity.uniqueIdentifier}
-                  badgeIcon="reward"
                   navTo={
-                    entity.context.network === "N/A"
+                    entity.context.network === "N/A" && !entity.computed.parentPath
                       ? undefined
                       : () =>
                           router.push(
-                            `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
+                            entity.computed.parentPath ?? `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
                           )
                   }
                 >
-                  <KeyValueList entries={Object.entries(entity.metadata)} />
+                  <CardKeyValueList data={entity.metadata} />
                 </Card>
               ))}
             </CardList>

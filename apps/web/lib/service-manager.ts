@@ -1016,7 +1016,7 @@ async function getEVMLogByPath(
         entityTypeName: "ERC20 Event",
       },
       computed: {
-        parentPath: `${networkName}/transactions/${log.transactionHash}`,
+        parentPath: `/${networkName}/transaction/hash/${log.transactionHash}`,
       },
       raw: "",
     };

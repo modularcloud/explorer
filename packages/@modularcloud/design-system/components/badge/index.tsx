@@ -4,7 +4,7 @@ import { ArrowOn } from "../../icons";
 type Props = {
   list: string[];
   long?: boolean;
-  icon?: true;
+  icon?: boolean;
   toggled?: boolean;
 };
 
