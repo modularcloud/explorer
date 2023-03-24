@@ -11,11 +11,11 @@ interface Props {
 
 export function Card({ type, badgeText, badgeIcon, children, navTo }: Props) {
   return (
-    <div className="w-full border border-gray-300 shadow-md rounded-lg">
-      <div className="px-4 p-2 font-bold bg-gray-100 border-b border-b-gray-300 rounded-t-lg">
+    <div className="w-full border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-xl lg:w-[42rem] xl:w-[48rem] 2xl:w-[56rem]">
+      <div className="px-4 py-1.5 font-bold bg-slate/[.04] border-b border-slate-100">
         {type}
       </div>
-      <div className="p-4">
+      <div className="py-2 px-4">
         <div onClick={navTo} className="cursor-pointer">
           <Badge icon={true} long={true} list={[badgeText ?? "Unknown"]} />
         </div>
