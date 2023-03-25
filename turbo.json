@@ -21,7 +21,8 @@
         "ADD_NETWORK_ENDPOINT",
         "EVM_CHAIN_DATA_SERVICE",
         "SOLANA_RPC",
-        "VERCEL_URL"
+        "VERCEL_URL",
+        "METRICS_API_URL"
       ]
     }
   }
