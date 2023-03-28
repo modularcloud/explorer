@@ -231,7 +231,6 @@ export function EntityPage({
             }
             searchInput={
               <SearchInput
-                mode={mode}
                 placeholder="Go to hash or height"
                 optionGroups={searchOptions}
                 isOpen={isOpen}
