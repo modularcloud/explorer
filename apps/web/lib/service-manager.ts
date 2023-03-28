@@ -864,6 +864,15 @@ function buildMetadata(obj: { [key: string]: any }): {
   return metadata;
 }
 
+export async function getEventSignatureName(topic: string) {
+  try {
+    const results = await fetch(
+      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
+    ).then((res) => res.json());
+    return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
+  } catch {}
+}
+
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
@@ -910,14 +919,28 @@ async function getEVMTransactionByHash(
       response.json()
     );
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
+    const eventSignatureName = await getEventSignatureName(
+      receipt.logs[0]?.topics?.[0]
+    );
+    let type = "Unknown";
+    if (!tx.to) {
+      type = "Contract Creation";
+    }
+    if (tx.to && Number(tx.value) > 0) {
+      type = "Transfer";
+    }
+    if (eventSignatureName) {
+      type = eventSignatureName;
+    }
+    type = type.split("(")[0];
     return {
       uniqueIdentifier: tx.hash,
       uniqueIdentifierLabel: "hash",
       metadata: buildMetadata({
         Height: convertHex(tx.blockNumber),
         Status: { type: "status", payload: receipt.status },
-        From: tx.from,
-        To: tx.to,
+        From: tx.from.replace("000000000000000000000000", ""),
+        To: tx.to?.replace("000000000000000000000000", ""),
         Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
         Fee: new Decimal(tx.gasPrice)
           .times(receipt.gasUsed)
@@ -937,8 +960,65 @@ async function getEVMTransactionByHash(
       },
       computed: {
         Receipt: receipt,
+        TableType: receipt.logs.length ? receipt.logs.map(() => type) : [type],
       },
       raw: JSON.stringify(tx),
+    };
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+async function getEVMLogByPath(
+  path: string[],
+  endpoint: string,
+  networkName: string
+): Promise<Entity | null> {
+  try {
+    const [hash, index] = path;
+
+    var raw = JSON.stringify({
+      method: "eth_getTransactionReceipt",
+      params: [hash],
+      id: 1,
+      jsonrpc: "2.0",
+    });
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const receiptData = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
+    const log = receipt.logs.find((log) => log.logIndex === Number(index));
+    if (!log) return null;
+    return {
+      uniqueIdentifier: "Transfer",
+      uniqueIdentifierLabel: "type",
+      metadata: buildMetadata({
+        From: log.topics[1].replace("000000000000000000000000", ""),
+        To: log.topics[2].replace("000000000000000000000000", ""),
+        Value: new Decimal(log.data).dividedBy("1000000000000000000").toFixed(),
+        Height: log.blockNumber,
+        "Transaction Hash": log.transactionHash,
+        "Log Index": log.logIndex,
+      }),
+      context: {
+        network: "N/A",
+        entityTypeName: "ERC20 Event",
+      },
+      computed: {
+        parentPath: `/${networkName}/transaction/hash/${log.transactionHash}`,
+      },
+      raw: "",
     };
   } catch (e) {
     console.log(e);
@@ -1134,28 +1214,183 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             },
           ],
           getAssociated: async (entity: Entity) => {
-            try {
-              const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
-                {
-                  method: "POST",
-                  body: JSON.stringify({
-                    method: "mc_getTransactionsByAddress",
-                    params: [entity.uniqueIdentifier.toLowerCase()],
-                  }),
-                }
-              ).then((res) => res.json());
-              return (
-                await Promise.all(
-                  txIds.result.txs.map(
-                    async (tx: any) =>
-                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
+            const getTransfers = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getEventsByAccountAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds["result"]["events"]
+                      .slice(0, 30)
+                      .map(async (event: any) => {
+                        return getEVMLogByPath(
+                          [event.transactionHash, event.logIndex],
+                          EVM,
+                          network.name
+                        );
+                      })
                   )
-                )
-              ).filter((notnull) => notnull) as Entity[];
-            } catch {
-              return [];
-            }
+                ).filter((notnull) => notnull) as Entity[];
+              } catch(e) {
+                console.log(e)
+                return [];
+              }
+            };
+            const getTransactions = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getTransactionsByAddress",
+                      params: [entity.uniqueIdentifier.toLowerCase()],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds.result.txs.map(
+                      async (tx: any) =>
+                        await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                    )
+                  )
+                ).filter((notnull) => notnull) as Entity[];
+              } catch {
+                return [];
+              }
+            };
+            const [Transfers, Transactions] = await Promise.all([
+              getTransfers(),
+              getTransactions(),
+            ]);
+            return { Transactions, Transfers };
+          },
+        },
+        {
+          name: needsPrefix ? "EVM Token" : "Token",
+          getters: [
+            {
+              field: "address",
+              getOne: async (address: string) => {
+                try {
+                  const response = await fetch(
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        method: "mc_getTokenByAddress",
+                        params: [address],
+                      }),
+                    }
+                  );
+                  const tokenData = await response.json();
+                  return {
+                    uniqueIdentifier: address,
+                    uniqueIdentifierLabel: "address",
+                    metadata: buildMetadata({
+                      Name: tokenData.result.token.name,
+                      Symbol: tokenData.result.token.symbol,
+                      Decimals: tokenData.result.token.decimals,
+                      Type: tokenData.result.token.type.toUpperCase(),
+                      Contract: tokenData.result.token.contract,
+                    }),
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Token",
+                    },
+                    computed: {},
+                    raw: "",
+                  };
+                } catch {
+                  return null;
+                }
+              },
+            },
+          ],
+          getAssociated: async (
+            entity: Entity
+          ): Promise<Record<string, Entity[]>> => {
+            const getTransfers = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getEventsByTokenAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return (
+                  await Promise.all(
+                    txIds["result"]["events"]
+                      .slice(0, 30)
+                      .map(async (event: any) => {
+                        return getEVMLogByPath(
+                          [event.transactionHash, event.logIndex],
+                          EVM,
+                          network.name
+                        );
+                      })
+                  )
+                ).filter((notnull) => notnull) as Entity[];
+              } catch {
+                return [];
+              }
+            };
+            const getHolders = async () => {
+              try {
+                const txIds = await fetch(
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}`,
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      method: "mc_getAccountBalancesByTokenAddress",
+                      params: [entity.uniqueIdentifier],
+                    }),
+                  }
+                ).then((res) => res.json());
+                return txIds.result.accountBalances.slice(0, 30).map((account: any) => {
+                  return {
+                    uniqueIdentifier: account.accountAddress,
+                    uniqueIdentifierLabel: "address",
+                    metadata: buildMetadata({
+                      Balance: new Decimal(account.balance)
+                        .dividedBy(
+                          new Decimal(10).pow(
+                            String(entity.metadata["Decimals"].payload)
+                          )
+                        )
+                        .toString(),
+                    }),
+                    context: {
+                      network: network.name,
+                      entityTypeName: "Account",
+                    },
+                    computed: {},
+                    raw: "",
+                  };
+                });
+              } catch(e) {
+                console.log(e)
+                return [];
+              }
+            };
+            const [Transfers, Holders] = await Promise.all([
+              getTransfers(),
+              getHolders(),
+            ]);
+            return { Transfers, Holders };
           },
         },
         {

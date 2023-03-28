@@ -7,6 +7,7 @@ import {
   isHeight,
   isSignature,
 } from "../../../../lib/search";
+import { getSearchOptions } from "../../../../lib/search-options";
 import {
   loadDynamicNetworks,
   ServiceManager,
@@ -23,6 +24,10 @@ export default async function handler(
   if (typeof fieldValue !== "string") {
     return res.status(404).end();
   }
+
+  const searchOptions = await getSearchOptions();
+  const defaultNetworkLabel: string = searchOptions[0].options[0].name;
+  const useShortPath = slugify(defaultNetworkLabel) === slugify(networkLabel);
 
   await loadDynamicNetworks();
   const network = ServiceManager.getNetwork(networkLabel);
@@ -63,10 +68,20 @@ export default async function handler(
 
   // Try address
   if (isAddress(fieldValue)) {
+    // Try token
+    const token = await getEntity(network, "token", "address", fieldValue);
+    if (token) {
+      res.json({
+        path: useShortPath ? `/token/${fieldValue}` : `/${networkLabel}/token/address/${fieldValue}`,
+      });
+      return res.status(200).end();
+    }
+
+    // Try account
     const account = await getEntity(network, "account", "address", fieldValue);
     if (account) {
       res.json({
-        path: `/${networkLabel}/account/address/${fieldValue}`,
+        path: useShortPath ? `/address/${fieldValue}` : `/${networkLabel}/account/address/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -78,7 +93,7 @@ export default async function handler(
     const hBlock = await getEntity(network, "block", "height", fieldValue);
     if (hBlock) {
       res.json({
-        path: `/${networkLabel}/block/height/${fieldValue}`,
+        path: useShortPath ? `/block/${fieldValue}` : `/${networkLabel}/block/height/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -122,7 +137,7 @@ export default async function handler(
     );
     if (transaction) {
       res.json({
-        path: `/${networkLabel}/transaction/hash/${fieldValue}`,
+        path: useShortPath ? `/tx/${fieldValue}` : `/${networkLabel}/transaction/hash/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -131,7 +146,7 @@ export default async function handler(
     const block = await getEntity(network, "block", "hash", fieldValue);
     if (block) {
       res.json({
-        path: `/${networkLabel}/block/hash/${fieldValue}`,
+        path: useShortPath ? `/block/${fieldValue}` : `/${networkLabel}/block/hash/${fieldValue}`,
       });
       return res.status(200).end();
     }

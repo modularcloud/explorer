@@ -9,6 +9,7 @@ export { default as ChartOff } from "./ChartOff";
 export { default as ChartOn } from "./ChartOn";
 export { default as CheckOff } from "./CheckOff";
 export { default as CheckOn } from "./CheckOn";
+export { default as ChevronDown } from "./ChevronDown";
 export { default as CloseOff } from "./CloseOff";
 export { default as CloseOn } from "./CloseOn";
 export { default as CodeOff } from "./CodeOff";

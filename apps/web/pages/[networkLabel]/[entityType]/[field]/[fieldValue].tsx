@@ -19,6 +19,7 @@ import {
   Card,
   CardList,
   Table,
+  Tabs,
 } from "@modularcloud/design-system";
 import Image from "next/image";
 import useSWR from "swr";
@@ -50,10 +51,10 @@ const EntityPanel = ({ classes, id, metadata, context, img }: PanelProps) => (
       hash={id}
       network={img}
     />
-    <KeyValueList
-      header={`${context.entityTypeName} Information`}
-      entries={Object.entries(metadata)}
-    />
+    <div>
+      <div className="pb-4 font-bold">{`${context.entityTypeName} Information`}</div>
+      <KeyValueList data={metadata} type="sidebar" />
+    </div>
   </RightPanel>
 );
 
@@ -124,7 +125,21 @@ export function EntityPage({
       },
     }
   );
-  const associated: Entity[] = swrResponse.data ?? []; // TODO validation
+  const associated: Record<string, Entity[]> | Entity[] =
+    swrResponse.data ?? ({} as Record<string, Entity[]>); // TODO validation
+  const [keys, record]: [string[], Record<string, Entity[]>] =
+    React.useMemo(() => {
+      if (Array.isArray(associated)) {
+        if (associated.length === 0) return [[], {}];
+        const type = associated[0].context.entityTypeName;
+        return [[associated[0].context.entityTypeName], { [type]: associated }];
+      }
+      return [Object.keys(associated), associated];
+    }, [associated]);
+  const [activeTab, setActiveTab] = React.useState(0);
+  const content = React.useMemo(() => {
+    return record[keys[activeTab]] ?? [];
+  }, [keys, record, activeTab]);
 
   const isCelestiaEntity = entity.context.network.toLowerCase() === "mocha";
   const isDymensionEntity = !!entity.context.network
@@ -184,8 +199,8 @@ export function EntityPage({
           </Script>
         </>
       ) : null}
-      <div className="flex">
-        <div className="grow">
+      <div className="lg:flex">
+        <div className="lg:grow">
           <div className="lg:hidden">
             <TopBar
               type={entity.context.entityTypeName}
@@ -216,7 +231,6 @@ export function EntityPage({
             }
             searchInput={
               <SearchInput
-                mode={mode}
                 placeholder="Go to hash or height"
                 optionGroups={searchOptions}
                 isOpen={isOpen}
@@ -256,39 +270,43 @@ export function EntityPage({
           />
           {view === "cards" ? (
             <CardList>
-              {associated.map((entity) => (
+              {content.map((entity, index) => (
                 <Card
-                  key={entity.uniqueIdentifier}
+                  key={`${entity.uniqueIdentifier}-${index}-${activeTab}`}
                   type={entity.context.entityTypeName}
                   badgeText={entity.uniqueIdentifier}
-                  badgeIcon="reward"
                   navTo={
-                    entity.context.network === "N/A"
+                    entity.context.network === "N/A" &&
+                    !entity.computed.parentPath
                       ? undefined
                       : () =>
                           router.push(
-                            `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
+                            entity.computed.parentPath ??
+                              `/${entity.context.network}/${entity.context.entityTypeName}/${entity.uniqueIdentifierLabel}/${entity.uniqueIdentifier}`
                           )
                   }
                 >
-                  <KeyValueList entries={Object.entries(entity.metadata)} />
+                  <KeyValueList data={entity.metadata} type="card" />
                 </Card>
               ))}
             </CardList>
           ) : null}
-          {view === "table" ? (
-            <Table data={associated} router={router} />
-          ) : null}
-          {!associated.length ? (
+          {view === "table" ? <Table data={content} router={router} /> : null}
+          {!content.length ? (
             <p className="w-full text-slate text-center">
               {swrResponse.isLoading
                 ? "Loading..."
+                : keys.length
+                ? `No ${keys[
+                    activeTab
+                  ].toLowerCase()} for this ${entity.context.entityTypeName.toLowerCase()}.`
                 : `This ${entity.context.entityTypeName.toLowerCase()} is empty.`}
             </p>
           ) : null}
+          <Tabs list={keys} setActiveTab={setActiveTab} activeTab={activeTab} />
         </div>
         <EntityPanel
-          classes="sticky top-0 hidden lg:flex"
+          classes="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
           id={entity.uniqueIdentifier}
           metadata={entity.metadata}
           context={entity.context}

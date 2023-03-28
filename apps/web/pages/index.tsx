@@ -47,21 +47,11 @@ export default function Homepage({
       <Head>
         <title>{`${name} by Modular Cloud`}</title>
       </Head>
-      <div
-        className={clsx(
-          "flex flex-col items-center justify-center mx-auto min-h-screen p-4",
-          {
-            /* "text-white bg-night": mode === "dark",*/
-            "bg-gray-100 bg-[url('/images/home-img-bg.png')] bg-repeat-x bg-top":
-              mode === "light",
-          }
-        )}
-      >
-        <div className="container flex flex-col items-center justify-center w-full">
+      <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] min-h-screen">
+        <div className="flex flex-col items-center justify-center w-full space-y-10 xs:pt-40 pt-[12.5rem]">
           <BigLogo mode={mode} name={name} />
-          <div className="w-full xl:w-2/5 lg:w-3/6 md:w-4/6 sm:w-4/5 mt-6">
+          <div className="w-[27.875rem]">
             <SearchInput
-              mode={mode}
               placeholder="Go to hash or height"
               optionGroups={searchOptions}
               isOpen={isOpen}

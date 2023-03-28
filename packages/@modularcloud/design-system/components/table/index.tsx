@@ -33,30 +33,135 @@ type TableSection = {
   label: string;
 };
 
-export function Table({ data, router }: Props) {
-  // temporarily before we have multi-entity tables
-  if (!data.length) {
-    return null;
+function forceLength(
+  str: string,
+  len: number,
+  strategy: "middle" | "end" = "middle"
+) {
+  const MIN = 4;
+  const diff = str.length - len;
+  if (diff > 0) {
+    if (strategy === "end") {
+      let shortend = str.slice(-len);
+      if (shortend.length < MIN) {
+        shortend = str.slice(0, MIN);
+      }
+      return shortend + "...";
+    }
+    if (strategy === "middle") {
+      const midpoint = Math.floor(str.length / 2);
+      const removal = Math.floor(diff / 2);
+      let start = str.slice(0, midpoint - removal);
+      let end = str.slice(midpoint + removal);
+      if (start.length + end.length < MIN) {
+        start = str.slice(0, MIN);
+        end = str.slice(-MIN);
+      }
+      return start + "..." + end;
+    }
   }
-  const type = data[0].context.entityTypeName;
-  const isNotCosmos = !data[0].context.network
-    .toLowerCase()
-    .match(/(^hub$)|rollapp|dymension|mocha/);
-  const filterData = data.filter(
-    (entity) => entity.context.entityTypeName === type
+  return str;
+}
+
+function LongVal({
+  value,
+  max,
+  step,
+  strategy,
+}: {
+  value: string;
+  max: number;
+  step: number;
+  strategy?: "middle" | "end";
+}) {
+  return (
+    <>
+      <div className="hidden 2xl:block">{value}</div>
+      <div className="hidden xl:block 2xl:hidden">
+        {forceLength(value, max, strategy)}
+      </div>
+      <div className="hidden lg:block xl:hidden">
+        {forceLength(value, max - step, strategy)}
+      </div>
+      <div className="hidden md:block lg:hidden">
+        {forceLength(value, max - step * 2, strategy)}
+      </div>
+      <div className="hidden sm:block md:hidden">
+        {forceLength(value, max - step * 3, strategy)}
+      </div>
+      <div className="hidden xs:block sm:hidden">
+        {forceLength(value, max - step * 4, strategy)}
+      </div>
+      <div className="hidden max-xs:block">
+        {forceLength(value, max - step * 5, strategy)}
+      </div>
+    </>
   );
-  let section: TableSection;
-  if (type === "Transaction") {
-    if (isNotCosmos) {
+}
+
+export function Table({ data, router }: Props) {
+  const push = React.useCallback(
+    (path: any) => {
+      router.push(path);
+    },
+    [router.push]
+  );
+
+  const section = React.useMemo(() => {
+    if (data.length === 0) {
+      return null;
+    }
+    const type = data[0].context.entityTypeName;
+    const isNotCosmos = !data[0].context.network
+      .toLowerCase()
+      .match(/(^hub$)|rollapp|dymension|mocha/);
+    const filterData = data.filter(
+      (entity) => entity.context.entityTypeName === type
+    );
+    let section: TableSection;
+    if (type === "ERC20 Event") {
       section = {
         rows: filterData,
-        label: "Transactions",
+        label: "Transfers",
         columns: [
           {
-            id: "hash",
-            header: "Transactions",
-            isPrimaryKey: true,
-            getCell: (entity: Entity) => entity.uniqueIdentifier,
+            id: "from",
+            header: "From",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.From.payload as string}
+                max={40}
+                step={8}
+              />
+            ),
+          },
+          {
+            id: "to",
+            header: "To",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.To.payload as string}
+                max={40}
+                step={8}
+              />
+            ),
+          },
+          {
+            id: "value",
+            header: "Value",
+            getCell: (entity: Entity) => (
+              <LongVal
+                value={entity.metadata.Value.payload as string}
+                max={20}
+                step={3}
+                strategy="end"
+              />
+            ),
+          },
+          {
+            id: "height",
+            header: "Height",
+            getCell: (entity: Entity) => entity.metadata.Height.payload,
           },
           {
             id: "menu",
@@ -65,7 +170,30 @@ export function Table({ data, router }: Props) {
           },
         ],
       };
-    } else {
+    } else if (type === "Account") {
+      section = {
+        rows: filterData,
+        label: "Accounts",
+        columns: [
+          {
+            id: "address",
+            header: "Address",
+            isPrimaryKey: true,
+            getCell: (entity: Entity) => entity.uniqueIdentifier,
+          },
+          {
+            id: "balance",
+            header: "Balance",
+            getCell: (entity: Entity) => entity.metadata.Balance.payload,
+          },
+          {
+            id: "menu",
+            isIcon: true,
+            getCell: (entity: Entity) => <ElipsHorizOff />,
+          },
+        ],
+      };
+    } else if (type === "Transaction") {
       const height = data[0].metadata.Height.payload;
       const differentHeight = !!data.find(
         (entity) => entity.metadata.Height.payload !== height
@@ -104,9 +232,12 @@ export function Table({ data, router }: Props) {
             rightJustifyOnXS: true,
             getCell: (entity: Entity) => (
               <Badge
-                list={entity.computed.Messages?.map(
-                  (message: any) => message.uniqueIdentifier
-                )}
+                list={
+                  entity.computed.TableType ??
+                  entity.computed.Messages?.map(
+                    (message: any) => message.uniqueIdentifier
+                  )
+                }
               />
             ),
           },
@@ -125,47 +256,54 @@ export function Table({ data, router }: Props) {
           },
         ].filter((notnull) => notnull) as EntityColumn<any>[],
       };
-    }
-  } else {
-    section = {
-      rows: filterData,
-      label: type + "s", // TODO: handle plural better
-      columns: [
-        /*{
+    } else {
+      section = {
+        rows: filterData,
+        label: type + "s", // TODO: handle plural better
+        columns: [
+          /*{
         id: "icon",
         isIcon: true,
         showOnXS: true,
         getCell: (entity: Entity) => <Status status={entity.metadata.status} mode="icon" />
       },*/
-        {
-          id: "id",
-          header: type + "s", // TODO: handle plural better
-          isPrimaryKey: true,
-          getCell: (entity: Entity) => entity.uniqueIdentifier,
-        },
-        {
-          id: "menu",
-          isIcon: true,
-          getCell: (entity: Entity) => <ElipsHorizOff />,
-        },
-      ],
-    };
-  }
+          {
+            id: "id",
+            header: type + "s", // TODO: handle plural better
+            isPrimaryKey: true,
+            getCell: (entity: Entity) => entity.uniqueIdentifier,
+          },
+          {
+            id: "menu",
+            isIcon: true,
+            getCell: (entity: Entity) => <ElipsHorizOff />,
+          },
+        ],
+      };
+    }
+    return section;
+  }, [data]);
 
   const columnHelper = createColumnHelper<Entity>();
-  const columns = section.columns.map((col) => {
-    return columnHelper.accessor("uniqueIdentifier", {
-      id: col.id,
-      header: col.header ?? (() => null),
-      cell: (info) => col.getCell(info.row.original),
+
+  const columns = React.useMemo(() => {
+    if (section === null) return null;
+    return section.columns.map((col) => {
+      return columnHelper.accessor("uniqueIdentifier", {
+        id: col.id,
+        header: col.header ?? (() => null),
+        cell: (info) => col.getCell(info.row.original),
+      });
     });
-  });
+  }, [section]);
 
   const table = useReactTable<Entity>({
-    data: section.rows,
-    columns,
+    data: section?.rows || [],
+    columns: columns || [],
     getCoreRowModel: getCoreRowModel(),
   });
+
+  if (section === null) return null;
 
   const maxXSLeftPadding = section.columns.findIndex((col) => !col.hideOnXS);
   const maxXSRightPadding =
@@ -177,6 +315,29 @@ export function Table({ data, router }: Props) {
     section.columns.length -
     1 -
     [...section.columns].reverse().findIndex((col) => !col.showOnXS);
+
+  // const maxXSLeftPadding = React.useMemo(
+  //   () => section.columns.findIndex((col) => !col.hideOnXS),
+  //   [section]
+  // );
+  // const maxXSRightPadding = React.useMemo(
+  //   () =>
+  //     section.columns.length -
+  //     1 -
+  //     [...section.columns].reverse().findIndex((col) => !col.hideOnXS),
+  //   [section]
+  // );
+  // const minXSLeftPadding = React.useMemo(
+  //   () => section.columns.findIndex((col) => !col.showOnXS),
+  //   [section]
+  // );
+  // const minXSRightPadding = React.useMemo(
+  //   () =>
+  //     section.columns.length -
+  //     1 -
+  //     [...section.columns].reverse().findIndex((col) => !col.showOnXS),
+  //   [section]
+  // );
 
   return (
     <div className="w-full overflow-x-hidden">
@@ -226,12 +387,16 @@ export function Table({ data, router }: Props) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
-              className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"
+              className={clsx(
+                "border-b border-b-[#F0F0F1]",
+                row.original.context.network !== "N/A" &&
+                  "hover:bg-[#08061505] cursor-pointer"
+              )}
               key={row.id}
               onClick={() =>
                 row.original.context.network === "N/A"
                   ? null
-                  : router.push(
+                  : push(
                       `/${row.original.context.network}/${row.original.context.entityTypeName}/${row.original.uniqueIdentifierLabel}/${row.original.uniqueIdentifier}`
                     )
               }
