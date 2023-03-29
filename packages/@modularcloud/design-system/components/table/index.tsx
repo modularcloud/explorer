@@ -225,8 +225,11 @@ export function Table({ data, router }: Props) {
           {
             id: "hash",
             header: "Transactions",
-            isPrimaryKey: true,
-            getCell: (entity: Entity) => entity.uniqueIdentifier,
+            getCell: (entity: Entity) => <LongVal
+            value={entity.uniqueIdentifier}
+            max={50}
+            step={10}
+          />,
           },
           differentHeight
             ? {
@@ -239,6 +242,7 @@ export function Table({ data, router }: Props) {
             ? {
                 id: "timestamp",
                 header: "Timestamp",
+                hideOnXS: true,
                 getCell: (entity: Entity) => dayjs(entity.metadata.Timestamp.payload as number).fromNow(),
               }
             : null,
