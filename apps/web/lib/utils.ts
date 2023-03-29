@@ -11,7 +11,7 @@ export async function getEventSignatureName(topic: string) {
 }
 
 // wrap loading in a fetch request until we figure out how to best cache using next app routing
-type FetchLoadArgs = { network: string; type: string; query: string[] };
+export type FetchLoadArgs = { network: string; type: string; query: string[] };
 export async function fetchLoad(props: FetchLoadArgs) {
   try {
     const response = await fetch(
@@ -33,23 +33,65 @@ export async function fetchLoad(props: FetchLoadArgs) {
   }
 }
 
-type WhitelabelType = { name: [string] | [string, string] };
-export function getWhitelabel(): WhitelabelType {
+export type SearchOption = {
+  displayName: string;
+  id: string;
+};
+export type OptionGroups = {
+  [groupDisplayName: string]: SearchOption[];
+};
+export type Whitelabel = {
+  name: [string] | [string, string];
+  searchOptions: OptionGroups;
+};
+export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
     case "nautilus":
       return {
+        searchOptions: {
+          Dev: [
+            {
+              displayName: "Ethereum",
+              id: "ethereum",
+            },
+          ],
+        },
         name: ["Naut", "Scan"],
       };
     case "celestia":
       return {
+        searchOptions: {
+          Dev: [
+            {
+              displayName: "Ethereum",
+              id: "ethereum",
+            },
+          ],
+        },
         name: ["Celestia", "Scan"],
       };
     case "dymension":
       return {
+        searchOptions: {
+          Dev: [
+            {
+              displayName: "Ethereum",
+              id: "ethereum",
+            },
+          ],
+        },
         name: ["Dym", "Scan"],
       };
     default:
       return {
+        searchOptions: {
+          Dev: [
+            {
+              displayName: "Ethereum",
+              id: "ethereum",
+            },
+          ],
+        },
         name: ["Modular", "Cloud"],
       };
   }
