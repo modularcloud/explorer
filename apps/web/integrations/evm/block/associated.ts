@@ -15,7 +15,7 @@ export const AssociatedTransform = {
       Transactions: data.transactions.map((transaction) => ({
         network: metadata.network.id,
         type: "transaction",
-        query: [transaction],
+        query: transaction,
       })),
     },
   }),

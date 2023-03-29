@@ -37,7 +37,7 @@ export default async function Associated({ resourcePath }: Props) {
               {rows.map((row) => (
                 <tr
                   className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"
-                  key={row.query.join("/")}
+                  key={row.query}
                 >
                   <td aria-hidden={true} className="p-2">
                     {/** For spacing purposes */}

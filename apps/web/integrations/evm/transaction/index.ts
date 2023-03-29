@@ -1,7 +1,7 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import Web3 from "web3";
+import { z } from "zod";
 import { getEventSignatureName } from "../../../lib/utils";
-import { QuerySchema } from "../../../schemas/query";
 import { AssociatedTransform } from "./associated";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
@@ -12,11 +12,11 @@ export async function TransactionExtract(
   _q: unknown,
   metadata: EngineConfigMetadata
 ) {
-  const query = QuerySchema.parse(_q);
+  const query = z.string().parse(_q);
   const web3 = new Web3(metadata.endpoint);
 
-  const transaction = await web3.eth.getTransaction(query[0]);
-  const receipt = await web3.eth.getTransactionReceipt(query[0]);
+  const transaction = await web3.eth.getTransaction(query);
+  const receipt = await web3.eth.getTransactionReceipt(query);
   const eventSignatureName = await getEventSignatureName(
     receipt.logs[0]?.topics?.[0]
   );
