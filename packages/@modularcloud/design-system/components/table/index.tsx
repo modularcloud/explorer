@@ -11,6 +11,10 @@ import { Badge } from "../badge";
 import { Status } from "../status";
 import * as React from "react";
 
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+
 type Props = {
   data: Entity[];
   router: any;
@@ -164,6 +168,11 @@ export function Table({ data, router }: Props) {
             getCell: (entity: Entity) => entity.metadata.Height.payload,
           },
           {
+            id: "timestamp",
+            header: "Timestamp",
+            getCell: (entity: Entity) => dayjs(entity.metadata.Timestamp.payload as number).fromNow(),
+          },
+          {
             id: "menu",
             isIcon: true,
             getCell: (entity: Entity) => <ElipsHorizOff />,
@@ -224,6 +233,13 @@ export function Table({ data, router }: Props) {
                 id: "height",
                 header: "Height",
                 getCell: (entity: Entity) => entity.metadata.Height.payload,
+              }
+            : null,
+          differentHeight
+            ? {
+                id: "timestamp",
+                header: "Timestamp",
+                getCell: (entity: Entity) => dayjs(entity.metadata.Timestamp.payload as number).fromNow(),
               }
             : null,
           {
