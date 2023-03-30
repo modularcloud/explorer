@@ -22,7 +22,8 @@
         "EVM_CHAIN_DATA_SERVICE",
         "SOLANA_RPC",
         "VERCEL_URL",
-        "METRICS_API_URL"
+        "METRICS_API_URL",
+        "ETHEREUM_RPC"
       ]
     }
   }
