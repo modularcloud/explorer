@@ -1,19 +1,21 @@
-import { PageArchetype } from "../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../ecs/hooks/use-entity";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../../ecs/hooks/use-entity";
 import { Suspense } from "react";
-import { Row } from "./(components)/row";
-import HeadBox from "./(components)/head-box";
+import { Row } from "../(components)/row";
+import HeadBox from "../(components)/head-box";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 type Props = {
-  resourcePath: any;
+  resourcePath: FetchLoadArgs;
 };
 
-export default async function Associated({ resourcePath }: Props) {
+export default async function Table({ resourcePath }: Props) {
   const entity = await useEntity({
     resourcePath,
     archetype: PageArchetype,
   });
   if (!entity) return null;
+
   const associated = entity.components.associated.data;
   const groups = Object.keys(associated);
 
@@ -21,6 +23,7 @@ export default async function Associated({ resourcePath }: Props) {
     <div>
       {groups.map((group) => {
         const rows = associated[group];
+        if(rows.length === 0) return null;
         return (
           <table className="w-full text-left" cellSpacing={0} cellPadding={0} key={group}>
             <thead>

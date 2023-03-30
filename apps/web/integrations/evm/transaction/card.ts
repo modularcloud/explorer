@@ -12,7 +12,7 @@ export const CardTransform = {
   > => ({
     typeId: "card",
     data: {
-      titleBar: "Block",
+      titleBar: "Transaction",
       badge: data.hash,
       attributes: {
         Network: {

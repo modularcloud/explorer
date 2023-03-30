@@ -1,21 +1,31 @@
 import clsx from "clsx";
+import SvgArrowOn from "./(icons)/ArrowOn";
 
 type Props = {
   text: string;
   extra?: number;
   long?: boolean;
+  icon?: boolean;
+  toggled?: boolean;
 };
 
-export function Badge({ text, extra = 0, long }: Props) {
+export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
   const hasExtra = extra > 1;
 
   return (
     <div
       className={clsx(
-        "flex gap-2 border rounded-[2.5rem] border-mid-dark-100 pl-3 py-[.1875rem] w-max",
+        toggled ? "border-ocean-700" : "border-mid-dark-100",
+        "bg-white flex gap-2 border rounded-[2.5rem] pl-3 py-[.1875rem] items-center",
+        long ? "max-w-min" : "w-max",
         hasExtra ? "pr-[.1875rem]" : "pr-3"
       )}
     >
+      {icon ? (
+        <div className="w-5">
+          <SvgArrowOn />
+        </div>
+      ) : null}
       <div className={clsx(!long && "max-w-[80px] truncate")}>
         {text}
       </div>

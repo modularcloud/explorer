@@ -1,7 +1,7 @@
-import { FetchLoadArgs } from "../../../../../lib/utils";
-import Table from "./table/component";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
+import Table from "./component";
 
-export default async function EntityPage({
+export default async function TablePage({
     params,
   }: {
     params: FetchLoadArgs;

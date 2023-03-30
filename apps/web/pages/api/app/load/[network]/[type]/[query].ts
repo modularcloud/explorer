@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const config = CreateEVMConfig({
-    endpoint: "https://rpc.ankr.com/eth",
+    endpoint: process.env.ETHEREUM_RPC ?? "",
     network: {
       id: "ethereum",
       displayName: "Ethereum",

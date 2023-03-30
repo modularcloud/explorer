@@ -1,7 +1,15 @@
-export default async function FeedPage(props: any) {
-  return (
-    <div>Hello</div>
-  );
-}
+import { FetchLoadArgs } from "../../../../../../lib/utils";
+import Feed from "./component";
 
-export const dynamic = "force-dynamic";
+export default async function FeedPage({
+    params,
+  }: {
+    params: FetchLoadArgs;
+  }) {
+    /**
+     * For now, we will default to the table view
+     */
+
+    // @ts-expect-error Async Server Component
+    return <Feed resourcePath={params} />;
+  }
