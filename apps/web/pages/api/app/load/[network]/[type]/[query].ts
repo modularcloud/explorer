@@ -17,9 +17,22 @@ export default async function handler(
   });
   Engine.addConfig("ethereum", config);
   try {
-    const result = await Engine.load(req.query as any);
-    res.json(result);
-  } catch(e) {
+    if (req.query.type === "search") {
+      const types = Object.keys(config.loaders);
+      const result = await Promise.any(
+        types.map(async (type) => {
+          return Engine.load({
+            ...req.query,
+            type,
+          } as any);
+        })
+      );
+      res.json(result);
+    } else {
+      const result = await Engine.load(req.query as any);
+      res.json(result);
+    }
+  } catch (e) {
     console.error(e);
     res.status(404).end();
   }
