@@ -17,7 +17,7 @@ export default async function EntityLayout({
   return (
     <div className="lg:flex">
       <div className="lg:grow">
-        <Header />
+        <Header resourcePath={params} />
         {children}
       </div>
       {/* @ts-expect-error Async Server Component */}

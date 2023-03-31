@@ -1,9 +1,14 @@
 import { ViewSwitcher } from "./view-switcher";
 import { MobileActions } from "./mobile-actions";
 import { Search } from "./search";
-import { getWhitelabel } from "../../../../../../lib/utils";
+import { FetchLoadArgs, getWhitelabel } from "../../../../../../lib/utils";
+import { RightPanel } from "./right-panel";
 
-export function Header() {
+type Props = {
+  resourcePath: FetchLoadArgs;
+};
+
+export function Header({ resourcePath }: Props) {
   const whitelabel = getWhitelabel();
   return (
     <div className="h-[4.25rem] flex flex-col sticky top-0 bg-translucent backdrop-blur-xs">
@@ -21,7 +26,10 @@ export function Header() {
         </div>
         <div className="flex gap-6 items-center">
           <ViewSwitcher />
-          <MobileActions />
+          <MobileActions searchOptions={whitelabel.searchOptions}>
+            {/* @ts-expect-error Async Server Component */}
+            <RightPanel resourcePath={resourcePath} className="flex lg:hidden" />
+          </MobileActions>
         </div>
       </div>
       <div className="w-full h-px bg-night opacity-[.04]"></div>

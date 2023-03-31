@@ -5,8 +5,15 @@ import {
   RightSidebarOff,
   SearchOff,
 } from "@modularcloud/design-system";
+import { OptionGroups } from "../../../../../../lib/utils";
+import { Search } from "./search";
 
-export function MobileActions() {
+type Props = {
+  searchOptions: OptionGroups;
+  children: React.ReactNode;
+}
+
+export function MobileActions({ searchOptions, children }: Props) {
   return (
     <div className="flex gap-4 items-center lg:hidden">
       <DialogPanel
@@ -15,7 +22,11 @@ export function MobileActions() {
         triggerIcon={<SearchOff />}
         removeCloseBtn
       >
-        <span className="max-w-[80%] m-auto shadow-lg">Search goes here</span>
+        <span className="w-full flex justify-center">
+          <span className="max-w-[21.4375rem] sm:w-[32rem] md:w-[36rem]">
+            <Search optionGroups={searchOptions} />
+          </span>
+        </span>
       </DialogPanel>
 
       <DialogPanel
@@ -24,7 +35,7 @@ export function MobileActions() {
         overlayClass="block lg:hidden"
         triggerIcon={<RightSidebarOff />}
       >
-        Content goes here
+        {children}
       </DialogPanel>
     </div>
   );
