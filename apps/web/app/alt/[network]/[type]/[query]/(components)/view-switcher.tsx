@@ -6,7 +6,6 @@ import ListViewOn from "./(icons)/ListViewOn";
 import ListViewOff from "./(icons)/ListViewOff";
 import CardOn from "./(icons)/CardOn";
 import CardOff from "./(icons)/CardOff";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 

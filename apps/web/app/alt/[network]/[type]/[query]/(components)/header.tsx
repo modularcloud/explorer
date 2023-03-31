@@ -1,7 +1,7 @@
 import { ViewSwitcher } from "./view-switcher";
 import { MobileActions } from "./mobile-actions";
 import { Search } from "./search";
-import { FetchLoadArgs, getWhitelabel } from "../../../../../../lib/utils";
+import { getWhitelabel } from "../../../../../../lib/utils";
 
 export function Header() {
   const whitelabel = getWhitelabel();
