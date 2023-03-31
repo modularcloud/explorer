@@ -1,21 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useRef } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
 import ChevronDown from "./(icons)/ChevronDown";
 import CubesOn from "./(icons)/CubesOn";
 import SearchOff from "./(icons)/SearchOff";
 import { OptionGroups } from "../../../../../../lib/utils";
+import { useRouter } from "next/navigation";
 
 interface Props {
   optionGroups: OptionGroups;
 }
 
 export const Search = ({ optionGroups }: Props) => {
-  const [option, setOption] = useState(
-    Object.values(optionGroups)[0][0].id
-  );
+  const router = useRouter();
+  const [option, setOption] = useState(Object.values(optionGroups)[0][0].id);
+  const searchInput = useRef<HTMLInputElement>(null);
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>
       <Popover.Anchor>
@@ -24,14 +25,8 @@ export const Search = ({ optionGroups }: Props) => {
             value={option}
             onValueChange={(value) => setOption(value)}
           >
-            <Select.Trigger
-              className="outline-none flex items-center justify-center h-full pl-4 py-[0.3125rem] pr-2 font-semibold flex-none border-r border-[#2C2C2C1A]"
-              aria-label="SearchType"
-            >
-              <Select.Value
-                aria-label={option}
-                defaultValue={option}
-              ></Select.Value>
+            <Select.Trigger className="outline-none flex items-center justify-center h-full pl-4 py-[0.3125rem] pr-2 font-semibold flex-none border-r border-[#2C2C2C1A]">
+              <Select.Value defaultValue={option}></Select.Value>
               <Select.Icon>
                 <ChevronDown />
               </Select.Icon>
@@ -69,17 +64,23 @@ export const Search = ({ optionGroups }: Props) => {
             </Select.Portal>
           </Select.Root>
           <input
-            onChange={(event: any) => console.log("changed")}
+            ref={searchInput}
+            onChange={(event: any) =>
+              router.prefetch(`/alt/${option}/search/${event.target.value}`)
+            }
             onKeyDown={(event: any) => {
               if (event.code === "Enter" || event.code === "NumpadEnter")
-                console.log("search");
+                router.push(`/alt/${option}/search/${event.target.value}`);
             }}
             className="flex-1 placeholder:text-gray px-3 py-[0.3125rem] outline-none"
             type="text"
             placeholder="Go to hash, height, or address"
           />
           <button
-            onClick={() => console.log("search")}
+            onClick={() => {
+              if (searchInput.current)
+                router.push(`/alt/${option}/search/${searchInput.current.value}`);
+            }}
             className="px-3 flex items-center"
           >
             <SearchOff />
