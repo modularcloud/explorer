@@ -3,12 +3,7 @@ import { MobileActions } from "./mobile-actions";
 import { Search } from "./search";
 import { FetchLoadArgs, getWhitelabel } from "../../../../../../lib/utils";
 
-type Props = {
-  view: string;
-  resourcePath: FetchLoadArgs;
-}
-
-export function Header({ view, resourcePath }: Props) {
+export function Header() {
   const whitelabel = getWhitelabel();
   return (
     <div className="h-[4.25rem] flex flex-col sticky top-0 bg-translucent backdrop-blur-xs">
@@ -25,7 +20,7 @@ export function Header({ view, resourcePath }: Props) {
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
         <div className="flex gap-6 items-center">
-          <ViewSwitcher defaultSelected={view} resourcePath={resourcePath} />
+          <ViewSwitcher />
           <MobileActions />
         </div>
       </div>

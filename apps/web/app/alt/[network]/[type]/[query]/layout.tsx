@@ -11,7 +11,6 @@ function __dangerouslyExtractSegment(children: React.ReactNode) {
     typeof children !== "number" &&
     "props" in children
   ) {
-    console.log(children)
     return children.props.childProp.segment;
   }
 }
@@ -28,11 +27,10 @@ export default async function EntityLayout({
   children: React.ReactNode;
 }) {
   const segment = __dangerouslyExtractSegment(children);
-  console.log(segment)
   return (
     <div className="lg:flex">
       <div className="lg:grow">
-        <Header view={segment} resourcePath={params} />
+        <Header />
         {children}
       </div>
       {/* @ts-expect-error Async Server Component */}

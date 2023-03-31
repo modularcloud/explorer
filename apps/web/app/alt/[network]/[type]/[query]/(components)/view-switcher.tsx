@@ -10,24 +10,24 @@ import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-type Props = {
-  defaultSelected: string;
-  resourcePath: FetchLoadArgs;
-};
-
-export function ViewSwitcher({ defaultSelected, resourcePath }: Props) {
+export function ViewSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
-
-  const [selected, setSelected] = useState(defaultSelected);
 
   /**
    * TODO: more robust way to do this
    */
+  const defaultSelected = useMemo(() => {
+    if (!pathname) return "table";
+    if (pathname.includes("table")) return "table";
+    if (pathname.includes("feed")) return "feed";
+    return "table";
+  }, [pathname]);
+
   const tablePath = useMemo(() => {
     if (!pathname) return;
     if (!pathname.includes("table") && !pathname.includes("feed")) {
-      return "table";
+      return pathname + "/table";
     }
 
     return pathname.replace("feed", "table");
@@ -36,11 +36,13 @@ export function ViewSwitcher({ defaultSelected, resourcePath }: Props) {
   const feedPath = useMemo(() => {
     if (!pathname) return;
     if (!pathname.includes("table") && !pathname.includes("feed")) {
-      return "feed";
+      return pathname + "/feed";
     }
 
     return pathname.replace("table", "feed");
   }, [pathname]);
+
+  const [selected, setSelected] = useState(defaultSelected);
 
   useEffect(() => {
     if (tablePath) {
