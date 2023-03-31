@@ -876,7 +876,8 @@ export async function getEventSignatureName(topic: string) {
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
-  networkName: string
+  networkName: string,
+  timestamp?: number,
 ): Promise<Entity | null> {
   try {
     const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
@@ -933,12 +934,35 @@ async function getEVMTransactionByHash(
       type = eventSignatureName;
     }
     type = type.split("(")[0];
+
+    if(!timestamp) {
+      var raw = JSON.stringify({
+        method: "eth_getBlockByNumber",
+        params: [tx.blockNumber, false],
+        id: 1,
+        jsonrpc: "2.0",
+      })
+  
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+      };
+  
+      const blockData = await fetch(endpoint, requestOptions).then((response) =>
+        response.json()
+      );
+      const block = EthBlockSchema.parse(blockData.result);
+      timestamp = Number(block.timestamp) * 1000;
+    }
+
     return {
       uniqueIdentifier: tx.hash,
       uniqueIdentifierLabel: "hash",
       metadata: buildMetadata({
         Height: convertHex(tx.blockNumber),
         Status: { type: "status", payload: receipt.status },
+        Timestamp: { type: "time", payload: timestamp },
         From: tx.from.replace("000000000000000000000000", ""),
         To: tx.to?.replace("000000000000000000000000", ""),
         Value: new Decimal(tx.value).dividedBy("1000000000000000000").toFixed(),
@@ -1000,6 +1024,26 @@ async function getEVMLogByPath(
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
     const log = receipt.logs.find((log) => log.logIndex === Number(index));
     if (!log) return null;
+
+    var raw = JSON.stringify({
+      method: "eth_getBlockByNumber",
+      params: [log.blockNumber, false],
+      id: 1,
+      jsonrpc: "2.0",
+    })
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    const blockData = await fetch(endpoint, requestOptions).then((response) =>
+      response.json()
+    );
+    const block = EthBlockSchema.parse(blockData.result);
+    const timestamp = Number(block.timestamp) * 1000;
+    
     return {
       uniqueIdentifier: "Transfer",
       uniqueIdentifierLabel: "type",
@@ -1008,6 +1052,7 @@ async function getEVMLogByPath(
         To: log.topics[2].replace("000000000000000000000000", ""),
         Value: new Decimal(log.data).dividedBy("1000000000000000000").toFixed(),
         Height: log.blockNumber,
+        Timestamp: { type: "time", payload: timestamp },
         "Transaction Hash": log.transactionHash,
         "Log Index": log.logIndex,
       }),
@@ -1151,7 +1196,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 await Promise.all(
                   block.transactions.map(
                     async (tx) =>
-                      await getEVMTransactionByHash(tx, EVM, network.name)
+                      await getEVMTransactionByHash(tx, EVM, network.name, Number(block.timestamp) * 1000)
                   )
                 )
               ).filter((notnull) => notnull) as Entity[];

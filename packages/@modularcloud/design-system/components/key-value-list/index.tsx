@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { ValueSchemaType } from "service-manager";
 import { Status } from "../status";
+import dayjs from "dayjs";
 
 export function KeyValueList(props: {
   data: Record<string, ValueSchemaType>;
@@ -35,6 +36,9 @@ export function KeyValueList(props: {
               </dd>
             ) : null}
             {type === "string" ? <dd className="truncate">{payload}</dd> : null}
+            {type === "time" ? (
+              <dd className="truncate">{dayjs(payload).toString().replace("GMT", "UTC")}</dd>
+            ) : null}
           </>
         );
       })}
