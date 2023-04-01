@@ -1,5 +1,6 @@
 import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
+import _slugify from "slugify";
 
 export async function getEventSignatureName(topic: string) {
   try {
@@ -95,4 +96,8 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
       };
   }
+}
+
+export function slugify(str: string): string {
+  return _slugify(str, { lower: true, strict: true });
 }

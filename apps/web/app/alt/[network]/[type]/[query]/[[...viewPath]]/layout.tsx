@@ -2,6 +2,7 @@ import React from "react";
 import { Header } from "./(components)/header";
 import { RightPanel } from "./(components)/right-panel";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { Tabs } from "./(components)/tabs";
 
 type Props = {
     params: FetchLoadArgs & {
@@ -17,6 +18,8 @@ export default async function EntityLayout({ params, children }: Props) {
           <div className="lg:grow">
             <Header resourcePath={resourcePath} />
             {children}
+            {/* @ts-expect-error Async Server Component */}
+            <Tabs params={params} />
           </div>
           {/* @ts-expect-error Async Server Component */}
           <RightPanel

@@ -1,6 +1,6 @@
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
 import { useEntity } from "../../../../../../ecs/hooks/use-entity";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
 import Feed from "./(components)/feed";
 import Table from "./(components)/table";
 
@@ -13,8 +13,8 @@ type Props = {
 };
 
 export default async function EntityPage({ params }: Props) {
-  const { viewPath, ...resourcePath } = params;
-  const [view, selection] = viewPath ?? DEFAULT_VIEW_PATH;
+  const { viewPath = DEFAULT_VIEW_PATH, ...resourcePath } = params;
+  const [view, selection] = viewPath;
 
   const entity = await useEntity({
     resourcePath,
@@ -23,12 +23,12 @@ export default async function EntityPage({ params }: Props) {
   if (!entity) return null;
 
   const associated = entity.components.associated.data;
-  const groups = Object.keys(associated);
+  const labels = Object.keys(associated);
 
-  const group =
-    groups.find((group) => group.toLowerCase() === selection?.toLowerCase()) ??
-    groups[0];
-  const data = associated[group];
+  const label =
+    labels.findIndex((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels[0];
+  const data = associated[label];
 
   switch (view) {
     case "feed":
@@ -36,7 +36,7 @@ export default async function EntityPage({ params }: Props) {
       return <Feed data={data} />;
     case "table":
       // @ts-expect-error Async Server Component
-      return <Table data={data} label={group} />;
+      return <Table data={data} label={label} />;
     default:
       return <div>404</div>;
   }
