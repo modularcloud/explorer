@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { AssociatedArchetype } from "../../../../../../../ecs/archetypes/associated";
+import { useEntity } from "../../../../../../../ecs/hooks/use-entity";
+import { FetchLoadArgs } from "../../../../../../../lib/utils";
 import { Badge } from "./badge";
 import Link from "next/link";
 import { KeyValueList } from "./key-value-list";
