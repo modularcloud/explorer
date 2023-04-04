@@ -1,8 +1,8 @@
 import { Abel } from "@next/font/google";
 import Link from "next/link";
-import { PageArchetype } from "../../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../../ecs/hooks/use-entity";
-import { FetchLoadArgs, slugify } from "../../../../../../../lib/utils";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
 import { Badge } from "./badge";
 
 const DEFAULT_VIEW_PATH = ["table"];

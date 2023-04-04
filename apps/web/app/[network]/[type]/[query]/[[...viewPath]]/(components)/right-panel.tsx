@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { FetchLoadArgs } from "../../../../../../../lib/utils";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { EntityDetails } from "./entity-details";
 import { KeyValueList } from "./key-value-list";
 

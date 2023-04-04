@@ -6,7 +6,7 @@ import * as Popover from "@radix-ui/react-popover";
 import ChevronDown from "./(icons)/ChevronDown";
 import CubesOn from "./(icons)/CubesOn";
 import SearchOff from "./(icons)/SearchOff";
-import { OptionGroups } from "../../../../../../../lib/utils";
+import { OptionGroups } from "../../../../../../lib/utils";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -66,11 +66,11 @@ export const Search = ({ optionGroups }: Props) => {
           <input
             ref={searchInput}
             onChange={(event: any) =>
-              router.prefetch(`/alt/${option}/search/${event.target.value}`)
+              router.prefetch(`/${option}/search/${event.target.value}`)
             }
             onKeyDown={(event: any) => {
               if (event.code === "Enter" || event.code === "NumpadEnter")
-                router.push(`/alt/${option}/search/${event.target.value}`);
+                router.push(`/${option}/search/${event.target.value}`);
             }}
             className="flex-1 placeholder:text-gray px-3 py-[0.3125rem] outline-none"
             type="text"
@@ -79,7 +79,7 @@ export const Search = ({ optionGroups }: Props) => {
           <button
             onClick={() => {
               if (searchInput.current)
-                router.push(`/alt/${option}/search/${searchInput.current.value}`);
+                router.push(`/${option}/search/${searchInput.current.value}`);
             }}
             className="px-3 flex items-center"
           >

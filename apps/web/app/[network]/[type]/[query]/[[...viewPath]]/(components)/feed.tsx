@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Card } from "./card";
 import { CardList } from "./card-list";
-import { AssociatedValue } from "../../../../../../../ecs/components/associated";
+import { AssociatedValue } from "../../../../../../ecs/components/associated";
 
 type Props = {
   data: AssociatedValue;

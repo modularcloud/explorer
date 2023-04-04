@@ -1,7 +1,7 @@
 import React from "react";
 import { Header } from "./(components)/header";
 import { RightPanel } from "./(components)/right-panel";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { FetchLoadArgs } from "../../../../../lib/utils";
 import { Tabs } from "./(components)/tabs";
 
 type Props = {

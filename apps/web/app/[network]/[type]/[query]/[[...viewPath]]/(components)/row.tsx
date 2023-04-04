@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { AssociatedArchetype } from "../../../../../../../ecs/archetypes/associated";
-import { Associated } from "../../../../../../../ecs/components/associated";
-import { useEntity } from "../../../../../../../ecs/hooks/use-entity";
+import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
+import { Associated } from "../../../../../../ecs/components/associated";
+import { useEntity } from "../../../../../../ecs/hooks/use-entity";
 import { CellBox } from "./cell-box";
 import HeadBox from "./head-box";
 

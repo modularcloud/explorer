@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AssociatedArchetype } from "../../../../../../../ecs/archetypes/associated";
+import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
 import SvgGreenTick from "./(icons)/GreenTick";
 import SvgRedCross from "./(icons)/RedCross";
 import { Badge } from "./badge";

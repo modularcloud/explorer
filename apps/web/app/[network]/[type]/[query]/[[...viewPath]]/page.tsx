@@ -1,6 +1,6 @@
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
-import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
+import { PageArchetype } from "../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../ecs/hooks/use-entity";
+import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
 import Feed from "./(components)/feed";
 import Table from "./(components)/table";
 
@@ -26,7 +26,7 @@ export default async function EntityPage({ params }: Props) {
   const labels = Object.keys(associated);
 
   const label =
-    labels.findIndex((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
     labels[0];
   const data = associated[label];
 

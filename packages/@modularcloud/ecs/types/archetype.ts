@@ -14,7 +14,7 @@ function buildArchetype<Prev>(prev: Prev = {} as Prev) {
       newComponent: NewComponent
     ) => {
       const typeId = newComponent.shape.typeId
-        .value as ExtractKey<NewComponent>;
+        .value as unknown as ExtractKey<NewComponent>;
       return buildArchetype({ ...prev, [typeId]: newComponent } as Prev & {
         [key in typeof typeId]: NewComponent;
       });

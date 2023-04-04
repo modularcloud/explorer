@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { Status } from "./status";
-import { FetchLoadArgs } from "../../../../../../../lib/utils";
-import { PageArchetype } from "../../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../../ecs/hooks/use-entity";
-import { AssociatedArchetype } from "../../../../../../../ecs/archetypes/associated";
-import { Value } from "../../../../../../../schemas/value";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
+import { Value } from "../../../../../../schemas/value";
 
 interface Props {
   resourcePath: FetchLoadArgs;

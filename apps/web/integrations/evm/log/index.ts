@@ -7,7 +7,7 @@ import { RowTransform } from "./row";
 
 export async function LogExtract(_q: unknown, metadata: EngineConfigMetadata) {
   const query = z.string().parse(_q);
-  const [txHash, logIndex] = query.split("#");
+  const [txHash, logIndex] = query.split(":");
   const web3 = new Web3(metadata.endpoint);
 
   const receipt = await web3.eth.getTransactionReceipt(txHash);

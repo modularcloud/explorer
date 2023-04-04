@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Row } from "./row";
 import HeadBox from "./head-box";
-import { AssociatedKey, AssociatedValue } from "../../../../../../../ecs/components/associated";
+import { AssociatedKey, AssociatedValue } from "../../../../../../ecs/components/associated";
 
 type Props = {
   label: AssociatedKey

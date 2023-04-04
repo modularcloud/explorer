@@ -1,6 +1,6 @@
-import { PageArchetype } from "../../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../../ecs/hooks/use-entity";
-import { FetchLoadArgs } from "../../../../../../../lib/utils";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 interface Props {
   resourcePath: FetchLoadArgs;

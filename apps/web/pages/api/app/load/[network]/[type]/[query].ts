@@ -7,15 +7,15 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const config = CreateEVMConfig({
-    endpoint: process.env.ETHEREUM_RPC ?? "",
+    endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
     network: {
-      id: "ethereum",
-      displayName: "Ethereum",
+      id: "triton",
+      displayName: "Triton",
       logoUrl:
         "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
     },
   });
-  Engine.addConfig("ethereum", config);
+  Engine.addConfig("triton", config);
   try {
     if (req.query.type === "search") {
       const types = Object.keys(config.loaders);

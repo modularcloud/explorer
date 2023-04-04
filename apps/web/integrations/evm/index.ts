@@ -1,4 +1,5 @@
 import { EngineConfig, EngineConfigMetadata } from "@modularcloud/ecs";
+import { AccountLoader } from "./account";
 import { BlockLoader } from "./block";
 import { LogLoader } from "./log";
 import { TransactionLoader } from "./transaction";
@@ -9,7 +10,8 @@ export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
     loaders: {
       block: BlockLoader,
       transaction: TransactionLoader,
-      log: LogLoader
+      log: LogLoader,
+      account: AccountLoader,
     },
   };
 }

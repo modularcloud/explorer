@@ -14,7 +14,6 @@ export async function BlockExtract(
   const query = z.string().parse(_q);
   const web3 = new Web3(metadata.endpoint);
 
-  // TODO: enforce correct field name
   return await web3.eth.getBlock(query);
 }
 
