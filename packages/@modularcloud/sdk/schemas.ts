@@ -6,6 +6,12 @@ export const TxRefSchema = z.object({
 });
 export type TxRef = z.infer<typeof TxRefSchema>;
 
+export const TxResponseSchema = z.object({
+  txs: TxRefSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type TxResponse = z.infer<typeof TxResponseSchema>;
+
 export const TokenSchema = z.object({
   type: z.string(),
   name: z.string(),
@@ -33,3 +39,9 @@ export const EventSchema = z.object({
   blockHeight: z.number(),
 });
 export type Event = z.infer<typeof EventSchema>;
+
+export const EventResponseSchema = z.object({
+  events: EventSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type EventResponse = z.infer<typeof EventResponseSchema>;

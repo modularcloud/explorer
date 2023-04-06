@@ -12,7 +12,10 @@ const AssociatedValueSchema = z
 
 const AssociatedSchema = z.record(
   AssociatedKeySchema, // Collection name
-  AssociatedValueSchema
+  z.object({
+    values: AssociatedValueSchema,
+    nextToken: z.string().optional(),
+  })
 );
 
 export const AssociatedComponent = createComponentSchema(

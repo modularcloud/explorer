@@ -28,15 +28,15 @@ export default async function EntityPage({ params }: Props) {
   const label =
     labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
     labels[0];
-  const data = associated[label];
+  const { values, nextToken } = associated[label];
 
   switch (view) {
     case "feed":
       // @ts-expect-error Async Server Component
-      return <Feed data={data} />;
+      return <Feed data={values} nextToken={nextToken} />;
     case "table":
       // @ts-expect-error Async Server Component
-      return <Table data={data} label={label} />;
+      return <Table data={values} nextToken={nextToken} label={label} />;
     default:
       return <div>404</div>;
   }

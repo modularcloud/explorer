@@ -5,6 +5,7 @@ import { AssociatedValue } from "../../../../../../ecs/components/associated";
 
 type Props = {
   data: AssociatedValue;
+  nextToken?: string;
 };
 
 export default async function Feed({ data }: Props) {

@@ -6,6 +6,7 @@ import { AssociatedKey, AssociatedValue } from "../../../../../../ecs/components
 type Props = {
   label: AssociatedKey
   data: AssociatedValue;
+  nextToken?: string;
 };
 
 export default async function Table({ data, label }: Props) {

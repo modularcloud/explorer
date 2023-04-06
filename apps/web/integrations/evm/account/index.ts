@@ -10,14 +10,15 @@ export async function AccountExtract(
   metadata: EngineConfigMetadata
 ) {
   const query = z.string().parse(_q);
+  const [address, nextToken ] = query.split(":");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const [balances, transfers, transactions] = await Promise.all([
-    mc.evm.getTokenBalancesByAddress(metadata.network.id, query),
-    mc.evm.getEventsByAccountAddress(metadata.network.id, query),
-    mc.evm.getTransactionsByAddress(metadata.network.id, query),
+    mc.evm.getTokenBalancesByAddress(metadata.network.id, address),
+    mc.evm.getEventsByAccountAddress(metadata.network.id, address, 30, nextToken),
+    mc.evm.getTransactionsByAddress(metadata.network.id, address, 30, nextToken),
   ]);
   return {
-    address: query,
+    address,
     balances,
     transfers,
     transactions,
