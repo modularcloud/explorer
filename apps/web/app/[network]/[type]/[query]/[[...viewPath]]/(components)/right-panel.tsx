@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { Suspense } from "react";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { EntityDetails } from "./entity-details";
 import { KeyValueList } from "./key-value-list";
@@ -16,10 +17,12 @@ export async function RightPanel({ resourcePath, className }: Props) {
         className
       )}
     >
-      {/* @ts-expect-error Async Server Component */}
-      <EntityDetails resourcePath={resourcePath} />
-      {/* @ts-expect-error Async Server Component */}
-      <KeyValueList resourcePath={resourcePath} type="sidebar" />
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* @ts-expect-error Async Server Component */}
+        <EntityDetails resourcePath={resourcePath} />
+        {/* @ts-expect-error Async Server Component */}
+        <KeyValueList resourcePath={resourcePath} type="sidebar" />
+      </Suspense>
     </div>
   );
 }
