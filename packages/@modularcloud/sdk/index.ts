@@ -74,7 +74,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch token balances");
+          // TEMPORARY
+          return [];
+          // throw new Error("Failed to fetch token balances");
         }
 
         const json = (await response.json()) as APIResponse;

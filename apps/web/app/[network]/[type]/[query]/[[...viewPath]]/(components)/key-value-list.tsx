@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Status } from "./status";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { useEntity as getEntity } from "../../../../../../ecs/hooks/use-entity";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
 import { Value } from "../../../../../../schemas/value";
 
@@ -14,11 +14,11 @@ interface Props {
 export async function KeyValueList({ type: kvType, resourcePath }: Props) {
   const entity =
     kvType === "sidebar"
-      ? await useEntity({
+      ? await getEntity({
           resourcePath,
           archetype: PageArchetype,
         })
-      : await useEntity({
+      : await getEntity({
           resourcePath,
           archetype: AssociatedArchetype,
         });

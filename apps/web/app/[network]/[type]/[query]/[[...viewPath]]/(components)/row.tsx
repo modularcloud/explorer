@@ -1,14 +1,14 @@
 import clsx from "clsx";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { Associated } from "../../../../../../ecs/components/associated";
 import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { CellBox } from "./cell-box";
 import HeadBox from "./head-box";
 
 type RowProps = {
   name?: string;
   header?: boolean;
-  row: Associated[keyof Associated][0];
+  row: FetchLoadArgs;
 };
 
 export async function Row({ row, name, header }: RowProps) {
