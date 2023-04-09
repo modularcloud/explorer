@@ -141,11 +141,12 @@ export function EntityPage({
     return record[keys[activeTab]] ?? [];
   }, [keys, record, activeTab]);
 
+  const isCalderaEntity = entity.context.network.toLowerCase() === "caldera";
   const isCelestiaEntity = entity.context.network.toLowerCase() === "mocha";
   const isDymensionEntity = !!entity.context.network
     .toLowerCase()
     .match(/(^hub$)|rollapp|dymension/);
-  const isEclipseEntity = !isCelestiaEntity && !isDymensionEntity;
+  const isEclipseEntity = !isCelestiaEntity && !isDymensionEntity && !isCalderaEntity;
 
   let img = "";
   if (isCelestiaEntity) {
@@ -156,6 +157,9 @@ export function EntityPage({
   }
   if (isEclipseEntity) {
     img = "Eclipse";
+  }
+  if (isCalderaEntity) {
+    img = "Caldera";
   }
 
   let name = "Explorer";

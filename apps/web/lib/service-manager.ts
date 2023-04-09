@@ -648,7 +648,7 @@ const EthTransactionSchema = z.object({
   to: z.string().nullable(),
   transactionIndex: z.string().nullable(),
   value: z.string(),
-  type: z.string(),
+  type: z.string().optional(),
   chainId: z.string().optional(),
   v: z.string(),
   r: z.string(),
@@ -1168,6 +1168,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
   if (network.id === "triton") {
     network.id = "91002";
   }
+  if (network.id === "triton") {
+    network.id = "1";
+  }
   const EVM = network.endpoints.evm;
   const SVM = network.endpoints.svm;
   const needsPrefix = EVM && SVM;
@@ -1571,6 +1574,14 @@ addRemote({
   id: "solana",
   endpoints: {
     svm: process.env.SOLANA_RPC ?? "",
+  },
+});
+addRemote({
+  provider: "cal",
+  name: "Caldera",
+  id: "caldera",
+  endpoints: {
+    evm: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
   },
 });
 
