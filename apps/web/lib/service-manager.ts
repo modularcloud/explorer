@@ -1025,9 +1025,10 @@ async function getEVMLogByPath(
     const log = receipt.logs.find((log) => log.logIndex === Number(index));
     if (!log) return null;
 
+    const hexHeight = log.blockNumber.toString(16);
     var raw = JSON.stringify({
       method: "eth_getBlockByNumber",
-      params: [log.blockNumber, false],
+      params: ["0x" + hexHeight, false],
       id: 1,
       jsonrpc: "2.0",
     })
@@ -1577,7 +1578,7 @@ addRemote({
   },
 });
 addRemote({
-  provider: "cal",
+  provider: "clo",
   name: "Caldera",
   id: "caldera",
   endpoints: {
