@@ -1168,7 +1168,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
   if (network.id === "triton") {
     network.id = "91002";
   }
-  if (network.id === "triton") {
+  if (network.id === "caldera") {
     network.id = "1";
   }
   const EVM = network.endpoints.evm;
