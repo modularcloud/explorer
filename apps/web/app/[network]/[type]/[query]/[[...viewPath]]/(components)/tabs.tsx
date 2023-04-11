@@ -1,7 +1,7 @@
 import { Abel } from "@next/font/google";
 import Link from "next/link";
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
 import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
 import { Badge } from "./badge";
 
@@ -17,7 +17,7 @@ export async function Tabs({ params }: Props) {
   const { viewPath = DEFAULT_VIEW_PATH, ...resourcePath } = params;
   const [view, selection] = viewPath;
 
-  const entity = await useEntity({
+  const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
   });

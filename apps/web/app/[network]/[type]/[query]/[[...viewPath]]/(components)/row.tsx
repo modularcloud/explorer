@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { CellBox } from "./cell-box";
 import HeadBox from "./head-box";
@@ -12,7 +12,7 @@ type RowProps = {
 };
 
 export async function Row({ row, name, header }: RowProps) {
-  const entity = await useEntity({
+  const entity = await asyncUseEntity({
     resourcePath: row,
     archetype: AssociatedArchetype,
   });

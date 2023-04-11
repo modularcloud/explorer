@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { Card } from "./card";
 import { CardList } from "./card-list";
-import { AssociatedValue } from "../../../../../../ecs/components/associated";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 type Props = {
-  data: AssociatedValue;
+  data: FetchLoadArgs[];
   nextToken?: string;
 };
 

@@ -33,6 +33,7 @@ export default async function handler(
       res.json(result);
     }
   } catch (e) {
+    console.error("Error loading entity", req.query)
     console.error(e);
     res.status(404).end();
   }

@@ -13,6 +13,7 @@ export const AssociatedTransform = {
     typeId: "associated",
     data: {
       Transactions: {
+        type: "static",
         values: data.transactions.map((transaction) => ({
           network: metadata.network.id,
           type: "transaction",

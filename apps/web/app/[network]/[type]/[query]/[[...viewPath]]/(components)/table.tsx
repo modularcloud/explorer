@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 import { Row } from "./row";
 import HeadBox from "./head-box";
-import { AssociatedKey, AssociatedValue } from "../../../../../../ecs/components/associated";
+import { AssociatedKey } from "../../../../../../ecs/components/associated";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 type Props = {
   label: AssociatedKey
-  data: AssociatedValue;
+  data: FetchLoadArgs[];
   nextToken?: string;
 };
 

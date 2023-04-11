@@ -1,5 +1,6 @@
 import { PageArchetype } from "../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../ecs/hooks/use-entity";
+import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
+import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
 import Feed from "./(components)/feed";
 import Table from "./(components)/table";
@@ -16,7 +17,7 @@ export default async function EntityPage({ params }: Props) {
   const { viewPath = DEFAULT_VIEW_PATH, ...resourcePath } = params;
   const [view, selection] = viewPath;
 
-  const entity = await useEntity({
+  const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
   });
@@ -28,8 +29,23 @@ export default async function EntityPage({ params }: Props) {
   const label =
     labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
     labels[0];
-  const { values, nextToken } = associated[label];
 
+  let values: FetchLoadArgs[] = [];
+  let nextToken: string;
+  const collection = associated[label];
+  if(collection.type === "static") {
+    values = collection.values;
+  }
+  if(collection.type === "paginated") {
+    const pagination = await asyncUseEntity({
+      resourcePath: collection.value,
+      archetype: PaginationArchetype,
+    })
+    if(pagination) {
+      values = pagination.components.pagination.data.values;
+      // nextToken = pagination.components.pagination.data.values.nextToken;
+    }
+  }
   switch (view) {
     case "feed":
       // @ts-expect-error Async Server Component

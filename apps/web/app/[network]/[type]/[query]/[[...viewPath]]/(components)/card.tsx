@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { Badge } from "./badge";
 import Link from "next/link";
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export async function Card({ resourcePath }: Props) {
-  const entity = await useEntity({
+  const entity = await asyncUseEntity({
     resourcePath,
     archetype: AssociatedArchetype,
   });

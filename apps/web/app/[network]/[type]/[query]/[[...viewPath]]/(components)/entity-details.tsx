@@ -1,5 +1,5 @@
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { useEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export async function EntityDetails({ resourcePath }: Props) {
-  const entity = await useEntity({
+  const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
   });

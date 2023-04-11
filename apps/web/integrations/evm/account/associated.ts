@@ -13,18 +13,20 @@ export const AssociatedTransform = {
     typeId: "associated",
     data: {
       Transactions: {
-        values: data.transactions.txs.map((transaction) => ({
+        type: "paginated",
+        value: {
           network: metadata.network.id,
-          type: "transaction",
-          query: transaction.hash,
-        })),
+          type: "pagination",
+          query: `${data.address}:transactions`,
+        },
       },
       Transfers: {
-        values: data.transfers.events.map((transfer) => ({
+        type: "paginated",
+        value: {
           network: metadata.network.id,
-          type: "log",
-          query: `${transfer.transactionHash}:${transfer.logIndex}`,
-        })),
+          type: "pagination",
+          query: `${data.address}:transfers`,
+        },
       },
     },
   }),

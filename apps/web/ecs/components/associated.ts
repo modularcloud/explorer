@@ -1,21 +1,27 @@
 import { createComponentSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 
+export const EntityRefSchema = z.object({
+  network: z.string(),
+  type: z.string(),
+  query: z.string(),
+});
+
 const AssociatedKeySchema = z.string();
-const AssociatedValueSchema = z
-  .object({
-    network: z.string(),
-    type: z.string(),
-    query: z.string(),
-  })
-  .array();
+const AssociatedValueSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("static"),
+    values: EntityRefSchema.array(),
+  }),
+  z.object({
+    type: z.literal("paginated"),
+    value: EntityRefSchema,
+  }),
+])
 
 const AssociatedSchema = z.record(
   AssociatedKeySchema, // Collection name
-  z.object({
-    values: AssociatedValueSchema,
-    nextToken: z.string().optional(),
-  })
+  AssociatedValueSchema
 );
 
 export const AssociatedComponent = createComponentSchema(
