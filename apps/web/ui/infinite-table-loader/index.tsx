@@ -35,6 +35,7 @@ export function InfiniteTableLoader({ next, children }: Props) {
       hasMore={!!next}
       dataLength={tableRows.length}
       loader={<div>Loader...</div>}
+      height="calc(100vh - 4.25rem)"
     >
       <InfiniteTableLoaderContext.Provider value={tableRows}>
         {children}
