@@ -5,7 +5,7 @@ import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 type Props = {
   data: FetchLoadArgs[];
-  nextToken?: string;
+  next: FetchLoadArgs;
 };
 
 export default async function Feed({ data }: Props) {

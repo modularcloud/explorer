@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { ServerTableRow } from "../../../../../../ui/table-row/server";
-import HeadBox from "./head-box";
-import { AssociatedKey } from "../../../../../../ecs/components/associated";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { ServerTableRow } from "../table-row/server";
+import HeadBox from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/head-box";
+import { AssociatedKey } from "../../ecs/components/associated";
+import { FetchLoadArgs } from "../../lib/utils";
+import { InfiniteTableLoaderRows } from "../infinite-table-loader/rows";
 
 type Props = {
   label: AssociatedKey;
   data: FetchLoadArgs[];
-  nextToken?: string;
 };
 
 export default async function Table({ data, label }: Props) {
@@ -43,7 +43,7 @@ export default async function Table({ data, label }: Props) {
             </td>
           </tr>
         ))}
-        
+        <InfiniteTableLoaderRows />
       </tbody>
     </table>
   );

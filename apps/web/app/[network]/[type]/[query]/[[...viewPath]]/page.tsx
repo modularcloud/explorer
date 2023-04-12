@@ -3,7 +3,8 @@ import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
 import Feed from "./(components)/feed";
-import Table from "./(components)/table";
+import Table from "../../../../../ui/table";
+import { InfiniteTableLoader } from "../../../../../ui/infinite-table-loader";
 
 const DEFAULT_VIEW_PATH = ["table"];
 
@@ -31,28 +32,32 @@ export default async function EntityPage({ params }: Props) {
     labels[0];
 
   let values: FetchLoadArgs[] = [];
-  let nextToken: string;
+  let next: FetchLoadArgs | undefined;
   const collection = associated[label];
-  if(collection.type === "static") {
+  if (collection.type === "static") {
     values = collection.values;
   }
-  if(collection.type === "paginated") {
+  if (collection.type === "paginated") {
     const pagination = await asyncUseEntity({
       resourcePath: collection.value,
       archetype: PaginationArchetype,
-    })
-    if(pagination) {
+    });
+    if (pagination) {
       values = pagination.components.pagination.data.values;
-      // nextToken = pagination.components.pagination.data.values.nextToken;
+      next = pagination.components.pagination.data.next;
     }
   }
   switch (view) {
     case "feed":
       // @ts-expect-error Async Server Component
-      return <Feed data={values} nextToken={nextToken} />;
+      return <Feed data={values} next={next} />;
     case "table":
-      // @ts-expect-error Async Server Component
-      return <Table data={values} nextToken={nextToken} label={label} />;
+      return (
+        <InfiniteTableLoader next={next}>
+          {/* @ts-expect-error Async Server Component */}
+          <Table data={values} label={label} />
+        </InfiniteTableLoader>
+      );
     default:
       return <div>404</div>;
   }
