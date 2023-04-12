@@ -1,23 +1,16 @@
 import clsx from "clsx";
-import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
-import { CellBox } from "./cell-box";
-import HeadBox from "./head-box";
+import { CellBox } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/cell-box";
+import HeadBox from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/head-box";
+import { Entity } from "@modularcloud/ecs";
+import { AssociatedArchetype } from "../../ecs/archetypes/associated";
 
-type RowProps = {
+export interface Props {
   name?: string;
   header?: boolean;
-  row: FetchLoadArgs;
-};
+  entity: Entity<typeof AssociatedArchetype>;
+}
 
-export async function Row({ row, name, header }: RowProps) {
-  const entity = await asyncUseEntity({
-    resourcePath: row,
-    archetype: AssociatedArchetype,
-  });
-  if (!entity) return null;
-
+export function TableRow({ entity, name, header }: Props) {
   const generateColumnStyle = (
     data: (typeof entity.components.row.data)[0]
   ) => {

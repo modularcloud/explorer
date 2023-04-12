@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import { Row } from "./row";
+import { ServerTableRow } from "../../../../../../ui/table-row/server";
 import HeadBox from "./head-box";
 import { AssociatedKey } from "../../../../../../ecs/components/associated";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 type Props = {
-  label: AssociatedKey
+  label: AssociatedKey;
   data: FetchLoadArgs[];
   nextToken?: string;
 };
@@ -20,7 +20,7 @@ export default async function Table({ data, label }: Props) {
           <HeadBox classes="w-4" spacingPurposesOnly={true} />
           <Suspense fallback={<HeadBox>Loading...</HeadBox>}>
             {/* @ts-expect-error Async Server Component */}
-            <Row header={true} name={label} row={data[0]} />
+            <ServerTableRow header={true} name={label} row={data[0]} />
           </Suspense>
           <HeadBox classes="w-4" spacingPurposesOnly={true} />
         </tr>
@@ -36,13 +36,14 @@ export default async function Table({ data, label }: Props) {
             </td>
             <Suspense fallback={<td className="h-12">Loading...</td>}>
               {/* @ts-expect-error Async Server Component */}
-              <Row row={row} />
+              <ServerTableRow row={row} />
             </Suspense>
             <td aria-hidden={true} className="p-2">
               {/** For spacing purposes */}
             </td>
           </tr>
         ))}
+        
       </tbody>
     </table>
   );
