@@ -30,16 +30,18 @@ export function InfiniteLoader({ next, children }: Props) {
   };
 
   return (
-    <InfiniteScroll
-      next={loadNextPage}
-      hasMore={!!next}
-      dataLength={entityRefs.length}
-      loader={<div>Loader...</div>}
-      height="calc(100vh - 4.25rem)"
-    >
-      <InfiniteLoaderContext.Provider value={entityRefs}>
-        {children}
-      </InfiniteLoaderContext.Provider>
-    </InfiniteScroll>
+    <div className="top-0 absolute w-full">
+      <InfiniteScroll
+        next={loadNextPage}
+        hasMore={!!next}
+        dataLength={entityRefs.length}
+        loader={<div>Loader...</div>}
+        height="100vh"
+      >
+        <InfiniteLoaderContext.Provider value={entityRefs}>
+          {children}
+        </InfiniteLoaderContext.Provider>
+      </InfiniteScroll>
+    </div>
   );
 }

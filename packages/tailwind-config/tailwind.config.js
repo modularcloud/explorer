@@ -11,6 +11,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        header: "4.25rem",
+      },
+      top: {
+        header: "4.25rem",
+      },
       backdropBlur: {
         xs: '3px',
       },

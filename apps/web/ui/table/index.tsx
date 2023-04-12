@@ -26,6 +26,9 @@ export default async function Table({ data, label }: Props) {
         </tr>
       </thead>
       <tbody>
+        <tr className="h-header" aria-hidden={true}>
+          {/** For spacing purposes */}
+        </tr>
         {data.map((row) => (
           <tr
             className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"

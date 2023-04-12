@@ -11,7 +11,7 @@ type Props = {
 export function Header({ resourcePath }: Props) {
   const whitelabel = getWhitelabel();
   return (
-    <div className="h-[4.25rem] flex flex-col sticky top-0 bg-translucent backdrop-blur-xs">
+    <div className="h-header flex flex-col sticky top-0 bg-translucent backdrop-blur-xs z-10">
       <div className="flex-grow pb-px flex justify-between items-center space-x-4 px-4 sm:px-6 lg:px-8">
         <div className="font-logo font-[700] text-[1.125rem] flex justify-between items-center">
           {whitelabel.name[0]}
@@ -28,7 +28,10 @@ export function Header({ resourcePath }: Props) {
           <ViewSwitcher />
           <MobileActions searchOptions={whitelabel.searchOptions}>
             {/* @ts-expect-error Async Server Component */}
-            <RightPanel resourcePath={resourcePath} className="flex lg:hidden" />
+            <RightPanel
+              resourcePath={resourcePath}
+              className="flex lg:hidden"
+            />
           </MobileActions>
         </div>
       </div>

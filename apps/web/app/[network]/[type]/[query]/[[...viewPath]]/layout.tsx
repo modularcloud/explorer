@@ -15,7 +15,7 @@ export default async function EntityLayout({ params, children }: Props) {
   const { viewPath, ...resourcePath } = params;
   return (
     <div className="lg:flex">
-      <div className="lg:grow">
+      <div className="lg:grow relative">
         <Header resourcePath={resourcePath} />
         {children}
         <Suspense>
