@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useContext } from "react";
-import { ClientTableRow } from "../table-row/client";
+import { ClientTableRow } from "../table/row/client";
 import { InfiniteTableLoaderContext } from "./context";
 
 export function InfiniteTableLoaderRows() {

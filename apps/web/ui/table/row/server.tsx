@@ -1,5 +1,5 @@
-import { AssociatedArchetype } from "../../ecs/archetypes/associated";
-import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
+import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
+import { asyncUseEntity } from "../../../ecs/hooks/use-entity/server";
 import { TableRow } from "./component";
 import { TableRowProps } from "./interface";
 

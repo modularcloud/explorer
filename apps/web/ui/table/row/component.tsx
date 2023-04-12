@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { CellBox } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/cell-box";
-import HeadBox from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/head-box";
+import { CellBox } from "../cell-box";
+import HeadBox from "../head-box";
 import { Entity } from "@modularcloud/ecs";
-import { AssociatedArchetype } from "../../ecs/archetypes/associated";
+import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
 
 export interface Props {
   name?: string;
