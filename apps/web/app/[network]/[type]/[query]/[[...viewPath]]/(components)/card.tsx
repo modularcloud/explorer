@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { Badge } from "./badge";
 import Link from "next/link";

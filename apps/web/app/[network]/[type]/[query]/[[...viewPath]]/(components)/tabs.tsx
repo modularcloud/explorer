@@ -1,7 +1,7 @@
 import { Abel } from "@next/font/google";
 import Link from "next/link";
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
 import { Badge } from "./badge";
 

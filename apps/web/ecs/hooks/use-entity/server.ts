@@ -1,5 +1,5 @@
 import { AnyArchetypeSchema, verifyArchetype } from "@modularcloud/ecs";
-import { fetchLoad } from "../../lib/utils";
+import { fetchLoad } from "../../../lib/utils";
 // import useSWRImmutable from "swr/immutable";
 
 type Args<T extends AnyArchetypeSchema> = {

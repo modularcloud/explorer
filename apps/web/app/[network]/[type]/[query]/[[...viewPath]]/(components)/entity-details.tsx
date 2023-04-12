@@ -1,5 +1,5 @@
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 
 interface Props {

@@ -1,6 +1,6 @@
 import { PageArchetype } from "../../../../../ecs/archetypes/page";
 import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
-import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
 import Feed from "./(components)/feed";
 import Table from "./(components)/table";

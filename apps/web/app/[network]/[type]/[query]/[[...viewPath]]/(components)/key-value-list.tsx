@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Status } from "./status";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity as getEntity } from "../../../../../../ecs/hooks/use-entity";
+import { asyncUseEntity as getEntity } from "../../../../../../ecs/hooks/use-entity/server";
 import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
 import { Value } from "../../../../../../schemas/value";
 
