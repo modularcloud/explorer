@@ -5,15 +5,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { PaginationArchetype } from "../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs } from "../../lib/utils";
-import { InfiniteTableLoaderContext } from "./context";
+import { InfiniteLoaderContext } from "./context";
 
 type Props = {
   next?: FetchLoadArgs;
   children: React.ReactNode;
 };
 
-export function InfiniteTableLoader({ next, children }: Props) {
-  const [tableRows, setTableRows] = useState<FetchLoadArgs[]>([]);
+export function InfiniteLoader({ next, children }: Props) {
+  const [entityRefs, setEntityRefs] = useState<FetchLoadArgs[]>([]);
   const [nextPage, setNextPage] = useState(next);
 
   const loadNextPage = async () => {
@@ -25,7 +25,7 @@ export function InfiniteTableLoader({ next, children }: Props) {
     });
     console.log(entity);
     if (!entity) return;
-    setTableRows([...tableRows, ...entity.components.pagination.data.values]);
+    setEntityRefs([...entityRefs, ...entity.components.pagination.data.values]);
     setNextPage(entity.components.pagination.data.next);
   };
 
@@ -33,13 +33,13 @@ export function InfiniteTableLoader({ next, children }: Props) {
     <InfiniteScroll
       next={loadNextPage}
       hasMore={!!next}
-      dataLength={tableRows.length}
+      dataLength={entityRefs.length}
       loader={<div>Loader...</div>}
       height="calc(100vh - 4.25rem)"
     >
-      <InfiniteTableLoaderContext.Provider value={tableRows}>
+      <InfiniteLoaderContext.Provider value={entityRefs}>
         {children}
-      </InfiniteTableLoaderContext.Provider>
+      </InfiniteLoaderContext.Provider>
     </InfiniteScroll>
   );
 }

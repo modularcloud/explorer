@@ -4,7 +4,7 @@ import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
 import Feed from "./(components)/feed";
 import Table from "../../../../../ui/table";
-import { InfiniteTableLoader } from "../../../../../ui/infinite-table-loader";
+import { InfiniteLoader } from "../../../../../ui/infinite-loader";
 
 const DEFAULT_VIEW_PATH = ["table"];
 
@@ -53,10 +53,10 @@ export default async function EntityPage({ params }: Props) {
       return <Feed data={values} next={next} />;
     case "table":
       return (
-        <InfiniteTableLoader next={next}>
+        <InfiniteLoader next={next}>
           {/* @ts-expect-error Async Server Component */}
           <Table data={values} label={label} />
-        </InfiniteTableLoader>
+        </InfiniteLoader>
       );
     default:
       return <div>404</div>;

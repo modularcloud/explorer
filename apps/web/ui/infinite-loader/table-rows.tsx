@@ -2,10 +2,10 @@
 
 import { Suspense, useContext } from "react";
 import { ClientTableRow } from "../table/row/client";
-import { InfiniteTableLoaderContext } from "./context";
+import { InfiniteLoaderContext } from "./context";
 
 export function InfiniteTableLoaderRows() {
-    const tableRows = useContext(InfiniteTableLoaderContext);
+    const tableRows = useContext(InfiniteLoaderContext);
     return <>
       {tableRows.map((row) => (
         <tr

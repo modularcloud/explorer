@@ -1,4 +1,4 @@
 import { createContext } from 'react';
 import { FetchLoadArgs } from '../../lib/utils';
 
-export const InfiniteTableLoaderContext = createContext<FetchLoadArgs[]>([]);
+export const InfiniteLoaderContext = createContext<FetchLoadArgs[]>([]);
