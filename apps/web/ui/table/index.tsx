@@ -3,7 +3,7 @@ import { ServerTableRow } from "./row/server";
 import HeadBox from "./head-box";
 import { AssociatedKey } from "../../ecs/components/associated";
 import { FetchLoadArgs } from "../../lib/utils";
-import { InfiniteTableLoaderRows } from "../infinite-loader/table-rows";
+import { InfiniteTableLoaderRows } from "../associated/infinite-loader/table-rows";
 
 type Props = {
   label: AssociatedKey;

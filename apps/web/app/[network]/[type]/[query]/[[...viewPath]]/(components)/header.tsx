@@ -1,4 +1,4 @@
-import { ViewSwitcher } from "./view-switcher";
+import { ViewSwitcher } from "../../../../../../ui/view-switcher";
 import { MobileActions } from "./mobile-actions";
 import { Search } from "./search";
 import { FetchLoadArgs, getWhitelabel } from "../../../../../../lib/utils";

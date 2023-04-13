@@ -2,11 +2,12 @@ import { PageArchetype } from "../../../../../ecs/archetypes/page";
 import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
-import Feed from "../../../../../ui/feed";
-import Table from "../../../../../ui/table";
-import { InfiniteLoader } from "../../../../../ui/infinite-loader";
-
-const DEFAULT_VIEW_PATH = ["table"];
+import { InfiniteLoader } from "../../../../../ui/associated/infinite-loader";
+import { AssociatedList } from "../../../../../ui/associated/list";
+import { ServerAssociatedEntry } from "../../../../../ui/associated/entry/server";
+import { InfiniteLoaderEntries } from "../../../../../ui/associated/infinite-loader/entries";
+import { Suspense } from "react";
+import { AssociatedEntryLoadingFallback } from "../../../../../ui/associated/entry/loading";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -15,8 +16,8 @@ type Props = {
 };
 
 export default async function EntityPage({ params }: Props) {
-  const { viewPath = DEFAULT_VIEW_PATH, ...resourcePath } = params;
-  const [view, selection] = viewPath;
+  const { viewPath = [], ...resourcePath } = params;
+  const [selection] = viewPath;
 
   const entity = await asyncUseEntity({
     resourcePath,
@@ -47,18 +48,21 @@ export default async function EntityPage({ params }: Props) {
       next = pagination.components.pagination.data.next;
     }
   }
-  switch (view) {
-    case "feed":
-      // @ts-expect-error Async Server Component
-      return <Feed data={values} next={next} />;
-    case "table":
-      return (
-        <InfiniteLoader next={next}>
-          {/* @ts-expect-error Async Server Component */}
-          <Table data={values} label={label} />
-        </InfiniteLoader>
-      );
-    default:
-      return <div>404</div>;
-  }
+  // table header
+  return (
+    <InfiniteLoader next={next}>
+      <AssociatedList tableLabel={label}>
+        {values.map((value) => (
+          <Suspense fallback={<AssociatedEntryLoadingFallback />}>
+            {/* @ts-expect-error Async Server Component */}
+            <ServerAssociatedEntry
+              key={`${value.network}/${value.type}/${value.query}`}
+              resourcePath={value}
+            />
+          </Suspense>
+        ))}
+        <InfiniteLoaderEntries />
+      </AssociatedList>
+    </InfiniteLoader>
+  );
 }
