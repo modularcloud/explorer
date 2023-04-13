@@ -1,40 +1,13 @@
 import clsx from "clsx";
-import { Status } from "./status";
-import { FetchLoadArgs } from "../../../../../../lib/utils";
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity as getEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { AssociatedArchetype } from "../../../../../../ecs/archetypes/associated";
-import { Value } from "../../../../../../schemas/value";
+import { Status } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
+import { Value } from "../../schemas/value";
 
 interface Props {
-  resourcePath: FetchLoadArgs;
+  attributes: Record<string, Value>;
   type: "card" | "sidebar";
 }
 
-export async function KeyValueList({ type: kvType, resourcePath }: Props) {
-  const entity =
-    kvType === "sidebar"
-      ? await getEntity({
-          resourcePath,
-          archetype: PageArchetype,
-        })
-      : await getEntity({
-          resourcePath,
-          archetype: AssociatedArchetype,
-        });
-
-  if (!entity) return null;
-
-  let attributes = {} as Record<string, Value>;
-
-  if ("sidebar" in entity.components) {
-    attributes = entity.components.sidebar.data.attributes;
-  }
-
-  if ("card" in entity.components) {
-    attributes = entity.components.card.data.attributes;
-  }
-
+export function KeyValueList({ attributes, type: kvType }: Props) {
   return (
     <dl
       className={clsx(

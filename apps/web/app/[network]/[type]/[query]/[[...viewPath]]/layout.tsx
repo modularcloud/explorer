@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { Header } from "./(components)/header";
-import { RightPanel } from "./(components)/right-panel";
+import { RightPanel } from "../../../../../ui/right-panel";
 import { FetchLoadArgs } from "../../../../../lib/utils";
 import { Tabs } from "./(components)/tabs";
 

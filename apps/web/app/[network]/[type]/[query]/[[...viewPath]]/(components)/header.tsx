@@ -2,7 +2,7 @@ import { ViewSwitcher } from "./view-switcher";
 import { MobileActions } from "./mobile-actions";
 import { Search } from "./search";
 import { FetchLoadArgs, getWhitelabel } from "../../../../../../lib/utils";
-import { RightPanel } from "./right-panel";
+import { RightPanel } from "../../../../../../ui/right-panel";
 
 type Props = {
   resourcePath: FetchLoadArgs;

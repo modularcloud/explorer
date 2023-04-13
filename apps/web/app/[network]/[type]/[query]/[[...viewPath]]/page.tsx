@@ -2,7 +2,7 @@ import { PageArchetype } from "../../../../../ecs/archetypes/page";
 import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
-import Feed from "./(components)/feed";
+import Feed from "../../../../../ui/feed";
 import Table from "../../../../../ui/table";
 import { InfiniteLoader } from "../../../../../ui/infinite-loader";
 
