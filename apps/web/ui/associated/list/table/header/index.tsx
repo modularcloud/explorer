@@ -10,6 +10,8 @@ type Props = {
   label: string;
 };
 export async function TableHeader({ rows, label }: Props) {
+  if (rows.length === 0) return null;
+
   const entity = await Promise.any(
     rows.map((row) =>
       asyncUseEntity({
@@ -18,7 +20,9 @@ export async function TableHeader({ rows, label }: Props) {
       })
     )
   );
+
   if (!entity) return null;
+
   return (
     <tr>
       <HeadBox classes="w-4" spacingPurposesOnly={true} />
