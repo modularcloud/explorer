@@ -1,7 +1,7 @@
-import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
-import { Badge } from "../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
+import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
+import { Badge } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
 import Link from "next/link";
-import { KeyValueList } from "../../key-value-list";
+import { KeyValueList } from "../../../key-value-list";
 import { Entity } from "@modularcloud/ecs";
 
 export interface Props {

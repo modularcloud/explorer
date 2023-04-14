@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { CellBox } from "../cell-box";
-import HeadBox from "../head-box";
+import { CellBox } from "../../associated/entry/table/cell-box";
+import HeadBox from "../../associated/list/table/header/head-box";
 import { Entity } from "@modularcloud/ecs";
 import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
 

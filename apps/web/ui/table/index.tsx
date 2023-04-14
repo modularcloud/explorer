@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ServerTableRow } from "./row/server";
-import HeadBox from "./head-box";
+import HeadBox from "../associated/list/table/header/head-box";
 import { AssociatedKey } from "../../ecs/components/associated";
 import { FetchLoadArgs } from "../../lib/utils";
 import { InfiniteTableLoaderRows } from "../associated/infinite-loader/table-rows";

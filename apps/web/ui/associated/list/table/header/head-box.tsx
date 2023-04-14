@@ -9,16 +9,19 @@ export default function HeadBox({
   children,
   spacingPurposesOnly,
   classes,
+  colspan,
 }: {
   children?: React.ReactNode;
   spacingPurposesOnly?: boolean;
   classes?: string;
+  colspan?: number;
 }) {
   return (
     <th
       aria-hidden={spacingPurposesOnly}
       style={positioningStyle}
       className={clsx(classes, "sticky")}
+      colSpan={colspan ?? 1}
     >
       <div
         className={clsx(

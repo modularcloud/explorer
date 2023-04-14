@@ -42,3 +42,4 @@ const RowSchema = z
 export const RowComponent = createComponentSchema(RowSchema, "row");
 
 export type Row = z.infer<typeof RowSchema>;
+export type Column = z.infer<typeof ColumnSchema>;

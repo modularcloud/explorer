@@ -4,7 +4,7 @@ import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
 import { Entity } from "@modularcloud/ecs";
 import { useContext } from "react";
 import { AssociatedViewContext } from "../context";
-import { FeedEntry } from "./feed";
+import { FeedEntry } from "./feed/feed";
 import { TableEntry } from "./table";
 
 export interface Props {

@@ -51,7 +51,7 @@ export default async function EntityPage({ params }: Props) {
   // table header
   return (
     <InfiniteLoader next={next}>
-      <AssociatedList tableLabel={label}>
+      <AssociatedList tableLabel={label} initialValues={values}>
         {values.map((value) => (
           <Suspense fallback={<AssociatedEntryLoadingFallback />}>
             {/* @ts-expect-error Async Server Component */}

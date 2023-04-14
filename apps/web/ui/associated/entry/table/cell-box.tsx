@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { AssociatedArchetype } from "../../ecs/archetypes/associated";
-import SvgGreenTick from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/GreenTick";
-import SvgRedCross from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/RedCross";
-import { Badge } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
-import { Status } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
+import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
+import SvgGreenTick from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/GreenTick";
+import SvgRedCross from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/RedCross";
+import { Badge } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
+import { Status } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
 
 export function CellBox({
   value,
