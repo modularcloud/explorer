@@ -11,6 +11,9 @@ export async function AccountExtract(
 ) {
   const query = z.string().parse(_q);
   const [address, nextToken ] = query.split(":");
+  if(!address || !address.match(/^\w{42}$/)) {
+    throw new Error("Invalid address");
+  }
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const [balances, transfers, transactions] = await Promise.all([
     mc.evm.getTokenBalancesByAddress(metadata.network.id, address),

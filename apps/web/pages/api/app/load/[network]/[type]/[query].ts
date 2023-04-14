@@ -1,5 +1,6 @@
-import { Engine } from "@modularcloud/ecs";
+import { Engine, verifyArchetype } from "@modularcloud/ecs";
 import { NextApiRequest, NextApiResponse } from "next";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
 import { CreateEVMConfig } from "../../../../../../integrations/evm";
 
 export default async function handler(
@@ -20,12 +21,16 @@ export default async function handler(
     if (req.query.type === "search") {
       const types = Object.keys(config.loaders);
       const result = await Promise.any(
-        types.map(async (type) => {
-          return Engine.load({
-            ...req.query,
-            type,
-          } as any);
-        })
+        types
+          .map(async (type) => {
+            return Engine.load({
+              ...req.query,
+              type,
+            } as any);
+          })
+          .map((p) =>
+            p.then((entity) => verifyArchetype(PageArchetype, entity))
+          )
       );
       res.json(result);
     } else {
@@ -33,7 +38,7 @@ export default async function handler(
       res.json(result);
     }
   } catch (e) {
-    console.error("Error loading entity", req.query)
+    console.error("Error loading entity", req.query);
     console.error(e);
     res.status(404).end();
   }
