@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Header } from "./(components)/header";
 import { RightPanel } from "../../../../../ui/right-panel";
 import { FetchLoadArgs } from "../../../../../lib/utils";
-import { Tabs } from "./(components)/tabs";
+import { Tabs } from "../../../../../ui/tabs";
 import { AssociatedViewContextProvider } from "../../../../../ui/associated/context";
 
 type Props = {

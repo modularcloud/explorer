@@ -11,9 +11,9 @@ export async function LogExtract(_q: unknown, metadata: EngineConfigMetadata) {
   const web3 = new Web3(metadata.endpoint);
 
   const receipt = await web3.eth.getTransactionReceipt(txHash);
-  const log = receipt.logs[Number(logIndex)];
+  const log = receipt.logs.find((log) => log.logIndex === Number(logIndex));
 
-  const eventSignatureName = await getEventSignatureName(log.topics[0]);
+  const eventSignatureName = log ? await getEventSignatureName(log.topics[0]) : "Unknown";
 
   return {
     ...log,

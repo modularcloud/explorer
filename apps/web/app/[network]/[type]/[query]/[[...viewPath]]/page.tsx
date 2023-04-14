@@ -8,6 +8,8 @@ import { ServerAssociatedEntry } from "../../../../../ui/associated/entry/server
 import { InfiniteLoaderEntries } from "../../../../../ui/associated/infinite-loader/entries";
 import { Suspense } from "react";
 import { AssociatedEntryLoadingFallback } from "../../../../../ui/associated/entry/loading";
+import { TableHeader } from "../../../../../ui/associated/list/table/header";
+import { TableHeaderLoadingFallback } from "../../../../../ui/associated/list/table/header/loading";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -51,16 +53,25 @@ export default async function EntityPage({ params }: Props) {
   // table header
   return (
     <InfiniteLoader next={next}>
-      <AssociatedList tableLabel={label} initialValues={values}>
-        {values.map((value) => (
-          <Suspense fallback={<AssociatedEntryLoadingFallback />}>
+      <AssociatedList
+        tableHeader={
+          <Suspense fallback={<TableHeaderLoadingFallback />}>
             {/* @ts-expect-error Async Server Component */}
-            <ServerAssociatedEntry
-              key={`${value.network}/${value.type}/${value.query}`}
-              resourcePath={value}
-            />
+            <TableHeader rows={values} label={label} />
           </Suspense>
-        ))}
+        }
+      >
+        <>
+          {values.map((value) => (
+            <Suspense
+              key={`${value.network}/${value.type}/${value.query}`}
+              fallback={<AssociatedEntryLoadingFallback />}
+            >
+              {/* @ts-expect-error Async Server Component */}
+              <ServerAssociatedEntry resourcePath={value} />
+            </Suspense>
+          ))}
+        </>
         <InfiniteLoaderEntries />
       </AssociatedList>
     </InfiniteLoader>
