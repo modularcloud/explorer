@@ -50,10 +50,11 @@ export default async function EntityPage({ params }: Props) {
       next = pagination.components.pagination.data.next;
     }
   }
-  // table header
+
   return (
     <InfiniteLoader next={next}>
       <AssociatedList
+        label={label}
         tableHeader={
           <Suspense fallback={<TableHeaderLoadingFallback />}>
             {/* @ts-expect-error Async Server Component */}

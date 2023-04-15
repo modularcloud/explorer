@@ -23,6 +23,10 @@ const CellSchema = z.discriminatedUnion("type", [
     // TODO: create a central list of all icons
     payload: z.enum(["SUCCESS", "FAILURE"]),
   }),
+  z.object({
+    type: z.literal("hashOrAddress"),
+    payload: z.string(),
+  }),
 ]);
 
 const ColumnSchema = z.object({
@@ -30,6 +34,7 @@ const ColumnSchema = z.object({
   hiddenOnMobile: z.boolean().optional(),
   hiddenOnDesktop: z.boolean().optional(),
   showOnlyIfDifferent: z.boolean().optional(),
+  rightJustifyOnMobile: z.boolean().optional(),
 });
 
 const RowSchema = z
@@ -43,3 +48,4 @@ export const RowComponent = createComponentSchema(RowSchema, "row");
 
 export type Row = z.infer<typeof RowSchema>;
 export type Column = z.infer<typeof ColumnSchema>;
+export type Cell = z.infer<typeof CellSchema>;

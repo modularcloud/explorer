@@ -39,7 +39,7 @@ export const RowTransform = {
             columnLabel: "Transaction",
           },
           cell: {
-            type: "standard",
+            type: "hashOrAddress",
             payload: data.hash,
           },
         },
@@ -66,6 +66,7 @@ export const RowTransform = {
         {
           column: {
             columnLabel: "Type",
+            rightJustifyOnMobile: true,
           },
           cell: {
             type: "badge",
@@ -83,6 +84,7 @@ export const RowTransform = {
         {
           column: {
             columnLabel: "Status",
+            hiddenOnMobile: true,
           },
           cell: {
             type: "status",
