@@ -35,9 +35,16 @@ export async function Tabs({ params }: Props) {
     <div className="bg-gradient-to-t from-white to-transparent flex items-center fixed bottom-0 w-full gap-3 p-6 font-semibold">
       {labels.map((label) => (
         <Link
-          href={`/${params.network}/${params.type}/${params.query}/${slugify(label)}`}
+          key={label}
+          href={`/${params.network}/${params.type}/${params.query}/${slugify(
+            label
+          )}`}
         >
-          <Badge text={label} long={true} toggled={slugify(label) === slugify(activeTab)} />
+          <Badge
+            text={label}
+            long={true}
+            toggled={slugify(label) === slugify(activeTab)}
+          />
         </Link>
       ))}
     </div>

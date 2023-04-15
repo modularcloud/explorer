@@ -7,6 +7,33 @@ interface Props {
   type: "card" | "sidebar";
 }
 
+function Entry({ label, value }: { label: string; value: Value }) {
+  const { type, payload } = value;
+  if (!payload) return null;
+  return (
+    <>
+      <dt className="font-bold">{label}</dt>
+      {type === "status" ? (
+        <dd>
+          <Status status={payload} />
+        </dd>
+      ) : null}
+      {type === "list" ? (
+        <dd className="truncate">
+          <ol>
+            {payload.map((value) => (
+              <li key={value} className="truncate">
+                {value}
+              </li>
+            ))}
+          </ol>
+        </dd>
+      ) : null}
+      {type === "standard" ? <dd className="truncate">{payload}</dd> : null}
+    </>
+  );
+}
+
 export function KeyValueList({ attributes, type: kvType }: Props) {
   return (
     <dl
@@ -18,30 +45,7 @@ export function KeyValueList({ attributes, type: kvType }: Props) {
       )}
     >
       {Object.entries(attributes).map(([key, value]) => {
-        const { type, payload } = value;
-        if (!payload) return null;
-        return (
-          <>
-            <dt className="font-bold">{key}</dt>
-            {type === "status" ? (
-              <dd>
-                <Status status={payload} />
-              </dd>
-            ) : null}
-            {type === "list" ? (
-              <dd className="truncate">
-                <ol>
-                  {payload.map((value) => (
-                    <li className="truncate">{value}</li>
-                  ))}
-                </ol>
-              </dd>
-            ) : null}
-            {type === "standard" ? (
-              <dd className="truncate">{payload}</dd>
-            ) : null}
-          </>
-        );
+        return <Entry key={key} label={key} value={value} />;
       })}
     </dl>
   );
