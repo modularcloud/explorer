@@ -11,7 +11,7 @@ export interface Props {
 export function TableEntry({ entity }: Props) {
   return (
     <tr className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer">
-      <td aria-hidden={true} className="p-2">
+      <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
       </td>
       {entity.components.row.data.map((entry) => (

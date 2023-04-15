@@ -25,7 +25,7 @@ export async function TableHeader({ rows, label }: Props) {
 
   return (
     <tr>
-      <HeadBox classes="w-4" spacingPurposesOnly={true} />
+      <HeadBox classes="w-4 sm:w-6 lg:w-8" spacingPurposesOnly={true} />
       <HeadBox classes={"xs:hidden"}>{label}</HeadBox>
       {entity.components.row.data.map((entry) => (
         <HeadBox
@@ -36,7 +36,7 @@ export async function TableHeader({ rows, label }: Props) {
         </HeadBox>
       ))}
       <HeadBox classes="max-xs:hidden" spacingPurposesOnly={true} />
-      <HeadBox classes="w-4" spacingPurposesOnly={true} />
+      <HeadBox classes="w-4 sm:w-6 lg:w-8" spacingPurposesOnly={true} />
     </tr>
   );
 }
