@@ -16,13 +16,13 @@ export function TableEntry({ entity }: Props) {
       </td>
       {entity.components.row.data.map((entry) => (
         <td
-          className={clsx("h-12", generateColumnStyle(entry.column))}
+          className={clsx("h-[3.375rem]", generateColumnStyle(entry.column))}
           key={entry.column.columnLabel}
         >
           <CellBox value={entry.cell} />
         </td>
       ))}
-      <td className="h-12">...</td>
+      <td className="h-[3.375rem]">...</td>
       <td aria-hidden={true} className="p-2">
         {/** For spacing purposes */}
       </td>
