@@ -7,8 +7,8 @@ function forceLength(
   const diff = str.length - len;
   if (diff > 0) {
     if (strategy === "end") {
-      let shortend = str.slice(-len);
-      if (shortend.length < MIN) {
+      let shortend = str.slice(0, len - 1);
+      if (len < MIN) {
         shortend = str.slice(0, MIN);
       }
       return shortend + "...";
@@ -57,7 +57,7 @@ export function LongVal({
       <div className="hidden xs:block sm:hidden">
         {forceLength(value, max - step * 4, strategy)}
       </div>
-      <div className="hidden max-xs:block">
+      <div className="xs:hidden">
         {forceLength(value, max - step * 5, strategy)}
       </div>
     </>

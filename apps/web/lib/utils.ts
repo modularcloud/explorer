@@ -2,6 +2,13 @@ import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
 
+export function decodeEvmAddressParam(address: string) {
+  if(address.indexOf("000000000000000000000000") !== -1) {
+    return address.replace("000000000000000000000000", "");
+  }
+  return address;
+}
+
 export async function getEventSignatureName(topic: string) {
   try {
     const results = await fetch(

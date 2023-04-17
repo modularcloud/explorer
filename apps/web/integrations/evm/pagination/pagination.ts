@@ -21,7 +21,7 @@ export const PaginationTransform = {
           },
           values: data.transfers.events.map((transfer) => ({
             network: metadata.network.id,
-            type: "log",
+            type: "transfer",
             query: `${transfer.transactionHash}:${transfer.logIndex}`,
           })),
         },

@@ -24,9 +24,18 @@ const CellSchema = z.discriminatedUnion("type", [
     payload: z.enum(["SUCCESS", "FAILURE"]),
   }),
   z.object({
-    type: z.literal("hashOrAddress"),
-    payload: z.string(),
+    type: z.literal("longval"),
+    payload: z.object({
+      value: z.string(),
+      type: z.enum(["middle", "end"]).optional(),
+      maxLength: z.number().optional(),
+      stepDown: z.number().optional(),
+    }),
   }),
+  z.object({
+    type: z.literal("timestamp"),
+    payload: z.number(),
+  })
 ]);
 
 const ColumnSchema = z.object({

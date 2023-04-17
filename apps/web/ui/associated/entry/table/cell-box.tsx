@@ -3,6 +3,7 @@ import SvgRedCross from "../../../../app/[network]/[type]/[query]/[[...viewPath]
 import { Badge } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
 import { Status } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
 import { Cell } from "../../../../ecs/components/row";
+import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";
 
 export function CellBox({ value }: { value: Cell }) {
@@ -23,8 +24,11 @@ export function CellBox({ value }: { value: Cell }) {
         return <SvgRedCross />;
     }
   }
-  if (value.type === "hashOrAddress") {
-    return <LongVal value={value.payload} max={50} step={10} />;
+  if (value.type === "longval") {
+    return <LongVal value={value.payload.value} max={value.payload.maxLength ?? 50} step={value.payload.stepDown ?? 10} strategy={value.payload.type} />;
+  }
+  if(value.type === "timestamp") {
+    return <CompactDate datetime={value.payload} />;
   }
   return null;
 }

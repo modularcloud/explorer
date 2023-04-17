@@ -39,8 +39,10 @@ export const RowTransform = {
             columnLabel: "Transaction",
           },
           cell: {
-            type: "hashOrAddress",
-            payload: data.hash,
+            type: "longval",
+            payload: {
+              value: data.hash,
+            }
           },
         },
         {
