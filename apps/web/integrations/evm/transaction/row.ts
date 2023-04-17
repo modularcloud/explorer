@@ -27,7 +27,8 @@ export const RowTransform = {
         {
           column: {
             columnLabel: "Icon",
-            hiddenOnDesktop: true,
+            breakpoint: "max-sm",
+            hideHeader: true,
           },
           cell: {
             type: "icon",
@@ -42,7 +43,7 @@ export const RowTransform = {
             type: "longval",
             payload: {
               value: data.hash,
-            }
+            },
           },
         },
         {
@@ -57,18 +58,7 @@ export const RowTransform = {
         },
         {
           column: {
-            columnLabel: "Block Number",
-            showOnlyIfDifferent: true,
-          },
-          cell: {
-            type: "standard",
-            payload: data.blockNumber,
-          },
-        },
-        {
-          column: {
             columnLabel: "Type",
-            rightJustifyOnMobile: true,
           },
           cell: {
             type: "badge",
@@ -86,11 +76,24 @@ export const RowTransform = {
         {
           column: {
             columnLabel: "Status",
-            hiddenOnMobile: true,
+            breakpoint: "sm",
           },
           cell: {
             type: "status",
             payload: data.receipt.status,
+          },
+        },
+        {
+          column: {
+            columnLabel: "Block",
+            //showOnlyIfDifferent: true,
+          },
+          cell: {
+            type: "block",
+            payload: {
+              number: Number(data.blockNumber),
+              timestamp: Number(data.timestamp) * 1000,
+            },
           },
         },
       ],

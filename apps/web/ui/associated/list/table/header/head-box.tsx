@@ -10,11 +10,13 @@ export default function HeadBox({
   spacingPurposesOnly,
   classes,
   colspan,
+  hideText,
 }: {
   children?: React.ReactNode;
   spacingPurposesOnly?: boolean;
   classes?: string;
   colspan?: number;
+  hideText?: boolean;
 }) {
   return (
     <th
@@ -29,7 +31,7 @@ export default function HeadBox({
           "h-10 py-2 bg-translucent backdrop-blur-xs border-b border-b-night-100 h-10 font-bold"
         )}
       >
-        {children}
+        {hideText ? <div className="invisible">{children}</div> : children}
       </div>
     </th>
   );

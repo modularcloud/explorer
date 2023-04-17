@@ -25,10 +25,22 @@ export function CellBox({ value }: { value: Cell }) {
     }
   }
   if (value.type === "longval") {
-    return <LongVal value={value.payload.value} max={value.payload.maxLength ?? 50} step={value.payload.stepDown ?? 10} strategy={value.payload.type} />;
+    return (
+      <LongVal
+        value={value.payload.value}
+        max={value.payload.maxLength ?? 50}
+        step={value.payload.stepDown ?? 10}
+        strategy={value.payload.strategy}
+      />
+    );
   }
-  if(value.type === "timestamp") {
-    return <CompactDate datetime={value.payload} />;
+  if (value.type === "block") {
+    return (
+      <div className="whitespace-nowrap flex flex-nowrap">
+        {value.payload.number}
+        <CompactDate classes="pl-1 before:content-['('] after:content-[')'] hidden md:block" datetime={value.payload.timestamp} />
+      </div>
+    );
   }
   return null;
 }

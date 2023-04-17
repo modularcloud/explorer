@@ -27,23 +27,40 @@ const CellSchema = z.discriminatedUnion("type", [
     type: z.literal("longval"),
     payload: z.object({
       value: z.string(),
-      type: z.enum(["middle", "end"]).optional(),
+      strategy: z.enum(["middle", "end"]).optional(),
       maxLength: z.number().optional(),
       stepDown: z.number().optional(),
     }),
   }),
   z.object({
-    type: z.literal("timestamp"),
-    payload: z.number(),
-  })
+    type: z.literal("block"),
+    payload: z.object({
+      number: z.number(),
+      timestamp: z.number(),
+    }),
+  }),
 ]);
 
 const ColumnSchema = z.object({
   columnLabel: z.string(),
-  hiddenOnMobile: z.boolean().optional(),
-  hiddenOnDesktop: z.boolean().optional(),
+  breakpoint: z
+    .enum([
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "2xl",
+      "max-xs",
+      "max-sm",
+      "max-md",
+      "max-lg",
+      "max-xl",
+      "max-2xl",
+    ])
+    .optional(),
+  hideHeader: z.boolean().optional(),
   showOnlyIfDifferent: z.boolean().optional(),
-  rightJustifyOnMobile: z.boolean().optional(),
 });
 
 const RowSchema = z

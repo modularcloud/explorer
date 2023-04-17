@@ -20,11 +20,13 @@ export async function TransactionExtract(
   const eventSignatureName = await getEventSignatureName(
     receipt.logs[0]?.topics?.[0]
   );
-
+  const block = await web3.eth.getBlock(receipt.blockNumber);
+  
   return {
     ...transaction,
     receipt,
     eventSignatureName,
+    timestamp: block.timestamp,
   };
 }
 

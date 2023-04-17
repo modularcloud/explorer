@@ -20,7 +20,8 @@ export function TableEntry({ entity }: Props) {
           className={clsx(
             "h-[3.375rem]",
             generateColumnStyle(entry.column),
-            generateCellStyle(entry.cell)
+            generateCellStyle(entry.cell),
+            entry.column.showOnlyIfDifferent && "hidden"
           )}
           key={entry.column.columnLabel}
         >

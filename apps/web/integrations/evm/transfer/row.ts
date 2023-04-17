@@ -24,7 +24,7 @@ export const RowTransform = {
             value: decodeEvmAddressParam(data.topics[1]),
             maxLength: 30,
             stepDown: 6,
-          }
+          },
         },
       },
       {
@@ -37,7 +37,7 @@ export const RowTransform = {
             value: decodeEvmAddressParam(data.topics[2]),
             maxLength: 30,
             stepDown: 6,
-          }
+          },
         },
       },
       {
@@ -50,8 +50,8 @@ export const RowTransform = {
             value: Web3.utils.fromWei(data.data),
             maxLength: 20,
             stepDown: 4,
-            type: "end"
-          }
+            strategy: "end",
+          },
         },
       },
       {
@@ -59,18 +59,11 @@ export const RowTransform = {
           columnLabel: "Block",
         },
         cell: {
-          type: "standard",
-          payload: data.blockNumber,
-        },
-      },
-      {
-        column: {
-          columnLabel: "Time",
-          hiddenOnMobile: true,
-        },
-        cell: {
-          type: "timestamp",
-          payload: Number(data.timestamp) * 1000,
+          type: "block",
+          payload: {
+            number: Number(data.blockNumber),
+            timestamp: Number(data.timestamp) * 1000,
+          },
         },
       },
     ],
