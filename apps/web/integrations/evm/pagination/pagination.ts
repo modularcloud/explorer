@@ -14,11 +14,13 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:account-transfers:${data["account-transfers"].nextToken}`,
-          },
+          next: data["account-transfers"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:account-transfers:${data["account-transfers"].nextToken}`,
+              }
+            : undefined,
           values: data["account-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
             type: "transfer",
@@ -31,11 +33,13 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:token-transfers:${data["token-transfers"].nextToken}`,
-          },
+          next: data["token-transfers"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:token-transfers:${data["token-transfers"].nextToken}`,
+              }
+            : undefined,
           values: data["token-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
             type: "transfer",
@@ -48,11 +52,13 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:transactions:${data.transactions.nextToken}`,
-          },
+          next: data.transactions.nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:transactions:${data.transactions.nextToken}`,
+              }
+            : undefined,
           values: data.transactions.txs.map((transaction) => ({
             network: metadata.network.id,
             type: "transaction",
@@ -65,11 +71,13 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:holders:${data.holders.nextToken}`,
-          },
+          next: data.holders.nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:holders:${data.holders.nextToken}`,
+              }
+            : undefined,
           values: data.holders.accountBalances.map((holder) => ({
             network: metadata.network.id,
             type: "holder",
