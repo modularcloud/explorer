@@ -17,7 +17,7 @@ export function InfiniteLoader({ next, children }: Props) {
   const [nextPage, setNextPage] = useState(next);
 
   const loadNextPage = async () => {
-    console.log(nextPage);
+    console.log("nextPage", nextPage);
     if (!nextPage) return;
     const entity = await asyncUseEntity({
       resourcePath: nextPage,
@@ -33,7 +33,7 @@ export function InfiniteLoader({ next, children }: Props) {
     <div className="top-0 absolute w-full">
       <InfiniteScroll
         next={loadNextPage}
-        hasMore={!!next}
+        hasMore={!!nextPage}
         dataLength={entityRefs.length}
         loader={<div>Loader...</div>}
         height="100vh"
