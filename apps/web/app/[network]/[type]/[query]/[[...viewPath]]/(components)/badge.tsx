@@ -16,7 +16,7 @@ export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
     <div
       className={clsx(
         toggled ? "border-ocean-700" : "border-mid-dark-100",
-        "bg-white flex gap-2 border rounded-[2.5rem] pl-3 py-[.1875rem] items-center",
+        "bg-white flex gap-2 border rounded-[2.5rem] pl-3 py-[.1875rem] items-center whitespace-nowrap",
         long ? "max-w-min" : "w-max",
         hasExtra ? "pr-[.1875rem]" : "pr-3"
       )}
@@ -26,7 +26,7 @@ export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
           <SvgArrowOn />
         </div>
       ) : null}
-      <div className={clsx(!long && "max-w-[80px] truncate")}>
+      <div className={clsx(long ? "max-w-min" : "max-w-[80px]", "truncate")}>
         {text}
       </div>
       {hasExtra ? (
