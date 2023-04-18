@@ -4,6 +4,7 @@ import { RightPanel } from "../../../../../../ui/right-panel";
 import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { Tabs } from "../../../../../../ui/tabs";
 import { AssociatedViewContextProvider } from "../../../../../../ui/associated/context";
+import { TopBar } from "../../../../../../ui/top-bar";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -17,13 +18,17 @@ export default async function EntityLayout({ params, children }: Props) {
   return (
     <AssociatedViewContextProvider value="table">
       <div className="lg:flex">
-        <div className="lg:grow relative">
-          <Header resourcePath={resourcePath} />
-          {children}
-          <Suspense>
-            {/* @ts-expect-error Async Server Component */}
-            <Tabs params={params} />
-          </Suspense>
+        <div className="lg:grow">
+          {/* @ts-expect-error Async Server Component */}
+          <TopBar resourcePath={resourcePath} />
+          <div className="relative">
+            <Header resourcePath={resourcePath} />
+            {children}
+            <Suspense>
+              {/* @ts-expect-error Async Server Component */}
+              <Tabs params={params} />
+            </Suspense>
+          </div>
         </div>
         {/* @ts-expect-error Async Server Component */}
         <RightPanel
