@@ -17,13 +17,12 @@ export function InfiniteLoader({ next, children }: Props) {
   const [nextPage, setNextPage] = useState(next);
 
   const loadNextPage = async () => {
-    console.log("nextPage", nextPage);
     if (!nextPage) return;
     const entity = await asyncUseEntity({
       resourcePath: nextPage,
       archetype: PaginationArchetype,
     });
-    console.log(entity);
+
     if (!entity) return;
     setEntityRefs([...entityRefs, ...entity.components.pagination.data.values]);
     setNextPage(entity.components.pagination.data.next);
