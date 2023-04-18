@@ -32,8 +32,8 @@ export const Search = ({ optionGroups }: Props) => {
               </Select.Icon>
             </Select.Trigger>
             <Select.Portal>
-              <Select.Content position="popper" sideOffset={8}>
-                <div className="overflow-scroll h-[8.5rem] min-w-[10.5rem] overflow-auto bg-white rounded-lg border-mid-dark-100 shadow-[0px_12px_16px_rgba(42,43,46,0.14),0px_3px_6px_rgba(42,_43,_46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
+              <Select.Content position="popper" className="z-10" sideOffset={8}>
+                <div className="overflow-scroll max-h-[8.5rem] min-w-[10.5rem] overflow-auto bg-white rounded-lg border-mid-dark-100 shadow-[0px_12px_16px_rgba(42,43,46,0.14),0px_3px_6px_rgba(42,_43,_46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
                   <Select.Viewport>
                     {Object.entries(optionGroups).map((entry, index) => {
                       const [groupDisplayName, options] = entry;
