@@ -11,35 +11,37 @@ export const RowTransform = {
     TransformOutput<typeof RowComponent>
   > => ({
     typeId: "row",
-    data: [
-      {
-        column: {
-          columnLabel: "Event",
+    data: {
+      tableData: [
+        {
+          column: {
+            columnLabel: "Event",
+          },
+          cell: {
+            type: "standard",
+            payload: data.eventSignatureName ?? data.topics?.[0],
+          },
         },
-        cell: {
-          type: "standard",
-          payload: data.eventSignatureName ?? data.topics?.[0],
+        {
+          column: {
+            columnLabel: "Address",
+          },
+          cell: {
+            type: "standard",
+            payload: data.address,
+          },
         },
-      },
-      {
-        column: {
-          columnLabel: "Address",
+        {
+          column: {
+            columnLabel: "Block Number",
+            showOnlyIfDifferent: true,
+          },
+          cell: {
+            type: "standard",
+            payload: data.blockNumber,
+          },
         },
-        cell: {
-          type: "standard",
-          payload: data.address,
-        },
-      },
-      {
-        column: {
-          columnLabel: "Block Number",
-          showOnlyIfDifferent: true,
-        },
-        cell: {
-          type: "standard",
-          payload: data.blockNumber,
-        },
-      },
-    ],
+      ],
+    },
   }),
 };

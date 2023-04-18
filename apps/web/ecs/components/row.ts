@@ -1,5 +1,6 @@
 import { createComponentSchema } from "@modularcloud/ecs";
 import { z } from "zod";
+import { EntityRefSchema } from "./associated";
 
 const CellSchema = z.discriminatedUnion("type", [
   z.object({
@@ -63,12 +64,15 @@ const ColumnSchema = z.object({
   showOnlyIfDifferent: z.boolean().optional(),
 });
 
-const RowSchema = z
-  .object({
-    cell: CellSchema,
-    column: ColumnSchema,
-  })
-  .array();
+const RowSchema = z.object({
+  tableData: z
+    .object({
+      cell: CellSchema,
+      column: ColumnSchema,
+    })
+    .array(),
+  link: EntityRefSchema.optional(),
+});
 
 export const RowComponent = createComponentSchema(RowSchema, "row");
 

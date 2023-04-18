@@ -4,6 +4,7 @@ import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
 import { CellBox } from "./cell-box";
 import { generateColumnStyle } from "../../list/table/column-styles";
 import { generateCellStyle } from "./cell-style";
+import { ClickableRow } from "./clickable-row";
 
 export interface Props {
   entity: Entity<typeof AssociatedArchetype>;
@@ -11,11 +12,11 @@ export interface Props {
 
 export function TableEntry({ entity }: Props) {
   return (
-    <tr className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer">
+    <ClickableRow resourcePath={entity.components.row.data.link}>
       <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
       </td>
-      {entity.components.row.data.map((entry) => (
+      {entity.components.row.data.tableData.map((entry) => (
         <td
           className={clsx(
             "h-[3.375rem]",
@@ -32,6 +33,6 @@ export function TableEntry({ entity }: Props) {
       <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
       </td>
-    </tr>
+    </ClickableRow>
   );
 }

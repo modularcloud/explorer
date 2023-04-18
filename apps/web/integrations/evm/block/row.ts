@@ -11,53 +11,56 @@ export const RowTransform = {
     TransformOutput<typeof RowComponent>
   > => ({
     typeId: "row",
-    data: [
-      {
-        column: {
-          columnLabel: "Block",
+    data: {
+      tableData: [
+        {
+          column: {
+            columnLabel: "Block",
+          },
+          cell: {
+            type: "standard",
+            payload: data.hash,
+          },
         },
-        cell: {
-          type: "standard",
-          payload: data.hash,
+        {
+          column: {
+            columnLabel: "Network",
+            showOnlyIfDifferent: true,
+          },
+          cell: {
+            type: "standard",
+            payload: metadata.network.displayName,
+          },
         },
-      },
-      {
-        column: {
-          columnLabel: "Network",
-          showOnlyIfDifferent: true,
+        {
+          column: {
+            columnLabel: "Block Number",
+          },
+          cell: {
+            type: "standard",
+            payload: data.number,
+          },
         },
-        cell: {
-          type: "standard",
-          payload: metadata.network.displayName,
+        {
+          column: {
+            columnLabel: "Timestamp",
+          },
+          cell: {
+            type: "standard",
+            payload: data.timestamp,
+          },
         },
-      },
-      {
-        column: {
-          columnLabel: "Block Number",
+        {
+          column: {
+            columnLabel: "Transactions",
+          },
+          cell: {
+            type: "standard",
+            payload: data.transactions.length,
+          },
         },
-        cell: {
-          type: "standard",
-          payload: data.number,
-        },
-      },
-      {
-        column: {
-          columnLabel: "Timestamp",
-        },
-        cell: {
-          type: "standard",
-          payload: data.timestamp,
-        },
-      },
-      {
-        column: {
-          columnLabel: "Transactions",
-        },
-        cell: {
-          type: "standard",
-          payload: data.transactions.length,
-        },
-      },
-    ],
+      ],
+      link: { network: metadata.network.id, type: "block", query: data.hash },
+    },
   }),
 };
