@@ -3,7 +3,7 @@ import { z } from "zod";
 import _slugify from "slugify";
 
 export function decodeEvmAddressParam(address: string) {
-  if(address.indexOf("000000000000000000000000") !== -1) {
+  if (address.indexOf("000000000000000000000000") !== -1) {
     return address.replace("000000000000000000000000", "");
   }
   return address;
@@ -22,12 +22,15 @@ export async function getEventSignatureName(topic: string) {
 export type FetchLoadArgs = { network: string; type: string; query: string };
 export async function fetchLoad(props: FetchLoadArgs) {
   try {
+    let baseUrl = "http://localhost:3000";
+    if (process.env.VERCEL_URL) {
+      baseUrl = `https://${process.env.VERCEL_URL}`;
+    }
+    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+      baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    }
     const response = await fetch(
-      `${
-        process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000"
-      }/api/app/load/${props.network}/${props.type}/${props.query}`
+      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`
     );
     if (!response.ok) {
       console.log("Error loading entity", response);

@@ -23,7 +23,8 @@
         "SOLANA_RPC",
         "VERCEL_URL",
         "METRICS_API_URL",
-        "ETHEREUM_RPC"
+        "ETHEREUM_RPC",
+        "NEXT_PUBLIC_VERCEL_URL"
       ]
     }
   }
