@@ -1,6 +1,6 @@
 import EntityPage from "../(standard)/[query]/[[...viewPath]]/page";
 import { getWhitelabel } from "../../../../lib/utils";
-import { mapTypes, ShortenedResourcePath } from "./layout";
+import { ShortenedResourcePath, mapTypes } from "./helpers";
 
 type Props = {
   params: ShortenedResourcePath;

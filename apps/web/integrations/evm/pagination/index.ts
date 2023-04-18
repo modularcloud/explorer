@@ -11,7 +11,7 @@ export async function PaginationExtract(
   const [value, collection, nextToken] = query.split(":");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
 
-  if (collection === "transfers") {
+  if (collection === "account-transfers") {
     const transfers = await mc.evm.getEventsByAccountAddress(
       metadata.network.id,
       value,
@@ -20,7 +20,19 @@ export async function PaginationExtract(
     );
     return {
       value,
-      transfers,
+      "account-transfers": transfers,
+    };
+  }
+  if (collection === "token-transfers") {
+    const transfers = await mc.evm.getEventsByAccountAddress(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      "token-transfers": transfers,
     };
   }
   if (collection === "transactions") {
@@ -33,6 +45,18 @@ export async function PaginationExtract(
     return {
       value,
       transactions,
+    };
+  }
+  if (collection === "holders") {
+    const holders = await mc.evm.getAccountBalancesByTokenAddress(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      holders,
     };
   }
 }

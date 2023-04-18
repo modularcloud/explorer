@@ -10,16 +10,33 @@ export const PaginationTransform = {
   }: TransformInput<typeof PaginationExtract>): Promise<
     TransformOutput<typeof PaginationComponent>
   > => {
-    if (data?.transfers) {
+    if (data?.["account-transfers"]) {
       return {
         typeId: "pagination",
         data: {
           next: {
             network: metadata.network.id,
             type: "pagination",
-            query: `${data.value}:transfers:${data.transfers.nextToken}`,
+            query: `${data.value}:account-transfers:${data["account-transfers"].nextToken}`,
           },
-          values: data.transfers.events.map((transfer) => ({
+          values: data["account-transfers"].events.map((transfer) => ({
+            network: metadata.network.id,
+            type: "transfer",
+            query: `${transfer.transactionHash}:${transfer.logIndex}`,
+          })),
+        },
+      };
+    }
+    if (data?.["token-transfers"]) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: {
+            network: metadata.network.id,
+            type: "pagination",
+            query: `${data.value}:token-transfers:${data["token-transfers"].nextToken}`,
+          },
+          values: data["token-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
             type: "transfer",
             query: `${transfer.transactionHash}:${transfer.logIndex}`,
@@ -40,6 +57,23 @@ export const PaginationTransform = {
             network: metadata.network.id,
             type: "transaction",
             query: transaction.hash,
+          })),
+        },
+      };
+    }
+    if (data?.holders) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: {
+            network: metadata.network.id,
+            type: "pagination",
+            query: `${data.value}:holders:${data.holders.nextToken}`,
+          },
+          values: data.holders.accountBalances.map((holder) => ({
+            network: metadata.network.id,
+            type: "holder",
+            query: `${holder.accountAddress}:${data.value}:${holder.balance}`,
           })),
         },
       };

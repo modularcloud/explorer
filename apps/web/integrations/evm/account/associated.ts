@@ -25,7 +25,7 @@ export const AssociatedTransform = {
         value: {
           network: metadata.network.id,
           type: "pagination",
-          query: `${data.address}:transfers`,
+          query: `${data.address}:account-transfers`,
         },
       },
     },

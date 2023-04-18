@@ -32,6 +32,12 @@ export const HolderSchema = z.object({
 });
 export type Holder = z.infer<typeof HolderSchema>;
 
+export const HolderResponseSchema = z.object({
+  accountBalances: HolderSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type HolderResponse = z.infer<typeof HolderResponseSchema>;
+
 export const EventSchema = z.object({
   eventType: z.string(),
   transactionHash: z.string(),

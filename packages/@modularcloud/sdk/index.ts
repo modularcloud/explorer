@@ -1,14 +1,14 @@
 import {
   TokenBalance,
   Token,
-  Holder,
   TokenBalanceSchema,
   TokenSchema,
-  HolderSchema,
   EventResponse,
   TxResponse,
   EventResponseSchema,
   TxResponseSchema,
+  HolderResponseSchema,
+  HolderResponse,
 } from "./schemas";
 
 declare global {
@@ -39,7 +39,7 @@ export interface ModularCloud {
       address: string,
       maxResults?: number,
       nextToken?: string
-    ) => Promise<Holder[]>;
+    ) => Promise<HolderResponse>;
     getTransactionsByAddress: (
       networkId: string,
       address: string,
@@ -126,7 +126,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         }
 
         const json = (await response.json()) as APIResponse;
-        return TokenSchema.parse(json.result);
+        return TokenSchema.parse(json.result.token);
       },
       getAccountBalancesByTokenAddress: async (
         networkId: string,
@@ -143,7 +143,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         }
 
         const json = (await response.json()) as APIResponse;
-        return HolderSchema.array().parse(json.result);
+        return HolderResponseSchema.parse(json.result);
       },
       getTransactionsByAddress: async (
         networkId: string,
