@@ -62,8 +62,8 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Dev: [
             {
-              displayName: "Ethereum",
-              id: "ethereum",
+              displayName: "Triton",
+              id: "triton",
             },
           ],
         },
