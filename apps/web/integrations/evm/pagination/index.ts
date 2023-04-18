@@ -24,7 +24,7 @@ export async function PaginationExtract(
     };
   }
   if (collection === "token-transfers") {
-    const transfers = await mc.evm.getEventsByAccountAddress(
+    const transfers = await mc.evm.getEventsByTokenAddress(
       metadata.network.id,
       value,
       30,
