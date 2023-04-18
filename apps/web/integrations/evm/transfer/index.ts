@@ -1,4 +1,5 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
+import { createModularCloud } from "@modularcloud/sdk";
 import Web3 from "web3";
 import { z } from "zod";
 import { CardTransform } from "./card";
@@ -22,15 +23,19 @@ export async function TransferExtract(
   ) {
     throw new Error("Transfer not found");
   }
-
   const blockNumber = receipt.blockNumber;
-  const block = await web3.eth.getBlock(blockNumber);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
+  const [token, block] = await Promise.all([
+    mc.evm.getTokenByAddress(metadata.network.id, log.address),
+    web3.eth.getBlock(blockNumber),
+  ]);
   const timestamp = block.timestamp;
 
   return {
     ...log,
     timestamp,
     blockNumber,
+    token,
   };
 }
 

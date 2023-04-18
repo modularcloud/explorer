@@ -1,4 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import Decimal from "decimal.js";
 import Web3 from "web3";
 import { TransferExtract } from ".";
 import { RowComponent } from "../../../ecs/components/row";
@@ -48,11 +49,22 @@ export const RowTransform = {
           cell: {
             type: "longval",
             payload: {
-              value: Web3.utils.fromWei(data.data),
+              value: new Decimal(data.data)
+                .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
+                .toString(),
               maxLength: 20,
               stepDown: 4,
               strategy: "end",
             },
+          },
+        },
+        {
+          column: {
+            columnLabel: "Token",
+          },
+          cell: {
+            type: "standard",
+            payload: data.token.symbol,
           },
         },
         {

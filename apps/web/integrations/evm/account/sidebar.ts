@@ -1,8 +1,8 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import Decimal from "decimal.js";
 import { AccountExtract } from ".";
 import { SidebarComponent } from "../../../ecs/components/sidebar";
 import { Value } from "../../../schemas/value";
-
 
 export const SidebarTransform = {
   schema: SidebarComponent,
@@ -16,8 +16,10 @@ export const SidebarTransform = {
     for (const balance of data.balances) {
       balances[balance.token.name] = {
         type: "standard",
-        payload: balance.balance,
-      }
+        payload: new Decimal(balance.balance)
+          .dividedBy(new Decimal(10).pow(String(balance.token.decimals)))
+          .toString(),
+      };
     }
     return {
       typeId: "sidebar",

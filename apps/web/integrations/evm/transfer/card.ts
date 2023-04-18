@@ -1,6 +1,8 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import Decimal from "decimal.js";
 import { TransferExtract } from ".";
 import { CardComponent } from "../../../ecs/components/card";
+import { decodeEvmAddressParam } from "../../../lib/utils";
 
 export const CardTransform = {
   schema: CardComponent,
@@ -22,15 +24,18 @@ export const CardTransform = {
       attributes: {
         From: {
           type: "standard",
-          payload: data.topics[1],
+          payload: decodeEvmAddressParam(data.topics[1]),
         },
         To: {
           type: "standard",
-          payload: data.topics[2],
+          payload: decodeEvmAddressParam(data.topics[2]),
         },
         Value: {
           type: "standard",
-          payload: data.data,
+          payload:
+            new Decimal(data.data)
+              .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
+              .toString() + ` ${data.token.symbol}`,
         },
         "Block Number": {
           type: "standard",

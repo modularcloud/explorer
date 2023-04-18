@@ -1,4 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import Decimal from "decimal.js";
 import { HolderExtract } from ".";
 import { RowComponent } from "../../../ecs/components/row";
 
@@ -30,8 +31,15 @@ export const RowTransform = {
             columnLabel: "Balance",
           },
           cell: {
-            type: "standard",
-            payload: data.balance,
+            type: "longval",
+            payload: {
+              value: new Decimal(data.balance)
+                .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
+                .toString(),
+              maxLength: 30,
+              stepDown: 5,
+              strategy: "end",
+            },
           },
         },
       ],

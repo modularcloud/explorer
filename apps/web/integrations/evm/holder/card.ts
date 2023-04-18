@@ -1,4 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import Decimal from "decimal.js";
 import { HolderExtract } from ".";
 import { CardComponent } from "../../../ecs/components/card";
 
@@ -26,7 +27,10 @@ export const CardTransform = {
         },
         Balance: {
           type: "standard",
-          payload: data.balance,
+          payload:
+            new Decimal(data.balance)
+              .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
+              .toString() + ` ${data.token.symbol}`,
         },
       },
     },
