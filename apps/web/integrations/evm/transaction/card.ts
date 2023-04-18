@@ -14,6 +14,11 @@ export const CardTransform = {
     data: {
       titleBar: "Transaction",
       badge: data.hash,
+      link: {
+        network: metadata.network.id,
+        type: "transaction",
+        query: data.hash,
+      },
       attributes: {
         Network: {
           type: "standard",

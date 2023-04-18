@@ -16,9 +16,15 @@ export function FeedEntry({ entity }: Props) {
       </div>
       <div className="py-2 px-4">
         <div className="pt-2 pb-4">
-          <Link href={`#`}>
-            <Badge icon={true} long={true} text={card.badge} />
-          </Link>
+          {card.link ? (
+            <Link href={`/${card.link.network}/${card.link.type}/${card.link.query}`}>
+              <Badge icon={true} long={true} text={card.badge} />
+            </Link>
+          ) : (
+            <div>
+              <Badge long={true} text={card.badge} />
+            </div>
+          )}
         </div>
         <KeyValueList type="card" attributes={card.attributes} />
       </div>

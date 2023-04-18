@@ -14,6 +14,11 @@ export const CardTransform = {
     data: {
       titleBar: "Event",
       badge: "ERC20 Transfer",
+      link: {
+        network: metadata.network.id,
+        type: "transaction",
+        query: data.blockHash,
+      },
       attributes: {
         From: {
           type: "standard",
