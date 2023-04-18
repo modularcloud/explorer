@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../lib/utils";
-import { Badge } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
+import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
 
 const DEFAULT_VIEW_PATH = ["table"];
 

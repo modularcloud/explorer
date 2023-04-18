@@ -1,6 +1,6 @@
 import { ViewSwitcher } from "../view-switcher";
-import { MobileActions } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/mobile-actions";
-import { Search } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/search";
+import { MobileActions } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/mobile-actions";
+import { Search } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/search";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
 import { RightPanel } from "../right-panel";
 import Link from "next/link";

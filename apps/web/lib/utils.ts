@@ -54,19 +54,21 @@ export type OptionGroups = {
 export type Whitelabel = {
   name: [string] | [string, string];
   searchOptions: OptionGroups;
+  defaultNetwork: string;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
     case "nautilus":
       return {
         searchOptions: {
-          Dev: [
+          Nautilus: [
             {
               displayName: "Triton",
               id: "triton",
             },
           ],
         },
+        defaultNetwork: "triton",
         name: ["Naut", "Scan"],
       };
     case "celestia":
@@ -79,6 +81,7 @@ export function getWhitelabel(): Whitelabel {
             },
           ],
         },
+        defaultNetwork: "ethereum",
         name: ["Celestia", "Scan"],
       };
     case "dymension":
@@ -91,6 +94,7 @@ export function getWhitelabel(): Whitelabel {
             },
           ],
         },
+        defaultNetwork: "ethereum",
         name: ["Dym", "Scan"],
       };
     default:
@@ -103,6 +107,7 @@ export function getWhitelabel(): Whitelabel {
             },
           ],
         },
+        defaultNetwork: "ethereum",
         name: ["Modular", "Cloud"],
       };
   }

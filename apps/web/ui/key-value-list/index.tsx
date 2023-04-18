@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Status } from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
+import { Status } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
 import { Value } from "../../schemas/value";
 
 interface Props {

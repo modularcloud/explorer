@@ -5,7 +5,7 @@ import {
   RightSidebarOff,
   SearchOff,
 } from "@modularcloud/design-system";
-import { OptionGroups } from "../../../../../../lib/utils";
+import { OptionGroups } from "../../../../../../../lib/utils";
 import { Search } from "./search";
 
 type Props = {

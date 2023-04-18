@@ -1,7 +1,7 @@
-import SvgGreenTick from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/GreenTick";
-import SvgRedCross from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/RedCross";
-import { Badge } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/badge";
-import { Status } from "../../../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/status";
+import SvgGreenTick from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/GreenTick";
+import SvgRedCross from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/RedCross";
+import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
+import { Status } from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
 import { Cell } from "../../../../ecs/components/row";
 import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";

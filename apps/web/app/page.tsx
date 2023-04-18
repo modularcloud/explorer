@@ -1,7 +1,7 @@
 import { getWhitelabel } from "../lib/utils";
 import { BigLogo } from "../ui/big-logo";
 import { Footer } from "../ui/footer";
-import { Search } from "./[network]/[type]/[query]/[[...viewPath]]/(components)/search";
+import { Search } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/search";
 
 export default async function HomePage() {
   const whitelabel = await getWhitelabel();

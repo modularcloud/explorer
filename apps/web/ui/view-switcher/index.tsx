@@ -2,10 +2,10 @@
 
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Separator from "@radix-ui/react-separator";
-import ListViewOn from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/ListViewOn";
-import ListViewOff from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/ListViewOff";
-import CardOn from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/CardOn";
-import CardOff from "../../app/[network]/[type]/[query]/[[...viewPath]]/(components)/(icons)/CardOff";
+import ListViewOn from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ListViewOn";
+import ListViewOff from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ListViewOff";
+import CardOn from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/CardOn";
+import CardOff from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/CardOff";
 import { useContext } from "react";
 import {
   AssociatedViewContext,

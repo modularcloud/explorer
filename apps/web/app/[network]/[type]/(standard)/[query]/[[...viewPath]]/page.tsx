@@ -1,19 +1,19 @@
-import { PageArchetype } from "../../../../../ecs/archetypes/page";
-import { PaginationArchetype } from "../../../../../ecs/archetypes/pagination";
-import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, slugify } from "../../../../../lib/utils";
-import { InfiniteLoader } from "../../../../../ui/associated/infinite-loader";
-import { AssociatedList } from "../../../../../ui/associated/list";
-import { ServerAssociatedEntry } from "../../../../../ui/associated/entry/server";
-import { InfiniteLoaderEntries } from "../../../../../ui/associated/infinite-loader/entries";
+import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { PaginationArchetype } from "../../../../../../ecs/archetypes/pagination";
+import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
+import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
+import { InfiniteLoader } from "../../../../../../ui/associated/infinite-loader";
+import { AssociatedList } from "../../../../../../ui/associated/list";
+import { ServerAssociatedEntry } from "../../../../../../ui/associated/entry/server";
+import { InfiniteLoaderEntries } from "../../../../../../ui/associated/infinite-loader/entries";
 import { Suspense } from "react";
-import { AssociatedEntryLoadingFallback } from "../../../../../ui/associated/entry/loading";
-import { TableHeader } from "../../../../../ui/associated/list/table/header";
-import { TableHeaderLoadingFallback } from "../../../../../ui/associated/list/table/header/loading";
+import { AssociatedEntryLoadingFallback } from "../../../../../../ui/associated/entry/loading";
+import { TableHeader } from "../../../../../../ui/associated/list/table/header";
+import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
 
 type Props = {
   params: FetchLoadArgs & {
-    viewPath: string[];
+    viewPath?: string[];
   };
 };
 

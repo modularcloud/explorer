@@ -1,13 +1,13 @@
 import React, { Suspense } from "react";
-import { Header } from "../../../../../ui/header";
-import { RightPanel } from "../../../../../ui/right-panel";
-import { FetchLoadArgs } from "../../../../../lib/utils";
-import { Tabs } from "../../../../../ui/tabs";
-import { AssociatedViewContextProvider } from "../../../../../ui/associated/context";
+import { Header } from "../../../../../../ui/header";
+import { RightPanel } from "../../../../../../ui/right-panel";
+import { FetchLoadArgs } from "../../../../../../lib/utils";
+import { Tabs } from "../../../../../../ui/tabs";
+import { AssociatedViewContextProvider } from "../../../../../../ui/associated/context";
 
 type Props = {
   params: FetchLoadArgs & {
-    viewPath: string[];
+    viewPath?: string[];
   };
   children: React.ReactNode;
 };
