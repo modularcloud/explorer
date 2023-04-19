@@ -106,13 +106,13 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Dev: [
             {
-              displayName: "Ethereum",
-              id: "ethereum",
+              displayName: "Saga",
+              id: "saga",
             },
           ],
         },
-        defaultNetwork: "ethereum",
-        name: ["Modular", "Cloud"],
+        defaultNetwork: "saga",
+        name: ["Saga", "Scan"],
         env: "default",
       };
   }
