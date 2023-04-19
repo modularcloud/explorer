@@ -23,7 +23,7 @@ function TableEntryFallback() {
         {/** For spacing purposes */}
       </td>
       <td className="h-12">Loading...</td>
-      <td aria-hidden={true} className="p-2">
+      <td aria-hidden={true} className="p-2" colSpan={100}>
         {/** For spacing purposes */}
       </td>
     </tr>
