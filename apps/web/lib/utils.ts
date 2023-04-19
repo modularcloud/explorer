@@ -55,6 +55,7 @@ export type Whitelabel = {
   name: [string] | [string, string];
   searchOptions: OptionGroups;
   defaultNetwork: string;
+  env: string;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
@@ -70,6 +71,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
+        env: "nautilus",
       };
     case "celestia":
       return {
@@ -83,6 +85,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "ethereum",
         name: ["Celestia", "Scan"],
+        env: "celestia",
       };
     case "dymension":
       return {
@@ -96,6 +99,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "ethereum",
         name: ["Dym", "Scan"],
+        env: "dymension",
       };
     default:
       return {
@@ -109,6 +113,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "ethereum",
         name: ["Modular", "Cloud"],
+        env: "default",
       };
   }
 }
