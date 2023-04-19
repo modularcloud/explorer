@@ -71,7 +71,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
     evm: {
       getTokenBalancesByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/token-balances/${address}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/token-balances/${address.toLowerCase()}`
         );
 
         if (!response.ok) {
@@ -90,7 +90,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string
       ) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/token-events/${address}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/token-events/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
         );
 
         if (!response.ok) {
@@ -107,7 +107,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string
       ) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/account-events/${address}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/account-events/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
         );
 
         if (!response.ok) {
@@ -119,7 +119,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       },
       getTokenByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/token/${address}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/token/${address.toLowerCase()}`
         );
 
         if (!response.ok) {
@@ -136,7 +136,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string
       ) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/holder-balances/${address}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/holder-balances/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
         );
 
         if (!response.ok) {
@@ -153,7 +153,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string
       ) => {
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(networkId)}/transactions/${address}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
+          `${baseUrl}/${normalizeNetworkId(networkId)}/transactions/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ''}`
         );
 
         if (!response.ok) {
