@@ -1,7 +1,7 @@
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
 import { PaginationArchetype } from "../../../../../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, slugify } from "../../../../../../lib/utils";
+import { FetchLoadArgs, getWhitelabel, slugify } from "../../../../../../lib/utils";
 import { InfiniteLoader } from "../../../../../../ui/associated/infinite-loader";
 import { AssociatedList } from "../../../../../../ui/associated/list";
 import { ServerAssociatedEntry } from "../../../../../../ui/associated/entry/server";
@@ -12,12 +12,48 @@ import { TableHeader } from "../../../../../../ui/associated/list/table/header";
 import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
 import { notFound } from "next/navigation";
 import AssociatedNotFound from "../../../../../../ui/associated/not-found";
+import { Metadata } from "next";
 
 type Props = {
   params: FetchLoadArgs & {
     viewPath?: string[];
   };
 };
+
+// TODO: add metadata component to page archetype
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const whitelabel = getWhitelabel();
+  const { viewPath = [], ...resourcePath } = params;
+  const [selection] = viewPath;
+
+  const entity = await asyncUseEntity({
+    resourcePath,
+    archetype: PageArchetype,
+  });
+  if (!entity) return {
+    title: `Not Found - ${whitelabel.name.join("")}`
+  };
+
+  const associated = entity.components.associated.data;
+  const labels = Object.keys(associated);
+
+  const label =
+    labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels[0];
+
+  const id = entity.components.sidebar.data.entityId;
+
+  const title = `${entity.components.sidebar.data.entityTypeName} (${id.length > 9 ? id.slice(0,6) + "..." : id}) - ${whitelabel.name.join("")}`
+
+  if(selection) {
+    return {
+      title: `${label} - ${title}`,
+    }
+  }
+  return {
+    title
+  }
+}
 
 export default async function EntityPage({ params }: Props) {
   const { viewPath = [], ...resourcePath } = params;
