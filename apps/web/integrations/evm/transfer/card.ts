@@ -19,7 +19,7 @@ export const CardTransform = {
       link: {
         network: metadata.network.id,
         type: "transaction",
-        query: data.blockHash,
+        query: data.transactionHash,
       },
       attributes: {
         From: {

@@ -83,7 +83,7 @@ export const RowTransform = {
       link: {
         network: metadata.network.id,
         type: "transaction",
-        query: data.blockHash,
+        query: data.transactionHash,
       },
     },
   }),
