@@ -5,6 +5,7 @@ import { FetchLoadArgs } from "../../../../../../lib/utils";
 import { Tabs } from "../../../../../../ui/tabs";
 import { AssociatedViewContextProvider } from "../../../../../../ui/associated/context";
 import { TopBar } from "../../../../../../ui/top-bar";
+import { RightPanelLoadingFallback } from "../../../../../../ui/right-panel/loading";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -30,11 +31,13 @@ export default async function EntityLayout({ params, children }: Props) {
             </Suspense>
           </div>
         </div>
-        {/* @ts-expect-error Async Server Component */}
-        <RightPanel
-          className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
-          resourcePath={resourcePath}
-        />
+        <Suspense fallback={<RightPanelLoadingFallback />}>
+          {/* @ts-expect-error Async Server Component */}
+          <RightPanel
+            className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+            resourcePath={resourcePath}
+          />
+        </Suspense>
       </div>
     </AssociatedViewContextProvider>
   );

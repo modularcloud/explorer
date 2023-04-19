@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { Suspense } from "react";
 import { FetchLoadArgs } from "../../lib/utils";
 import { EntityDetails } from "./entity-details";
 import { KeyValueList } from "../key-value-list";
@@ -11,7 +10,7 @@ interface Props {
   resourcePath: FetchLoadArgs;
 }
 
-async function RightPanelContent({ resourcePath }: Props) {
+export async function RightPanel({ resourcePath, className }: Props) {
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
@@ -20,7 +19,12 @@ async function RightPanelContent({ resourcePath }: Props) {
   const { attributes, logo, entityTypeName, entityId } =
     entity.components.sidebar.data;
   return (
-    <>
+    <div
+      className={clsx(
+        "h-full lg:h-screen flex flex-col space-y-10 px-6 py-7 lg:px-5 sm:px-9 bg-gray-100 shadow-inner overflow-auto scrollbar-thin scrollbar-thumb-mid-dark-500 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full",
+        className
+      )}
+    >
       <EntityDetails
         imageUrl={logo}
         label={entityTypeName}
@@ -28,22 +32,6 @@ async function RightPanelContent({ resourcePath }: Props) {
         alt={resourcePath.network}
       />
       <KeyValueList attributes={attributes} type="sidebar" />
-    </>
-  );
-}
-
-export async function RightPanel({ resourcePath, className }: Props) {
-  return (
-    <div
-      className={clsx(
-        "h-full lg:h-screen flex flex-col space-y-10 px-6 py-7 lg:px-5 sm:px-9 bg-gray-100 shadow-inner overflow-auto scrollbar-thin scrollbar-thumb-mid-dark-500 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full",
-        className
-      )}
-    >
-      <Suspense fallback={<div>Loading...</div>}>
-        {/* @ts-expect-error Async Server Component */}
-        <RightPanelContent resourcePath={resourcePath} />
-      </Suspense>
     </div>
   );
 }

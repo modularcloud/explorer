@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { AssociatedEntryLoadingFallback } from "../../../../../../ui/associated/entry/loading";
 import { TableHeader } from "../../../../../../ui/associated/list/table/header";
 import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -25,7 +26,7 @@ export default async function EntityPage({ params }: Props) {
     resourcePath,
     archetype: PageArchetype,
   });
-  if (!entity) return null;
+  if (!entity) notFound();
 
   const associated = entity.components.associated.data;
   const labels = Object.keys(associated);
