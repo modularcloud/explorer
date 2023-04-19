@@ -12,4 +12,6 @@ assignees: ""
 
 # URL / Steps to reproduce
 
+# Expected behavior
+
 # Notes
