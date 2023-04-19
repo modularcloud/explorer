@@ -13,7 +13,16 @@ export const SidebarTransform = {
     TransformOutput<typeof SidebarComponent>
   > => {
     const balances: Record<string, Value> = {};
-    for (const balance of data.balances) {
+    if (data.balances.nativeTokenBalance) {
+      balances[metadata.network.nativeToken] = {
+        type: "standard",
+        // from wei
+        payload: new Decimal(data.balances.nativeTokenBalance)
+          .dividedBy(new Decimal(10).pow(18))
+          .toString(),
+      };
+    }
+    for (const balance of data.balances.balances ?? []) {
       balances[balance.token.name] = {
         type: "standard",
         payload: new Decimal(balance.balance)

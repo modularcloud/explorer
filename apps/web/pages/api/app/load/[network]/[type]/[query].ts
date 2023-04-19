@@ -10,24 +10,26 @@ export default async function handler(
 ) {
   const whitelabel = getWhitelabel();
   let config: EngineConfig;
-  if(whitelabel.env === "nautilus") {
+  if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
       network: {
         id: "triton",
         displayName: "Triton",
+        nativeToken: "ZBC",
         logoUrl:
           "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
       },
     });
     Engine.addConfig("triton", config);
-  }
-  else {
+  } else {
     config = CreateEVMConfig({
-      endpoint: "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+      endpoint:
+        "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
       network: {
         id: "saga",
         displayName: "Saga",
+        nativeToken: "ETH",
         logoUrl:
           "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
       },

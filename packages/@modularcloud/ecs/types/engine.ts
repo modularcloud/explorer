@@ -7,6 +7,7 @@ export type EngineConfig = {
       id: string;
       displayName: string;
       logoUrl: string;
+      nativeToken: string;
     };
   };
   loaders: Loaders;
