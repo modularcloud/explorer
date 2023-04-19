@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FetchLoadArgs } from "../../../../lib/utils";
@@ -27,7 +28,7 @@ export function ClickableRow({ resourcePath, children }: Props) {
   return (
     <tr
       onClick={onClick}
-      className="border-b border-b-[#F0F0F1] hover:bg-[#08061505] cursor-pointer"
+      className={clsx("border-b border-b-[#F0F0F1] hover:bg-[#08061505]", resourcePath && "cursor-pointer")}
     >
       {children}
     </tr>
