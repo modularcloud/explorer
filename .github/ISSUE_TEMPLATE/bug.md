@@ -8,6 +8,8 @@ assignees: ""
 
 # Description
 
-# Screenshot
+# Screenshot / Video
 
 # URL / Steps to reproduce
+
+# Notes
