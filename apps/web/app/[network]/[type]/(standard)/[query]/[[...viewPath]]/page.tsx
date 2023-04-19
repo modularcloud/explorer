@@ -11,6 +11,7 @@ import { AssociatedEntryLoadingFallback } from "../../../../../../ui/associated/
 import { TableHeader } from "../../../../../../ui/associated/list/table/header";
 import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
 import { notFound } from "next/navigation";
+import AssociatedNotFound from "../../../../../../ui/associated/not-found";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -50,6 +51,16 @@ export default async function EntityPage({ params }: Props) {
       values = pagination.components.pagination.data.values;
       next = pagination.components.pagination.data.next;
     }
+  }
+
+  if (values.length === 0) {
+    // using the sidebar component is bad practice, but just doing this until this component is refactored
+    return (
+      <AssociatedNotFound
+        primaryTypeSingular={entity.components.sidebar.data.entityTypeName}
+        secondaryTypePlural={label}
+      />
+    );
   }
 
   return (
