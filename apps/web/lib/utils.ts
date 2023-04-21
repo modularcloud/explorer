@@ -55,6 +55,7 @@ export type Whitelabel = {
   name: [string] | [string, string];
   searchOptions: OptionGroups;
   defaultNetwork: string;
+  subText?: string;
   env: string;
 };
 export function getWhitelabel(): Whitelabel {
@@ -72,6 +73,21 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
         env: "nautilus",
+      };
+    case "worlds":
+      return {
+        searchOptions: {
+          Worlds: [
+            {
+              displayName: "Worlds",
+              id: "worlds",
+            },
+          ],
+        },
+        defaultNetwork: "worlds",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "worlds",
       };
     case "celestia":
       return {

@@ -22,6 +22,18 @@ export default async function handler(
       },
     });
     Engine.addConfig("triton", config);
+  } else if (whitelabel.env === "worlds") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+      network: {
+        id: "worlds",
+        displayName: "Worlds",
+        nativeToken: "ETH",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("worlds", config);
   } else {
     config = CreateEVMConfig({
       endpoint:
