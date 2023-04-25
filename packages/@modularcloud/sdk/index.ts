@@ -33,6 +33,13 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<EventResponse>;
+    // TODO: combine this with the above
+    getNFTEventsByAccountAddress: (
+      networkId: string,
+      address: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<EventResponse>;
     getTokenByAddress: (networkId: string, address: string) => Promise<Token>;
     getAccountBalancesByTokenAddress: (
       networkId: string,
@@ -116,6 +123,28 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
           `${baseUrl}/${normalizeNetworkId(
             networkId
           )}/account-events/${address.toLowerCase()}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return EventResponseSchema.parse(json.result);
+      },
+      getNFTEventsByAccountAddress: async (
+        networkId: string,
+        address: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        // temporarily endpoint
+        const response = await fetch(
+          `https://f9qono5vdi.execute-api.us-west-2.amazonaws.com/prod/${normalizeNetworkId(
+            networkId
+          )}/account-events/${address.toLowerCase()}?eventType=NFTTransfer&maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );

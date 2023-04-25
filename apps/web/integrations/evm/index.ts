@@ -3,6 +3,7 @@ import { AccountLoader } from "./account";
 import { BlockLoader } from "./block";
 import { HolderLoader } from "./holder";
 import { LogLoader } from "./log";
+import { NFTTransferLoader } from "./nft-transfer";
 import { PaginationLoader } from "./pagination";
 import { TokenLoader } from "./token";
 import { TransactionLoader } from "./transaction";
@@ -20,6 +21,7 @@ export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
       transfer: TransferLoader,
       token: TokenLoader,
       holder: HolderLoader,
+      "nft-transfer": NFTTransferLoader,
     },
   };
 }

@@ -29,6 +29,25 @@ export const PaginationTransform = {
         },
       };
     }
+    if (data?.["account-nft-transfers"]) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: data["account-nft-transfers"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:account-transfers:${data["account-nft-transfers"].nextToken}`,
+              }
+            : undefined,
+          values: data["account-nft-transfers"].events.map((transfer) => ({
+            network: metadata.network.id,
+            type: "nft-transfer",
+            query: `${transfer.transactionHash}:${transfer.logIndex}`,
+          })),
+        },
+      };
+    }
     if (data?.["token-transfers"]) {
       return {
         typeId: "pagination",

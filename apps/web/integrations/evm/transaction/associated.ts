@@ -14,10 +14,10 @@ export const AssociatedTransform = {
     data: {
       Logs: {
         type: "static",
-        values: data.receipt.logs.map((log, index) => ({
+        values: data.receipt.logs.map((log) => ({
           network: metadata.network.id,
           type: "log",
-          query: `${data.hash}:${index}`,
+          query: `${data.hash}:${log.logIndex}`,
         })),
       },
     },

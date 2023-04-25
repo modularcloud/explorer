@@ -20,12 +20,20 @@ export const AssociatedTransform = {
           query: `${data.address}:transactions`,
         },
       },
-      Transfers: {
+      "ERC20 Transfers": {
         type: "paginated",
         value: {
           network: metadata.network.id,
           type: "pagination",
           query: `${data.address}:account-transfers`,
+        },
+      },
+      "NFT Transfers": {
+        type: "paginated",
+        value: {
+          network: metadata.network.id,
+          type: "pagination",
+          query: `${data.address}:account-nft-transfers`,
         },
       },
     },

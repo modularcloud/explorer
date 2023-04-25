@@ -23,6 +23,18 @@ export async function PaginationExtract(
       "account-transfers": transfers,
     };
   }
+  if (collection === "account-nft-transfers") {
+    const transfers = await mc.evm.getNFTEventsByAccountAddress(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      "account-nft-transfers": transfers,
+    };
+  }
   if (collection === "token-transfers") {
     const transfers = await mc.evm.getEventsByTokenAddress(
       metadata.network.id,
