@@ -57,6 +57,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   triton: "eclipse/91002",
   saga: "sg/1",
   worlds: "ep/3",
+  "evm-rollapp": "dym/rollapp1",
 };
 
 function normalizeNetworkId(networkId: string) {

@@ -106,14 +106,14 @@ export function getWhitelabel(): Whitelabel {
     case "dymension":
       return {
         searchOptions: {
-          Dev: [
+          Dymension: [
             {
-              displayName: "Ethereum",
-              id: "ethereum",
+              displayName: "EVM RollApp",
+              id: "evm-rollapp",
             },
           ],
         },
-        defaultNetwork: "ethereum",
+        defaultNetwork: "evm-rollapp",
         name: ["Dym", "Scan"],
         env: "dymension",
       };
