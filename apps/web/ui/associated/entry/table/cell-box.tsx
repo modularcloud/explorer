@@ -5,6 +5,7 @@ import { Status } from "../../../../app/[network]/[type]/(standard)/[query]/[[..
 import { Cell } from "../../../../ecs/components/row";
 import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";
+import Image from "next/image";
 
 export function CellBox({ value }: { value: Cell }) {
   if (value.type === "badge") {
@@ -38,9 +39,28 @@ export function CellBox({ value }: { value: Cell }) {
     return (
       <div className="whitespace-nowrap flex flex-nowrap">
         {value.payload.number}
-        <CompactDate classes="pl-1 before:content-['('] after:content-[')'] hidden md:block" datetime={value.payload.timestamp} />
+        <CompactDate
+          classes="pl-1 before:content-['('] after:content-[')'] hidden md:block"
+          datetime={value.payload.timestamp}
+        />
       </div>
     );
+  }
+  if (value.type === "image") {
+    return (
+      <Image
+        src="/images/placeholder-square.jpg"
+        alt="Placeholder"
+        width={value.payload.width}
+        height={value.payload.height}
+      />
+    );
+    // <Image
+    //   src={value.payload.src}
+    //   alt={value.payload.alt}
+    //   width={value.payload.width}
+    //   height={value.payload.height}
+    //   />
   }
   return null;
 }

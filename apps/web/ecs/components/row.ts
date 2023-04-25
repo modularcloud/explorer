@@ -40,6 +40,15 @@ const CellSchema = z.discriminatedUnion("type", [
       timestamp: z.number(),
     }),
   }),
+  z.object({
+    type: z.literal("image"),
+    payload: z.object({
+      src: z.string(),
+      alt: z.string(),
+      height: z.number(),
+      width: z.number(),
+    }),
+  }),
 ]);
 
 const ColumnSchema = z.object({

@@ -71,6 +71,20 @@ export const RowTransform = {
             payload: Number(data.topics[3]),
           },
         },
+        {
+          column: {
+            columnLabel: "Image",
+          },
+          cell: {
+            type: "image",
+            payload: {
+              src: "placeholder",
+              alt: "placeholder",
+              height: 24,
+              width: 24,
+            },
+          },
+        },
       ],
       link: {
         network: metadata.network.id,
