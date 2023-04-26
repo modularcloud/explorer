@@ -36,6 +36,14 @@ export const AssociatedTransform = {
           query: `${data.address}:account-nft-transfers`,
         },
       },
+      Inventory: {
+        type: "static",
+        values: data.nfts.map((_, index) => ({
+          network: metadata.network.id,
+          type: "inventory",
+          query: `${data.address}:${index}`,
+        })),
+      },
     },
   }),
 };

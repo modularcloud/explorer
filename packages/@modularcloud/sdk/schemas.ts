@@ -32,6 +32,23 @@ export const TokenBalanceResponseSchema = z.object({
 });
 export type TokenBalanceResponse = z.infer<typeof TokenBalanceResponseSchema>;
 
+export const NFTBalanceSchema = z.object({
+  tokenType: z.enum(["ERC721", "ERC1155"]),
+  balance: z.object({
+    token: z.object({
+      address: z.string(),
+      name: z.string().optional(),
+      symbol: z.string().optional(),
+    }),
+    balance: z.object({
+      tokenId: z.string(),
+      tokenUri: z.string(),
+      value: z.string().optional(),
+    }),
+  }),
+});
+export type NFTBalance = z.infer<typeof NFTBalanceSchema>;
+
 export const HolderSchema = z.object({
   accountAddress: z.string(),
   balance: z.string(),

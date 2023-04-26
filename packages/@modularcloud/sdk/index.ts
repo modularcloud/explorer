@@ -9,6 +9,8 @@ import {
   HolderResponse,
   TokenBalanceResponseSchema,
   TokenBalanceResponse,
+  NFTBalance,
+  NFTBalanceSchema,
 } from "./schemas";
 
 declare global {
@@ -21,6 +23,13 @@ export interface ModularCloud {
       networkId: string,
       address: string
     ) => Promise<TokenBalanceResponse>;
+    // TODO: combine this with the above
+    getNFTBalancesByAddress: (
+      networkId: string,
+      address: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<NFTBalance[]>;
     getEventsByTokenAddress: (
       networkId: string,
       address: string,
@@ -91,6 +100,26 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = (await response.json()) as APIResponse;
         return TokenBalanceResponseSchema.parse(json.result);
+      },
+      getNFTBalancesByAddress: async (networkId: string, address: string) => {
+        const response = await fetch(
+          `https://f9qono5vdi.execute-api.us-west-2.amazonaws.com/prod/${normalizeNetworkId(
+            networkId
+          )}/token-balances/${address.toLowerCase()}?tokenType=NFT`
+        );
+
+        if (!response.ok) {
+          return [];
+        }
+
+        const json = (await response.json()) as APIResponse;
+        if (!json.result || !json.result.balancesV2) {
+          return [];
+        }
+
+        return json.result.balancesV2.map((balance: any) => {
+          return NFTBalanceSchema.parse(balance);
+        });
       },
       getEventsByTokenAddress: async (
         networkId: string,

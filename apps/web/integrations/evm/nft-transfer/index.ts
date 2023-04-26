@@ -436,9 +436,7 @@ export async function NFTTransferExtract(
       .then((res) => {
         try {
           return MetadataSchema.parse(res);
-        } catch {
-          console.log(res)
-        }
+        } catch {}
       });
     return {
       type: "ERC721 Transfer",
