@@ -22,7 +22,7 @@ export const RowTransform = {
           cell: {
             type: "longval",
             payload: {
-              value: decodeEvmAddressParam(data.topics[1]),
+              value: data.from,
               maxLength: 30,
               stepDown: 6,
             },
@@ -35,7 +35,7 @@ export const RowTransform = {
           cell: {
             type: "longval",
             payload: {
-              value: decodeEvmAddressParam(data.topics[2]),
+              value: data.to,
               maxLength: 30,
               stepDown: 6,
             },
@@ -67,8 +67,17 @@ export const RowTransform = {
             columnLabel: "ID",
           },
           cell: {
-            type: "standard",
-            payload: Number(data.topics[3]),
+            type: "badge",
+            payload:
+              "id" in data
+                ? {
+                    text: `#${data.id}`,
+                  }
+                : {
+                    text: `#${data.ids[0]}`,
+                    extraCount:
+                      data.ids.length > 1 ? data.ids.length - 1 : undefined,
+                  },
           },
         },
         {
@@ -77,12 +86,14 @@ export const RowTransform = {
           },
           cell: {
             type: "image",
-            payload: {
-              src: "placeholder",
-              alt: "placeholder",
-              height: 24,
-              width: 24,
-            },
+            payload: data.metadata
+              ? {
+                  src: data.metadata.image,
+                  alt: data.metadata.description,
+                  height: 24,
+                  width: 24,
+                }
+              : undefined,
           },
         },
       ],

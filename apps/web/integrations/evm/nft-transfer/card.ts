@@ -24,11 +24,11 @@ export const CardTransform = {
       attributes: {
         From: {
           type: "standard",
-          payload: decodeEvmAddressParam(data.topics[1]),
+          payload: data.from,
         },
         To: {
           type: "standard",
-          payload: decodeEvmAddressParam(data.topics[2]),
+          payload: data.to,
         },
         ID: {
           type: "standard",

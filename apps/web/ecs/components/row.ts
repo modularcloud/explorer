@@ -42,12 +42,14 @@ const CellSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("image"),
-    payload: z.object({
-      src: z.string(),
-      alt: z.string(),
-      height: z.number(),
-      width: z.number(),
-    }),
+    payload: z
+      .object({
+        src: z.string(),
+        alt: z.string(),
+        height: z.number(),
+        width: z.number(),
+      })
+      .optional(),
   }),
 ]);
 

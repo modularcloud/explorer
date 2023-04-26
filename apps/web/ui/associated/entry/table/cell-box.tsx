@@ -47,20 +47,21 @@ export function CellBox({ value }: { value: Cell }) {
     );
   }
   if (value.type === "image") {
-    return (
+    return value.payload ? (
       <Image
-        src="/images/placeholder-square.jpg"
-        alt="Placeholder"
+        src={value.payload.src}
+        alt={value.payload.alt}
         width={value.payload.width}
         height={value.payload.height}
       />
+    ) : (
+      <Image
+        src="/images/placeholder-square.jpg"
+        alt="Image not found"
+        width="24"
+        height="24"
+      />
     );
-    // <Image
-    //   src={value.payload.src}
-    //   alt={value.payload.alt}
-    //   width={value.payload.width}
-    //   height={value.payload.height}
-    //   />
   }
   return null;
 }
