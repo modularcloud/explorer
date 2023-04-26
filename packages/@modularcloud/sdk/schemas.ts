@@ -27,7 +27,7 @@ export const TokenBalanceSchema = z.object({
 export type TokenBalance = z.infer<typeof TokenBalanceSchema>;
 
 export const TokenBalanceResponseSchema = z.object({
-  balances: TokenBalanceSchema.array().nullable(),
+  balances: TokenBalanceSchema.array().nullish(),
   nativeTokenBalance: z.number().optional(),
 });
 export type TokenBalanceResponse = z.infer<typeof TokenBalanceResponseSchema>;

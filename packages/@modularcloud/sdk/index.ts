@@ -73,7 +73,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   triton: "eclipse/91002",
   saga: "sg/1",
   worlds: "ep/3",
-  "evm-rollapp": "dym/rollapp1",
+  "evm-rollapp": "dym/2",
 };
 
 function normalizeNetworkId(networkId: string) {
@@ -95,7 +95,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch token balances");
+          throw new Error("Failed to fetch token balances!");
         }
 
         const json = (await response.json()) as APIResponse;
@@ -103,7 +103,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       },
       getNFTBalancesByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
-          `https://f9qono5vdi.execute-api.us-west-2.amazonaws.com/prod/${normalizeNetworkId(
+          `${baseUrl}/${normalizeNetworkId(
             networkId
           )}/token-balances/${address.toLowerCase()}?tokenType=NFT`
         );
@@ -169,9 +169,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         maxResults: number = 30,
         nextToken?: string
       ) => {
-        // temporarily endpoint
         const response = await fetch(
-          `https://f9qono5vdi.execute-api.us-west-2.amazonaws.com/prod/${normalizeNetworkId(
+          `${baseUrl}/${normalizeNetworkId(
             networkId
           )}/account-events/${address.toLowerCase()}?eventType=NFTTransfer&maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
