@@ -19,7 +19,7 @@ export const CardTransform = {
       link: {
         network: metadata.network.id,
         type: "transaction",
-        query: data.transactionHash,
+        query: data.log.transactionHash,
       },
       attributes: {
         From: {
@@ -32,7 +32,7 @@ export const CardTransform = {
         },
         ID: {
           type: "standard",
-          payload: Number(data.topics[3]),
+          payload: Number(data.log.topics[3]),
         },
         "Block Number": {
           type: "standard",
@@ -40,19 +40,19 @@ export const CardTransform = {
         },
         "Block Hash": {
           type: "standard",
-          payload: data.blockHash,
+          payload: data.log.blockHash,
         },
         "Transaction Index": {
           type: "standard",
-          payload: data.transactionIndex,
+          payload: data.log.transactionIndex,
         },
         "Transaction Hash": {
           type: "standard",
-          payload: data.transactionHash,
+          payload: data.log.transactionHash,
         },
         "Log Index": {
           type: "standard",
-          payload: data.logIndex,
+          payload: data.log.logIndex,
         },
       },
     },

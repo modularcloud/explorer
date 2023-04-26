@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
-  const hasExtra = extra > 1;
+  const hasExtra = extra > 0;
 
   return (
     <div

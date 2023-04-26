@@ -439,7 +439,7 @@ export async function NFTTransferExtract(
         } catch {}
       });
     return {
-      ...log,
+      log,
       timestamp,
       blockNumber,
       id,
@@ -502,7 +502,7 @@ export async function NFTTransferExtract(
         } catch {}
       });
     return {
-      ...log,
+      log,
       timestamp,
       blockNumber,
       id,
@@ -566,7 +566,7 @@ export async function NFTTransferExtract(
         } catch {}
       });
     return {
-      ...log,
+      log,
       timestamp,
       blockNumber,
       ids,

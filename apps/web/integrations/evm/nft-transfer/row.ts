@@ -100,7 +100,7 @@ export const RowTransform = {
       link: {
         network: metadata.network.id,
         type: "transaction",
-        query: data.transactionHash,
+        query: data.log.transactionHash,
       },
     },
   }),
