@@ -33,13 +33,13 @@ export const RemoteServiceResponseSchema = RemoteServiceRequestSchema.extend({
   rpcId: z.string(),
 }).array();
 
-type JSONRPCResponse<T> = {
+export type JSONRPCResponse<T> = {
   jsonrpc: string;
   id: number;
   result: T;
 };
 
-type ABCIResponse = {
+export type ABCIResponse = {
   response: {
     code: number;
     log: string;
@@ -53,7 +53,7 @@ type ABCIResponse = {
   };
 };
 
-type Block = {
+export type Block = {
   block_id: {
     hash: string;
     parts: {
@@ -120,7 +120,7 @@ type Block = {
   };
 };
 
-type Transaction = {
+export type Transaction = {
   hash: string;
   height: string;
   index: number;
@@ -144,7 +144,7 @@ type Transaction = {
   tx: string;
 };
 
-type TxSearch = {
+export type TxSearch = {
   txs: Transaction[];
   total_count: string;
 };

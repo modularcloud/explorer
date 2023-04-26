@@ -111,6 +111,14 @@ export function getWhitelabel(): Whitelabel {
               displayName: "EVM RollApp",
               id: "evm-rollapp",
             },
+            {
+              displayName: "RollApp X",
+              id: "rollappx",
+            },
+            {
+              displayName: "Hub",
+              id: "hub",
+            },
           ],
         },
         defaultNetwork: "evm-rollapp",

@@ -1,6 +1,7 @@
 import { Engine, EngineConfig, verifyArchetype } from "@modularcloud/ecs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
+import { CreateCosmosConfig } from "../../../../../../integrations/cosmos";
 import { CreateEVMConfig } from "../../../../../../integrations/evm";
 import { getWhitelabel } from "../../../../../../lib/utils";
 
@@ -46,6 +47,28 @@ export default async function handler(
       },
     });
     Engine.addConfig("evm-rollapp", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      network: {
+        id: "hub",
+        displayName: "Hub",
+        nativeToken: "DYM",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("hub", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      network: {
+        id: "rollappx",
+        displayName: "RollApp X",
+        nativeToken: "RAX",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("rollappx", config);
   } else {
     config = CreateEVMConfig({
       endpoint:
