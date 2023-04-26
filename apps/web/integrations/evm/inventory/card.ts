@@ -15,7 +15,7 @@ export const CardTransform = {
     typeId: "card",
     data: {
       titleBar: data.tokenType,
-      badge: data.balance.balance.tokenId,
+      badge: "#" + data.balance.balance.tokenId,
       // Right now we do not have a token page for NFTs
       // link: {
       //   network: metadata.network.id,

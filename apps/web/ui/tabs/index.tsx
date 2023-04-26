@@ -32,7 +32,7 @@ export async function Tabs({ params }: Props) {
     labels[0];
 
   return labels.length > 1 ? (
-    <div className="bg-gradient-to-t from-white to-transparent flex items-center fixed bottom-0 w-full gap-3 p-6 font-semibold">
+    <div className="bg-gradient-to-t from-white to-transparent flex items-center fixed bottom-0 w-screen gap-3 p-6 font-semibold overflow-x-scroll">
       {labels.map((label) => (
         <Link
           key={label}
