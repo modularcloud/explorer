@@ -14,8 +14,11 @@ export const CardTransform = {
   > => ({
     typeId: "card",
     data: {
-      titleBar: "Event",
-      badge: "ERC20 Transfer",
+      titleBar: "ERC20 Transfer",
+      badge:
+        new Decimal(data.data)
+          .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
+          .toString() + ` ${data.token.symbol}`,
       link: {
         network: metadata.network.id,
         type: "transaction",
@@ -29,13 +32,6 @@ export const CardTransform = {
         To: {
           type: "standard",
           payload: decodeEvmAddressParam(data.topics[2]),
-        },
-        Value: {
-          type: "standard",
-          payload:
-            new Decimal(data.data)
-              .dividedBy(new Decimal(10).pow(String(data.token.decimals)))
-              .toString() + ` ${data.token.symbol}`,
         },
         "Block Number": {
           type: "standard",

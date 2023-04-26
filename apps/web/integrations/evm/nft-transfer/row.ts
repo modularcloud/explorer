@@ -62,6 +62,16 @@ export const RowTransform = {
             },
           },
         },
+        // TODO: fix decimals
+        {
+          column: {
+            columnLabel: "Qty",
+          },
+          cell: {
+            type: "standard",
+            payload: data.value ?? data.values?.[0] ?? "1",
+          },
+        },
         {
           column: {
             columnLabel: "ID",
@@ -89,7 +99,7 @@ export const RowTransform = {
             payload: data.metadata
               ? {
                   src: data.metadata.image,
-                  alt: data.metadata.description,
+                  alt: data.metadata.description ?? data.metadata.name ?? "",
                   height: 24,
                   width: 24,
                 }

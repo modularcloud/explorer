@@ -7,8 +7,8 @@ import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 
 const MetadataSchema = z.object({
-  name: z.string(),
-  description: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
   image: z.string(),
   decimals: z.number().optional(),
   properties: z.any().optional(),
@@ -436,9 +436,12 @@ export async function NFTTransferExtract(
       .then((res) => {
         try {
           return MetadataSchema.parse(res);
-        } catch {}
+        } catch {
+          console.log(res)
+        }
       });
     return {
+      type: "ERC721 Transfer",
       log,
       timestamp,
       blockNumber,
@@ -450,7 +453,7 @@ export async function NFTTransferExtract(
   }
 
   if (topicMatches(eventSignature, ERC1155TransferSingleEventTopic)) {
-    const { from, to, id, amount } = web3.eth.abi.decodeLog(
+    const { from, to, id, value } = web3.eth.abi.decodeLog(
       [
         {
           indexed: true,
@@ -484,7 +487,7 @@ export async function NFTTransferExtract(
       from: string;
       to: string;
       id: string;
-      amount: string;
+      value: string;
     };
 
     const baseUri: string = await new web3.eth.Contract(
@@ -502,13 +505,14 @@ export async function NFTTransferExtract(
         } catch {}
       });
     return {
+      type: "ERC1155 Transfer",
       log,
       timestamp,
       blockNumber,
       id,
       from,
       to,
-      amount,
+      value,
       metadata,
     };
   }
@@ -548,9 +552,9 @@ export async function NFTTransferExtract(
       from: string;
       to: string;
       ids: string[];
-      amounts: string[];
+      values: string[];
     };
-    const { from, to, ids, amounts } = decodedLog;
+    const { from, to, ids, values } = decodedLog;
     const baseUri: string = await new web3.eth.Contract(
       Erc1155ABI,
       log.address
@@ -566,25 +570,19 @@ export async function NFTTransferExtract(
         } catch {}
       });
     return {
+      type: "ERC1155 Batch Transfer",
       log,
       timestamp,
       blockNumber,
       ids,
       from,
       to,
-      amounts,
+      values,
       metadata,
     };
   }
 
   throw new Error("Unsupported event type");
-
-  // return {
-  //   ...log,
-  //   timestamp,
-  //   blockNumber,
-  //   // token,
-  // };
 }
 
 export const NFTTransferLoader = createLoader()

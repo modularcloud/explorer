@@ -14,14 +14,33 @@ export const CardTransform = {
   > => ({
     typeId: "card",
     data: {
-      titleBar: "Event",
-      badge: "ERC20 Transfer",
+      titleBar: data.type,
+      badge: data.ids ? `#${data.ids[0]}` : `#${data.id}`,
       link: {
         network: metadata.network.id,
         type: "transaction",
         query: data.log.transactionHash,
       },
       attributes: {
+        Image: {
+          type: "image",
+          payload: data.metadata
+            ? {
+                src: data.metadata.image,
+                alt: data.metadata.description ?? data.metadata.name ?? "",
+                height: 100,
+                width: 100,
+              }
+            : null,
+        },
+        Name: {
+          type: "standard",
+          payload: data.metadata?.name,
+        },
+        Description: {
+          type: "standard",
+          payload: data.metadata?.description,
+        },
         From: {
           type: "standard",
           payload: data.from,
@@ -30,9 +49,14 @@ export const CardTransform = {
           type: "standard",
           payload: data.to,
         },
-        ID: {
+        // TODO: fix decimals
+        Value: {
           type: "standard",
-          payload: Number(data.log.topics[3]),
+          payload: data.value,
+        },
+        Transfers: {
+          type: "list",
+          payload: data.ids?.map((id, index) => `#${id} (${data.values[index]})`),
         },
         "Block Number": {
           type: "standard",

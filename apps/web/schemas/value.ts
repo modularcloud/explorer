@@ -10,6 +10,17 @@ export const ValueSchema = z.discriminatedUnion("type", [
     payload: z.coerce.boolean().nullish(),
   }),
   z.object({ type: z.literal("list"), payload: z.string().array().nullish() }),
+  z.object({
+    type: z.literal("image"),
+    payload: z
+      .object({
+        src: z.string(),
+        alt: z.string(),
+        height: z.number(),
+        width: z.number(),
+      })
+      .nullish(),
+  }),
 ]);
 
 export type Value = z.infer<typeof ValueSchema>;

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { Status } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
 import { Value } from "../../schemas/value";
+import Image from "next/image";
 
 interface Props {
   attributes: Record<string, Value>;
@@ -13,6 +14,16 @@ function Entry({ label, value }: { label: string; value: Value }) {
   return (
     <>
       <dt className="font-bold">{label}</dt>
+      {type === "image" ? (
+        <dd>
+          <Image
+            src={payload.src}
+            alt={payload.alt}
+            width={payload.width}
+            height={payload.height}
+          />
+        </dd>
+      ) : null}
       {type === "status" ? (
         <dd>
           <Status status={payload} />
