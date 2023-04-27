@@ -11,11 +11,14 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   optionGroups: OptionGroups;
+  defaultValue?: string;
 }
 
-export const Search = ({ optionGroups }: Props) => {
+export const Search = ({ optionGroups, defaultValue }: Props) => {
   const router = useRouter();
-  const [option, setOption] = useState(Object.values(optionGroups)[0][0].id);
+  const [option, setOption] = useState(
+    defaultValue ?? Object.values(optionGroups)[0][0].id
+  );
   const searchInput = useRef<HTMLInputElement>(null);
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>

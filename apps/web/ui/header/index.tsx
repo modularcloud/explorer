@@ -26,7 +26,10 @@ export function Header({ resourcePath }: Props) {
           ) : null}
         </Link>
         <div className="hidden lg:flex w-[23rem] xl:w-[28rem]">
-          <Search optionGroups={whitelabel.searchOptions} />
+          <Search
+            defaultValue={resourcePath.network}
+            optionGroups={whitelabel.searchOptions}
+          />
         </div>
         <Suspense
           fallback={
