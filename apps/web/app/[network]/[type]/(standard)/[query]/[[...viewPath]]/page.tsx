@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       resourcePath.query.toLowerCase() === "address") &&
     viewPath.length === 1
   ) {
-    return redirect(
+    redirect(
       `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${selection}`
     );
   }
@@ -80,21 +80,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function EntityPage({ params }: Props) {
   const { viewPath = [], ...resourcePath } = params;
   const [selection] = viewPath;
-
-  // Redirect legacy url structure
-  if (
-    (resourcePath.type.toLowerCase() === "block" ||
-      resourcePath.type.toLowerCase() === "transaction" ||
-      resourcePath.type.toLowerCase() === "account") &&
-    (resourcePath.query.toLowerCase() === "hash" ||
-      resourcePath.query.toLowerCase() === "height" ||
-      resourcePath.query.toLowerCase() === "address") &&
-    viewPath.length === 1
-  ) {
-    return redirect(
-      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${selection}`
-    );
-  }
 
   const entity = await asyncUseEntity({
     resourcePath,
