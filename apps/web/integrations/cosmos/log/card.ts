@@ -28,7 +28,7 @@ export const CardTransform = {
         }
       }
       if(value.type === "status" || value.type === "list") {
-        attributes.key = value;
+        attributes[key] = value;
       }
     };
     return {
