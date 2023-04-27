@@ -74,6 +74,8 @@ const NETWORK_ID_MAP: Record<string, string> = {
   saga: "sg/1",
   worlds: "ep/3",
   "evm-rollapp": "dym/2",
+  goerli: "cal/1",
+  polygon: "cal/2",
 };
 
 function normalizeNetworkId(networkId: string) {

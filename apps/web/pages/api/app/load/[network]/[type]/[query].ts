@@ -69,6 +69,29 @@ export default async function handler(
       },
     });
     Engine.addConfig("rollappx", config);
+  } else if (whitelabel.env === "caldera") {
+    config = CreateEVMConfig({
+      endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
+      network: {
+        id: "goerli",
+        displayName: "Goerli",
+        nativeToken: "ETH",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("goerli", config);
+    config = CreateEVMConfig({
+      endpoint: "https://usdc-polygon-testnet.calderachain.xyz/replica-http",
+      network: {
+        id: "polygon",
+        displayName: "Polygon",
+        nativeToken: "USDC",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("polygon", config);
   } else {
     config = CreateEVMConfig({
       endpoint:

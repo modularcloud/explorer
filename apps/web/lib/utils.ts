@@ -74,6 +74,24 @@ export function getWhitelabel(): Whitelabel {
         name: ["Naut", "Scan"],
         env: "nautilus",
       };
+      case "caldera":
+      return {
+        searchOptions: {
+          Caldera: [
+            {
+              displayName: "Goerli",
+              id: "goerli",
+            },
+            {
+              displayName: "Polygon",
+              id: "polygon",
+            },
+          ],
+        },
+        defaultNetwork: "goerli",
+        name: ["Caldera", "Scan"],
+        env: "caldera",
+      };
     case "worlds":
       return {
         searchOptions: {
