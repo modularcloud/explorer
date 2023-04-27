@@ -5,6 +5,6 @@ module.exports = {
     appDir: true,
   },
   images: {
-    domains: ['nautchain.xyz'],
+    domains: ['nautchain.xyz', 'https://mc-nft.s3.us-west-2.amazonaws.com'],
   },
 };
