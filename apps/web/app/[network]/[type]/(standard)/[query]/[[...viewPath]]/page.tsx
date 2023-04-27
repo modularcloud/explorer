@@ -1,7 +1,11 @@
 import { PageArchetype } from "../../../../../../ecs/archetypes/page";
 import { PaginationArchetype } from "../../../../../../ecs/archetypes/pagination";
 import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, getWhitelabel, slugify } from "../../../../../../lib/utils";
+import {
+  FetchLoadArgs,
+  getWhitelabel,
+  slugify,
+} from "../../../../../../lib/utils";
 import { InfiniteLoader } from "../../../../../../ui/associated/infinite-loader";
 import { AssociatedList } from "../../../../../../ui/associated/list";
 import { ServerAssociatedEntry } from "../../../../../../ui/associated/entry/server";
@@ -10,7 +14,7 @@ import { Suspense } from "react";
 import { AssociatedEntryLoadingFallback } from "../../../../../../ui/associated/entry/loading";
 import { TableHeader } from "../../../../../../ui/associated/list/table/header";
 import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import AssociatedNotFound from "../../../../../../ui/associated/not-found";
 import { Metadata } from "next";
 
@@ -26,13 +30,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { viewPath = [], ...resourcePath } = params;
   const [selection] = viewPath;
 
+  // Redirect legacy url structure
+  if (
+    (resourcePath.type.toLowerCase() === "block" ||
+      resourcePath.type.toLowerCase() === "transaction" ||
+      resourcePath.type.toLowerCase() === "account") &&
+    (resourcePath.query.toLowerCase() === "hash" ||
+      resourcePath.query.toLowerCase() === "height" ||
+      resourcePath.query.toLowerCase() === "address") &&
+    viewPath.length === 1
+  ) {
+    return redirect(
+      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${selection}`
+    );
+  }
+
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
   });
-  if (!entity) return {
-    title: `Not Found - ${whitelabel.name.join("")}`
-  };
+  if (!entity)
+    return {
+      title: `Not Found - ${whitelabel.name.join("")}`,
+    };
 
   const associated = entity.components.associated.data;
   const labels = Object.keys(associated);
@@ -43,16 +63,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const id = entity.components.sidebar.data.entityId;
 
-  const title = `${entity.components.sidebar.data.entityTypeName} (${id.length > 9 ? id.slice(0,6) + "..." : id}) - ${whitelabel.name.join("")}`
+  const title = `${entity.components.sidebar.data.entityTypeName} (${
+    id.length > 9 ? id.slice(0, 6) + "..." : id
+  }) - ${whitelabel.name.join("")}`;
 
-  if(selection) {
+  if (selection) {
     return {
       title: `${label} - ${title}`,
-    }
+    };
   }
   return {
-    title
-  }
+    title,
+  };
 }
 
 export default async function EntityPage({ params }: Props) {
