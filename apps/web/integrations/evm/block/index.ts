@@ -6,6 +6,7 @@ import { AssociatedTransform } from "./associated";
 import { RowTransform } from "./row";
 import { CardTransform } from "./card";
 import { z } from "zod";
+import { PageTransform } from "./page";
 
 export async function BlockExtract(
   _q: unknown,
@@ -24,4 +25,5 @@ export const BlockLoader = createLoader()
   .addTransform(AssociatedTransform)
   .addTransform(CardTransform)
   .addTransform(RowTransform)
+  .addTransform(PageTransform)
   .finish();

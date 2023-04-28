@@ -1,4 +1,4 @@
-function forceLength(
+export function forceLength(
   str: string,
   len: number,
   strategy: "middle" | "end" = "middle"

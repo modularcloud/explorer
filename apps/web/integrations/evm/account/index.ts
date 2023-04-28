@@ -2,6 +2,7 @@ import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { createModularCloud } from "@modularcloud/sdk";
 import { z } from "zod";
 import { AssociatedTransform } from "./associated";
+import { PageTransform } from "./page";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -31,4 +32,5 @@ export const AccountLoader = createLoader()
   .addTransform(TopbarTransform)
   .addTransform(SidebarTransform)
   .addTransform(AssociatedTransform)
+  .addTransform(PageTransform)
   .finish();

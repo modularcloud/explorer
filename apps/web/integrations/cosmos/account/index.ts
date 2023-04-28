@@ -3,6 +3,7 @@ import { getBalanceQueryData, parseBalance } from "service-manager";
 import { z } from "zod";
 import { ABCIResponse, JSONRPCResponse } from "../../../lib/service-manager";
 import { AssociatedTransform } from "./associated";
+import { PageTransform } from "./page";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -42,4 +43,5 @@ export const AccountLoader = createLoader()
   .addTransform(TopbarTransform)
   .addTransform(SidebarTransform)
   .addTransform(AssociatedTransform)
+  .addTransform(PageTransform)
   .finish();

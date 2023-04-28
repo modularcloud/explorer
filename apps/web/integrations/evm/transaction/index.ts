@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getEventSignatureName } from "../../../lib/utils";
 import { AssociatedTransform } from "./associated";
 import { CardTransform } from "./card";
+import { PageTransform } from "./page";
 import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
@@ -37,4 +38,5 @@ export const TransactionLoader = createLoader()
   .addTransform(AssociatedTransform)
   .addTransform(CardTransform)
   .addTransform(RowTransform)
+  .addTransform(PageTransform)
   .finish();
