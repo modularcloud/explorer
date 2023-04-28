@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, Dispatch, useReducer } from "react";
-import { DEFAULT_ASSOCIATED_VIEW } from "./constants";
-import { AssociatedViewType } from "./types";
+import { DEFAULT_ASSOCIATED_VIEW } from "../constants";
+import { AssociatedViewType } from "../types";
 
 export const AssociatedViewContext = createContext<AssociatedViewType>(
   DEFAULT_ASSOCIATED_VIEW
@@ -21,7 +21,7 @@ function reducer(_: AssociatedViewType, action: AssociatedViewType) {
   return action;
 }
 
-export function AssociatedViewContextProvider({ value, children }: Props) {
+export function ClientAssociatedViewContextProvider({ value, children }: Props) {
   const [view, dispatch] = useReducer(reducer, value ?? DEFAULT_ASSOCIATED_VIEW);
   return (
     <AssociatedViewContext.Provider value={view}>

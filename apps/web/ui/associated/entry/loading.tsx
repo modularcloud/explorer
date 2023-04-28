@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AssociatedViewContext } from "../context";
+import { AssociatedViewContext } from "../context/client";
 
 function FeedEntryFallback() {
   return (

@@ -10,7 +10,7 @@ import { useContext } from "react";
 import {
   AssociatedViewContext,
   AssociatedViewDispatchContext,
-} from "../associated/context";
+} from "../associated/context/client";
 
 export function ViewSwitcher() {
   const view = useContext(AssociatedViewContext);

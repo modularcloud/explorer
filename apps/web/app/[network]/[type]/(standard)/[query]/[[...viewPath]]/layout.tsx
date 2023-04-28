@@ -17,7 +17,8 @@ type Props = {
 export default async function EntityLayout({ params, children }: Props) {
   const { viewPath, ...resourcePath } = params;
   return (
-    <AssociatedViewContextProvider value="table">
+    // @ts-expect-error Async Server Component
+    <AssociatedViewContextProvider resourcePath={resourcePath}>
       <div className="lg:flex">
         <div className="lg:grow">
           {/* @ts-expect-error Async Server Component */}
