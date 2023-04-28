@@ -3,6 +3,7 @@ import { AccountLoader } from "./account";
 import { BlockLoader } from "./block";
 import { HolderLoader } from "./holder";
 import { InventoryLoader } from "./inventory";
+import { LatestLoader } from "./latest";
 import { LogLoader } from "./log";
 import { NFTTransferLoader } from "./nft-transfer";
 import { PaginationLoader } from "./pagination";
@@ -24,6 +25,7 @@ export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
       holder: HolderLoader,
       "nft-transfer": NFTTransferLoader,
       inventory: InventoryLoader,
+      latest: LatestLoader,
     },
   };
 }

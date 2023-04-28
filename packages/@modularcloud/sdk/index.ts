@@ -62,6 +62,11 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<TxResponse>;
+    getRecentTransactions: (
+      networkId: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<TxResponse>;
   };
 }
 
@@ -231,6 +236,26 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
           `${baseUrl}/${normalizeNetworkId(
             networkId
           )}/transactions/${address.toLowerCase()}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return TxResponseSchema.parse(json.result);
+      },
+      getRecentTransactions: async (
+        networkId: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/transactions?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );

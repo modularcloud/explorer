@@ -10,6 +10,25 @@ export const PaginationTransform = {
   }: TransformInput<typeof PaginationExtract>): Promise<
     TransformOutput<typeof PaginationComponent>
   > => {
+    if (data?.["latest"]) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: data["latest"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:latest:${data["latest"].nextToken}`,
+              }
+            : undefined,
+          values: data.latest.txs.map((transaction) => ({
+            network: metadata.network.id,
+            type: "transaction",
+            query: transaction.hash,
+          })),
+        },
+      };
+    }
     if (data?.["account-transfers"]) {
       return {
         typeId: "pagination",
