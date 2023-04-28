@@ -61,19 +61,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
     labels[0];
 
-  const id = entity.components.sidebar.data.entityId;
-
-  const title = `${entity.components.sidebar.data.entityTypeName} (${
-    id.length > 9 ? id.slice(0, 6) + "..." : id
-  }) - ${whitelabel.name.join("")}`;
-
-  if (selection) {
-    return {
-      title: `${label} - ${title}`,
-    };
-  }
   return {
-    title,
+    title: `${selection ? `${label} - ` : ""}${
+      entity.components.page.data.metadata.title
+    } - ${whitelabel.name.join("")}`,
+    description: entity.components.page.data.metadata.description,
+    keywords: entity.components.page.data.metadata.keywords,
   };
 }
 

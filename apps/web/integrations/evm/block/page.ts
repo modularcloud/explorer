@@ -13,7 +13,7 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Block ${data.number}`,
+        title: `Block ${data.number} on ${metadata.network.displayName}`,
         description: `Block ${data.number} on ${metadata.network.displayName} has hash ${data.hash} and ${data.transactions.length} transactions.`,
         keywords: `evm, block, ${metadata.network.displayName}, ${metadata.network.nativeToken}`,
       },

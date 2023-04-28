@@ -14,7 +14,9 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Transaction ${forceLength(data.result.hash, 8)}`,
+        title: `Transaction ${forceLength(data.result.hash, 8)} on ${
+          metadata.network.displayName
+        }`,
         description: `Transaction ${data.result.hash} is in block ${data.result.height} on ${metadata.network.displayName}.`,
         keywords: `cosmos, transaction, ${metadata.network.displayName}, ${metadata.network.nativeToken}}`,
       },

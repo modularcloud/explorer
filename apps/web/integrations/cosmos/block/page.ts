@@ -13,7 +13,7 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Block ${data.result.block.header.height}`,
+        title: `Block ${data.result.block.header.height} on ${metadata.network.displayName}`,
         description: `Block ${data.result.block.header.height} on ${metadata.network.displayName} has hash ${data.result.block_id.hash} and ${data.result.block.data.txs.length} transactions.`,
         keywords: `cosmos, block, ${metadata.network.displayName}, ${metadata.network.nativeToken}`,
       },

@@ -13,7 +13,7 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Token ${data.token.name} (${data.token.symbol})`,
+        title: `Token ${data.token.name} (${data.token.symbol}) on ${metadata.network.displayName}`,
         description: `Token ${data.token.name} (${data.token.symbol}) at ${data.address} is a ${data.token.type} token on ${metadata.network.displayName}.`,
         keywords: `evm, token, ${data.token.type}, ${data.token.name}, ${data.token.symbol}, ${metadata.network.displayName}`,
       },

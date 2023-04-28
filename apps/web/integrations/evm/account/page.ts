@@ -14,9 +14,19 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Account ${forceLength(data.address, 8)}`,
-        description: `Account ${data.address} on ${metadata.network.displayName} has ${data.balances.nativeTokenBalance ?? 0} ${metadata.network.nativeToken} and ${data.balances.balances?.length ?? 0} tokens.`,
-        keywords: `evm, account, address, ${metadata.network.displayName}, ${metadata.network.nativeToken}${(data.balances.balances ?? []).map((b) => `, ${b.token.name}, ${b.token.symbol}`).join("")}`,
+        title: `Account ${forceLength(data.address, 8)} on ${
+          metadata.network.displayName
+        }`,
+        description: `Account ${data.address} on ${
+          metadata.network.displayName
+        } has ${data.balances.nativeTokenBalance ?? 0} ${
+          metadata.network.nativeToken
+        } and ${data.balances.balances?.length ?? 0} tokens.`,
+        keywords: `evm, account, address, ${metadata.network.displayName}, ${
+          metadata.network.nativeToken
+        }${(data.balances.balances ?? [])
+          .map((b) => `, ${b.token.name}, ${b.token.symbol}`)
+          .join("")}`,
       },
       defaultView: "table",
     },

@@ -5,8 +5,8 @@ import { SidebarComponent } from "../components/sidebar";
 import { TopbarComponent } from "../components/topbar";
 
 export const PageArchetype = createArchetype()
-    .addComponent(SidebarComponent)
-    .addComponent(TopbarComponent)
-    .addComponent(AssociatedComponent)
-    .addComponent(PageComponent)
-    .finish();
+  .addComponent(SidebarComponent)
+  .addComponent(TopbarComponent)
+  .addComponent(AssociatedComponent)
+  .addComponent(PageComponent)
+  .finish();

@@ -14,7 +14,9 @@ export const PageTransform = {
     typeId: "page",
     data: {
       metadata: {
-        title: `Account ${forceLength(data.address, 8)}`,
+        title: `Account ${forceLength(data.address, 8)} on ${
+          metadata.network.displayName
+        }`,
         description: `Account ${data.address} on ${metadata.network.displayName} has ${data.balance} ${data.denom}.`,
         keywords: `cosmos, account, address, ${metadata.network.displayName}, ${data.denom}}`,
       },
