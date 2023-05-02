@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import { getWhitelabel, truncateString } from "../lib/utils";
 import { BigLogo } from "../ui/big-logo";
 import { Footer } from "../ui/footer";
@@ -6,16 +5,6 @@ import { Search } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(c
 import DollarCircled from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/DollarCircled";
 import CapDisplay from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/CapDisplay";
 import FuelTankIcon from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/FuelTank";
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import ClockCount from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ClockCount";
 import BarChartIcon from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BarChartIcon";
 import BlocksIcon from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
@@ -26,12 +15,9 @@ import {
   MockShortcutsData,
   MockTransactionsData,
 } from "../schemas/mock-data";
+import { ExplorerLineChart } from "../ui/chart";
 
 const whitelabel = getWhitelabel();
-
-export const metadata: Metadata = {
-  title: `${whitelabel.name.join("")} by Modular Cloud`,
-};
 
 const data = [
   {
@@ -155,32 +141,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex-1 w-full">
-            {/* <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                width={500}
-                height={300}
-                data={data}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="pv"
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
-                />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer> */}
+            <ExplorerLineChart />
           </div>
         </div>
         <div className="border-2 rounded-xl py-8 bg-white max-w-5xl mx-auto divide-x-2 mt-8 flex items-center justify-center gap-6">
