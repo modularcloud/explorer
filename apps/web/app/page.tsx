@@ -16,6 +16,7 @@ import {
   MockTransactionsData,
 } from "../schemas/mock-data";
 import { ExplorerLineChart } from "../ui/chart";
+import { SummaryPresenter } from "../ui/presenters/summary-presenter";
 
 const whitelabel = getWhitelabel();
 
@@ -110,35 +111,21 @@ export default function HomePage() {
 
       <div className="w-full bg-gradient-blend py-12 px-10 mt-10 border-y-2 border-transluscent">
         <div className="flex items-center justify-between mx-auto gap-16 max-w-5xl">
-          <div className="flex items-start justify start gap-2">
-            <div className="mt-1 ">
-              <DollarCircled />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-night">ZBC Price</span>
-              <span className="text-[mid-dark]">$134.58</span>
-            </div>
-          </div>
-
-          <div className="flex items-start justify start gap-2">
-            <div className="mt-1 ">
-              <CapDisplay />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-night">Market Cap</span>
-              <span className="text-[mid-dark]">$224,980,459.00</span>
-            </div>
-          </div>
-
-          <div className="flex items-start justify start gap-2">
-            <div className="mt-1 ">
-              <FuelTankIcon />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-night">Gas Price</span>
-              <span className="text-[mid-dark]">23.22 Gwei ($0.98)</span>
-            </div>
-          </div>
+          <SummaryPresenter
+            icon={<DollarCircled />}
+            title="ZBC Price"
+            value={`$${(134.58).toLocaleString()}`}
+          />
+          <SummaryPresenter
+            icon={<CapDisplay />}
+            title="Market Cap"
+            value={`$${(224980459).toLocaleString()}`}
+          />
+          <SummaryPresenter
+            icon={<FuelTankIcon />}
+            title="Gas Price"
+            value="23.22 Gwei ($0.98)"
+          />
 
           <div className="flex-1 w-full">
             <ExplorerLineChart />
@@ -146,14 +133,8 @@ export default function HomePage() {
         </div>
         <div className="border-2 rounded-xl py-8 bg-white max-w-5xl mx-auto divide-x-2 mt-8 flex items-center justify-center gap-6">
           {TransactionSummary.map(({ icon: Icon, title, value, id }) => (
-            <div className="flex items-start justify start gap-2 px-6" key={id}>
-              <div className="mt-1 ">
-                <Icon />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-night">{title}</span>
-                <span className="text-[mid-dark]">{value}</span>
-              </div>
+            <div className="px-4" key={id}>
+              <SummaryPresenter value={value} title={title} icon={<Icon />} />
             </div>
           ))}
         </div>
