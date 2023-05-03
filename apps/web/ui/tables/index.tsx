@@ -94,7 +94,7 @@ export const TransactionsSummaryTable = () => {
                 <td className="pb-2">
                   <div className="flex flex-col gap-1">
                     <span className="text-ocean">
-                      {truncateString(transaction.hash, 10, 1)}
+                      {truncateString(transaction.hash, 10, 0)}
                     </span>
                     <span className="text-[mid-dark]">12 secs ago</span>
                   </div>

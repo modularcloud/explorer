@@ -177,6 +177,6 @@ export function truncateString(
   }
 
   const start = address.slice(0, numCharsBefore);
-  const end = address.slice(-numCharsAfter ?? address.length);
+  const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
   return `${start}...${end}`;
 }

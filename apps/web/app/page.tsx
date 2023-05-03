@@ -102,7 +102,7 @@ const TransactionSummary = [
 ];
 
 export default function HomePage() {
-  const hasTableData = false;
+  const hasTableData = true;
 
   const basicSummaryData = useCallback(() => {
     return (
