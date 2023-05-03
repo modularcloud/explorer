@@ -17,6 +17,9 @@ import {
 } from "../schemas/mock-data";
 import { ExplorerLineChart } from "../ui/chart";
 import { SummaryPresenter } from "../ui/presenters/summary-presenter";
+import { Badge } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
+import { BlockSummaryTable, TransactionsSummaryTable } from "../ui/tables";
+import { useCallback } from "react";
 
 const whitelabel = getWhitelabel();
 
@@ -99,8 +102,32 @@ const TransactionSummary = [
 ];
 
 export default function HomePage() {
+  const hasTableData = false;
+
+  const basicSummaryData = useCallback(() => {
+    return (
+      <>
+        <SummaryPresenter
+          icon={<DollarCircled />}
+          title="ZBC Price"
+          value={`$${(134.58).toLocaleString()}`}
+        />
+        <SummaryPresenter
+          icon={<CapDisplay />}
+          title="Market Cap"
+          value={`$${(224980459).toLocaleString()}`}
+        />
+        <SummaryPresenter
+          icon={<FuelTankIcon />}
+          title="Gas Price"
+          value="23.22 Gwei ($0.98)"
+        />
+      </>
+    );
+  }, []);
+
   return (
-    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-no-repeat min-h-screen">
+    <div className="flex flex-col items-center bg-specialty-gray radial-check-bg bg-no-repeat min-h-screen">
       <div className="flex flex-col items-center justify-center w-full space-y-10 xs:pt-40 pt-[12.5rem]">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
@@ -109,29 +136,14 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="w-full bg-gradient-blend py-12 px-10 mt-10 border-y-2 border-transluscent">
+      <div className="w-full bg-gradient-blend py-12 px-10 mt-10 border-y border-transluscent">
         <div className="flex items-center justify-between mx-auto gap-16 max-w-5xl">
-          <SummaryPresenter
-            icon={<DollarCircled />}
-            title="ZBC Price"
-            value={`$${(134.58).toLocaleString()}`}
-          />
-          <SummaryPresenter
-            icon={<CapDisplay />}
-            title="Market Cap"
-            value={`$${(224980459).toLocaleString()}`}
-          />
-          <SummaryPresenter
-            icon={<FuelTankIcon />}
-            title="Gas Price"
-            value="23.22 Gwei ($0.98)"
-          />
-
-          <div className="flex-1 w-full">
+          {hasTableData ? basicSummaryData() : null}
+          <div className="flex-1 w-fit max-w-xl justify-self-center mx-auto">
             <ExplorerLineChart />
           </div>
         </div>
-        <div className="border-2 rounded-xl py-8 bg-white max-w-5xl mx-auto divide-x-2 mt-8 flex items-center justify-center gap-6">
+        <div className="border lifting-shadow rounded-xl py-8 bg-white max-w-5xl mx-auto divide-x mt-8 flex items-center justify-center gap-6">
           {TransactionSummary.map(({ icon: Icon, title, value, id }) => (
             <div className="px-4" key={id}>
               <SummaryPresenter value={value} title={title} icon={<Icon />} />
@@ -140,97 +152,17 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="w-full flex items-stretch mx-auto justify-evenly gap-4 mt-10 max-w-[90%] py-6 px-10">
-        <div className="flex-1 bg-white p-10 rounded-lg border-2">
-          <div className="flex items-center justify-between">
-            <h3 className="flex items-center justify-start gap-2 font-bold">
-              <BlocksIcon />
-              Latest Blocks
-            </h3>
-
-            <button className="border-2 rounded-lg py-2 px-3">View All</button>
-          </div>
-          <table className="responsive border-collapse w-full mt-8">
-            <tbody>
-              {MockBlockData.map((block) => {
-                return (
-                  <tr key={block.id} className="border-b-2">
-                    <td className="pb-2">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-ocean">{block.height}</span>
-                        <span className="text-[mid-dark]">12 secs ago</span>
-                      </div>
-                    </td>
-                    <td className="pb-2">
-                      <div>
-                        miner:{" "}
-                        <em className="text-ocean  not-italic">
-                          {truncateString(block.minerAddress, 8, 8)}
-                        </em>
-                      </div>
-                    </td>
-                    <td className="text-right pb-2">
-                      <button className="border-2 rounded-3xl py-2 px-3">
-                        {block.blockreward.toLocaleString()} ZBC
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {hasTableData ? null : (
+        <div className="w-fit flex gap-16 items-center mt-4 mb-20 justify-center">
+          {basicSummaryData()}
         </div>
+      )}
 
-        <div className="flex-1 bg-white p-10 rounded-lg border-2">
-          <div className="flex items-center justify-between">
-            <h3 className="flex items-center justify-start gap-2 font-bold">
-              <BarChartIcon />
-              Latest Transactions
-            </h3>
-
-            <button className="border-2 rounded-lg py-2 px-3">View All</button>
-          </div>
-          <table className="responsive border-collapse w-full mt-8">
-            <tbody>
-              {MockTransactionsData.map((transaction) => {
-                return (
-                  <tr key={transaction.id} className="border-b-2">
-                    <td className="pb-2">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-ocean">
-                          {truncateString(transaction.hash, 10, 1)}
-                        </span>
-                        <span className="text-[mid-dark]">12 secs ago</span>
-                      </div>
-                    </td>
-                    <td className="pb-2">
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          From:{" "}
-                          <em className="text-ocean not-italic">
-                            {truncateString(transaction.from, 8, 8)}
-                          </em>
-                        </span>
-                        <span>
-                          To:{" "}
-                          <em className="text-ocean not-italic">
-                            {truncateString(transaction.recipient, 8, 8)}
-                          </em>
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-right pb-2">
-                      <button className="border-2 rounded-3xl py-2 px-3">
-                        {transaction.amount} ZBC
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {hasTableData && (
+        <div className="w-full flex items-stretch mx-auto justify-evenly gap-4 mt-10 max-w-[90%] py-6 px-10">
+          <BlockSummaryTable /> <TransactionsSummaryTable />
         </div>
-      </div>
+      )}
 
       <div className="max-w-5xl mx-auto flex items-center justify-center gap-6 mt-12 mb-4">
         {MockShortcutsData.map(({ title, key }) => (

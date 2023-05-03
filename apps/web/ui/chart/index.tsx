@@ -55,6 +55,8 @@ export const ExplorerLineChart = () => {
         />
         <YAxis
           axisLine={false}
+          // color="rgba(42, 43, 46, 0.4)"
+          color="pink"
           tickLine={false}
           padding={{ bottom: 15 }}
           tickFormatter={(value) => `${Math.round(value / 1000)}`}

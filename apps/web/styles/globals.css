@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .lifting-shadow {
+        box-shadow: 0px 3px 6px rgba(42, 43, 46, 0.07), 0px 1px 2px rgba(42, 43, 46, 0.04);
+    }
+
+    .radial-check-bg {
+        /* background-image: url("../public//images//home-bg.svg"), radial-gradient(ellipse at center, rgba(74, 113, 254, 0.5), rgba(178, 96, 254, 0.5)); */
+        background-image: url("../public//images//home-bg.svg");
+        background-size: initial, 50% 50%;
+        background-repeat: no-repeat
+    }
+}
