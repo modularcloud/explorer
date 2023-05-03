@@ -167,7 +167,7 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto flex items-center justify-center gap-6 mt-12 mb-4">
         {MockShortcutsData.map(({ title, key }) => (
           <div className="flex items-center justify-start gap-3 text-night">
-            <span className="block rounded-md p-1 w-6 items-center justify-center flex h-6 border-2 border-[#0806151a] bg-[#0806150d] w-fit">
+            <span className="block rounded-md p-1 w-6 h-6 items-center justify-center flex border-2 backdrop-blur-sm border-night-100 bg-[rgba(8,6,21,0.05)]">
               {key}
             </span>
             <span>{title}</span>
