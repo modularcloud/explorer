@@ -75,9 +75,15 @@ export const ExplorerLineChart = () => {
           type="monotone"
           dataKey="price"
           stroke="#B160FE"
+          dot={false}
           activeDot={{ r: 2 }}
         />
-        <Line type="monotone" dataKey="new_price" stroke="#4A70FE" />
+        <Line
+          type="monotone"
+          dot={false}
+          dataKey="new_price"
+          stroke="#4A70FE"
+        />
       </LineChart>
     </ResponsiveContainer>
   );
