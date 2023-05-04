@@ -125,7 +125,7 @@ export default async function handler(
         displayName: "Triton",
         nativeToken: "ZBC",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/eclipse.png",
       },
     });
     Engine.addConfig("eclipse-nautilus", config);
@@ -159,7 +159,7 @@ export default async function handler(
         displayName: "Goerli",
         nativeToken: "ETH",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/caldera.png",
       },
     });
     Engine.addConfig("caldera-goerli", config);
@@ -170,7 +170,7 @@ export default async function handler(
         displayName: "Polygon",
         nativeToken: "USDC",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/caldera.png",
       },
     });
     Engine.addConfig("caldera-polygon", config);
@@ -181,7 +181,7 @@ export default async function handler(
         displayName: "Mocha",
         nativeToken: "TIA",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/celestia.png",
       },
     });
     Engine.addConfig("celestia-mocha", config);
@@ -192,7 +192,7 @@ export default async function handler(
         displayName: "EVM RollApp",
         nativeToken: "tEVMOS",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/dymension.png",
       },
     });
     Engine.addConfig("dymension-evm-rollapp", config);
@@ -203,7 +203,7 @@ export default async function handler(
         displayName: "Hub",
         nativeToken: "DYM",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/dymension.png",
       },
     });
     Engine.addConfig("dymension-hub", config);
@@ -214,7 +214,7 @@ export default async function handler(
         displayName: "RollApp X",
         nativeToken: "RAX",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/dymension.png",
       },
     });
     Engine.addConfig("dymension-rollappx", config);
