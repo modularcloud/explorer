@@ -23,7 +23,6 @@ export async function AccountExtract(
     const data = getBalanceQueryData(address, "utia");
     queryInput = `https://rpc-mocha.pops.one/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "TIA";
-    console.log(queryInput);
   } else if (address.match(/^rol\w{39}$/)) {
     // dymension rollappX
     const data = getBalanceQueryData(address, "urax");
