@@ -25,38 +25,37 @@ const data = [
   },
   {
     time: "Apr 20",
-    new_price: 2780,
-    price: 3908,
+    new_price: 27800,
+    price: 39080,
     amt: 2000,
   },
   {
     time: "Apr 24",
-    new_price: 2390,
-    price: 3800,
+    new_price: 23900,
+    price: 38000,
     amt: 2500,
   },
   {
     time: "Apr 29",
-    new_price: 3490,
-    price: 4300,
+    new_price: 34900,
+    price: 43000,
     amt: 2100,
   },
 ];
 
 export const ExplorerLineChart = () => {
+  const daysFilter = 30;
   return (
     <ResponsiveContainer width="100%" height={200}>
       <LineChart data={data}>
         <XAxis
           dataKey="time"
           axisLine={false}
+          padding={{ left: 0 }}
           tickLine={false}
-          padding={{ left: 20 }}
         />
         <YAxis
           axisLine={false}
-          // color="rgba(42, 43, 46, 0.4)"
-          color="pink"
           tickLine={false}
           padding={{ bottom: 15 }}
           tickFormatter={(value) => `${Math.round(value / 1000)}`}
@@ -66,7 +65,7 @@ export const ExplorerLineChart = () => {
         <Legend
           content={() => (
             <div className="mx-auto w-fit mb-6 text-center text-gray font-bold">
-              Last 14 days transaction history
+              Last {daysFilter} days transaction history
             </div>
           )}
           align="center"
@@ -76,7 +75,7 @@ export const ExplorerLineChart = () => {
           type="monotone"
           dataKey="price"
           stroke="#B160FE"
-          activeDot={{ r: 8 }}
+          activeDot={{ r: 2 }}
         />
         <Line type="monotone" dataKey="new_price" stroke="#4A70FE" />
       </LineChart>

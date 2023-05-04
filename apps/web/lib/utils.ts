@@ -227,5 +227,5 @@ export function truncateString(
 
   const start = address.slice(0, numCharsBefore);
   const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
-  return `${start}...${end}`;
+  return `${start}....${end}`;
 }

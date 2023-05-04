@@ -9,9 +9,8 @@
 
     .radial-check-bg {
         background-image: url("../public//images//home-bg.svg"), url("../public//images//radial-bg.svg");
-        background-size: 100vw 1000px, 100vw 101%;
-        background-position: initial, center;
+        background-size: 300%, 100% 101%;
+        background-position: 0 0, center;
         background-repeat: no-repeat;
-        background-color: transparent !important;
     }
 }
