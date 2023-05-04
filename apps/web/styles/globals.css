@@ -13,4 +13,10 @@
         background-position: 0 0, center;
         background-repeat: no-repeat;
     }
+
+    @media (min-width: 720px) {
+        .radial-check-bg {
+            background-size: 100%, 100% 101%;
+        }
+      }
 }

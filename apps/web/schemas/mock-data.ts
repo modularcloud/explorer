@@ -140,31 +140,3 @@ export const MockTransactionsData: Transaction[] = [
     timestamp: new Date().getTime(),
   },
 ];
-
-export const MockShortcutsData = [
-  {
-    title: "Search",
-    key: "/",
-    code: 191,
-  },
-  {
-    title: "Latest block",
-    key: "E",
-    code: 69,
-  },
-  {
-    title: "Clipboard",
-    key: "⌥",
-    code: 18,
-  },
-  {
-    title: "Search blocks",
-    key: "B",
-    code: 66,
-  },
-  {
-    title: "Search hash",
-    key: "O",
-    code: 79,
-  },
-];
