@@ -3,13 +3,23 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 module.exports = {
   content: [
     // app content
+    "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./ui/**/*.{js,ts,jsx,tsx}",
     // include packages if not transpiling
     "../../packages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      spacing: {
+        header: "4.25rem",
+      },
+      top: {
+        header: "4.25rem",
+      },
+      backdropBlur: {
+        xs: '3px',
+      },
       screens: {
         xs: "375px",
         xl: "1440px",
@@ -125,6 +135,9 @@ module.exports = {
           green: "#0DAA76",
           red: "#EF4444",
         },
+        translucent: {
+          DEFAULT: "rgba(255, 255, 255, 0.88)",
+        }
       },
       keyframes: {
         "right-to-left": {

@@ -1,0 +1,27 @@
+{
+  "name": "@modularcloud/sdk",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup index.ts --format esm,cjs --dts --external react",
+    "dev": "tsup index.ts --format esm,cjs --dts --external react --watch",
+    "clean": "rm -rf dist",
+    "lint": "TIMING=1 eslint \"**/*.ts*\""
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^6.1.3",
+    "typescript": "^4.5.2",
+    "undici": "^5.21.0"
+  },
+  "dependencies": {
+    "zod": "^3.21.4"
+  }
+}
