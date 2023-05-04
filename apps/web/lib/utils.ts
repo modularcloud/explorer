@@ -73,7 +73,6 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
         env: "nautilus",
-        subText: "The future is now",
       };
     case "caldera":
       return {

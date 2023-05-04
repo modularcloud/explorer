@@ -159,21 +159,10 @@ export default function HomePage() {
       )}
 
       {hasTableData && (
-        <div className="w-full flex items-stretch mx-auto justify-evenly gap-4 mt-10 max-w-[90%] py-6 px-10">
+        <div className="w-full flex items-stretch mx-auto justify-evenly gap-4 mt-10 max-w-[90%] py-6 px-10 mb-20">
           <BlockSummaryTable /> <TransactionsSummaryTable />
         </div>
       )}
-
-      <div className="max-w-5xl mx-auto flex items-center justify-center gap-6 mt-12 mb-4">
-        {MockShortcutsData.map(({ title, key }) => (
-          <div className="flex items-center justify-start gap-3 text-night">
-            <span className="block rounded-md p-1 w-6 h-6 items-center justify-center flex border-2 backdrop-blur-sm border-night-100 bg-[rgba(8,6,21,0.05)]">
-              {key}
-            </span>
-            <span>{title}</span>
-          </div>
-        ))}
-      </div>
 
       <Footer />
     </div>

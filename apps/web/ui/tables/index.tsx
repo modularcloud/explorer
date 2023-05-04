@@ -26,7 +26,7 @@ const TableHeader: React.FC<HeaderProps> = ({
       </h3>
 
       <button
-        className="border-2 rounded-lg py-2 px-3"
+        className="border rounded-lg py-2 px-3"
         type="button"
         onClick={() => handleClick?.()}
       >
@@ -54,7 +54,7 @@ export const BlockSummaryTable = () => {
                     <span className="text-[mid-dark]">12 secs ago</span>
                   </div>
                 </td>
-                <td className="pb-2">
+                <td className="py-2">
                   <div>
                     miner:{" "}
                     <em className="text-ocean  not-italic">
@@ -62,7 +62,7 @@ export const BlockSummaryTable = () => {
                     </em>
                   </div>
                 </td>
-                <td className="pb-2">
+                <td className="py-2">
                   <div className="ml-auto w-fit text-right">
                     <Badge
                       long
@@ -91,7 +91,7 @@ export const TransactionsSummaryTable = () => {
                 key={transaction.id}
                 className="border-b border-[rgba(8,6,21,0.06)]"
               >
-                <td className="pb-2">
+                <td className="py-2">
                   <div className="flex flex-col gap-1">
                     <span className="text-ocean">
                       {truncateString(transaction.hash, 10, 0)}
@@ -99,7 +99,7 @@ export const TransactionsSummaryTable = () => {
                     <span className="text-[mid-dark]">12 secs ago</span>
                   </div>
                 </td>
-                <td className="pb-2">
+                <td className="py-2">
                   <div className="flex flex-col gap-1">
                     <span>
                       From:{" "}
@@ -115,7 +115,7 @@ export const TransactionsSummaryTable = () => {
                     </span>
                   </div>
                 </td>
-                <td className="text-right pb-2">
+                <td className="text-right py-2">
                   <div className="w-fit ml-auto">
                     <Badge long text={`${transaction.amount} ZBC`} />
                   </div>
