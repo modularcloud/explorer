@@ -74,7 +74,7 @@ export function getWhitelabel(): Whitelabel {
         name: ["Naut", "Scan"],
         env: "nautilus",
       };
-      case "caldera":
+    case "caldera":
       return {
         searchOptions: {
           Caldera: [
@@ -143,10 +143,10 @@ export function getWhitelabel(): Whitelabel {
         name: ["Dym", "Scan"],
         env: "dymension",
       };
-    default:
+    case "saga":
       return {
         searchOptions: {
-          Dev: [
+          Saga: [
             {
               displayName: "Saga",
               id: "saga",
@@ -155,6 +155,55 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "saga",
         name: ["Saga", "Scan"],
+        env: "saga",
+      };
+    default:
+      return {
+        searchOptions: {
+          Celestia: [
+            {
+              displayName: "Mocha",
+              id: "celestia-mocha",
+            },
+          ],
+          Dymension: [
+            {
+              displayName: "EVM RollApp",
+              id: "dymension-evm-rollapp",
+            },
+            {
+              displayName: "RollApp X",
+              id: "dymension-rollappx",
+            },
+            {
+              displayName: "Hub",
+              id: "dymension-hub",
+            },
+          ],
+          Caldera: [
+            {
+              displayName: "Goerli",
+              id: "caldera-goerli",
+            },
+            {
+              displayName: "Polygon",
+              id: "caldera-polygon",
+            },
+          ],
+          Eclipse: [
+            {
+              displayName: "Nautilus",
+              id: "eclipse-nautilus",
+            },
+            // {
+            //   displayName: "Worlds",
+            //   id: "eclipse-worlds",
+            // },
+          ],
+        },
+        defaultNetwork: "mocha",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
         env: "default",
       };
   }
