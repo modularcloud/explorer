@@ -69,6 +69,18 @@ export default async function handler(
       },
     });
     Engine.addConfig("rollappx", config);
+  } else if (whitelabel.env === "celestia") {
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("mocha", config);
   } else if (whitelabel.env === "caldera") {
     config = CreateEVMConfig({
       endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",

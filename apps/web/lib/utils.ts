@@ -110,14 +110,14 @@ export function getWhitelabel(): Whitelabel {
     case "celestia":
       return {
         searchOptions: {
-          Dev: [
+          Celestia: [
             {
-              displayName: "Ethereum",
-              id: "ethereum",
+              displayName: "Mocha",
+              id: "mocha",
             },
           ],
         },
-        defaultNetwork: "ethereum",
+        defaultNetwork: "mocha",
         name: ["Celestia", "Scan"],
         env: "celestia",
       };
