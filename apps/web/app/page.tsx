@@ -127,7 +127,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center bg-specialty-gray radial-check-bg bg-no-repeat min-h-screen">
+    <div className="flex flex-col items-center bg-specialty-gray radial-check-bg  min-h-screen">
       <div className="flex flex-col items-center justify-center w-full space-y-10 xs:pt-40 pt-[12.5rem]">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
