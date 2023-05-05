@@ -1,6 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { PaginationExtract } from ".";
 import { PaginationComponent } from "../../../ecs/components/pagination";
+import { FetchLoadArgs } from "../../../lib/utils";
 
 export const PaginationTransform = {
   schema: PaginationComponent,
@@ -11,44 +12,51 @@ export const PaginationTransform = {
     TransformOutput<typeof PaginationComponent>
   > => {
     if (data?.["latest"]) {
-        return {
-          typeId: "pagination",
-          data: {
-            next: data["latest"].nextToken
-              ? {
-                  network: metadata.network.id,
-                  type: "pagination",
-                  query: `${data.value}:latest:${data["latest"].nextToken}`,
-                }
-              : undefined,
-            values: data.latest.txs.map((transaction) => ({
-              network: metadata.network.id,
-              type: "transaction",
-              query: transaction.hash,
-            })),
-          },
-        };
+      return {
+        typeId: "pagination",
+        data: {
+          next: data["latest"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:latest:${data["latest"].nextToken}`,
+              }
+            : undefined,
+          values: data.latest.txs.map((transaction) => ({
+            network: metadata.network.id,
+            type: "transaction",
+            query: transaction.hash,
+          })),
+        },
+      };
+    }
+
+    if (data?.["latestBlockNumber"]) {
+      const values: FetchLoadArgs[] = [];
+      const MAX_BLOCKS =
+        data.latestBlockNumber > 30 ? 30 : data.latestBlockNumber;
+      for (let i = 0; i < MAX_BLOCKS; i++) {
+        values.push({
+          network: metadata.network.id,
+          type: "block",
+          query: `${data.latestBlockNumber - i}`,
+        });
       }
-    
-    if(data?.["latestBlockNumber"]) {
-        return {
-          typeId: "pagination",
-          data: {
-            next: data.latestBlockNumber > 30
+      return {
+        typeId: "pagination",
+        data: {
+          next:
+            data.latestBlockNumber > 30
               ? {
                   network: metadata.network.id,
                   type: "pagination",
                   query: `${data.value}:latest:${data.latestBlockNumber - 30}`,
                 }
               : undefined,
-            values: Array(data.latestBlockNumber > 30 ? 30 : data.latestBlockNumber).map((_, index) => ({
-              network: metadata.network.id,
-              type: "block",
-              query: `${data.latestBlockNumber - index}`,
-              })),
-          },
-        };
-      }
+          values,
+        },
+      };
+    }
     if (data?.["account-transfers"]) {
       return {
         typeId: "pagination",
