@@ -74,8 +74,8 @@ export async function Stats({ extended }: Props) {
     <>
       <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-10 tab:px-4 mt-10 border-y border-transluscent">
         <div className="flex items-center flex-col sm:flex-row justify-center mx-auto gap-6 md:gap-12 tab:gap-6 max-w-4xl tab:max-w-5xl flex-wrap tab:flex-nowrap">
-          <div className="w-full tab:flex-1">
-            {extended ? (
+          {extended ? (
+            <div className="w-full tab:flex-1">
               <div className="grid grid-cols-2 tablet:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
                 <SummaryPresenter
                   icon={<DollarCircled />}
@@ -100,8 +100,8 @@ export async function Stats({ extended }: Props) {
                   />
                 </div>
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
           <div className="flex-1 w-full max-w-xs xs:max-w-md md:max-w-xl tab:max-w-xl justify-self-center order-first tab:order-last -ml-8">
             <ExplorerLineChart />
           </div>
@@ -152,8 +152,8 @@ export async function Stats({ extended }: Props) {
       </div>
 
       {extended ? null : (
-        <div className="w-fit flex gap-16 items-center mt-4 mb-20 justify-center">
-          <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
+        <div className="w-full max-w-2xl px-4 flex gap-16 items-center mt-4 mb-20 justify-center">
+          <div className="grid grid-cols-2 tab:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
             <SummaryPresenter
               icon={<DollarCircled />}
               title="ZBC Price"
@@ -164,8 +164,8 @@ export async function Stats({ extended }: Props) {
               title="Market Cap"
               value={formatter.format(zbcPrice * 700000000)}
             />
-            <div className="col-span-2 md:col-span-1 flex flex-col items-center tab:items-start">
-              <hr className="w-full md:hidden mb-3" />
+            <div className="col-span-2 tab:col-span-1 flex flex-col items-center tablet:items-start">
+              <hr className="w-full tab:hidden mb-3" />
               <SummaryPresenter
                 icon={<FuelTankIcon />}
                 title="Gas Price"
@@ -187,7 +187,7 @@ export async function Stats({ extended }: Props) {
       </div> */}
 
       {extended && (
-        <div className="w-full mt-6 py-6 px-2 tab:px-10 mb-20">
+        <div className="w-full tablet:max-w-[95%] mt-6 py-6 px-2 tab:px-10 mb-20">
           <BlocksAndTransactionsSummaryDisplay />
         </div>
       )}
