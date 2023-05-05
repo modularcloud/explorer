@@ -8,8 +8,8 @@ const whitelabel = getWhitelabel();
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center bg-specialty-gray radial-check-bg  min-h-screen">
-      <div className="flex flex-col items-center justify-center w-full space-y-10 pt-6 sm:pt-20 md:pt-24 tab:pt-32">
+    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-top bg-no-repeat  min-h-screen">
+      <div className="flex flex-col items-center justify-start w-full flex-1 space-y-10 pt-6 sm:pt-14 md:pt-18 tab:pt-28">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
         <div className="w-full sm:max-w-[27.875rem] px-2">

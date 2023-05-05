@@ -7,16 +7,11 @@
         box-shadow: 0px 3px 6px rgba(42, 43, 46, 0.07), 0px 1px 2px rgba(42, 43, 46, 0.04);
     }
 
-    .radial-check-bg {
-        background-image: url("../public//images//home-bg.svg"), url("../public//images//radial-bg.svg");
-        background-size: 300%, 100% 101%;
-        background-position: 0 0, center;
+    .radial-bg {
+        background-image: url("../public//images//radial-bg.svg");
         background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-position: top;
+        background-origin: border-box;
     }
-
-    @media (min-width: 720px) {
-        .radial-check-bg {
-            background-size: 100%, 100% 101%;
-        }
-      }
 }

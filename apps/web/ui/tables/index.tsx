@@ -68,7 +68,7 @@ export const BlockSummaryTable = async () => {
     };
   });
   return (
-    <div className="flex-1 bg-white px-4 py-6 md:p-10 rounded-lg border border-mid-dark-100 lifting-shadow">
+    <div className="flex-1 bg-white px-4 py-6 rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
         href="/latest/blocks"
         icon={<BlocksIcon />}
@@ -174,7 +174,7 @@ export const TransactionsSummaryTable = async () => {
   );
 
   return (
-    <div className="flex-1 bg-white px-4 py-6 md:p-10 rounded-lg border border-mid-dark-100 lifting-shadow">
+    <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
         href="/latest/transactions"
         icon={<BarChartIcon />}

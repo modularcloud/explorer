@@ -10,6 +10,7 @@ import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[[..
 import { ExplorerLineChart } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
 import Web3 from "web3";
+import SvgRadialBgIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/RadialBg";
 
 type Props = {
   extended?: boolean;
@@ -75,7 +76,7 @@ export async function Stats({ extended }: Props) {
         <div className="flex items-center flex-col sm:flex-row justify-center mx-auto gap-6 md:gap-12 tab:gap-6 max-w-4xl tab:max-w-5xl flex-wrap tab:flex-nowrap">
           <div className="w-full tab:flex-1">
             {extended ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
+              <div className="grid grid-cols-2 tablet:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
                 <SummaryPresenter
                   icon={<DollarCircled />}
                   title="ZBC Price"
@@ -86,8 +87,8 @@ export async function Stats({ extended }: Props) {
                   title="Market Cap"
                   value={formatter.format(zbcPrice * 700000000)}
                 />
-                <div className="col-span-2 md:col-span-1 flex flex-col items-center tab:items-start">
-                  <hr className="w-full md:hidden mb-3" />
+                <div className="col-span-2 tablet:col-span-1 flex flex-col items-center tablet:items-start">
+                  <hr className="w-full tablet:hidden mb-3" />
                   <SummaryPresenter
                     icon={<FuelTankIcon />}
                     title="Gas Price"
@@ -105,7 +106,7 @@ export async function Stats({ extended }: Props) {
             <ExplorerLineChart />
           </div>
         </div>
-        <div className="border lifting-shadow rounded-xl py-8 bg-white max-w-4xl lp:max-w-5xl mx-auto divide-y tab:divide-x tab:divide-y-0 mt-8 flex-wrap px-2 tab:px-3 flex tab:flex-nowrap items-center justify-center gap-0">
+        <div className="border lifting-shadow rounded-xl py-8 bg-white max-w-4xl lp:max-w-5xl mx-auto divide-y tab:divide-x tablet:divide-y-0 mt-8 flex-wrap px-2 tab:px-3 flex tablet:flex-nowrap items-center justify-center gap-0">
           <div className="px-4 py-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
@@ -178,9 +179,15 @@ export async function Stats({ extended }: Props) {
           </div>
         </div>
       )}
+      {/* 
+      <div className="w-full -mt-[30px] relative hidden tablet:block">
+        <div className=" w-full">
+          <SvgRadialBgIcon width="100%" />
+        </div>
+      </div> */}
 
       {extended && (
-        <div className="w-full mt-6 py-6 px-2 mb-20">
+        <div className="w-full mt-6 py-6 px-2 tab:px-10 mb-20">
           <BlocksAndTransactionsSummaryDisplay />
         </div>
       )}
