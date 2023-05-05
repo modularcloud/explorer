@@ -11,24 +11,44 @@ export const PaginationTransform = {
     TransformOutput<typeof PaginationComponent>
   > => {
     if (data?.["latest"]) {
-      return {
-        typeId: "pagination",
-        data: {
-          next: data["latest"].nextToken
-            ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:latest:${data["latest"].nextToken}`,
-              }
-            : undefined,
-          values: data.latest.txs.map((transaction) => ({
-            network: metadata.network.id,
-            type: "transaction",
-            query: transaction.hash,
-          })),
-        },
-      };
-    }
+        return {
+          typeId: "pagination",
+          data: {
+            next: data["latest"].nextToken
+              ? {
+                  network: metadata.network.id,
+                  type: "pagination",
+                  query: `${data.value}:latest:${data["latest"].nextToken}`,
+                }
+              : undefined,
+            values: data.latest.txs.map((transaction) => ({
+              network: metadata.network.id,
+              type: "transaction",
+              query: transaction.hash,
+            })),
+          },
+        };
+      }
+    
+    if(data?.["latestBlockNumber"]) {
+        return {
+          typeId: "pagination",
+          data: {
+            next: data.latestBlockNumber > 30
+              ? {
+                  network: metadata.network.id,
+                  type: "pagination",
+                  query: `${data.value}:latest:${data.latestBlockNumber - 30}`,
+                }
+              : undefined,
+            values: Array(data.latestBlockNumber > 30 ? 30 : data.latestBlockNumber).map((_, index) => ({
+              network: metadata.network.id,
+              type: "block",
+              query: `${data.latestBlockNumber - index}`,
+              })),
+          },
+        };
+      }
     if (data?.["account-transfers"]) {
       return {
         typeId: "pagination",
