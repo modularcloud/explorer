@@ -72,10 +72,10 @@ export async function Stats({ extended }: Props) {
   );
   return (
     <>
-      <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-10 tab:px-4 mt-10 border-y border-transluscent">
+      <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 tab:px-4 mt-10 border-y border-transluscent">
         <div className="flex items-center flex-col sm:flex-row justify-center mx-auto gap-6 md:gap-12 tab:gap-6 max-w-4xl tab:max-w-5xl flex-wrap tab:flex-nowrap">
           {extended ? (
-            <div className="w-full tab:flex-1">
+            <div className="w-full tab:flex-1 px-4 tablet:px-2">
               <div className="grid grid-cols-2 tablet:grid-cols-3 items-center content-start justify-start w-full gap-x-8 tab:gap-3 gap-y-6">
                 <SummaryPresenter
                   icon={<DollarCircled />}
@@ -106,15 +106,15 @@ export async function Stats({ extended }: Props) {
             <ExplorerLineChart />
           </div>
         </div>
-        <div className="border lifting-shadow rounded-xl py-8 bg-white max-w-4xl lp:max-w-5xl mx-auto divide-y tab:divide-x tablet:divide-y-0 mt-8 flex-wrap px-2 tab:px-3 flex tablet:flex-nowrap items-center justify-center gap-0">
-          <div className="px-4 py-4 w-full flex justify-center">
+        <div className="border lifting-shadow rounded-xl tab:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y tab:divide-x tablet:divide-y-0 mt-8 flex-wrap px-4 tab:px-6 flex tablet:flex-nowrap items-center justify-center gap-0">
+          <div className="max-tab:py-4 tab:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
               title="Avg Block Time"
               icon={<ClockCount />}
             />
           </div>
-          <div className="px-4 py-4 w-full flex justify-center">
+          <div className="max-tab:py-4 tab:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${realTimeMetrics.totalTransactions.toLocaleString(
                 "en-US"
@@ -123,14 +123,14 @@ export async function Stats({ extended }: Props) {
               icon={<BarChartIcon />}
             />
           </div>
-          <div className="px-4 py-4 w-full flex justify-center">
+          <div className="max-tab:py-4 tab:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
               title="Total Blocks"
               icon={<BlocksIcon />}
             />
           </div>
-          <div className="px-4 py-4 w-full flex justify-center">
+          <div className="max-tab:py-4 tab:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${realTimeMetrics.walletAddresses.toLocaleString(
                 "en-US"
@@ -139,7 +139,7 @@ export async function Stats({ extended }: Props) {
               icon={<WalletIcon />}
             />
           </div>
-          <div className="px-4 py-4 w-full flex justify-center">
+          <div className="max-tab:py-4 tab:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${realTimeMetrics.contractsDeployed.toLocaleString(
                 "en-US"
@@ -187,7 +187,7 @@ export async function Stats({ extended }: Props) {
       </div> */}
 
       {extended && (
-        <div className="w-full tablet:max-w-[95%] mt-6 py-6 px-2 tab:px-10 mb-20">
+        <div className="w-full px-4 py-6 tablet:py-10 flex justify-center">
           <BlocksAndTransactionsSummaryDisplay />
         </div>
       )}

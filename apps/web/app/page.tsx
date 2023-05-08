@@ -17,7 +17,7 @@ export default function HomePage() {
         </div>
       </div>
       {/* @ts-expect-error Async Server Component */}
-      <Stats extended={false} />
+      <Stats extended={true} />
       <Footer />
     </div>
   );

@@ -36,7 +36,7 @@ const TableHeader: React.FC<HeaderProps> = ({
 export const BlocksAndTransactionsSummaryDisplay = () => {
   // const isMobile = true;
   return (
-    <div className="w-full flex items-stretch justify-evenly gap-4 flex-wrap">
+    <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 tablet:gap-8 flex-col tablet:flex-row">
       {/* @ts-expect-error Async Server Component */}
       <BlockSummaryTable /> <TransactionsSummaryTable />
     </div>
@@ -102,7 +102,7 @@ export const BlockSummaryTable = async () => {
         </ul>
       </div>
 
-      <table className="responsive border-collapse hidden sm:table w-full mt-8">
+      <table className="responsive border-collapse hidden md:table w-full mt-8">
         <tbody>
           {blockData.map((block) => {
             return (
@@ -118,7 +118,7 @@ export const BlockSummaryTable = async () => {
                     >
                       {block.height}
                     </Link>
-                    <span className="text-[mid-dark]">
+                    <span className="text-[rgba(42,43,46,0.48)]">
                       {" "}
                       <ClientTime time={Number(block.timestamp)} />
                     </span>
@@ -197,7 +197,7 @@ export const TransactionsSummaryTable = async () => {
                 <Badge long text={`${transaction.amount} ZBC`} />
               </div>
 
-              <div className="flex flex-col gap-1 mt-2">
+              <div className="flex flex-col gap-1 mt-2 whitespace-nowrap">
                 <span>
                   <span className="block">From: </span>
                   <Link
@@ -242,13 +242,13 @@ export const TransactionsSummaryTable = async () => {
                     >
                       {truncateString(transaction.hash, 10, 0)}
                     </Link>
-                    <span className="text-[mid-dark]">
+                    <span className="text-[rgba(42,43,46,0.48)]">
                       <ClientTime time={Number(transaction.timestamp)} />
                     </span>
                   </div>
                 </td>
                 <td className="py-2">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 whitespace-nowrap">
                     <span>
                       From:{" "}
                       <Link
