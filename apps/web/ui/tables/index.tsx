@@ -36,7 +36,7 @@ const TableHeader: React.FC<HeaderProps> = ({
 export const BlocksAndTransactionsSummaryDisplay = () => {
   // const isMobile = true;
   return (
-    <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 tablet:gap-8 flex-col tablet:flex-row">
+    <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 lg:gap-8 flex-col lg:flex-row">
       {/* @ts-expect-error Async Server Component */}
       <BlockSummaryTable /> <TransactionsSummaryTable />
     </div>
