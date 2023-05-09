@@ -65,14 +65,14 @@ export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
           axisLine={false}
           tickLine={false}
           padding={{ bottom: 15 }}
-          tickFormatter={(value) => `$${Math.round(value / 1000)}`}
+          tickFormatter={(value) => `$${(value / 1000).toFixed(1)}`}
           unit="k"
         />
         <Tooltip />
         <Legend
           content={() => (
             <div className="mx-auto w-fit mb-6 text-center text-gray">
-              Last {daysFilter} days transaction history
+              {`Last ${daysFilter} day${daysFilter !== 1 ? "s" : ""} transaction histoy`}
             </div>
           )}
           align="center"

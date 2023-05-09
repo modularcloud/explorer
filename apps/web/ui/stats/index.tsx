@@ -117,7 +117,7 @@ export async function Stats({ extended }: Props) {
   return (
     <>
       <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-4 mt-10 border-y border-transluscent">
-        <div className="flex items-center flex-col sm:flex-row justify-center mx-auto gap-6 md:gap-12 md:gap-6 max-w-4xl md:max-w-5xl flex-wrap md:flex-nowrap">
+        <div className="flex items-center flex-col lg:flex-row justify-center mx-auto gap-6 md:gap-12 md:gap-6 max-w-4xl md:max-w-5xl flex-wrap md:flex-nowrap">
           {extended ? (
             <div className="w-full md:flex-1 px-4 md:px-2">
               <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
@@ -146,11 +146,11 @@ export async function Stats({ extended }: Props) {
               </div>
             </div>
           ) : null}
-          <div className="flex-1 w-full max-w-xs xs:max-w-md md:max-w-xl md:max-w-xl justify-self-center order-first md:order-last -ml-8">
+          <div className="flex-1 w-full max-w-xs xs:max-w-md md:max-w-xl md:max-w-xl justify-self-center order-first lg:order-last -ml-8">
             <ExplorerLineChart data={transactionVolumes} />
           </div>
         </div>
-        <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-4 lg:px-6 flex lg:flex-nowrap items-center justify-center gap-0">
+        <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-2 flex lg:flex-nowrap items-center justify-center gap-0">
           <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
