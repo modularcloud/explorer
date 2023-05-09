@@ -23,13 +23,15 @@ export const TransactionVolumeSchema = z.object({
 });
 export type TransactionVolume = z.infer<typeof TransactionVolumeSchema>;
 
-const formatter = new Intl.NumberFormat("en-US", {
+const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
+});
 
-  // These options are needed to round to whole numbers if that's what you want.
-  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-  //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+const subPennyCurrencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 4,
 });
 
 async function getZbcPrice() {
@@ -53,9 +55,7 @@ async function getBlockMetrics() {
   const thousandBlocksAgo = await web3.eth.getBlock(latestBlock - 1000);
   const thousandBlocksAgoTimestamp = thousandBlocksAgo.timestamp;
   const avgBlockTime =
-    (Number(latestBlockTimestamp) - Number(thousandBlocksAgoTimestamp)) /
-    1000 /* avg */ /
-    1000; /* ms */
+    (Number(latestBlockTimestamp) - Number(thousandBlocksAgoTimestamp)) / 1000;
   return {
     avgBlockTime,
     latestBlock,
@@ -124,12 +124,12 @@ export async function Stats({ extended }: Props) {
                 <SummaryPresenter
                   icon={<DollarCircled />}
                   title="ZBC Price"
-                  value={formatter.format(zbcPrice)}
+                  value={subPennyCurrencyFormatter.format(zbcPrice)}
                 />
                 <SummaryPresenter
                   icon={<CapDisplay />}
                   title="Market Cap"
-                  value={formatter.format(zbcPrice * 700000000)}
+                  value={currencyFormatter.format(zbcPrice * 700000000)}
                 />
                 <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
                   <hr className="w-full md:hidden mb-3" />
@@ -201,12 +201,12 @@ export async function Stats({ extended }: Props) {
             <SummaryPresenter
               icon={<DollarCircled />}
               title="ZBC Price"
-              value={formatter.format(zbcPrice)}
+              value={subPennyCurrencyFormatter.format(zbcPrice)}
             />
             <SummaryPresenter
               icon={<CapDisplay />}
               title="Market Cap"
-              value={formatter.format(zbcPrice * 700000000)}
+              value={currencyFormatter.format(zbcPrice * 700000000)}
             />
             <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
               <hr className="w-full md:hidden mb-3" />
