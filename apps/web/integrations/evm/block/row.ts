@@ -18,8 +18,10 @@ export const RowTransform = {
             columnLabel: "Block",
           },
           cell: {
-            type: "standard",
-            payload: data.hash,
+            type: "longval",
+            payload: {
+              value: data.hash,
+            },
           },
         },
         {
@@ -37,17 +39,11 @@ export const RowTransform = {
             columnLabel: "Block Number",
           },
           cell: {
-            type: "standard",
-            payload: data.number,
-          },
-        },
-        {
-          column: {
-            columnLabel: "Timestamp",
-          },
-          cell: {
-            type: "standard",
-            payload: data.timestamp,
+            type: "block",
+            payload: {
+              number: Number(data.number),
+              timestamp: Number(data.timestamp) * 1000,
+            },
           },
         },
         {

@@ -212,3 +212,19 @@ export function getWhitelabel(): Whitelabel {
 export function slugify(str: string): string {
   return _slugify(str, { lower: true, strict: true });
 }
+
+export function truncateString(
+  address: string,
+  numCharsBefore = 6,
+  numCharsAfter = 4
+) {
+  if (!address) return "";
+
+  if (address.length <= numCharsBefore + numCharsAfter + 2) {
+    return address;
+  }
+
+  const start = address.slice(0, numCharsBefore);
+  const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
+  return `${start}....${end}`;
+}

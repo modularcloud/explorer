@@ -12,11 +12,29 @@ export const SidebarTransform = {
   }: TransformInput<typeof LatestExtract>): Promise<
     TransformOutput<typeof SidebarComponent>
   > => {
+    if (data.type === "transactions") {
+      return {
+        typeId: "sidebar",
+        data: {
+          logo: metadata.network.logoUrl,
+          entityTypeName: "Transactions",
+          entityId: "Latest",
+          attributesHeader: "Details",
+          attributes: {
+            Network: {
+              type: "standard",
+              payload: metadata.network.displayName,
+            },
+          },
+        },
+      };
+    }
+    // if (data.type === "blocks") {
     return {
       typeId: "sidebar",
       data: {
         logo: metadata.network.logoUrl,
-        entityTypeName: "Transactions",
+        entityTypeName: "Blocks",
         entityId: "Latest",
         attributesHeader: "Details",
         attributes: {
@@ -27,5 +45,6 @@ export const SidebarTransform = {
         },
       },
     };
+    // }
   },
 };
