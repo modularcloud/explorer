@@ -23,7 +23,7 @@ const allowCors =
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.json(
-    await fetch(process.env.METRICS_API_URL ?? "").then((response) =>
+    await fetch(process.env.METRICS_API_URL + "/metrics").then((response) =>
       response.json()
     )
   );

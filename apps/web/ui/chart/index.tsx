@@ -9,42 +9,49 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { TransactionVolume } from "../stats";
 
 const data = [
   {
     time: "Apr 08",
     new_price: 4000,
-    price: 2400,
+    // price: 2400,
     amt: 2400,
   },
   {
     time: "Apr 15",
     new_price: 2000,
-    price: 9800,
+    // price: 9800,
     amt: 2290,
   },
   {
     time: "Apr 20",
     new_price: 27800,
-    price: 39080,
+    // price: 39080,
     amt: 2000,
   },
   {
     time: "Apr 24",
     new_price: 23900,
-    price: 38000,
+    // price: 38000,
     amt: 2500,
   },
   {
     time: "Apr 29",
     new_price: 34900,
-    price: 43000,
+    // price: 43000,
     amt: 2100,
   },
 ];
 
-export const ExplorerLineChart = () => {
-  const daysFilter = 30;
+export type ExplorerLineChartProps = {
+  data: {
+    time: string;
+    volume: number; // USD
+  }[];
+}
+export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
+  const daysFilter = data.length;
   return (
     <ResponsiveContainer width="100%" height={200}>
       <LineChart data={data}>
@@ -58,13 +65,13 @@ export const ExplorerLineChart = () => {
           axisLine={false}
           tickLine={false}
           padding={{ bottom: 15 }}
-          tickFormatter={(value) => `${Math.round(value / 1000)}`}
+          tickFormatter={(value) => `$${Math.round(value / 1000)}`}
           unit="k"
         />
         <Tooltip />
         <Legend
           content={() => (
-            <div className="mx-auto w-fit mb-6 text-center text-gray font-bold">
+            <div className="mx-auto w-fit mb-6 text-center text-gray">
               Last {daysFilter} days transaction history
             </div>
           )}
@@ -73,16 +80,10 @@ export const ExplorerLineChart = () => {
         />
         <Line
           type="monotone"
-          dataKey="price"
+          dataKey="volume"
           stroke="#B160FE"
           dot={false}
           activeDot={{ r: 2 }}
-        />
-        <Line
-          type="monotone"
-          dot={false}
-          dataKey="new_price"
-          stroke="#4A70FE"
         />
       </LineChart>
     </ResponsiveContainer>

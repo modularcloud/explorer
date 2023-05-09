@@ -7,14 +7,21 @@ import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[[...vie
 import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
 import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/WalletIcon";
 import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ContractFileIcon";
-import { ExplorerLineChart } from "../chart";
+import { ExplorerLineChart, ExplorerLineChartProps } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
 import Web3 from "web3";
 import SvgRadialBgIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/RadialBg";
+import { z } from "zod";
 
 type Props = {
   extended?: boolean;
 };
+
+export const TransactionVolumeSchema = z.object({
+  endTime: z.string(),
+  volumeInWei: z.string(),
+});
+export type TransactionVolume = z.infer<typeof TransactionVolumeSchema>;
 
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -66,10 +73,47 @@ async function getRealTimeMetrics() {
   };
 }
 
+async function getTransactionVolumes(): Promise<
+  ExplorerLineChartProps["data"]
+> {
+  return fetch(process.env.METRICS_API_URL + "/transaction-volume-data")
+    .then((res) => res.json())
+    .then((res) => {
+      return TransactionVolumeSchema.array().parse(
+        res.result.transactionVolumes
+      );
+    })
+    .then((res) => {
+      return res
+        .sort((a, b) => {
+          return Number(a.endTime) - Number(b.endTime);
+        })
+        .map((item) => {
+          return {
+            time: new Date(item.endTime).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            }),
+            volume: Number(Web3.utils.fromWei(item.volumeInWei)),
+          };
+        });
+    });
+}
+
 export async function Stats({ extended }: Props) {
-  const [zbcPrice, gasPrice, blockMetrics, realTimeMetrics] = await Promise.all(
-    [getZbcPrice(), getGasPrice(), getBlockMetrics(), getRealTimeMetrics()]
-  );
+  const [
+    zbcPrice,
+    gasPrice,
+    blockMetrics,
+    realTimeMetrics,
+    transactionVolumes,
+  ] = await Promise.all([
+    getZbcPrice(),
+    getGasPrice(),
+    getBlockMetrics(),
+    getRealTimeMetrics(),
+    getTransactionVolumes(),
+  ]);
   return (
     <>
       <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-4 mt-10 border-y border-transluscent">
@@ -103,7 +147,7 @@ export async function Stats({ extended }: Props) {
             </div>
           ) : null}
           <div className="flex-1 w-full max-w-xs xs:max-w-md md:max-w-xl md:max-w-xl justify-self-center order-first md:order-last -ml-8">
-            <ExplorerLineChart />
+            <ExplorerLineChart data={transactionVolumes} />
           </div>
         </div>
         <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-4 lg:px-6 flex lg:flex-nowrap items-center justify-center gap-0">
