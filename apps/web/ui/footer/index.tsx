@@ -12,13 +12,13 @@ export function Footer() {
       <span className="text-slate-900">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.
       </span>
-      <div className="flex flex-row justify-around">
+      {/* <div className="flex flex-row justify-around">
         {footer_links.map(({ title, id, href }) => (
           <Link key={id} href={href}>
             <span className="text-night">{title}</span>
           </Link>
         ))}
-      </div>
+      </div> */}
     </footer>
   );
 }
