@@ -7,7 +7,7 @@ import { Search } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(c
 const whitelabel = getWhitelabel();
 
 export const metadata: Metadata = {
-  title: `${whitelabel.name.join("")} by Modular Cloud`,
+  title: `Explorer by Modular Cloud`,
 };
 
 export default function HomePage() {
