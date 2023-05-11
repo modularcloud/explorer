@@ -73,8 +73,11 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
-        title: "NautScan",
         env: "nautilus",
+        metadata: {
+          title: "NautScan",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "caldera":
       return {
@@ -92,8 +95,11 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "goerli",
         name: ["Caldera", "Scan"],
-        title: "CalderaScan",
         env: "caldera",
+        metadata: {
+          title: "CalderaScan",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "worlds":
       return {
@@ -107,9 +113,12 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "worlds",
         subText: "Explorer",
-        title: "Explorer",
         name: ["Modular", "Cloud"],
         env: "worlds",
+        metadata: {
+          title: "Explorer",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "aeg":
       return {
@@ -125,6 +134,10 @@ export function getWhitelabel(): Whitelabel {
         subText: "Explorer",
         name: ["Modular", "Cloud"],
         env: "aeg",
+        metadata: {
+          title: "Explorer",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "celestia":
       return {
@@ -138,8 +151,11 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "mocha",
         name: ["Celestia", "Scan"],
-        title: "CelestiaScan",
         env: "celestia",
+        metadata: {
+          title: "CelestiaScan",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "dymension":
       return {
@@ -163,6 +179,10 @@ export function getWhitelabel(): Whitelabel {
         name: ["Dym", "Scan"],
         title: "DymScan",
         env: "dymension",
+        metadata: {
+          title: "DymScan",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     case "saga":
       return {
@@ -176,8 +196,11 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "saga",
         name: ["Saga", "Scan"],
-        title: "SagaScan",
         env: "saga",
+        metadata: {
+          title: "SagaScan",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
     default:
       return {
@@ -226,8 +249,11 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "mocha",
         subText: "Explorer",
         name: ["Modular", "Cloud"],
-        title: "Explorer",
         env: "default",
+        metadata: {
+          title: "Explorer",
+          description: "A modular block explorer built by Modular Cloud",
+        },
       };
   }
 }
