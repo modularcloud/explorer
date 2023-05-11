@@ -43,7 +43,10 @@ export async function fetchLoad(props: FetchLoadArgs) {
     return null;
   }
 }
-
+export type metaData = {
+  title: string;
+  description: string;
+};
 export type SearchOption = {
   displayName: string;
   id: string;
@@ -57,7 +60,7 @@ export type Whitelabel = {
   defaultNetwork: string;
   subText?: string;
   env: string;
-  metadata: object;
+  metadata: metaData;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
@@ -177,7 +180,6 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "evm-rollapp",
         name: ["Dym", "Scan"],
-        title: "DymScan",
         env: "dymension",
         metadata: {
           title: "DymScan",
