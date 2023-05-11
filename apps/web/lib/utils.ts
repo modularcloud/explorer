@@ -57,6 +57,7 @@ export type Whitelabel = {
   defaultNetwork: string;
   subText?: string;
   env: string;
+  title: string;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
@@ -72,6 +73,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
+        title: "NautScan",
         env: "nautilus",
       };
     case "caldera":
@@ -90,6 +92,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "goerli",
         name: ["Caldera", "Scan"],
+        title: "CalderaScan",
         env: "caldera",
       };
     case "worlds":
@@ -104,6 +107,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "worlds",
         subText: "Explorer",
+        title: "Explorer",
         name: ["Modular", "Cloud"],
         env: "worlds",
       };
@@ -119,6 +123,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "mocha",
         name: ["Celestia", "Scan"],
+        title: "CelestiaScan",
         env: "celestia",
       };
     case "dymension":
@@ -141,6 +146,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "evm-rollapp",
         name: ["Dym", "Scan"],
+        title: "DymScan",
         env: "dymension",
       };
     case "saga":
@@ -155,6 +161,7 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "saga",
         name: ["Saga", "Scan"],
+        title: "SagaScan",
         env: "saga",
       };
     default:
@@ -204,6 +211,7 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "mocha",
         subText: "Explorer",
         name: ["Modular", "Cloud"],
+        title: "Explorer",
         env: "default",
       };
   }

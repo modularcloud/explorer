@@ -5,9 +5,8 @@ import { Footer } from "../ui/footer";
 import { Search } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/search";
 
 const whitelabel = getWhitelabel();
-
 export const metadata: Metadata = {
-  title: `Explorer by Modular Cloud`,
+  title: `${whitelabel.title} by Modular Cloud`,
 };
 
 export default function HomePage() {
