@@ -57,7 +57,7 @@ export type Whitelabel = {
   defaultNetwork: string;
   subText?: string;
   env: string;
-  title: string;
+  metadata: object;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
