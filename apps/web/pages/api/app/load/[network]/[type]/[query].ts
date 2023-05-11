@@ -35,6 +35,18 @@ export default async function handler(
       },
     });
     Engine.addConfig("worlds", config);
+  } else if (whitelabel.env === "aeg") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
+      network: {
+        id: "aeg",
+        displayName: "AEG",
+        nativeToken: "ETH",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("aeg", config);
   } else if (whitelabel.env === "dymension") {
     config = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
