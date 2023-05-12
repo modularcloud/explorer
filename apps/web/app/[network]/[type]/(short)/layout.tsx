@@ -16,3 +16,5 @@ export default async function ShortEntityLayout({ params, children }: Props) {
     </EntityLayout>
   );
 }
+
+export const dynamic = "force-dynamic";
