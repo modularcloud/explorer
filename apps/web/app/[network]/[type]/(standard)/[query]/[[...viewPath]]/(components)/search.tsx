@@ -27,7 +27,13 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>
       <Popover.Anchor>
-        <div className={searchBarGlow ? "p-[1px] rounded-lg bg-[#9DAAE2]" : ""}>
+        <div
+          className={
+            searchBarGlow
+              ? "p-[1px] rounded-lg bg-[#9DAAE2]"
+              : "hover:bg-[#9DAAE2] hover:p-[1px] rounded-lg"
+          }
+        >
           <div className="flex items-center h-[2.125rem] border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-lg w-full bg-white overflow-hidden">
             <Select.Root
               value={option}
