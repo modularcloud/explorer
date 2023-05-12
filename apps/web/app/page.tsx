@@ -16,8 +16,7 @@ export default function HomePage() {
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>
-      {/* @ts-expect-error Async Server Component */}
-      <Stats extended={true} />
+      {whitelabel.env === "nautilus" && <Stats extended={true} />}
       <Footer />
     </div>
   );

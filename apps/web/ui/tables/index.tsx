@@ -1,3 +1,5 @@
+"use client";
+import useSWR from "swr";
 import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
 import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
 import { truncateString } from "../../lib/utils";
@@ -34,29 +36,33 @@ const TableHeader: React.FC<HeaderProps> = ({
 };
 
 export const BlocksAndTransactionsSummaryDisplay = () => {
-  // const isMobile = true;
   return (
     <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 lg:gap-8 flex-col lg:flex-row">
-      {/* @ts-expect-error Async Server Component */}
       <BlockSummaryTable /> <TransactionsSummaryTable />
     </div>
   );
 };
 
-interface TableSummaryProps {
-  screenSize?: "mobile" | "others";
-}
-
-export const BlockSummaryTable = async () => {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+const fetchBlockSummary = async (url: string) => {
+  const web3 = new Web3(url);
   const latestBlock = await web3.eth.getBlockNumber();
   const blockPromises = [];
   for (let i = 0; i < 8; i++) {
     const block = web3.eth.getBlock(latestBlock - i);
     blockPromises.push(block);
   }
-  const blocks = await Promise.all(blockPromises);
-  const blockData = blocks.map((block) => {
+  return await Promise.all(blockPromises);
+};
+
+export const BlockSummaryTable = () => {
+  const { data, error } = useSWR(
+    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
+    fetchBlockSummary
+  );
+  if (!data) {
+    return null;
+  }
+  const blockData = data.map((block) => {
     return {
       height: block.number,
       minerAddress: block.miner,
@@ -80,7 +86,9 @@ export const BlockSummaryTable = async () => {
             <li className="py-2" key={block.height}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <Link href={`/block/${block.height}`} className="text-ocean">{block.height}</Link>
+                  <Link href={`/block/${block.height}`} className="text-ocean">
+                    {block.height}
+                  </Link>
                   <span className="text-[rgba(42,43,46,0.48)]">
                     <ClientTime time={Number(block.timestamp)} />
                   </span>
@@ -152,8 +160,8 @@ export const BlockSummaryTable = async () => {
   );
 };
 
-export const TransactionsSummaryTable = async () => {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+const fetchTransactionSummary = async (url: string) => {
+  const web3 = new Web3(url);
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const txRefs = await mc.evm.getRecentTransactions("triton", 8);
   async function getTransaction(hash: string, blockNumber: number) {
@@ -169,9 +177,18 @@ export const TransactionsSummaryTable = async () => {
       timestamp: Number(block.timestamp) * 1000,
     };
   }
-  const transactionData = await Promise.all(
+  return await Promise.all(
     txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber))
   );
+};
+export const TransactionsSummaryTable = () => {
+  const { data: transactionData, error } = useSWR(
+    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
+    fetchTransactionSummary
+  );
+  if (!transactionData) {
+    return null;
+  }
 
   return (
     <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
