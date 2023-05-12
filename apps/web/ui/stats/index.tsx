@@ -118,20 +118,17 @@ export function Stats({ extended }: Props) {
     "/transaction-volume-data",
     getTransactionVolumes
   );
-  const priceStateReady = !!zbcPrice && !!gasPrice;
+  const priceStatsReady = !!zbcPrice && !!gasPrice;
+  // const metricsCanLoad = !!blockMetrics && realTimeMetrics
+  const metricsCanLoad = !!realTimeMetrics;
 
-  console.log({ zbcPrice });
-  console.log({ gasPrice });
-  console.log({ blockMetrics });
-  console.log({ realTimeMetrics });
-  console.log({ transactionVolumes });
   return (
     <>
       <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-4 mt-10 border-y border-transluscent">
         <div className="flex items-center flex-col lg:flex-row justify-center mx-auto gap-6 md:gap-12 md:gap-6 max-w-4xl md:max-w-5xl flex-wrap md:flex-nowrap">
           {extended ? (
             <div className="w-full md:flex-1 px-4 md:px-2">
-              {priceStateReady ? (
+              {priceStatsReady ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
                   <SummaryPresenter
                     icon={<DollarCircled />}
@@ -166,68 +163,70 @@ export function Stats({ extended }: Props) {
             ) : null}
           </div>
         </div>
-        <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-2 flex lg:flex-nowrap items-center justify-center gap-0">
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
-            <SummaryPresenter
-              value={`${realTimeMetrics?.walletAddresses.toLocaleString(
-                "en-US"
-              )}`}
-              title="Wallet Addresses"
-              icon={<WalletIcon />}
-            />
-            {/* <SummaryPresenter
+        {metricsCanLoad && (
+          <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-2 flex lg:flex-nowrap items-center justify-center gap-0">
+            <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+              <SummaryPresenter
+                value={`${realTimeMetrics?.walletAddresses.toLocaleString(
+                  "en-US"
+                )}`}
+                title="Wallet Addresses"
+                icon={<WalletIcon />}
+              />
+              {/* <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
               title="Avg Block Time"
               icon={<ClockCount />}
             /> */}
-          </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
-            <SummaryPresenter
-              value={`${realTimeMetrics?.totalTransactions.toLocaleString(
-                "en-US"
-              )}`}
-              title="Total Transactions"
-              icon={<BarChartIcon />}
-            />
-          </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
-            <SummaryPresenter
-              value={`${realTimeMetrics?.walletAddresses.toLocaleString(
-                "en-US"
-              )}`}
-              title="Wallet Addresses"
-              icon={<WalletIcon />}
-            />
-            {/* <SummaryPresenter
+            </div>
+            <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+              <SummaryPresenter
+                value={`${realTimeMetrics?.totalTransactions.toLocaleString(
+                  "en-US"
+                )}`}
+                title="Total Transactions"
+                icon={<BarChartIcon />}
+              />
+            </div>
+            <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+              <SummaryPresenter
+                value={`${realTimeMetrics?.walletAddresses.toLocaleString(
+                  "en-US"
+                )}`}
+                title="Wallet Addresses"
+                icon={<WalletIcon />}
+              />
+              {/* <SummaryPresenter
               value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
               title="Total Blocks"
               icon={<BlocksIcon />}
             /> */}
+            </div>
+            <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+              <SummaryPresenter
+                value={`${realTimeMetrics?.walletAddresses.toLocaleString(
+                  "en-US"
+                )}`}
+                title="Wallet Addresses"
+                icon={<WalletIcon />}
+              />
+            </div>
+            <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+              <SummaryPresenter
+                value={`${realTimeMetrics?.contractsDeployed.toLocaleString(
+                  "en-US"
+                )}`}
+                title="Contracts Deployed"
+                icon={<ContractFileIcon />}
+              />
+            </div>
           </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
-            <SummaryPresenter
-              value={`${realTimeMetrics?.walletAddresses.toLocaleString(
-                "en-US"
-              )}`}
-              title="Wallet Addresses"
-              icon={<WalletIcon />}
-            />
-          </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
-            <SummaryPresenter
-              value={`${realTimeMetrics?.contractsDeployed.toLocaleString(
-                "en-US"
-              )}`}
-              title="Contracts Deployed"
-              icon={<ContractFileIcon />}
-            />
-          </div>
-        </div>
+        )}
       </div>
 
       {extended ? null : (
         <div className="w-full max-w-2xl px-4 flex gap-16 items-center mt-4 mb-20 justify-center">
-          {priceStateReady ? (
+          {priceStatsReady ? (
             <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
               <SummaryPresenter
                 icon={<DollarCircled />}
