@@ -86,7 +86,7 @@ async function getTransactionVolumes(): Promise<
     .then((res) => {
       return res
         .sort((a, b) => {
-          return Number(a.endTime) - Number(b.endTime);
+          return Number(b.endTime) - Number(a.endTime);
         })
         .map((item) => {
           return {
