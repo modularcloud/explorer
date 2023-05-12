@@ -86,9 +86,7 @@ async function getTransactionVolumes(): Promise<
     .then((res) => {
       return res
         .sort((a, b) => {
-          var aDate = new Date(a.endTime)
-          var bDate = new Date(b.endTime)
-          return Number(aDate) - Number(bDate);
+          return Number(new Date(a.endTime)) - Number(new Date(b.endTime));
         })
         .map((item) => {
           return {
@@ -139,8 +137,8 @@ export async function Stats({ extended }: Props) {
                     icon={<FuelTankIcon />}
                     title="Gas Price"
                     value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
-                        ? (gasPrice * zbcPrice).toPrecision(3)
-                        : gasPrice * zbcPrice
+                      ? (gasPrice * zbcPrice).toPrecision(3)
+                      : gasPrice * zbcPrice
                       })`}
                   />
                 </div>
@@ -215,8 +213,8 @@ export async function Stats({ extended }: Props) {
                 icon={<FuelTankIcon />}
                 title="Gas Price"
                 value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
-                    ? (gasPrice * zbcPrice).toPrecision(3)
-                    : gasPrice * zbcPrice
+                  ? (gasPrice * zbcPrice).toPrecision(3)
+                  : gasPrice * zbcPrice
                   })`}
               />
             </div>
