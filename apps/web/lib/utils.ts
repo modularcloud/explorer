@@ -43,7 +43,7 @@ export async function fetchLoad(props: FetchLoadArgs) {
     return null;
   }
 }
-export type metaData = {
+export type MetaData = {
   title: string;
   description: string;
 };
@@ -60,7 +60,7 @@ export type Whitelabel = {
   defaultNetwork: string;
   subText?: string;
   env: string;
-  metadata: metaData;
+  metadata: MetaData;
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
