@@ -48,6 +48,15 @@ export const getSearchOptions = async () => {
       ...(Whitelabel === "dev"
         ? [
             {
+              label: "Caldera",
+              options: [
+                {
+                  name: "Caldera",
+                  value: "caldera",
+                },
+              ],
+            },
+            {
               label: "Dymension",
               options: [
                 ...(await fetch(
@@ -67,14 +76,14 @@ export const getSearchOptions = async () => {
                         };
                       })
                   )),
-                  {
-                    name: "Hub",
-                    value: DYMENSION_HUB,
-                  },
-                  {
-                    name: "RollApp X",
-                    value: DYMENSION_ROLLAPP_X,
-                  },
+                {
+                  name: "Hub",
+                  value: DYMENSION_HUB,
+                },
+                {
+                  name: "RollApp X",
+                  value: DYMENSION_ROLLAPP_X,
+                },
               ],
             },
             {

@@ -10,12 +10,7 @@ export async function LatestExtract(
   _q: unknown,
   metadata: EngineConfigMetadata
 ) {
-  const type = z.string().parse(_q);
-  if (type !== "transactions") {
-    // TODO: Add support for other types like blocks
-    throw new Error("Invalid type");
-  }
-
+  const type = z.enum(["transactions", "blocks"]).parse(_q);
   return {
     type,
   };

@@ -111,14 +111,14 @@ export function getWhitelabel(): Whitelabel {
     case "celestia":
       return {
         searchOptions: {
-          Dev: [
+          Celestia: [
             {
-              displayName: "Ethereum",
-              id: "ethereum",
+              displayName: "Mocha",
+              id: "mocha",
             },
           ],
         },
-        defaultNetwork: "ethereum",
+        defaultNetwork: "mocha",
         name: ["Celestia", "Scan"],
         env: "celestia",
       };
@@ -144,10 +144,10 @@ export function getWhitelabel(): Whitelabel {
         name: ["Dym", "Scan"],
         env: "dymension",
       };
-    default:
+    case "saga":
       return {
         searchOptions: {
-          Dev: [
+          Saga: [
             {
               displayName: "Saga",
               id: "saga",
@@ -156,6 +156,55 @@ export function getWhitelabel(): Whitelabel {
         },
         defaultNetwork: "saga",
         name: ["Saga", "Scan"],
+        env: "saga",
+      };
+    default:
+      return {
+        searchOptions: {
+          Celestia: [
+            {
+              displayName: "Mocha",
+              id: "celestia-mocha",
+            },
+          ],
+          Dymension: [
+            {
+              displayName: "EVM RollApp",
+              id: "dymension-evm-rollapp",
+            },
+            {
+              displayName: "RollApp X",
+              id: "dymension-rollappx",
+            },
+            {
+              displayName: "Hub",
+              id: "dymension-hub",
+            },
+          ],
+          Caldera: [
+            {
+              displayName: "Goerli",
+              id: "caldera-goerli",
+            },
+            {
+              displayName: "Polygon",
+              id: "caldera-polygon",
+            },
+          ],
+          Eclipse: [
+            {
+              displayName: "Nautilus",
+              id: "eclipse-nautilus",
+            },
+            // {
+            //   displayName: "Worlds",
+            //   id: "eclipse-worlds",
+            // },
+          ],
+        },
+        defaultNetwork: "mocha",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
         env: "default",
       };
   }
@@ -163,4 +212,20 @@ export function getWhitelabel(): Whitelabel {
 
 export function slugify(str: string): string {
   return _slugify(str, { lower: true, strict: true });
+}
+
+export function truncateString(
+  address: string,
+  numCharsBefore = 6,
+  numCharsAfter = 4
+) {
+  if (!address) return "";
+
+  if (address.length <= numCharsBefore + numCharsAfter + 2) {
+    return address;
+  }
+
+  const start = address.slice(0, numCharsBefore);
+  const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
+  return `${start}....${end}`;
 }

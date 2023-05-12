@@ -8,17 +8,17 @@ const footer_links = [
 
 export function Footer() {
   return (
-    <footer className="flex flex-col justify-evenly text-center absolute bottom-0 border-t h-1/6 p-2">
+    <footer className="flex flex-col justify-evenly text-center bottom-0 border-t h-1/6 p-2">
       <span className="text-slate-900">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.
       </span>
-      <div className="flex flex-row justify-around">
+      {/* <div className="flex flex-row justify-around">
         {footer_links.map(({ title, id, href }) => (
           <Link key={id} href={href}>
             <span className="text-night">{title}</span>
           </Link>
         ))}
-      </div>
+      </div> */}
     </footer>
   );
 }

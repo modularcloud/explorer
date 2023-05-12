@@ -69,6 +69,31 @@ export default async function handler(
       },
     });
     Engine.addConfig("rollappx", config);
+  } else if (whitelabel.env === "celestia") {
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("mocha", config);
+  } else if (whitelabel.env === "saga") {
+    config = CreateEVMConfig({
+      endpoint:
+        "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+      network: {
+        id: "saga",
+        displayName: "Saga",
+        nativeToken: "ETH",
+        logoUrl:
+          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+      },
+    });
+    Engine.addConfig("saga", config);
   } else if (whitelabel.env === "caldera") {
     config = CreateEVMConfig({
       endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
@@ -94,17 +119,106 @@ export default async function handler(
     Engine.addConfig("polygon", config);
   } else {
     config = CreateEVMConfig({
-      endpoint:
-        "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+      endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
       network: {
-        id: "saga",
-        displayName: "Saga",
-        nativeToken: "ETH",
+        id: "eclipse-nautilus",
+        displayName: "Triton",
+        nativeToken: "ZBC",
         logoUrl:
-          "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+          "/images/eclipse.png",
       },
     });
-    Engine.addConfig("saga", config);
+    Engine.addConfig("eclipse-nautilus", config);
+    // config = CreateEVMConfig({
+    //   endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    //   network: {
+    //     id: "eclipse-worlds",
+    //     displayName: "Worlds",
+    //     nativeToken: "ETH",
+    //     logoUrl:
+    //       "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+    //   },
+    // });
+    // Engine.addConfig("eclipse-worlds", config);
+    // config = CreateEVMConfig({
+    //   endpoint:
+    //     "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+    //   network: {
+    //     id: "saga",
+    //     displayName: "Saga",
+    //     nativeToken: "ETH",
+    //     logoUrl:
+    //       "https://ethereum.org/static/1b1d1b8e1f8d9b6e1c6d8f1b8f1b1b1c/6b2b1/eth-logo.png",
+    //   },
+    // });
+    // Engine.addConfig("saga", config);
+    config = CreateEVMConfig({
+      endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
+      network: {
+        id: "caldera-goerli",
+        displayName: "Goerli",
+        nativeToken: "ETH",
+        logoUrl:
+          "/images/caldera.png",
+      },
+    });
+    Engine.addConfig("caldera-goerli", config);
+    config = CreateEVMConfig({
+      endpoint: "https://usdc-polygon-testnet.calderachain.xyz/replica-http",
+      network: {
+        id: "caldera-polygon",
+        displayName: "Polygon",
+        nativeToken: "USDC",
+        logoUrl:
+          "/images/caldera.png",
+      },
+    });
+    Engine.addConfig("caldera-polygon", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "celestia-mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl:
+          "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("celestia-mocha", config);
+    config = CreateEVMConfig({
+      endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
+      network: {
+        id: "dymension-evm-rollapp",
+        displayName: "EVM RollApp",
+        nativeToken: "tEVMOS",
+        logoUrl:
+          "/images/dymension.png",
+      },
+    });
+    Engine.addConfig("dymension-evm-rollapp", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      network: {
+        id: "dymension-hub",
+        displayName: "Hub",
+        nativeToken: "DYM",
+        logoUrl:
+          "/images/dymension.png",
+      },
+    });
+    Engine.addConfig("dymension-hub", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      network: {
+        id: "dymension-rollappx",
+        displayName: "RollApp X",
+        nativeToken: "RAX",
+        logoUrl:
+          "/images/dymension.png",
+      },
+    });
+    Engine.addConfig("dymension-rollappx", config);
+    
   }
   try {
     if (req.query.type === "search") {

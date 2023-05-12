@@ -18,10 +18,15 @@ module.exports = {
         header: "4.25rem",
       },
       backdropBlur: {
-        xs: '3px',
+        xs: "3px",
       },
       screens: {
         xs: "375px",
+        sm: "475px",
+        md: "595px",
+        tab: "720px",
+        tablet: "860px",
+        lp: "1150px",
         xl: "1440px",
         "2xl": "1726px",
       },
@@ -49,6 +54,8 @@ module.exports = {
           "linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(74,112,254,1) 30%, rgba(177,96,254,1) 70%, rgba(255,255,255,0.2) 100%)",
         "gradient-secondary":
           "linear-gradient(267.41deg, #50B5FF 38.68%, #985EFE 63.16%)",
+        "gradient-blend":
+          "linear-gradient(90deg, rgba(246, 247, 249, 0.12) 0%, rgba(255, 255, 255, 0.6) 51.04%, rgba(246, 247, 249, 0.12) 100%)",
       }),
       borderColor: () => ({
         "gradient-primary":
@@ -137,7 +144,7 @@ module.exports = {
         },
         translucent: {
           DEFAULT: "rgba(255, 255, 255, 0.88)",
-        }
+        },
       },
       keyframes: {
         "right-to-left": {

@@ -23,7 +23,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>
       <Popover.Anchor>
-        <div className="flex h-[2.125rem] border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-lg w-full bg-white overflow-hidden">
+        <div className="flex items-center h-[2.125rem] border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-lg w-full bg-white overflow-hidden">
           <Select.Root
             value={option}
             onValueChange={(value) => setOption(value)}
@@ -66,28 +66,30 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
               </Select.Content>
             </Select.Portal>
           </Select.Root>
-          <input
-            ref={searchInput}
-            onChange={(event: any) =>
-              router.prefetch(`/${option}/search/${event.target.value}`)
-            }
-            onKeyDown={(event: any) => {
-              if (event.code === "Enter" || event.code === "NumpadEnter")
-                router.push(`/${option}/search/${event.target.value}`);
-            }}
-            className="flex-1 placeholder:text-gray px-3 py-[0.3125rem] outline-none"
-            type="text"
-            placeholder="Go to hash, height, or address"
-          />
-          <button
-            onClick={() => {
-              if (searchInput.current)
-                router.push(`/${option}/search/${searchInput.current.value}`);
-            }}
-            className="px-3 flex items-center"
-          >
-            <SearchOff />
-          </button>
+          <div className="grid grid-cols-[1fr_auto] items-center grow">
+            <input
+              ref={searchInput}
+              onChange={(event: any) =>
+                router.prefetch(`/${option}/search/${event.target.value}`)
+              }
+              onKeyDown={(event: any) => {
+                if (event.code === "Enter" || event.code === "NumpadEnter")
+                  router.push(`/${option}/search/${event.target.value}`);
+              }}
+              className="placeholder:text-gray mx-3 py-[0.3125rem] outline-none w-full"
+              type="text"
+              placeholder="Go to hash, height, or address"
+            />
+            <button
+              onClick={() => {
+                if (searchInput.current)
+                  router.push(`/${option}/search/${searchInput.current.value}`);
+              }}
+              className="px-3 flex items-center"
+            >
+              <SearchOff />
+            </button>
+          </div>
         </div>
       </Popover.Anchor>
       <Popover.Content className="min-w-[90%]">

@@ -100,7 +100,7 @@ export const SearchInput = ({
             className="flex-1 placeholder:text-gray px-3 py-[0.3125rem] outline-none"
             type="text"
             placeholder={
-              option.toLowerCase().match(/^hub$|dymension|rollapp|triton/)
+              option.toLowerCase().match(/^hub$|dymension|rollapp|triton|caldera/)
                 ? "Go to hash, height, or address"
                 : placeholder
             }

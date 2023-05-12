@@ -30,6 +30,13 @@ export async function PaginationExtract(
       receiveResponse = await fetch(
         `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${value}'&prove=false&page=${page}&per_page=15&order_by=asc`
       );
+    } else if (value.match(/^celestia\w{39}$/)) {
+      sendResponse = await fetch(
+        `https://rpc-mocha.pops.one/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`
+      );
+      receiveResponse = await fetch(
+        `https://rpc-mocha.pops.one/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`
+      );
     } else {
       throw new Error("Unsupported address");
     }

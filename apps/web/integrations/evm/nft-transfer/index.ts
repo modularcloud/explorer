@@ -494,7 +494,7 @@ export async function NFTTransferExtract(
     ).methods
       .uri(id)
       .call();
-    const uri = baseUri.replace("{id}", String(id));
+    const uri = baseUri.replace("{id}", web3.utils.padLeft(id, 64));
     const metadata = await fetch(uri)
       .then((res) => res.json())
       .then((res) => {
@@ -559,7 +559,7 @@ export async function NFTTransferExtract(
     ).methods
       .uri(ids[0])
       .call();
-    const uri = baseUri.replace("{id}", String(ids[0]));
+    const uri = baseUri.replace("{id}", String(web3.utils.padLeft(ids[0], 64)));
     const metadata = await fetch(uri)
       .then((res) => res.json())
       .then((res) => {
