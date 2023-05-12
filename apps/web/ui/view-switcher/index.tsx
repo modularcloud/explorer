@@ -23,7 +23,11 @@ export function ViewSwitcher() {
         value={view}
         onValueChange={setView ?? (() => {})}
       >
-        <ToggleGroup.Item value="table" className="h-[34px] w-[34px] p-[7px]">
+        <ToggleGroup.Item
+          value="table"
+          className="h-[34px] w-[34px] p-[7px] disabled:cursor-pointer"
+          disabled={view === "table"}
+        >
           {view === "table" ? <ListViewOn /> : <ListViewOff />}
         </ToggleGroup.Item>
         <Separator.Root
@@ -31,7 +35,11 @@ export function ViewSwitcher() {
           decorative
           orientation="vertical"
         />
-        <ToggleGroup.Item value="feed" className="h-[34px] w-[34px] p-[7px]">
+        <ToggleGroup.Item
+          value="feed"
+          className="h-[34px] w-[34px] p-[7px] disabled:cursor-pointer"
+          disabled={view === "feed"}
+        >
           {view === "feed" ? <CardOn /> : <CardOff />}
         </ToggleGroup.Item>
       </ToggleGroup.Root>
