@@ -11,45 +11,12 @@ import {
 } from "recharts";
 import { TransactionVolume } from "../stats";
 
-const data = [
-  {
-    time: "Apr 08",
-    new_price: 4000,
-    // price: 2400,
-    amt: 2400,
-  },
-  {
-    time: "Apr 15",
-    new_price: 2000,
-    // price: 9800,
-    amt: 2290,
-  },
-  {
-    time: "Apr 20",
-    new_price: 27800,
-    // price: 39080,
-    amt: 2000,
-  },
-  {
-    time: "Apr 24",
-    new_price: 23900,
-    // price: 38000,
-    amt: 2500,
-  },
-  {
-    time: "Apr 29",
-    new_price: 34900,
-    // price: 43000,
-    amt: 2100,
-  },
-];
-
 export type ExplorerLineChartProps = {
   data: {
     time: string;
     volume: number; // USD
   }[];
-}
+};
 export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
   const daysFilter = data.length;
   return (
@@ -72,7 +39,9 @@ export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
         <Legend
           content={() => (
             <div className="mx-auto w-fit mb-6 text-center text-gray">
-              {`Last ${daysFilter} day${daysFilter !== 1 ? "s" : ""} transaction histoy`}
+              {`Last ${daysFilter} day${
+                daysFilter !== 1 ? "s" : ""
+              } transaction histoy`}
             </div>
           )}
           align="center"

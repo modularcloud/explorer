@@ -4,9 +4,7 @@ import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewP
 import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
 import { truncateString } from "../../lib/utils";
 import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BarChartIcon";
-import Web3 from "web3";
 import Link from "next/link";
-import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
 
 type HeaderProps = {
@@ -35,44 +33,22 @@ const TableHeader: React.FC<HeaderProps> = ({
   );
 };
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const BlocksAndTransactionsSummaryDisplay = () => {
+  const { data, error } = useSWR("/api/transactions-summary", fetcher);
+  if (!data) {
+    return null;
+  }
+  const { blocks, transactions } = data;
   return (
     <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 lg:gap-8 flex-col lg:flex-row">
-      <BlockSummaryTable /> <TransactionsSummaryTable />
+      <BlockSummaryTable data={blocks} />{" "}
+      <TransactionsSummaryTable data={transactions} />
     </div>
   );
 };
 
-const fetchBlockSummary = async (url: string) => {
-  const web3 = new Web3(url);
-  const latestBlock = await web3.eth.getBlockNumber();
-  const blockPromises = [];
-  for (let i = 0; i < 8; i++) {
-    const block = web3.eth.getBlock(latestBlock - i);
-    blockPromises.push(block);
-  }
-  return await Promise.all(blockPromises);
-};
-
-export const BlockSummaryTable = () => {
-  const { data, error } = useSWR(
-    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-    fetchBlockSummary
-  );
-  if (!data) {
-    return null;
-  }
-  const blockData = data.map((block) => {
-    return {
-      height: block.number,
-      minerAddress: block.miner,
-
-      // from gwei to zbc
-      blockreward: block.gasUsed / 1000000000,
-
-      timestamp: Number(block.timestamp) * 1000,
-    };
-  });
+export const BlockSummaryTable = ({ data }: { data: any[] }) => {
   return (
     <div className="flex-1 bg-white px-4 py-6 rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
@@ -82,7 +58,7 @@ export const BlockSummaryTable = () => {
       />
       <div className="w-full mt-8 md:hidden">
         <ul className="divide-y px-1 space-y-2">
-          {blockData.map((block) => (
+          {data.map((block) => (
             <li className="py-2" key={block.height}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
@@ -112,7 +88,7 @@ export const BlockSummaryTable = () => {
 
       <table className="responsive border-collapse hidden md:table w-full mt-8">
         <tbody>
-          {blockData.map((block) => {
+          {data.map((block) => {
             return (
               <tr
                 key={block.height}
@@ -160,36 +136,7 @@ export const BlockSummaryTable = () => {
   );
 };
 
-const fetchTransactionSummary = async (url: string) => {
-  const web3 = new Web3(url);
-  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  const txRefs = await mc.evm.getRecentTransactions("triton", 8);
-  async function getTransaction(hash: string, blockNumber: number) {
-    const [tx, block] = await Promise.all([
-      web3.eth.getTransaction(hash),
-      web3.eth.getBlock(blockNumber),
-    ]);
-    return {
-      hash: tx.hash,
-      from: tx.from,
-      recipient: tx.to,
-      amount: Number(web3.utils.fromWei(tx.value)).toPrecision(3),
-      timestamp: Number(block.timestamp) * 1000,
-    };
-  }
-  return await Promise.all(
-    txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber))
-  );
-};
-export const TransactionsSummaryTable = () => {
-  const { data: transactionData, error } = useSWR(
-    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-    fetchTransactionSummary
-  );
-  if (!transactionData) {
-    return null;
-  }
-
+export const TransactionsSummaryTable = ({ data }: { data: any[] }) => {
   return (
     <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
@@ -199,7 +146,7 @@ export const TransactionsSummaryTable = () => {
       />
       <div className="w-full mt-8 md:hidden">
         <ul className="divide-y px-1 space-y-2">
-          {transactionData.map((transaction) => (
+          {data.map((transaction) => (
             <li key={transaction.hash} className="py-2">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-1">
@@ -245,7 +192,7 @@ export const TransactionsSummaryTable = () => {
 
       <table className="responsive border-collapse w-full mt-8 hidden md:table">
         <tbody>
-          {transactionData.map((transaction) => {
+          {data.map((transaction) => {
             return (
               <tr
                 key={transaction.hash}

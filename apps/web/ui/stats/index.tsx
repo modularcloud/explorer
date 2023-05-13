@@ -9,9 +9,8 @@ import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[[...vie
 import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
 import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/WalletIcon";
 import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ContractFileIcon";
-import { ExplorerLineChart, ExplorerLineChartProps } from "../chart";
+import { ExplorerLineChart } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
-import Web3 from "web3";
 import { z } from "zod";
 
 type Props = {
@@ -35,92 +34,23 @@ const subPennyCurrencyFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 4,
 });
 
-const getZbcPrice = async (url: string) => {
-  const response = await fetch(url);
-  return response
-    .json()
-    .then((response) => Number(Web3.utils.fromWei(response.price)));
-};
-
-async function getGasPrice(url: string) {
-  const web3 = new Web3(url);
-  return web3.eth
-    .getGasPrice()
-    .then((price) => Number(Web3.utils.fromWei(price)));
-}
-
-async function getBlockMetrics(url: string) {
-  const web3 = new Web3(url);
-  const latestBlock = await web3.eth.getBlockNumber();
-  const block = await web3.eth.getBlock(latestBlock);
-  const latestBlockTimestamp = block.timestamp;
-  const thousandBlocksAgo = await web3.eth.getBlock(latestBlock - 1000);
-  const thousandBlocksAgoTimestamp = thousandBlocksAgo.timestamp;
-  const avgBlockTime =
-    (Number(latestBlockTimestamp) - Number(thousandBlocksAgoTimestamp)) / 1000;
-  return {
-    avgBlockTime,
-    latestBlock,
-  };
-}
-
-async function getRealTimeMetrics(url: string) {
-  const metrics = await fetch(url).then((res) => res.json());
-  return {
-    contractsDeployed: metrics.result.realTimeMetrics.CONTRACT,
-    totalTransactions: metrics.result.realTimeMetrics.TRANSACTION,
-    walletAddresses: metrics.result.realTimeMetrics.UNIQUE_ADDRESS,
-  };
-}
-
-async function getTransactionVolumes(
-  path: string
-): Promise<ExplorerLineChartProps["data"]> {
-  return fetch(`${process.env.METRICS_API_URL}/${path}`)
-    .then((res) => res.json())
-    .then((res) => {
-      return TransactionVolumeSchema.array().parse(
-        res.result?.transactionVolumes || []
-      );
-    })
-    .then((res) => {
-      return res
-        .sort((a, b) => {
-          return Number(new Date(a.endTime)) - Number(new Date(b.endTime));
-        })
-        .map((item) => {
-          return {
-            time: new Date(item.endTime).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            }),
-            volume: Number(Web3.utils.fromWei(item.volumeInWei)),
-          };
-        });
-    });
-}
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function Stats({ extended }: Props) {
-  const { data: zbcPrice } = useSWR("https://api2.zebec.io/price", getZbcPrice);
-  const { data: gasPrice } = useSWR(
-    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-    getGasPrice
-  );
-  const { data: blockMetrics } = useSWR(
-    "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-    getBlockMetrics
-  );
-  const { data: realTimeMetrics } = useSWR(
-    "https://triton.nautscan.com/api/metrics",
-    getRealTimeMetrics
-  );
-  const { data: transactionVolumes } = useSWR(
-    "/transaction-volume-data",
-    getTransactionVolumes
-  );
+  const { data, error } = useSWR("/api/transactions", fetcher);
+  if (!data) {
+    return null;
+  }
+  const {
+    zbcPrice,
+    gasPrice,
+    metrics: realTimeMetrics,
+    blockMetrics,
+    transactionVolumes,
+  } = data;
   const priceStatsReady = !!zbcPrice && !!gasPrice;
-  // const metricsCanLoad = !!blockMetrics && realTimeMetrics
-  const metricsCanLoad = !!realTimeMetrics;
+  const metricsCanLoad = !!blockMetrics && realTimeMetrics;
+  console.log({ data, error });
 
   return (
     <>
@@ -167,17 +97,10 @@ export function Stats({ extended }: Props) {
           <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-2 flex lg:flex-nowrap items-center justify-center gap-0">
             <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
               <SummaryPresenter
-                value={`${realTimeMetrics?.walletAddresses.toLocaleString(
-                  "en-US"
-                )}`}
-                title="Wallet Addresses"
-                icon={<WalletIcon />}
+                value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
+                title="Avg Block Time"
+                icon={<ClockCount />}
               />
-              {/* <SummaryPresenter
-              value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
-              title="Avg Block Time"
-              icon={<ClockCount />}
-            /> */}
             </div>
             <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
               <SummaryPresenter
@@ -190,17 +113,10 @@ export function Stats({ extended }: Props) {
             </div>
             <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
               <SummaryPresenter
-                value={`${realTimeMetrics?.walletAddresses.toLocaleString(
-                  "en-US"
-                )}`}
-                title="Wallet Addresses"
-                icon={<WalletIcon />}
+                value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
+                title="Total Blocks"
+                icon={<BlocksIcon />}
               />
-              {/* <SummaryPresenter
-              value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
-              title="Total Blocks"
-              icon={<BlocksIcon />}
-            /> */}
             </div>
             <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
               <SummaryPresenter
