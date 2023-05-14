@@ -81,6 +81,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "evm-rollapp": "dym/2",
   goerli: "clo/1",
   polygon: "clo/2",
+  aeg: "ep/4",
 };
 
 function normalizeNetworkId(networkId: string) {
