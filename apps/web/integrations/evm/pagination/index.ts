@@ -12,6 +12,16 @@ export async function PaginationExtract(
   const [value, collection, nextToken] = query.split(":");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
 
+  if (collection === "balances") {
+    const balances = await mc.evm.getTokenBalancesByAddress(
+      metadata.network.id,
+      value
+    );
+    return {
+      value,
+      balances,
+    };
+  }
   if (collection === "latest") {
     if (value === "transactions") {
       const latest = await mc.evm.getRecentTransactions(
