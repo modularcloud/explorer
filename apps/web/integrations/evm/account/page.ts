@@ -19,13 +19,11 @@ export const PageTransform = {
         }`,
         description: `Account ${data.address} on ${
           metadata.network.displayName
-        } has ${data.balances.nativeTokenBalance ?? 0} ${
-          metadata.network.nativeToken
-        } and ${data.balances.balances?.length ?? 0} tokens.`,
+        }, balances, transactions, and ${data.nfts.length} NFTs`,
         keywords: `evm, account, address, ${metadata.network.displayName}, ${
           metadata.network.nativeToken
-        }${(data.balances.balances ?? [])
-          .map((b) => `, ${b.token.name}, ${b.token.symbol}`)
+        }${(data.nfts ?? [])
+          .map((b) => `, ${b.balance.token.name}, ${b.balance.token.symbol}`)
           .join("")}`,
       },
       defaultView: "table",

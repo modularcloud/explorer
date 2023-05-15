@@ -4,6 +4,8 @@ import { EntityDetails } from "./entity-details";
 import { KeyValueList } from "../key-value-list";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { PageArchetype } from "../../ecs/archetypes/page";
+import { AsyncKeyValueList } from "../key-value-list/async";
+import { Suspense } from "react";
 
 interface Props {
   className?: string;
@@ -16,7 +18,7 @@ export async function RightPanel({ resourcePath, className }: Props) {
     archetype: PageArchetype,
   });
   if (!entity) return null;
-  const { attributes, logo, entityTypeName, entityId } =
+  const { attributes, asyncAttributes, logo, entityTypeName, entityId } =
     entity.components.sidebar.data;
   return (
     <div
@@ -31,7 +33,18 @@ export async function RightPanel({ resourcePath, className }: Props) {
         value={entityId}
         alt={resourcePath.network}
       />
-      <KeyValueList attributes={attributes} type="sidebar" />
+      <div>
+        <KeyValueList attributes={attributes} type="sidebar" />
+        {(asyncAttributes ?? []).map((set) => (
+          <Suspense
+            key={`${set.src.network}/${set.src.type}/${set.src.query}`}
+            fallback={<KeyValueList attributes={set.fallback} type="sidebar" />}
+          >
+            {/* @ts-expect-error Async Server Component */}
+            <AsyncKeyValueList resourcePath={set.src} type="sidebar" />
+          </Suspense>
+        ))}
+      </div>
     </div>
   );
 }
