@@ -74,7 +74,9 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
               }
               onKeyDown={(event: any) => {
                 if (event.code === "Enter" || event.code === "NumpadEnter")
-                  router.push(`/${option}/search/${event.target.value}`);
+                  if (searchInput.current?.value) {
+                    router.push(`/${option}/search/${event.target.value}`);
+                  }
               }}
               className="placeholder:text-gray mx-3 py-[0.3125rem] outline-none w-full"
               type="text"
@@ -82,7 +84,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             />
             <button
               onClick={() => {
-                if (searchInput.current)
+                if (searchInput.current?.value)
                   router.push(`/${option}/search/${searchInput.current.value}`);
               }}
               className="px-3 flex items-center"
