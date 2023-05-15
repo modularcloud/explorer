@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import Web3 from "web3";
 import { z } from "zod";
 import { createModularCloud } from "@modularcloud/sdk";
@@ -29,6 +28,7 @@ export async function GET() {
       timestamp: Number(block.timestamp) * 1000,
     };
   }
+
   {
     const latestBlock = await web3.eth.getBlockNumber();
     const blockPromises = [];
@@ -55,6 +55,7 @@ export async function GET() {
       txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber))
     );
   }
+
   return new Response(
     JSON.stringify({
       blocks,
