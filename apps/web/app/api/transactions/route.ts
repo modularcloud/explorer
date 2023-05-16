@@ -24,9 +24,8 @@ export async function GET() {
 
   // fetch transaction volumes
   {
-    const response = await fetch(
-      `${process.env.METRICS_API_URL}/transaction-volume-data`
-    );
+    const baseUrl = process.env.METRICS_API_URL ?? "";
+    const response = await fetch(`${baseUrl}/transaction-volume-data`);
     const transactionResponse = await response.json();
     const data = TransactionVolumeSchema.array().parse(
       transactionResponse.result?.transactionVolumes || []
