@@ -1,12 +1,5 @@
 import Web3 from "web3";
-import { z } from "zod";
 import { createModularCloud } from "@modularcloud/sdk";
-
-export const TransactionVolumeSchema = z.object({
-  endTime: z.string(),
-  volumeInWei: z.string(),
-});
-export type TransactionVolume = z.infer<typeof TransactionVolumeSchema>;
 
 export async function GET() {
   /// fetch blocks summary data

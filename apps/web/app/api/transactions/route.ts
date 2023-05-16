@@ -1,11 +1,5 @@
 import Web3 from "web3";
-import { z } from "zod";
-
-export const TransactionVolumeSchema = z.object({
-  endTime: z.string(),
-  volumeInWei: z.string(),
-});
-export type TransactionVolume = z.infer<typeof TransactionVolumeSchema>;
+import { TransactionVolumeSchema } from "../../../schemas/transactions";
 
 export async function GET() {
   // fetch current price of ZBC

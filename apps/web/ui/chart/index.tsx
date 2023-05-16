@@ -9,7 +9,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TransactionVolume } from "../stats";
 
 export type ExplorerLineChartProps = {
   data: {

@@ -11,17 +11,10 @@ import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewP
 import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ContractFileIcon";
 import { ExplorerLineChart } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
-import { z } from "zod";
 
 type Props = {
   extended?: boolean;
 };
-
-export const TransactionVolumeSchema = z.object({
-  endTime: z.string(),
-  volumeInWei: z.string(),
-});
-export type TransactionVolume = z.infer<typeof TransactionVolumeSchema>;
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
