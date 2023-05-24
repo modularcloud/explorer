@@ -1,4 +1,4 @@
-import { MobileActions } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/mobile-actions";
+import { MobileActions } from "../mobile-actions";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";

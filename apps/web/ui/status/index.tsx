@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import SvgGreenTick from "../../../../../../../ui/icons/GreenTick";
-import SvgRedCross from "../../../../../../../ui/icons/RedCross";
+import SvgGreenTick from "../icons/GreenTick";
+import SvgRedCross from "../icons/RedCross";
 
 type Props = {
   children?: React.ReactNode;

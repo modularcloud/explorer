@@ -3,11 +3,11 @@
 import { useState, useRef } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
-import { OptionGroups } from "../../../../../../../lib/utils";
+import { OptionGroups } from "../../lib/utils";
 import { useRouter } from "next/navigation";
-import SvgChevronDown from "../../../../../../../ui/icons/ChevronDown";
-import SvgSearchOff from "../../../../../../../ui/icons/SearchOff";
-import SvgCubesOn from "../../../../../../../ui/icons/CubesOn";
+import SvgChevronDown from "../icons/ChevronDown";
+import SvgSearchOff from "../icons/SearchOff";
+import SvgCubesOn from "../icons/CubesOn";
 
 interface Props {
   optionGroups: OptionGroups;

@@ -1,4 +1,4 @@
-import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
+import { Badge } from "../badge";
 import { truncateString } from "../../lib/utils";
 import Web3 from "web3";
 import Link from "next/link";

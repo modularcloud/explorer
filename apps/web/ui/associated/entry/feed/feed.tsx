@@ -1,5 +1,5 @@
 import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
-import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
+import { Badge } from "../../../badge";
 import Link from "next/link";
 import { KeyValueList } from "../../../key-value-list";
 import { Entity } from "@modularcloud/ecs";

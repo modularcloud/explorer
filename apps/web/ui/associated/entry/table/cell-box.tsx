@@ -1,5 +1,5 @@
-import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
-import { Status } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/status";
+import { Badge } from "../../../badge";
+import { Status } from "../../../status";
 import { Cell } from "../../../../ecs/components/row";
 import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";

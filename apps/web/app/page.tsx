@@ -2,7 +2,7 @@ import { getWhitelabel } from "../lib/utils";
 import { BigLogo } from "../ui/big-logo";
 import { Footer } from "../ui/footer";
 import { Stats } from "../ui/stats";
-import { Search } from "./[network]/[type]/(standard)/[query]/[section]/(components)/search";
+import { Search } from "../ui/search";
 
 const whitelabel = getWhitelabel();
 
