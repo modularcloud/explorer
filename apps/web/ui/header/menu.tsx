@@ -1,8 +1,8 @@
-import { MobileActions } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/mobile-actions";
+import { MobileActions } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/mobile-actions";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
-import { RightPanel } from "../right-panel";
+import { AssociatedRightPanel } from "../right-panel/associated";
 import { ViewSwitcher } from "../view-switcher";
 
 type Props = {
@@ -29,7 +29,7 @@ export async function HeaderMenu({ resourcePath }: Props) {
       <ViewSwitcher />
       <MobileActions searchOptions={whitelabel.searchOptions}>
         {/* @ts-expect-error Async Server Component */}
-        <RightPanel resourcePath={resourcePath} className="flex lg:hidden" />
+        <AssociatedRightPanel resourcePath={resourcePath} className="flex lg:hidden" />
       </MobileActions>
     </div>
   );
