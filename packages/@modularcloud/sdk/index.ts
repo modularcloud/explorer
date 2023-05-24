@@ -81,6 +81,14 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "evm-rollapp": "dym/2",
   goerli: "clo/1",
   polygon: "clo/2",
+  aeg: "ep/4",
+  "nautilus-triton": "eclipse/91002",
+  "saga-saga": "sg/1",
+  "eclipse-worlds": "ep/3",
+  "dymension-evm-rollapp": "dym/2",
+  "caldera-goerli": "clo/1",
+  "caldera-polygon": "clo/2",
+  "eclipse-aeg": "ep/4",
 };
 
 function normalizeNetworkId(networkId: string) {

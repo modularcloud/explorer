@@ -1,4 +1,4 @@
-import SvgCardOff from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/CardOff";
+import SvgCardOff from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/CardOff";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
