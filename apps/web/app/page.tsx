@@ -2,7 +2,7 @@ import { getWhitelabel } from "../lib/utils";
 import { BigLogo } from "../ui/big-logo";
 import { Footer } from "../ui/footer";
 import { Stats } from "../ui/stats";
-import { Search } from "./[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/search";
+import { Search } from "./[network]/[type]/(standard)/[query]/[section]/(components)/search";
 
 const whitelabel = getWhitelabel();
 
@@ -17,7 +17,7 @@ export default function HomePage() {
         </div>
       </div>
       {/* @ts-expect-error Async Server Component */}
-      <Stats extended={true} />
+      { whitelabel.env === "nautilus" ? <Stats extended={true} /> : null }
       <Footer />
     </div>
   );

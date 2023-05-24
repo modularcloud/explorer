@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Status } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
+import { Status } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/status";
 import { Value } from "../../schemas/value";
 import Image from "next/image";
 

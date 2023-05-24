@@ -1,7 +1,7 @@
-import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
-import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
+import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BlocksIcon";
+import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
 import { truncateString } from "../../lib/utils";
-import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BarChartIcon";
+import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BarChartIcon";
 import Web3 from "web3";
 import Link from "next/link";
 import { createModularCloud } from "@modularcloud/sdk";

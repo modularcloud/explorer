@@ -107,6 +107,21 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "worlds",
       };
+    case "aeg":
+      return {
+        searchOptions: {
+          AEG: [
+            {
+              displayName: "AEG",
+              id: "aeg",
+            },
+          ],
+        },
+        defaultNetwork: "aeg",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "aeg",
+      };
     case "celestia":
       return {
         searchOptions: {

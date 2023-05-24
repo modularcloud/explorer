@@ -1,16 +1,15 @@
 import { SummaryPresenter } from "../presenters/summary-presenter";
-import DollarCircled from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/DollarCircled";
-import CapDisplay from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/CapDisplay";
-import FuelTankIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/FuelTank";
-import ClockCount from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ClockCount";
-import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BarChartIcon";
-import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/BlocksIcon";
-import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/WalletIcon";
-import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/ContractFileIcon";
+import DollarCircled from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/DollarCircled";
+import CapDisplay from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/CapDisplay";
+import FuelTankIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/FuelTank";
+import ClockCount from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/ClockCount";
+import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BarChartIcon";
+import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BlocksIcon";
+import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/WalletIcon";
+import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/ContractFileIcon";
 import { ExplorerLineChart, ExplorerLineChartProps } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
 import Web3 from "web3";
-import SvgRadialBgIcon from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/RadialBg";
 import { z } from "zod";
 
 type Props = {

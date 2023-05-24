@@ -1,4 +1,4 @@
-import EntityLayout from "../(standard)/[query]/[[...viewPath]]/layout";
+import EntityLayout from "../(standard)/[query]/layout";
 import { getWhitelabel } from "../../../../lib/utils";
 import { mapTypes, ShortenedResourcePath } from "./helpers";
 
