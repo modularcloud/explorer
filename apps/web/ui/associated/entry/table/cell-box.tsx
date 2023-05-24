@@ -1,11 +1,11 @@
-import SvgGreenTick from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/GreenTick";
-import SvgRedCross from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/RedCross";
 import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
 import { Status } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/status";
 import { Cell } from "../../../../ecs/components/row";
 import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";
 import Image from "next/image";
+import SvgGreenTick from "../../../icons/GreenTick";
+import SvgRedCross from "../../../icons/RedCross";
 
 export function CellBox({ value }: { value: Cell }) {
   if (value.type === "badge") {

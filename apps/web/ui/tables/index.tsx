@@ -1,11 +1,11 @@
-import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BlocksIcon";
 import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
 import { truncateString } from "../../lib/utils";
-import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BarChartIcon";
 import Web3 from "web3";
 import Link from "next/link";
 import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
+import SvgBlocksIcon from "../icons/BlocksIcon";
+import SvgBarChartIcon from "../icons/BarChartIcon";
 
 type HeaderProps = {
   icon: React.ReactNode;
@@ -71,7 +71,7 @@ export const BlockSummaryTable = async () => {
     <div className="flex-1 bg-white px-4 py-6 rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
         href="/latest/blocks"
-        icon={<BlocksIcon />}
+        icon={<SvgBlocksIcon />}
         title="Latest Blocks"
       />
       <div className="w-full mt-8 md:hidden">
@@ -177,7 +177,7 @@ export const TransactionsSummaryTable = async () => {
     <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
         href="/latest/transactions"
-        icon={<BarChartIcon />}
+        icon={<SvgBarChartIcon />}
         title="Latest Transactions"
       />
       <div className="w-full mt-8 md:hidden">

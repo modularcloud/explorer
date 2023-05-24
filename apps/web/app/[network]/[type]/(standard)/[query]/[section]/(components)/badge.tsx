@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import SvgArrowOn from "./(icons)/ArrowOn";
+import SvgArrowOn from "../../../../../../../ui/icons/ArrowOn";
 
 type Props = {
   text: string;

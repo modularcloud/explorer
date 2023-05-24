@@ -3,11 +3,11 @@
 import { useState, useRef } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
-import ChevronDown from "./(icons)/ChevronDown";
-import CubesOn from "./(icons)/CubesOn";
-import SearchOff from "./(icons)/SearchOff";
 import { OptionGroups } from "../../../../../../../lib/utils";
 import { useRouter } from "next/navigation";
+import SvgChevronDown from "../../../../../../../ui/icons/ChevronDown";
+import SvgSearchOff from "../../../../../../../ui/icons/SearchOff";
+import SvgCubesOn from "../../../../../../../ui/icons/CubesOn";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -31,7 +31,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             <Select.Trigger className="outline-none flex items-center justify-center h-full pl-4 py-[0.3125rem] pr-2 font-semibold flex-none border-r border-[#2C2C2C1A]">
               <Select.Value defaultValue={option}></Select.Value>
               <Select.Icon>
-                <ChevronDown />
+                <SvgChevronDown />
               </Select.Icon>
             </Select.Trigger>
             <Select.Portal>
@@ -87,7 +87,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
               }}
               className="px-3 flex items-center"
             >
-              <SearchOff />
+              <SvgSearchOff />
             </button>
           </div>
         </div>
@@ -95,7 +95,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
       <Popover.Content className="min-w-[90%]">
         <div className="flex flex-col justify-center items-center text-center p-5 border rounded-lg shadow-md bg-white mt-2 z-100 w-[300px] sm:w-auto">
           <div className="block py-3 m-auto">
-            <CubesOn />
+            <SvgCubesOn />
           </div>
           <span className="font-bold text-md">Not found.</span>
           <p className="flex flex-wrap text-slate my-2">

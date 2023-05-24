@@ -1,11 +1,9 @@
 "use client";
 
-import {
-  DialogPanel,
-  RightSidebarOff,
-  SearchOff,
-} from "@modularcloud/design-system";
 import { OptionGroups } from "../../../../../../../lib/utils";
+import { DialogPanel } from "../../../../../../../ui/dialog-panel";
+import SvgRightSidebarOff from "../../../../../../../ui/icons/RightSidebarOff";
+import SvgSearchOff from "../../../../../../../ui/icons/SearchOff";
 import { Search } from "./search";
 
 type Props = {
@@ -25,7 +23,7 @@ export function MobileActions({
         btnClass="h-7 flex justify-center items-center rounded-full border-mid-dark-100 border p-1 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]"
         contentClass="z-10 block fixed top-12 inset-x-0 animate-fadeIn"
         overlayClass="z-10 block"
-        triggerIcon={<SearchOff />}
+        triggerIcon={<SvgSearchOff />}
         removeCloseBtn
       >
         <span className="w-full flex justify-center">
@@ -40,7 +38,7 @@ export function MobileActions({
           btnClass="h-7 flex justify-center items-center rounded-full border-mid-dark-100 border p-1 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]"
           contentClass="z-10 block fixed top-0 right-0 w-3/4 md:w-4/6 h-full animate-rtl block lg:hidden"
           overlayClass="z-10 block lg:hidden"
-          triggerIcon={<RightSidebarOff />}
+          triggerIcon={<SvgRightSidebarOff />}
         >
           {children}
         </DialogPanel>

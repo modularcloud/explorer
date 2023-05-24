@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import GreenTick from "./(icons)/GreenTick";
-import RedCross from "./(icons)/RedCross";
+import SvgGreenTick from "../../../../../../../ui/icons/GreenTick";
+import SvgRedCross from "../../../../../../../ui/icons/RedCross";
 
 type Props = {
   children?: React.ReactNode;
@@ -11,9 +11,9 @@ type Props = {
 export function Status({ children, status, mode }: Props) {
   return mode === "icon" ? (
     status ? (
-      <GreenTick />
+      <SvgGreenTick />
     ) : (
-      <RedCross />
+      <SvgRedCross />
     )
   ) : (
     <div
@@ -22,7 +22,7 @@ export function Status({ children, status, mode }: Props) {
         status ? "text-specialty-green" : "text-specialty-red"
       )}
     >
-      {status ? <GreenTick /> : <RedCross />}
+      {status ? <SvgGreenTick /> : <SvgRedCross />}
       {children ?? (status ? "Success" : "Failure")}
     </div>
   );

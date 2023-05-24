@@ -1,16 +1,16 @@
 import { SummaryPresenter } from "../presenters/summary-presenter";
-import DollarCircled from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/DollarCircled";
-import CapDisplay from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/CapDisplay";
-import FuelTankIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/FuelTank";
-import ClockCount from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/ClockCount";
-import BarChartIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BarChartIcon";
-import BlocksIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/BlocksIcon";
-import WalletIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/WalletIcon";
-import ContractFileIcon from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/ContractFileIcon";
 import { ExplorerLineChart, ExplorerLineChartProps } from "../chart";
 import { BlocksAndTransactionsSummaryDisplay } from "../tables";
 import Web3 from "web3";
 import { z } from "zod";
+import SvgClockCount from "../icons/ClockCount";
+import SvgBarChartIcon from "../icons/BarChartIcon";
+import SvgBlocksIcon from "../icons/BlocksIcon";
+import SvgWalletIcon from "../icons/WalletIcon";
+import SvgContractFileIcon from "../icons/ContractFileIcon";
+import SvgCapDisplay from "../icons/CapDisplay";
+import SvgFuelTankIcon from "../icons/FuelTank";
+import SvgDollarCircle from "../icons/DollarCircled";
 
 type Props = {
   extended?: boolean;
@@ -121,19 +121,19 @@ export async function Stats({ extended }: Props) {
             <div className="w-full md:flex-1 px-4 md:px-2">
               <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
                 <SummaryPresenter
-                  icon={<DollarCircled />}
+                  icon={<SvgDollarCircle />}
                   title="ZBC Price"
                   value={subPennyCurrencyFormatter.format(zbcPrice)}
                 />
                 <SummaryPresenter
-                  icon={<CapDisplay />}
+                  icon={<SvgCapDisplay />}
                   title="Market Cap"
                   value={currencyFormatter.format(zbcPrice * 700000000)}
                 />
                 <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
                   <hr className="w-full md:hidden mb-3" />
                   <SummaryPresenter
-                    icon={<FuelTankIcon />}
+                    icon={<SvgFuelTankIcon />}
                     title="Gas Price"
                     value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
                       ? (gasPrice * zbcPrice).toPrecision(3)
@@ -153,7 +153,7 @@ export async function Stats({ extended }: Props) {
             <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
               title="Avg Block Time"
-              icon={<ClockCount />}
+              icon={<SvgClockCount />}
             />
           </div>
           <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
@@ -162,14 +162,14 @@ export async function Stats({ extended }: Props) {
                 "en-US"
               )}`}
               title="Total Transactions"
-              icon={<BarChartIcon />}
+              icon={<SvgBarChartIcon />}
             />
           </div>
           <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
             <SummaryPresenter
               value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
               title="Total Blocks"
-              icon={<BlocksIcon />}
+              icon={<SvgBlocksIcon />}
             />
           </div>
           <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
@@ -178,7 +178,7 @@ export async function Stats({ extended }: Props) {
                 "en-US"
               )}`}
               title="Wallet Addresses"
-              icon={<WalletIcon />}
+              icon={<SvgWalletIcon />}
             />
           </div>
           <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
@@ -187,7 +187,7 @@ export async function Stats({ extended }: Props) {
                 "en-US"
               )}`}
               title="Contracts Deployed"
-              icon={<ContractFileIcon />}
+              icon={<SvgContractFileIcon />}
             />
           </div>
         </div>
@@ -197,19 +197,19 @@ export async function Stats({ extended }: Props) {
         <div className="w-full max-w-2xl px-4 flex gap-16 items-center mt-4 mb-20 justify-center">
           <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
             <SummaryPresenter
-              icon={<DollarCircled />}
+              icon={<SvgDollarCircle />}
               title="ZBC Price"
               value={subPennyCurrencyFormatter.format(zbcPrice)}
             />
             <SummaryPresenter
-              icon={<CapDisplay />}
+              icon={<SvgCapDisplay />}
               title="Market Cap"
               value={currencyFormatter.format(zbcPrice * 700000000)}
             />
             <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
               <hr className="w-full md:hidden mb-3" />
               <SummaryPresenter
-                icon={<FuelTankIcon />}
+                icon={<SvgFuelTankIcon />}
                 title="Gas Price"
                 value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
                   ? (gasPrice * zbcPrice).toPrecision(3)
