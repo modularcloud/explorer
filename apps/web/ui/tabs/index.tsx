@@ -1,21 +1,19 @@
-import { Abel } from "@next/font/google";
 import Link from "next/link";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../lib/utils";
-import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
+import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
 
-const DEFAULT_VIEW_PATH = ["table"];
+const INDEX_TAB_NAME = "Overview";
 
 type Props = {
   params: FetchLoadArgs & {
-    viewPath: string[];
+    section: string;
   };
 };
 
 export async function Tabs({ params }: Props) {
-  const { viewPath = [], ...resourcePath } = params;
-  const [selection] = viewPath;
+  const { section, ...resourcePath } = params;
 
   const entity = await asyncUseEntity({
     resourcePath,
@@ -25,10 +23,11 @@ export async function Tabs({ params }: Props) {
 
   const associated = entity.components.associated.data;
   const labels = Object.keys(associated);
-  if (labels.length === 0) return null;
+
+  labels.unshift(INDEX_TAB_NAME);
 
   const activeTab =
-    labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(section ?? "")) ??
     labels[0];
 
   return labels.length > 1 ? (
@@ -36,9 +35,9 @@ export async function Tabs({ params }: Props) {
       {labels.map((label) => (
         <Link
           key={label}
-          href={`/${params.network}/${params.type}/${params.query}/${slugify(
-            label
-          )}`}
+          href={`/${params.network}/${params.type}/${params.query}/${
+            label === INDEX_TAB_NAME ? "" : slugify(label)
+          }`}
         >
           <Badge
             text={label}
