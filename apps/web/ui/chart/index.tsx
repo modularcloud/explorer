@@ -49,7 +49,7 @@ export type ExplorerLineChartProps = {
     time: string;
     volume: number; // USD
   }[];
-}
+};
 export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
   const daysFilter = data.length;
   return (
@@ -72,7 +72,9 @@ export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
         <Legend
           content={() => (
             <div className="mx-auto w-fit mb-6 text-center text-gray">
-              {`Last ${daysFilter} day${daysFilter !== 1 ? "s" : ""} transaction histoy`}
+              {`Last ${daysFilter} day${
+                daysFilter !== 1 ? "s" : ""
+              } transaction histoy`}
             </div>
           )}
           align="center"

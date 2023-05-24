@@ -56,7 +56,9 @@ export const CardTransform = {
         },
         Transfers: {
           type: "list",
-          payload: data.ids?.map((id, index) => `#${id} (${data.values[index]})`),
+          payload: data.ids?.map(
+            (id, index) => `#${id} (${data.values[index]})`
+          ),
         },
         "Block Number": {
           type: "standard",

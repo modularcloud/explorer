@@ -38,7 +38,7 @@ export const RowTransform = {
           cell: {
             type: "standard",
             payload: "#" + data.balance.balance.tokenId,
-          }
+          },
         },
         {
           column: {
@@ -52,8 +52,8 @@ export const RowTransform = {
               maxLength: 25,
               stepDown: 5,
               strategy: "end",
-            }
-          }
+            },
+          },
         },
         {
           column: {
@@ -63,11 +63,11 @@ export const RowTransform = {
             type: "badge",
             payload: {
               text: data.tokenType,
-            }
+            },
           },
         },
-         // TODO: fix decimals
-         {
+        // TODO: fix decimals
+        {
           column: {
             columnLabel: "Qty",
           },

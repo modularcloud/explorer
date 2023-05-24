@@ -15,8 +15,10 @@ export async function AccountExtract(
     throw new Error("Invalid address");
   }
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  const nfts = await 
-    mc.evm.getNFTBalancesByAddress(metadata.network.id, address);
+  const nfts = await mc.evm.getNFTBalancesByAddress(
+    metadata.network.id,
+    address
+  );
 
   return {
     address,

@@ -173,18 +173,18 @@ async function getBlockBy(
       metadata: buildMetadata(
         blockResponse.result.block.data.square_size
           ? {
-            "Chain Id": blockResponse.result.block.header.chain_id,
-            Height: blockResponse.result.block.header.height,
-            Time: blockResponse.result.block.header.time,
-            "Square Size": blockResponse.result.block.data.square_size,
-            Proposer: blockResponse.result.block.header.proposer_address,
-          }
+              "Chain Id": blockResponse.result.block.header.chain_id,
+              Height: blockResponse.result.block.header.height,
+              Time: blockResponse.result.block.header.time,
+              "Square Size": blockResponse.result.block.data.square_size,
+              Proposer: blockResponse.result.block.header.proposer_address,
+            }
           : {
-            "Chain Id": blockResponse.result.block.header.chain_id,
-            Height: blockResponse.result.block.header.height,
-            Time: blockResponse.result.block.header.time,
-            Proposer: blockResponse.result.block.header.proposer_address,
-          }
+              "Chain Id": blockResponse.result.block.header.chain_id,
+              Height: blockResponse.result.block.header.height,
+              Time: blockResponse.result.block.header.time,
+              Proposer: blockResponse.result.block.header.proposer_address,
+            }
       ),
       computed: {},
       context: {
@@ -795,17 +795,17 @@ async function getEVMBlockBy(
     var raw =
       key === "height"
         ? JSON.stringify({
-          method: "eth_getBlockByNumber",
-          params: ["0x" + hexHeight, false],
-          id: 1,
-          jsonrpc: "2.0",
-        })
+            method: "eth_getBlockByNumber",
+            params: ["0x" + hexHeight, false],
+            id: 1,
+            jsonrpc: "2.0",
+          })
         : JSON.stringify({
-          method: "eth_getBlockByHash",
-          params: ["0x" + value, false],
-          id: 1,
-          jsonrpc: "2.0",
-        });
+            method: "eth_getBlockByHash",
+            params: ["0x" + value, false],
+            id: 1,
+            jsonrpc: "2.0",
+          });
 
     var requestOptions = {
       method: "POST",
@@ -857,7 +857,7 @@ function buildMetadata(obj: { [key: string]: any }): {
     } else {
       try {
         metadata[entry[0]] = ValueSchema.parse(entry[1]);
-      } catch { }
+      } catch {}
     }
   });
 
@@ -870,14 +870,14 @@ export async function getEventSignatureName(topic: string) {
       `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
-  } catch { }
+  } catch {}
 }
 
 async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
   networkName: string,
-  timestamp?: number,
+  timestamp?: number
 ): Promise<Entity | null> {
   try {
     const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
@@ -941,7 +941,7 @@ async function getEVMTransactionByHash(
         params: [tx.blockNumber, false],
         id: 1,
         jsonrpc: "2.0",
-      })
+      });
 
       var requestOptions = {
         method: "POST",
@@ -1031,7 +1031,7 @@ async function getEVMLogByPath(
       params: ["0x" + hexHeight, false],
       id: 1,
       jsonrpc: "2.0",
-    })
+    });
 
     var requestOptions = {
       method: "POST",
@@ -1200,7 +1200,12 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 await Promise.all(
                   block.transactions.map(
                     async (tx) =>
-                      await getEVMTransactionByHash(tx, EVM, network.name, Number(block.timestamp) * 1000)
+                      await getEVMTransactionByHash(
+                        tx,
+                        EVM,
+                        network.name,
+                        Number(block.timestamp) * 1000
+                      )
                   )
                 )
               ).filter((notnull) => notnull) as Entity[];
@@ -1233,7 +1238,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   }
                   nativeTokenBalance =
                     balanceResponse.result.nativeTokenBalance;
-                } catch { }
+                } catch {}
                 return {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
@@ -1241,8 +1246,8 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     [network.name.toLowerCase() === "triton"
                       ? "ZBC"
                       : "Native"]: new Decimal(nativeTokenBalance)
-                        .dividedBy(new Decimal(10).pow(18))
-                        .toString(),
+                      .dividedBy(new Decimal(10).pow(18))
+                      .toString(),
                     ...balances,
                   }),
                   context: {
@@ -1259,7 +1264,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             const getTransfers = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/account-events/${entity.uniqueIdentifier}` // ListAccountEvents     
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/account-events/${entity.uniqueIdentifier}` // ListAccountEvents
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
@@ -1275,20 +1280,26 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   )
                 ).filter((notnull) => notnull) as Entity[];
               } catch (e) {
-                console.log(e)
+                console.log(e);
                 return [];
               }
             };
             const getTransactions = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/transactions/${entity.uniqueIdentifier.toLowerCase()}` // ListTransactions
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${
+                    network.id
+                  }/transactions/${entity.uniqueIdentifier.toLowerCase()}` // ListTransactions
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
                     txIds.result.txs.map(
                       async (tx: any) =>
-                        await getEVMTransactionByHash(tx.hash, EVM, network.name)
+                        await getEVMTransactionByHash(
+                          tx.hash,
+                          EVM,
+                          network.name
+                        )
                     )
                   )
                 ).filter((notnull) => notnull) as Entity[];
@@ -1343,7 +1354,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             const getTransfers = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-events/${entity.uniqueIdentifier}`, //ListTokenEvents
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-events/${entity.uniqueIdentifier}` //ListTokenEvents
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
@@ -1367,29 +1378,31 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 const txIds = await fetch(
                   `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/holder-balances/${entity.uniqueIdentifier}` //ListHolderBalances
                 ).then((res) => res.json());
-                return txIds.result.accountBalances.slice(0, 30).map((account: any) => {
-                  return {
-                    uniqueIdentifier: account.accountAddress,
-                    uniqueIdentifierLabel: "address",
-                    metadata: buildMetadata({
-                      Balance: new Decimal(account.balance)
-                        .dividedBy(
-                          new Decimal(10).pow(
-                            String(entity.metadata["Decimals"].payload)
+                return txIds.result.accountBalances
+                  .slice(0, 30)
+                  .map((account: any) => {
+                    return {
+                      uniqueIdentifier: account.accountAddress,
+                      uniqueIdentifierLabel: "address",
+                      metadata: buildMetadata({
+                        Balance: new Decimal(account.balance)
+                          .dividedBy(
+                            new Decimal(10).pow(
+                              String(entity.metadata["Decimals"].payload)
+                            )
                           )
-                        )
-                        .toString(),
-                    }),
-                    context: {
-                      network: network.name,
-                      entityTypeName: "Account",
-                    },
-                    computed: {},
-                    raw: "",
-                  };
-                });
+                          .toString(),
+                      }),
+                      context: {
+                        network: network.name,
+                        entityTypeName: "Account",
+                      },
+                      computed: {},
+                      raw: "",
+                    };
+                  });
               } catch (e) {
-                console.log(e)
+                console.log(e);
                 return [];
               }
             };
@@ -1428,7 +1441,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/transactions/${entity.uniqueIdentifier}` // ListTransactions 
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/transactions/${entity.uniqueIdentifier}` // ListTransactions
               ).then((res) => res.json());
               return (
                 await Promise.all(

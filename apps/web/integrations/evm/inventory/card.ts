@@ -50,7 +50,7 @@ export const CardTransform = {
         Address: {
           type: "standard",
           payload: data.balance.token.address,
-        }
+        },
       },
     },
   }),

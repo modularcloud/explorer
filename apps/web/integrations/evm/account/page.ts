@@ -17,9 +17,7 @@ export const PageTransform = {
         title: `Account ${forceLength(data.address, 8)} on ${
           metadata.network.displayName
         }`,
-        description: `Account ${data.address} on ${
-          metadata.network.displayName
-        }, balances, transactions, and ${data.nfts.length} NFTs`,
+        description: `Account ${data.address} on ${metadata.network.displayName}, balances, transactions, and ${data.nfts.length} NFTs`,
         keywords: `evm, account, address, ${metadata.network.displayName}, ${
           metadata.network.nativeToken
         }${(data.nfts ?? [])

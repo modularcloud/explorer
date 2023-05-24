@@ -50,10 +50,10 @@ export async function PaginationExtract(
     };
     let sendTxs: JSONRPCResponse<TxSearch> = emptyResponse;
     let receiveTxs: JSONRPCResponse<TxSearch> = emptyResponse;
-    if(sendResponse.ok) {
+    if (sendResponse.ok) {
       sendTxs = (await sendResponse.json()) as JSONRPCResponse<TxSearch>;
     }
-    if(receiveResponse.ok) {
+    if (receiveResponse.ok) {
       receiveTxs = (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
     }
     return {

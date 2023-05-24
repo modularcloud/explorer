@@ -29,7 +29,10 @@ export async function HeaderMenu({ resourcePath }: Props) {
       <ViewSwitcher />
       <MobileActions searchOptions={whitelabel.searchOptions}>
         {/* @ts-expect-error Async Server Component */}
-        <AssociatedRightPanel resourcePath={resourcePath} className="flex lg:hidden" />
+        <AssociatedRightPanel
+          resourcePath={resourcePath}
+          className="flex lg:hidden"
+        />
       </MobileActions>
     </div>
   );

@@ -18,7 +18,7 @@ export async function AccountExtract(
     const data = getBalanceQueryData(address, "udym");
     queryInput = `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "DYM";
-   } else if (address.match(/^celestia\w{39}$/)) {
+  } else if (address.match(/^celestia\w{39}$/)) {
     // celestia mocha
     const data = getBalanceQueryData(address, "utia");
     queryInput = `https://rpc-mocha.pops.one/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;

@@ -135,10 +135,11 @@ export async function Stats({ extended }: Props) {
                   <SummaryPresenter
                     icon={<SvgFuelTankIcon />}
                     title="Gas Price"
-                    value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
-                      ? (gasPrice * zbcPrice).toPrecision(3)
-                      : gasPrice * zbcPrice
-                      })`}
+                    value={`${gasPrice * 1000000000} Gwei ($${
+                      gasPrice * zbcPrice < 0.01
+                        ? (gasPrice * zbcPrice).toPrecision(3)
+                        : gasPrice * zbcPrice
+                    })`}
                   />
                 </div>
               </div>
@@ -211,10 +212,11 @@ export async function Stats({ extended }: Props) {
               <SummaryPresenter
                 icon={<SvgFuelTankIcon />}
                 title="Gas Price"
-                value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
-                  ? (gasPrice * zbcPrice).toPrecision(3)
-                  : gasPrice * zbcPrice
-                  })`}
+                value={`${gasPrice * 1000000000} Gwei ($${
+                  gasPrice * zbcPrice < 0.01
+                    ? (gasPrice * zbcPrice).toPrecision(3)
+                    : gasPrice * zbcPrice
+                })`}
               />
             </div>
           </div>

@@ -5,7 +5,10 @@ import { JSONRPCResponse, Transaction } from "../../../lib/service-manager";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 
-export async function MessageExtract(_q: unknown, metadata: EngineConfigMetadata) {
+export async function MessageExtract(
+  _q: unknown,
+  metadata: EngineConfigMetadata
+) {
   const query = z.string().parse(_q);
   const [hash, index] = query.split(":");
   const response = await fetch(

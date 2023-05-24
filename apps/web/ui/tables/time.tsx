@@ -6,8 +6,8 @@ const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
 
 type Props = {
-    time: number;
-}
+  time: number;
+};
 export function ClientTime({ time }: Props) {
   const [text, setText] = useState("");
   useEffect(() => {

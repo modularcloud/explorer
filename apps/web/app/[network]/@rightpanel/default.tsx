@@ -7,9 +7,9 @@ interface Props {
 }
 
 const VMDisplayNames = {
-  "evm": "Ethereum Virtual Machine",
-  "cosmos": "Cosmos SDK",
-}
+  evm: "Ethereum Virtual Machine",
+  cosmos: "Cosmos SDK",
+};
 
 export default async function RightPanelPage({ params }: Props) {
   const network = getNetworkBySlug(params.network);
@@ -33,6 +33,13 @@ export default async function RightPanelPage({ params }: Props) {
       // },
     },
   };
-  // @ts-expect-error Async Server Component
-  return <RightPanel data={data} alt={alt} className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]" />;
+
+  return (
+    // @ts-expect-error Async Server Component
+    <RightPanel
+      data={data}
+      alt={alt}
+      className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+    />
+  );
 }

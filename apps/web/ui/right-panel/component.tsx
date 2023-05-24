@@ -12,8 +12,7 @@ interface Props {
 }
 
 export async function RightPanel({ data, alt, className }: Props) {
-    const { attributes, asyncAttributes, logo, entityTypeName, entityId } =
-    data;
+  const { attributes, asyncAttributes, logo, entityTypeName, entityId } = data;
   return (
     <div
       className={clsx(

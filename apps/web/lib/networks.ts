@@ -237,7 +237,7 @@ type NetworkConfig = {
 
   // URL for the node
   rpcUrl: string;
-}
+};
 
 type ExplorerConfig = {
   // Name in a format that can be rendered with a gradient, i.e. ["Celestia", "Scan"]
@@ -262,4 +262,4 @@ type ExplorerConfig = {
 
   // Should networks be included in this explorer even if they do not designate this explorer in their explorer id?
   includeAllNetworks: boolean;
-}
+};

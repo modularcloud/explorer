@@ -17,7 +17,7 @@ export default function HomePage() {
         </div>
       </div>
       {/* @ts-expect-error Async Server Component */}
-      { whitelabel.env === "nautilus" ? <Stats extended={true} /> : null }
+      {whitelabel.env === "nautilus" ? <Stats extended={true} /> : null}
       <Footer />
     </div>
   );

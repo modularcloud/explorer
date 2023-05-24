@@ -80,7 +80,9 @@ export const BlockSummaryTable = async () => {
             <li className="py-2" key={block.height}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <Link href={`/block/${block.height}`} className="text-ocean">{block.height}</Link>
+                  <Link href={`/block/${block.height}`} className="text-ocean">
+                    {block.height}
+                  </Link>
                   <span className="text-[rgba(42,43,46,0.48)]">
                     <ClientTime time={Number(block.timestamp)} />
                   </span>
