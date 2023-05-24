@@ -1,0 +1,18 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Verification {
+  id             Int     @id @default(autoincrement())
+  contractAddress String @db.VarChar(255)
+  isVerified      Boolean
+  sourceCode      String
+  bytecode        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
