@@ -4,20 +4,17 @@ import { EntityDetails } from "./entity-details";
 import { KeyValueList } from "../key-value-list";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { PageArchetype } from "../../ecs/archetypes/page";
+import { Sidebar } from "../../ecs/components/sidebar";
 
 interface Props {
   className?: string;
-  resourcePath: FetchLoadArgs;
+  alt: string;
+  data: Sidebar;
 }
 
-export async function RightPanel({ resourcePath, className }: Props) {
-  const entity = await asyncUseEntity({
-    resourcePath,
-    archetype: PageArchetype,
-  });
-  if (!entity) return null;
-  const { attributes, logo, entityTypeName, entityId } =
-    entity.components.sidebar.data;
+export async function RightPanel({ data, alt, className }: Props) {
+    const { attributes, logo, entityTypeName, entityId } =
+    data;
   return (
     <div
       className={clsx(
@@ -29,7 +26,7 @@ export async function RightPanel({ resourcePath, className }: Props) {
         imageUrl={logo}
         label={entityTypeName}
         value={entityId}
-        alt={resourcePath.network}
+        alt={alt}
       />
       <KeyValueList attributes={attributes} type="sidebar" />
     </div>

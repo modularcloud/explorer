@@ -17,18 +17,17 @@ import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list
 import { notFound, redirect } from "next/navigation";
 import AssociatedNotFound from "../../../../../../ui/associated/not-found";
 import { Metadata } from "next";
+import { Tabs } from "../../../../../../ui/tabs";
 
 type Props = {
   params: FetchLoadArgs & {
-    viewPath?: string[];
+    section: string;
   };
 };
 
-// TODO: add metadata component to page archetype
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const whitelabel = getWhitelabel();
-  const { viewPath = [], ...resourcePath } = params;
-  const [selection] = viewPath;
+  const { section, ...resourcePath } = params;
 
   // Redirect legacy url structure
   if (
@@ -37,11 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       resourcePath.type.toLowerCase() === "account") &&
     (resourcePath.query.toLowerCase() === "hash" ||
       resourcePath.query.toLowerCase() === "height" ||
-      resourcePath.query.toLowerCase() === "address") &&
-    viewPath.length === 1
+      resourcePath.query.toLowerCase() === "address")
   ) {
     redirect(
-      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${selection}`
+      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`
     );
   }
 
@@ -58,11 +56,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const labels = Object.keys(associated);
 
   const label =
-    labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(section ?? "")) ??
     labels[0];
 
   return {
-    title: `${selection ? `${label} - ` : ""}${
+    title: `${label} - ${
       entity.components.page.data.metadata.title
     } - ${whitelabel.name.join("")}`,
     description: entity.components.page.data.metadata.description,
@@ -71,9 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EntityPage({ params }: Props) {
-  const { viewPath = [], ...resourcePath } = params;
-  const [selection] = viewPath;
-
+  const { section, ...resourcePath } = params;
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
@@ -84,7 +80,7 @@ export default async function EntityPage({ params }: Props) {
   const labels = Object.keys(associated);
 
   const label =
-    labels.find((label) => slugify(label) === slugify(selection ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(section ?? "")) ??
     labels[0];
 
   let values: FetchLoadArgs[] = [];
@@ -115,29 +111,35 @@ export default async function EntityPage({ params }: Props) {
   }
 
   return (
-    <InfiniteLoader next={next}>
-      <AssociatedList
-        label={label}
-        tableHeader={
-          <Suspense fallback={<TableHeaderLoadingFallback />}>
-            {/* @ts-expect-error Async Server Component */}
-            <TableHeader rows={values} label={label} />
-          </Suspense>
-        }
-      >
-        <>
-          {values.map((value) => (
-            <Suspense
-              key={`${value.network}/${value.type}/${value.query}`}
-              fallback={<AssociatedEntryLoadingFallback />}
-            >
+    <>
+      <InfiniteLoader next={next}>
+        <AssociatedList
+          label={label}
+          tableHeader={
+            <Suspense fallback={<TableHeaderLoadingFallback />}>
               {/* @ts-expect-error Async Server Component */}
-              <ServerAssociatedEntry resourcePath={value} />
+              <TableHeader rows={values} label={label} />
             </Suspense>
-          ))}
-        </>
-        <InfiniteLoaderEntries />
-      </AssociatedList>
-    </InfiniteLoader>
+          }
+        >
+          <>
+            {values.map((value) => (
+              <Suspense
+                key={`${value.network}/${value.type}/${value.query}`}
+                fallback={<AssociatedEntryLoadingFallback />}
+              >
+                {/* @ts-expect-error Async Server Component */}
+                <ServerAssociatedEntry resourcePath={value} />
+              </Suspense>
+            ))}
+          </>
+          <InfiniteLoaderEntries />
+        </AssociatedList>
+      </InfiniteLoader>
+      <Suspense>
+        {/* @ts-expect-error Async Server Component */}
+        <Tabs params={params} />
+      </Suspense>
+    </>
   );
 }
