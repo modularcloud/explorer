@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import Web3 from 'web3';
 import solc from 'solc';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const app = express();
 
@@ -44,7 +44,7 @@ const compileContract = (sourceCode: string) => {
 
   const compiledContract = JSON.parse(solc.compile(JSON.stringify(input)));
   return compiledContract.contracts['contract.sol']['C'].evm.bytecode.object;
-}
+};
 
 app.post('/verify', async (req, res) => {
   const { contractAddress, sourceCode } = req.body;
@@ -56,7 +56,7 @@ app.post('/verify', async (req, res) => {
     const isVerified = bytecodeOnChain === compiledBytecode;
 
     // Store Verification Data in the database
-    const record: Prisma.Verification = await prisma.verification.create({
+    const record = await prisma.verification.create({
       data: {
         contractAddress,
         isVerified,
@@ -76,4 +76,4 @@ app.post('/verify', async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server is running on http://localhost:${port}`)); 
+app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
