@@ -72,7 +72,7 @@ export default function DescriptionList({
           <h3 className="text-base font-semibold leading-7 text-temp-900">
             {title}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-temp-500">
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-temp-500 truncate">
             {subTitle}
           </p>
         </div>
