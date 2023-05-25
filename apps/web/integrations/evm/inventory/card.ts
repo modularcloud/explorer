@@ -27,7 +27,7 @@ export const CardTransform = {
           type: "image",
           payload: data.metadata
             ? {
-                src: data.metadata.image,
+                src: data.metadata.image ?? "/images/placeholder-square.jpg",
                 alt: data.metadata.description ?? data.metadata.name ?? "",
                 height: 100,
                 width: 100,
