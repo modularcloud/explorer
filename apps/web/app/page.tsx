@@ -7,7 +7,12 @@ import { EXPLORER_CONFIG } from "../config/explorers";
 import { Metadata } from "next";
 
 const whitelabel = getWhitelabel(); // TODO: deprecate
-const { homepageTitle, homepageDescription, homepageKeywords, id: explorerId } = EXPLORER_CONFIG;
+const {
+  homepageTitle,
+  homepageDescription,
+  homepageKeywords,
+  id: explorerId,
+} = EXPLORER_CONFIG;
 
 export function generateMetadata(): Metadata {
   return {
