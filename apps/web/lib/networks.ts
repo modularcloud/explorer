@@ -121,7 +121,7 @@ export function getEngine() {
         id: "eclipse-nautilus",
         displayName: "Triton",
         nativeToken: "ZBC",
-        logoUrl: "/images/eclipse.png",
+        logoUrl: "/images/nautilus.png",
       },
     });
     Engine.addConfig("eclipse-nautilus", config);

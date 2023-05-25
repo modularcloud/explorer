@@ -70,7 +70,7 @@ export const BlockSummaryTable = async () => {
   return (
     <div className="flex-1 bg-white px-4 py-6 rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
-        href="/latest/blocks"
+        href="/triton/latest/blocks/blocks"
         icon={<SvgBlocksIcon />}
         title="Latest Blocks"
       />
@@ -178,7 +178,7 @@ export const TransactionsSummaryTable = async () => {
   return (
     <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
       <TableHeader
-        href="/latest/transactions"
+        href="/triton/latest/transactions/transactions"
         icon={<SvgBarChartIcon />}
         title="Latest Transactions"
       />
