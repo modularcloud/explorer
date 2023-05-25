@@ -87,6 +87,7 @@ async function getTransactionVolumes(): Promise<
         .sort((a, b) => {
           return Number(new Date(a.endTime)) - Number(new Date(b.endTime));
         })
+        .slice(-14)
         .map((item) => {
           return {
             time: new Date(item.endTime).toLocaleDateString("en-US", {
