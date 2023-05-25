@@ -1,6 +1,6 @@
-import { getNetworkBySlug } from "../../../config/networks";
-import { Sidebar } from "../../../ecs/components/sidebar";
-import { RightPanel } from "../../../ui/right-panel/component";
+import { getNetworkBySlug } from "../../../../../config/networks";
+import { Sidebar } from "../../../../../ecs/components/sidebar";
+import { RightPanel } from "../../../../../ui/right-panel/component";
 
 interface Props {
   params: { network: string };
@@ -39,7 +39,7 @@ export default async function RightPanelPage({ params }: Props) {
     <RightPanel
       data={data}
       alt={alt}
-      className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+      className="shrink-0 sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
     />
   );
 }
