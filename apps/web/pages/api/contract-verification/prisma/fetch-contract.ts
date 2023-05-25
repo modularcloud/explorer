@@ -1,20 +1,20 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import Web3 from 'web3';
-import solc from 'solc';
-import { PrismaClient } from '@prisma/client';
+const solc = require('solc');
+const { PrismaClient } = require('@prisma/client');
+const express = require('express');
+const bodyParser = require('body-parser');
+const Web3 = require('web3');
 
 const app = express();
 
 // Middlewares
 app.use(bodyParser.json());
 
-// Initialize a Web3 instance connected to the Celestia-Mocha testnet
-const web3 = new Web3(process.env.MOCHA_RPC);
+// Initialize a Web3 instance connected to the Eclipse testnet
+const web3 = new Web3(process.env.WEB3_PROVIDER_URL);
 const prisma = new PrismaClient();
 
 // Fetch the Contract from the Blockchain
-const fetchContractBytecode = async (contractAddress: string): Promise<string> => {
+const fetchContractBytecode = async (contractAddress) => {
   try {
     const bytecode = await web3.eth.getCode(contractAddress);
     return bytecode;
@@ -25,7 +25,7 @@ const fetchContractBytecode = async (contractAddress: string): Promise<string> =
 };
 
 // Compile a Solidity contract
-const compileContract = (sourceCode: string) => {
+const compileContract = (sourceCode) => {
   const input = {
     language: 'Solidity',
     sources: {
@@ -75,5 +75,6 @@ app.post('/verify', async (req, res) => {
   }
 });
 
+// eslint-disable-next-line turbo/no-undeclared-env-vars
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
