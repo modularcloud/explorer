@@ -1,5 +1,6 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { createModularCloud } from "@modularcloud/sdk";
+import { uploadFile } from "@uploadcare/upload-client";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { z } from "zod";
@@ -30,6 +31,23 @@ export async function InventoryExtract(
     .then((res) => res.json())
     .then((res) => {
       return MetadataSchema.parse(res);
+    })
+    .then(async (res) => {
+      if (res) {
+        const fimg = await fetch(res.image);
+        const fimgb = Buffer.from(await fimg.arrayBuffer());
+        const result = await uploadFile(fimgb, {
+          publicKey: process.env.UPLOADCARE_API_KEY as string,
+          store: "auto",
+          metadata: {
+            original: res.image,
+          },
+        });
+        return {
+          ...res,
+          image: result.cdnUrl,
+        };
+      }
     });
 
   return {

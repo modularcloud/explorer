@@ -5,6 +5,7 @@ import { AbiItem } from "web3-utils";
 import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
+import { uploadFile } from "@uploadcare/upload-client";
 
 const MetadataSchema = z.object({
   name: z.string().optional(),
@@ -437,6 +438,23 @@ export async function NFTTransferExtract(
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(res.image);
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              uri,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC721 Transfer",
@@ -566,6 +584,23 @@ export async function NFTTransferExtract(
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(res.image);
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              original: res.image,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC1155 Batch Transfer",
