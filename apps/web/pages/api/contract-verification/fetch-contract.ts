@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import Web3 from 'web3';
 import solc from 'solc';
-import { PrismaClient, Verification } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 const app = express();
 
@@ -12,6 +12,17 @@ app.use(bodyParser.json());
 // Initialize a Web3 instance connected to the Celestia-Mocha testnet
 const web3 = new Web3(process.env.MOCHA_RPC);
 const prisma = new PrismaClient();
+
+// Fetch the Contract from the Blockchain
+const fetchContractBytecode = async (contractAddress: string): Promise<string> => {
+  try {
+    const bytecode = await web3.eth.getCode(contractAddress);
+    return bytecode;
+  } catch (error) {
+    console.error(`Could not fetch contract bytecode: ${error}`);
+    throw new Error(`Could not fetch contract bytecode: ${error}`);
+  }
+};
 
 // Compile a Solidity contract
 const compileContract = (sourceCode: string) => {
@@ -35,19 +46,8 @@ const compileContract = (sourceCode: string) => {
   return compiledContract.contracts['contract.sol']['C'].evm.bytecode.object;
 }
 
-app.post('/verify', async (req: { body: { contractAddress: any; sourceCode: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: string; }): void; new(): any; }; }; json: (arg0: { message: string; record: Verification; }) => void; }) => {
+app.post('/verify', async (req, res) => {
   const { contractAddress, sourceCode } = req.body;
-
-  // Fetch the Contract from the Blockchain
-  const fetchContractBytecode = async (contractAddress: string): Promise<string> => {
-    try {
-      const bytecode = await web3.eth.getCode(contractAddress);
-      return bytecode;
-    } catch (error) {
-      console.error(`Could not fetch contract bytecode: ${error}`);
-      res.status(500).json({ error: `Could not fetch contract bytecode: ${error}` });
-    }
-  };
 
   // Fetch the bytecode of the specific contract
   try {
@@ -56,7 +56,7 @@ app.post('/verify', async (req: { body: { contractAddress: any; sourceCode: any;
     const isVerified = bytecodeOnChain === compiledBytecode;
 
     // Store Verification Data in the database
-    const record = await prisma.verification.create({
+    const record: Prisma.Verification = await prisma.verification.create({
       data: {
         contractAddress,
         isVerified,
@@ -76,4 +76,4 @@ app.post('/verify', async (req: { body: { contractAddress: any; sourceCode: any;
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
+app.listen(port, () => console.log(`Server is running on http://localhost:${port}`)); 
