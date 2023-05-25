@@ -2,7 +2,6 @@ import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { createModularCloud } from "@modularcloud/sdk";
 import { uploadFile } from "@uploadcare/upload-client";
 import Web3 from "web3";
-import { AbiItem } from "web3-utils";
 import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
@@ -27,7 +26,14 @@ export async function InventoryExtract(
     account
   );
   const balance = balances[Number(index)];
-  const md = await fetch(balance.balance.balance.tokenUri)
+  const uri =
+    balance.tokenType === "ERC1155"
+      ? balance.balance.balance.tokenUri.replace(
+          "{id}",
+          Web3.utils.padLeft(balance.balance.balance.tokenId, 64)
+        )
+      : balance.balance.balance.tokenUri;
+  const md = await fetch(uri)
     .then((res) => res.json())
     .then((res) => {
       return MetadataSchema.parse(res);
