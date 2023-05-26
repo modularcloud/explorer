@@ -519,6 +519,23 @@ export async function NFTTransferExtract(
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(res.image);
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              uri,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC1155 Transfer",
