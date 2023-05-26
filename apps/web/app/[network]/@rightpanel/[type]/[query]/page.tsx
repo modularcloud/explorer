@@ -1,5 +1,6 @@
 import { getNetworkBySlug } from "../../../../../config/networks";
 import { Sidebar } from "../../../../../ecs/components/sidebar";
+import { Value } from "../../../../../schemas/value";
 import { RightPanel } from "../../../../../ui/right-panel/component";
 
 interface Props {
@@ -15,6 +16,13 @@ export default async function RightPanelPage({ params }: Props) {
   const network = getNetworkBySlug(params.network);
   if (!network) return null;
   const alt = network.searchOptionGroup; // TODO: add logo alt text to config schema
+  const attributes: Record<string, Value> = {}
+  for(const [key, value] of Object.entries(network.stack)) {
+    attributes[key] = {
+      type: "standard",
+      payload: value,
+    }
+  }
   const data: Sidebar = {
     logo: network.logoUrl,
     entityTypeName: "Network",
@@ -22,16 +30,7 @@ export default async function RightPanelPage({ params }: Props) {
       ? `${network.displayName} Testnet`
       : network.displayName,
     attributesHeader: "Network Information",
-    attributes: {
-      Execution: {
-        type: "standard",
-        payload: VMDisplayNames[network.vm],
-      },
-      // "Data Availability": {
-      //   type: "standard",
-      //   payload: "Celestia",
-      // },
-    },
+    attributes,
   };
 
   return (

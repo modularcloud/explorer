@@ -42,4 +42,7 @@ export type NetworkConfig = {
 
   // URL for the node
   rpcUrl: string;
+
+  // Information about the stack of this chain
+  stack: Record<string, string>
 };
