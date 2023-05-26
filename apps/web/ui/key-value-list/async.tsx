@@ -8,8 +8,9 @@ import { FetchLoadArgs } from "../../lib/utils";
 type Props = {
   resourcePath: FetchLoadArgs;
   type: "sidebar" | "card";
+  className?: string;
 };
-export async function AsyncKeyValueList({ resourcePath, type }: Props) {
+export async function AsyncKeyValueList({ resourcePath, type, className }: Props) {
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: AttributesArchetype,
@@ -18,6 +19,6 @@ export async function AsyncKeyValueList({ resourcePath, type }: Props) {
   if (!entity) return null;
 
   return (
-    <KeyValueList attributes={entity.components.attributes.data} type={type} />
+    <KeyValueList attributes={entity.components.attributes.data} type={type} className={className} />
   );
 }

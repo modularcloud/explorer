@@ -5,6 +5,7 @@ import Image from "next/image";
 
 interface Props {
   attributes: Record<string, Value>;
+  className?: string;
   type: "card" | "sidebar";
 }
 
@@ -45,10 +46,11 @@ function Entry({ label, value }: { label: string; value: Value }) {
   );
 }
 
-export function KeyValueList({ attributes, type: kvType }: Props) {
+export function KeyValueList({ attributes, type: kvType, className }: Props) {
   return (
     <dl
       className={clsx(
+        className,
         "grid",
         kvType === "card" &&
           "sm:grid-cols-[minmax(200px,auto)_1fr] grid-cols-[minmax(128px,auto)_1fr] gap-y-2",

@@ -31,10 +31,20 @@ export async function RightPanel({ data, alt, className }: Props) {
         {(asyncAttributes ?? []).map((set) => (
           <Suspense
             key={`${set.src.network}/${set.src.type}/${set.src.query}`}
-            fallback={<KeyValueList attributes={set.fallback} type="sidebar" />}
+            fallback={
+              <KeyValueList
+                attributes={set.fallback}
+                type="sidebar"
+                className="pt-4"
+              />
+            }
           >
             {/* @ts-expect-error Async Server Component */}
-            <AsyncKeyValueList resourcePath={set.src} type="sidebar" />
+            <AsyncKeyValueList
+              resourcePath={set.src}
+              type="sidebar"
+              className="pt-4"
+            />
           </Suspense>
         ))}
       </div>
