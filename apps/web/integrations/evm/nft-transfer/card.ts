@@ -1,8 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import Decimal from "decimal.js";
 import { NFTTransferExtract } from ".";
 import { CardComponent } from "../../../ecs/components/card";
-import { decodeEvmAddressParam } from "../../../lib/utils";
 
 export const CardTransform = {
   schema: CardComponent,
@@ -26,7 +24,7 @@ export const CardTransform = {
           type: "image",
           payload: data.metadata
             ? {
-                src: data.metadata.image,
+                src: data.metadata.image ?? "/images/placeholder-square.jpg",
                 alt: data.metadata.description ?? data.metadata.name ?? "",
                 height: 100,
                 width: 100,

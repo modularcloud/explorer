@@ -16,12 +16,12 @@ export default async function RightPanelPage({ params }: Props) {
   const network = getNetworkBySlug(params.network);
   if (!network) return null;
   const alt = network.searchOptionGroup; // TODO: add logo alt text to config schema
-  const attributes: Record<string, Value> = {}
-  for(const [key, value] of Object.entries(network.stack)) {
+  const attributes: Record<string, Value> = {};
+  for (const [key, value] of Object.entries(network.stack)) {
     attributes[key] = {
       type: "standard",
       payload: value,
-    }
+    };
   }
   const data: Sidebar = {
     logo: network.logoUrl,

@@ -21,7 +21,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       Settlement: "Ethereum",
       Platform: "Caldera",
-    }
+    },
   },
   CALDERA_POLYGON: {
     mcId: "clo/2",
@@ -41,7 +41,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       Settlement: "Polygon",
       Platform: "Caldera",
-    }
+    },
   },
   // Eclipse
   NAUTILUS_TRITON: {
@@ -62,7 +62,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       "Data Availability": "Celestia",
       Platform: "Eclipse",
-    }
+    },
   },
   ECLIPSE_WORLDS: {
     mcId: "ep/3",
@@ -82,7 +82,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       "Data Availability": "Celestia",
       Platform: "Eclipse",
-    }
+    },
   },
   ECLIPSE_AEG: {
     mcId: "ep/4",
@@ -102,7 +102,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       "Data Availability": "Celestia",
       Platform: "Eclipse",
-    }
+    },
   },
   // Dymension
   DYMENSION_HUB: {
@@ -122,7 +122,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Type: "Settlement",
       Execution: "Cosmos SDK",
       "Data Availability": "Celestia",
-    }
+    },
   },
   DYMENSION_EVM_ROLLAPP: {
     mcId: "dym/2",
@@ -143,7 +143,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Settlement: "Dymension Hub",
       "Data Availability": "Celestia",
       Platform: "Dymension",
-    }
+    },
   },
   DYMENSION_ROLLAPP_X: {
     mcId: "N/A",
@@ -164,7 +164,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Settlement: "Dymension Hub",
       "Data Availability": "Celestia",
       Platform: "Dymension",
-    }
+    },
   },
   // Celestia
   CELESTIA_MOCHA: {
@@ -183,7 +183,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     stack: {
       Type: "Data Availability",
       Execution: "Cosmos SDK",
-    }
+    },
   },
   // Saga
   SAGA_ANOTHER_WORLD: {
@@ -204,7 +204,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       Security: "Cassiopeia",
       Platform: "Saga",
-    }
+    },
   },
   SAGA_MODULAR_CLOUD: {
     mcId: "sg/3",
@@ -224,7 +224,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Execution: "EVM",
       Security: "Cassiopeia",
       Platform: "Saga",
-    }
+    },
   },
 };
 

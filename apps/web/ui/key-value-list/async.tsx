@@ -10,7 +10,11 @@ type Props = {
   type: "sidebar" | "card";
   className?: string;
 };
-export async function AsyncKeyValueList({ resourcePath, type, className }: Props) {
+export async function AsyncKeyValueList({
+  resourcePath,
+  type,
+  className,
+}: Props) {
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: AttributesArchetype,
@@ -19,6 +23,10 @@ export async function AsyncKeyValueList({ resourcePath, type, className }: Props
   if (!entity) return null;
 
   return (
-    <KeyValueList attributes={entity.components.attributes.data} type={type} className={className} />
+    <KeyValueList
+      attributes={entity.components.attributes.data}
+      type={type}
+      className={className}
+    />
   );
 }

@@ -1,8 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import Decimal from "decimal.js";
 import { NFTTransferExtract } from ".";
 import { RowComponent } from "../../../ecs/components/row";
-import { decodeEvmAddressParam } from "../../../lib/utils";
 
 export const RowTransform = {
   schema: RowComponent,
@@ -98,7 +96,7 @@ export const RowTransform = {
             type: "image",
             payload: data.metadata
               ? {
-                  src: data.metadata.image,
+                  src: data.metadata.image ?? "/images/placeholder-square.jpg",
                   alt: data.metadata.description ?? data.metadata.name ?? "",
                   height: 24,
                   width: 24,
