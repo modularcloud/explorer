@@ -19,7 +19,10 @@ export const SidebarTransform = {
         entityTypeName: "Account",
         entityId: data.address,
         attributesHeader: "Balances",
-        attributes: {},
+        attributes: {
+          Type: { type: "standard", payload: "Externally Owned Account" },
+          NFTs: { type: "standard", payload: String(data.nfts.length) },
+        },
         asyncAttributes: [
           {
             fallback: {
