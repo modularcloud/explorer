@@ -84,15 +84,26 @@ export function getEngine() {
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
-        "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+        "https://anotherworld-1681423864760549-1.jsonrpc.sp1.sagarpc.io",
       network: {
-        id: "saga",
-        displayName: "Saga",
-        nativeToken: "ETH",
+        id: "another-world",
+        displayName: "Another World",
+        nativeToken: "SAGA",
         logoUrl: "/images/saga.png",
       },
     });
-    Engine.addConfig("saga", config);
+    Engine.addConfig("another-world", config);
+    config = CreateEVMConfig({
+      endpoint:
+        "https://modularcloud-1684977602894776-1.jsonrpc.sp1.sagarpc.io",
+      network: {
+        id: "modular-cloud",
+        displayName: "Modular Cloud",
+        nativeToken: "MOD",
+        logoUrl: "/images/saga.png",
+      },
+    });
+    Engine.addConfig("modular-cloud", config);
   } else if (whitelabel.env === "caldera") {
     config = CreateEVMConfig({
       endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",

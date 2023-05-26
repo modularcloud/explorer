@@ -163,13 +163,18 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Saga: [
             {
-              displayName: "Saga",
-              id: "saga",
+              displayName: "Another World",
+              id: "another-world",
+            },
+            {
+              displayName: "Modular Cloud",
+              id: "modular-cloud",
             },
           ],
         },
         defaultNetwork: "saga",
-        name: ["Saga", "Scan"],
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
         env: "saga",
       };
     default:

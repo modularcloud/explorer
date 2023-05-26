@@ -79,6 +79,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "aeg",
     includeAllNetworks: true,
   },
+  SAGA: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for modular blockchains.",
+    homepageKeywords:
+      "saga, block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
+    defaultSearchOptionGroup: "Saga",
+    env: "saga",
+    id: "saga",
+    includeAllNetworks: true,
+  },
   // No whitelabel
   DEFAULT: {
     name: ["Modular", "Cloud"],

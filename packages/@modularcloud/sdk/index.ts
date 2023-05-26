@@ -89,6 +89,10 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "caldera-goerli": "clo/1",
   "caldera-polygon": "clo/2",
   "eclipse-aeg": "ep/4",
+  "modular-cloud": "sg/3",
+  "saga-modular-cloud": "sg/3",
+  "another-world": "sg/2",
+  "saga-another-world": "sg/2",
 };
 
 function normalizeNetworkId(networkId: string) {

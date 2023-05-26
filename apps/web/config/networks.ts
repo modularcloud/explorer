@@ -186,16 +186,36 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     }
   },
   // Saga
-  SAGA: {
-    mcId: "sg/1",
-    displayName: "Saga",
+  SAGA_ANOTHER_WORLD: {
+    mcId: "sg/2",
+    displayName: "Another World",
     isTestnet: true,
     isVerified: false,
     explorerId: "saga",
-    slug: "saga",
+    slug: "another-world",
     slugPrefix: "saga",
     vm: "evm",
-    nativeToken: "ETH",
+    nativeToken: "SAGA",
+    logoUrl: "/images/saga.png",
+    searchOptionGroup: "Saga",
+    rpcUrl: "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io",
+    stack: {
+      Type: "Chainlet",
+      Execution: "EVM",
+      Security: "Cassiopeia",
+      Platform: "Saga",
+    }
+  },
+  SAGA_MODULAR_CLOUD: {
+    mcId: "sg/3",
+    displayName: "Modular Cloud",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "saga",
+    slug: "modular-cloud",
+    slugPrefix: "saga",
+    vm: "evm",
+    nativeToken: "MOD",
     logoUrl: "/images/saga.png",
     searchOptionGroup: "Saga",
     rpcUrl: "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io",
