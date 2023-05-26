@@ -6,7 +6,12 @@ export const protobufPackage = "";
 /** MsgPayForBlobs pays for the inclusion of a blob in the block. */
 export interface MsgPayForBlobs {
   signer: string;
-  namespaceIds: Uint8Array[];
+  /**
+   * namespaces is a list of namespaces that the blobs are associated with. A
+   * namespace is a byte slice of length 33 where the first byte is the
+   * namespaceVersion and the subsequent 32 bytes are the namespaceId.
+   */
+  namespaces: Uint8Array[];
   blobSizes: number[];
   /** share_commitments is a list of share commitments (one per blob). */
   shareCommitments: Uint8Array[];
@@ -19,15 +24,16 @@ export interface MsgPayForBlobs {
   shareVersions: number[];
 }
 
-export interface MalleatedTx {
-  originalTxHash: Uint8Array;
+export interface IndexWrapper {
   tx: Uint8Array;
+  shareIndexes: number[];
+  typeId: string;
 }
 
 function createBaseMsgPayForBlobs(): MsgPayForBlobs {
   return {
     signer: "",
-    namespaceIds: [],
+    namespaces: [],
     blobSizes: [],
     shareCommitments: [],
     shareVersions: [],
@@ -42,7 +48,7 @@ export const MsgPayForBlobs = {
     if (message.signer !== "") {
       writer.uint32(10).string(message.signer);
     }
-    for (const v of message.namespaceIds) {
+    for (const v of message.namespaces) {
       writer.uint32(18).bytes(v!);
     }
     writer.uint32(26).fork();
@@ -72,7 +78,7 @@ export const MsgPayForBlobs = {
           message.signer = reader.string();
           break;
         case 2:
-          message.namespaceIds.push(reader.bytes());
+          message.namespaces.push(reader.bytes());
           break;
         case 3:
           if ((tag & 7) === 2) {
@@ -108,8 +114,8 @@ export const MsgPayForBlobs = {
   fromJSON(object: any): MsgPayForBlobs {
     return {
       signer: isSet(object.signer) ? String(object.signer) : "",
-      namespaceIds: Array.isArray(object?.namespaceIds)
-        ? object.namespaceIds.map((e: any) => bytesFromBase64(e))
+      namespaces: Array.isArray(object?.namespaces)
+        ? object.namespaces.map((e: any) => bytesFromBase64(e))
         : [],
       blobSizes: Array.isArray(object?.blobSizes)
         ? object.blobSizes.map((e: any) => Number(e))
@@ -126,12 +132,12 @@ export const MsgPayForBlobs = {
   toJSON(message: MsgPayForBlobs): unknown {
     const obj: any = {};
     message.signer !== undefined && (obj.signer = message.signer);
-    if (message.namespaceIds) {
-      obj.namespaceIds = message.namespaceIds.map((e) =>
+    if (message.namespaces) {
+      obj.namespaces = message.namespaces.map((e) =>
         base64FromBytes(e !== undefined ? e : new Uint8Array())
       );
     } else {
-      obj.namespaceIds = [];
+      obj.namespaces = [];
     }
     if (message.blobSizes) {
       obj.blobSizes = message.blobSizes.map((e) => Math.round(e));
@@ -164,7 +170,7 @@ export const MsgPayForBlobs = {
   ): MsgPayForBlobs {
     const message = createBaseMsgPayForBlobs();
     message.signer = object.signer ?? "";
-    message.namespaceIds = object.namespaceIds?.map((e) => e) || [];
+    message.namespaces = object.namespaces?.map((e) => e) || [];
     message.blobSizes = object.blobSizes?.map((e) => e) || [];
     message.shareCommitments = object.shareCommitments?.map((e) => e) || [];
     message.shareVersions = object.shareVersions?.map((e) => e) || [];
@@ -172,36 +178,51 @@ export const MsgPayForBlobs = {
   },
 };
 
-function createBaseMalleatedTx(): MalleatedTx {
-  return { originalTxHash: new Uint8Array(), tx: new Uint8Array() };
+function createBaseIndexWrapper(): IndexWrapper {
+  return { tx: new Uint8Array(), shareIndexes: [], typeId: "" };
 }
 
-export const MalleatedTx = {
+export const IndexWrapper = {
   encode(
-    message: MalleatedTx,
+    message: IndexWrapper,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.originalTxHash.length !== 0) {
-      writer.uint32(10).bytes(message.originalTxHash);
-    }
     if (message.tx.length !== 0) {
-      writer.uint32(18).bytes(message.tx);
+      writer.uint32(10).bytes(message.tx);
+    }
+    writer.uint32(18).fork();
+    for (const v of message.shareIndexes) {
+      writer.uint32(v);
+    }
+    writer.ldelim();
+    if (message.typeId !== "") {
+      writer.uint32(26).string(message.typeId);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MalleatedTx {
+  decode(input: _m0.Reader | Uint8Array, length?: number): IndexWrapper {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMalleatedTx();
+    const message = createBaseIndexWrapper();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.originalTxHash = reader.bytes();
+          message.tx = reader.bytes();
           break;
         case 2:
-          message.tx = reader.bytes();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.shareIndexes.push(reader.uint32());
+            }
+          } else {
+            message.shareIndexes.push(reader.uint32());
+          }
+          break;
+        case 3:
+          message.typeId = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -211,40 +232,44 @@ export const MalleatedTx = {
     return message;
   },
 
-  fromJSON(object: any): MalleatedTx {
+  fromJSON(object: any): IndexWrapper {
     return {
-      originalTxHash: isSet(object.originalTxHash)
-        ? bytesFromBase64(object.originalTxHash)
-        : new Uint8Array(),
       tx: isSet(object.tx) ? bytesFromBase64(object.tx) : new Uint8Array(),
+      shareIndexes: Array.isArray(object?.shareIndexes)
+        ? object.shareIndexes.map((e: any) => Number(e))
+        : [],
+      typeId: isSet(object.typeId) ? String(object.typeId) : "",
     };
   },
 
-  toJSON(message: MalleatedTx): unknown {
+  toJSON(message: IndexWrapper): unknown {
     const obj: any = {};
-    message.originalTxHash !== undefined &&
-      (obj.originalTxHash = base64FromBytes(
-        message.originalTxHash !== undefined
-          ? message.originalTxHash
-          : new Uint8Array()
-      ));
     message.tx !== undefined &&
       (obj.tx = base64FromBytes(
         message.tx !== undefined ? message.tx : new Uint8Array()
       ));
+    if (message.shareIndexes) {
+      obj.shareIndexes = message.shareIndexes.map((e) => Math.round(e));
+    } else {
+      obj.shareIndexes = [];
+    }
+    message.typeId !== undefined && (obj.typeId = message.typeId);
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<MalleatedTx>, I>>(base?: I): MalleatedTx {
-    return MalleatedTx.fromPartial(base ?? {});
+  create<I extends Exact<DeepPartial<IndexWrapper>, I>>(
+    base?: I
+  ): IndexWrapper {
+    return IndexWrapper.fromPartial(base ?? {});
   },
 
-  fromPartial<I extends Exact<DeepPartial<MalleatedTx>, I>>(
+  fromPartial<I extends Exact<DeepPartial<IndexWrapper>, I>>(
     object: I
-  ): MalleatedTx {
-    const message = createBaseMalleatedTx();
-    message.originalTxHash = object.originalTxHash ?? new Uint8Array();
+  ): IndexWrapper {
+    const message = createBaseIndexWrapper();
     message.tx = object.tx ?? new Uint8Array();
+    message.shareIndexes = object.shareIndexes?.map((e) => e) || [];
+    message.typeId = object.typeId ?? "";
     return message;
   },
 };
