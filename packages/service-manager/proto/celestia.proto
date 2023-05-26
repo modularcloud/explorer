@@ -22,3 +22,9 @@ message IndexWrapper {
   repeated uint32 share_indexes = 2;
   string          type_id       = 3;
 }
+
+// Needed for Mocha
+message MalleatedTx {
+    bytes original_tx_hash = 1;
+    bytes tx = 2;
+}

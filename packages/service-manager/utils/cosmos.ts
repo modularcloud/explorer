@@ -2,7 +2,7 @@ import { sha256 } from "@cosmjs/crypto";
 import { fromBase64 } from "@cosmjs/encoding";
 import { decodeTxRaw, Registry } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes } from "@cosmjs/stargate";
-import { IndexWrapper, MsgPayForBlobs } from "../proto/celestia";
+import { IndexWrapper, MalleatedTx, MsgPayForBlobs } from "../proto/celestia";
 import { Entity } from "../types/entity.type";
 import { QueryBalanceRequest, QueryBalanceResponse } from "../proto/cosmos";
 import { ValueSchemaType } from "../types/valueschema.type";
@@ -102,7 +102,11 @@ export function txStringToHash(txstr: string) {
   try {
     decodeTxRaw(raw); // detecting if normal transaction, if PFB it catches
   } catch {
-    raw = IndexWrapper.decode(raw).tx;
+    try {
+      raw = IndexWrapper.decode(raw).tx;
+    } catch {
+      raw = MalleatedTx.decode(raw).tx;
+    }
   }
 
   return Buffer.from(sha256(raw)).toString("hex");

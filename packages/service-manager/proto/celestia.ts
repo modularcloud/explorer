@@ -30,6 +30,11 @@ export interface IndexWrapper {
   typeId: string;
 }
 
+export interface MalleatedTx {
+  originalTxHash: Uint8Array;
+  tx: Uint8Array;
+}
+
 function createBaseMsgPayForBlobs(): MsgPayForBlobs {
   return {
     signer: "",
@@ -270,6 +275,83 @@ export const IndexWrapper = {
     message.tx = object.tx ?? new Uint8Array();
     message.shareIndexes = object.shareIndexes?.map((e) => e) || [];
     message.typeId = object.typeId ?? "";
+    return message;
+  },
+};
+
+function createBaseMalleatedTx(): MalleatedTx {
+  return { originalTxHash: new Uint8Array(), tx: new Uint8Array() };
+}
+
+export const MalleatedTx = {
+  encode(
+    message: MalleatedTx,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.originalTxHash.length !== 0) {
+      writer.uint32(10).bytes(message.originalTxHash);
+    }
+    if (message.tx.length !== 0) {
+      writer.uint32(18).bytes(message.tx);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MalleatedTx {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMalleatedTx();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.originalTxHash = reader.bytes();
+          break;
+        case 2:
+          message.tx = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MalleatedTx {
+    return {
+      originalTxHash: isSet(object.originalTxHash)
+        ? bytesFromBase64(object.originalTxHash)
+        : new Uint8Array(),
+      tx: isSet(object.tx) ? bytesFromBase64(object.tx) : new Uint8Array(),
+    };
+  },
+
+  toJSON(message: MalleatedTx): unknown {
+    const obj: any = {};
+    message.originalTxHash !== undefined &&
+      (obj.originalTxHash = base64FromBytes(
+        message.originalTxHash !== undefined
+          ? message.originalTxHash
+          : new Uint8Array()
+      ));
+    message.tx !== undefined &&
+      (obj.tx = base64FromBytes(
+        message.tx !== undefined ? message.tx : new Uint8Array()
+      ));
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MalleatedTx>, I>>(base?: I): MalleatedTx {
+    return MalleatedTx.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MalleatedTx>, I>>(
+    object: I
+  ): MalleatedTx {
+    const message = createBaseMalleatedTx();
+    message.originalTxHash = object.originalTxHash ?? new Uint8Array();
+    message.tx = object.tx ?? new Uint8Array();
     return message;
   },
 };
