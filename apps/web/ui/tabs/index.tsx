@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, slugify } from "../../lib/utils";
-import { Badge } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
+import { Badge } from "../badge";
 
 const INDEX_TAB_NAME = "Overview";
 

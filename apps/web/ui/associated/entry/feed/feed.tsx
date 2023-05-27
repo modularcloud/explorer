@@ -1,5 +1,5 @@
 import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
-import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[section]/(components)/badge";
+import { Badge } from "../../../badge";
 import Link from "next/link";
 import { KeyValueList } from "../../../key-value-list";
 import { Entity } from "@modularcloud/ecs";
@@ -17,7 +17,9 @@ export function FeedEntry({ entity }: Props) {
       <div className="py-2 px-4">
         <div className="pt-2 pb-4">
           {card.link ? (
-            <Link href={`/${card.link.network}/${card.link.type}/${card.link.query}`}>
+            <Link
+              href={`/${card.link.network}/${card.link.type}/${card.link.query}`}
+            >
               <Badge icon={true} long={true} text={card.badge} />
             </Link>
           ) : (

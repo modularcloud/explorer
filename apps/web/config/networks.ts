@@ -16,6 +16,12 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/caldera.png",
     searchOptionGroup: "Caldera",
     rpcUrl: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      Settlement: "Ethereum",
+      Platform: "Caldera",
+    },
   },
   CALDERA_POLYGON: {
     mcId: "clo/2",
@@ -30,6 +36,12 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/caldera.png",
     searchOptionGroup: "Caldera",
     rpcUrl: "https://usdc-polygon-testnet.calderachain.xyz/replica-http",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      Settlement: "Polygon",
+      Platform: "Caldera",
+    },
   },
   // Eclipse
   NAUTILUS_TRITON: {
@@ -42,9 +54,15 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     slugPrefix: "nautilus",
     vm: "evm",
     nativeToken: "ZBC",
-    logoUrl: "/images/eclipse.png",
+    logoUrl: "/images/nautilus.png",
     searchOptionGroup: "Nautilus",
     rpcUrl: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
   },
   ECLIPSE_WORLDS: {
     mcId: "ep/3",
@@ -59,6 +77,12 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
     rpcUrl: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
   },
   ECLIPSE_AEG: {
     mcId: "ep/4",
@@ -73,6 +97,12 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
     rpcUrl: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
   },
   // Dymension
   DYMENSION_HUB: {
@@ -88,6 +118,11 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
     rpcUrl: process.env.DYMENSION_HUB_RPC ?? "",
+    stack: {
+      Type: "Settlement",
+      Execution: "Cosmos SDK",
+      "Data Availability": "Celestia",
+    },
   },
   DYMENSION_EVM_ROLLAPP: {
     mcId: "dym/2",
@@ -102,6 +137,13 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
     rpcUrl: "https://evmrpc-rollappevm-35c.dymension.xyz",
+    stack: {
+      Type: "RollApp",
+      Execution: "EVM",
+      Settlement: "Dymension Hub",
+      "Data Availability": "Celestia",
+      Platform: "Dymension",
+    },
   },
   DYMENSION_ROLLAPP_X: {
     mcId: "N/A",
@@ -116,6 +158,13 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
     rpcUrl: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+    stack: {
+      Type: "RollApp",
+      Execution: "Cosmos SDK",
+      Settlement: "Dymension Hub",
+      "Data Availability": "Celestia",
+      Platform: "Dymension",
+    },
   },
   // Celestia
   CELESTIA_MOCHA: {
@@ -131,21 +180,51 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/celestia.png",
     searchOptionGroup: "Celestia",
     rpcUrl: process.env.CELESTIA_MOCHA_RPC ?? "",
+    stack: {
+      Type: "Data Availability",
+      Execution: "Cosmos SDK",
+    },
   },
   // Saga
-  SAGA: {
-    mcId: "sg/1",
-    displayName: "Saga",
+  SAGA_ANOTHER_WORLD: {
+    mcId: "sg/2",
+    displayName: "Another World",
     isTestnet: true,
     isVerified: false,
     explorerId: "saga",
-    slug: "saga",
+    slug: "another-world",
     slugPrefix: "saga",
     vm: "evm",
-    nativeToken: "ETH",
+    nativeToken: "SAGA",
     logoUrl: "/images/saga.png",
     searchOptionGroup: "Saga",
     rpcUrl: "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io",
+    stack: {
+      Type: "Chainlet",
+      Execution: "EVM",
+      Security: "Cassiopeia",
+      Platform: "Saga",
+    },
+  },
+  SAGA_MODULAR_CLOUD: {
+    mcId: "sg/3",
+    displayName: "Modular Cloud",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "saga",
+    slug: "modular-cloud",
+    slugPrefix: "saga",
+    vm: "evm",
+    nativeToken: "MOD",
+    logoUrl: "/images/saga.png",
+    searchOptionGroup: "Saga",
+    rpcUrl: "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io",
+    stack: {
+      Type: "Chainlet",
+      Execution: "EVM",
+      Security: "Cassiopeia",
+      Platform: "Saga",
+    },
   },
 };
 

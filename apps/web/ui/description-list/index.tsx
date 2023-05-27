@@ -1,12 +1,20 @@
 import Image from "next/image";
-import { Status } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/status";
+import { Status } from "../status";
 import { Value } from "../../schemas/value";
 import clsx from "clsx";
+import { FetchLoadArgs } from "../../lib/utils";
+import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
+import { AttributesArchetype } from "../../ecs/archetypes/attributes";
+import { Suspense } from "react";
 
 type Props = {
   title: string;
   subTitle: string;
   attributes: Record<string, Value>;
+  asyncAttributes?: {
+    src: FetchLoadArgs;
+    fallback: Record<string, Value>;
+  }[];
 };
 
 function Entry({ label, value }: { label: string; value: Value }) {
@@ -60,10 +68,27 @@ function Entry({ label, value }: { label: string; value: Value }) {
   );
 }
 
+async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
+  const entity = await asyncUseEntity({
+    resourcePath,
+    archetype: AttributesArchetype,
+  });
+  if (!entity) return null;
+  const attributes = entity.components.attributes.data;
+  return (
+    <>
+      {Object.entries(attributes).map(([key, value]) => {
+        return <Entry key={key} label={key} value={value} />;
+      })}
+    </>
+  );
+}
+
 export default function DescriptionList({
   title,
   subTitle,
   attributes,
+  asyncAttributes,
 }: Props) {
   return (
     <div className="flex w-full p-6 justify-center">
@@ -72,7 +97,7 @@ export default function DescriptionList({
           <h3 className="text-base font-semibold leading-7 text-temp-900">
             {title}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-temp-500">
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-temp-500 truncate">
             {subTitle}
           </p>
         </div>
@@ -81,6 +106,21 @@ export default function DescriptionList({
             {Object.entries(attributes).map(([key, value]) => {
               return <Entry key={key} label={key} value={value} />;
             })}
+            {(asyncAttributes ?? []).map((set) => (
+              <Suspense
+                key={`${set.src.network}/${set.src.type}/${set.src.query}`}
+                fallback={
+                  <>
+                    {Object.entries(set.fallback).map(([key, value]) => {
+                      return <Entry key={key} label={key} value={value} />;
+                    })}
+                  </>
+                }
+              >
+                {/* @ts-expect-error Async Server Component */}
+                <AsyncEntries resourcePath={set.src} />
+              </Suspense>
+            ))}
           </dl>
         </div>
       </div>

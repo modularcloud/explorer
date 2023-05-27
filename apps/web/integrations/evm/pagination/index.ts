@@ -1,5 +1,6 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { createModularCloud } from "@modularcloud/sdk";
+import Web3 from "web3";
 import { z } from "zod";
 import { PaginationTransform } from "./pagination";
 
@@ -10,13 +11,42 @@ export async function PaginationExtract(
   const query = z.string().parse(_q);
   const [value, collection, nextToken] = query.split(":");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  
-  if (collection === "latest") {
-    const latest = await mc.evm.getRecentTransactions(metadata.network.id, 30);
+
+  if (collection === "balances") {
+    const balances = await mc.evm.getTokenBalancesByAddress(
+      metadata.network.id,
+      value
+    );
     return {
       value,
-      latest,
+      balances,
     };
+  }
+  if (collection === "latest") {
+    if (value === "transactions") {
+      const latest = await mc.evm.getRecentTransactions(
+        metadata.network.id,
+        30
+      );
+      return {
+        value,
+        latest,
+      };
+    }
+    if (value === "blocks") {
+      let latestBlockNumber: number;
+      if (nextToken && !isNaN(parseInt(nextToken))) {
+        latestBlockNumber = parseInt(nextToken);
+      } else {
+        const web3 = new Web3(metadata.endpoint);
+        latestBlockNumber = await web3.eth.getBlockNumber();
+      }
+      return {
+        value,
+        latestBlockNumber,
+      };
+    }
+    throw new Error("Latest value for this collection not supported");
   }
   if (collection === "account-transfers") {
     const transfers = await mc.evm.getEventsByAccountAddress(

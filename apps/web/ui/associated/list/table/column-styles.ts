@@ -1,7 +1,7 @@
 import { Column } from "../../../../ecs/components/row";
 
 export const generateColumnStyle = (column: Column) => {
-  switch(column.breakpoint) {
+  switch (column.breakpoint) {
     case "xs":
       return "max-xs:hidden";
     case "sm":

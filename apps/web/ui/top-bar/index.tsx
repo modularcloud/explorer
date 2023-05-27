@@ -1,8 +1,8 @@
-import SvgCardOff from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/(icons)/CardOff";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
 import Image from "next/image";
+import SvgCardOff from "../icons/CardOff";
 
 type Props = {
   resourcePath: FetchLoadArgs;

@@ -6,7 +6,7 @@ type Props = {
 export default async function EntityLayout({ children, rightpanel }: Props) {
   return (
     <div className="lg:flex">
-      <div className="lg:grow bg-[url('/images/glow.svg')] bg-no-repeat bg-center bg-top">
+      <div className="lg:grow bg-[url('/images/glow.svg')] bg-no-repeat bg-top">
         <div className="relative">{children}</div>
       </div>
       {rightpanel}

@@ -40,13 +40,14 @@ export default async function EntityPage({ params }: Props) {
   if (!entity) notFound();
 
   // temporary until we create a new component
-  const { attributes, entityTypeName, entityId } =
+  const { attributes, asyncAttributes, entityTypeName, entityId } =
     entity.components.sidebar.data;
 
   return (
     <>
       <DescriptionList
         attributes={attributes}
+        asyncAttributes={asyncAttributes}
         title={`${entityTypeName} Information`}
         subTitle={entityId}
       />

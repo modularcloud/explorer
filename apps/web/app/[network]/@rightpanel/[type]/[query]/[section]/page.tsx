@@ -18,6 +18,10 @@ export default async function RightPanelPage({ params }: Props) {
   if (!entity) return null;
   return (
     // @ts-expect-error Async Server Component
-    <RightPanel data={entity.components.sidebar.data} alt={params.network} className="sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]" />
+    <RightPanel
+      data={entity.components.sidebar.data}
+      alt={params.network}
+      className="shrink-0 sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+    />
   );
 }

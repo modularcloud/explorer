@@ -9,12 +9,25 @@ export const TopbarTransform = {
     metadata,
   }: TransformInput<typeof LatestExtract>): Promise<
     TransformOutput<typeof TopbarComponent>
-  > => ({
-    typeId: "topbar",
-    data: {
-      logo: metadata.network.logoUrl,
-      entityTypeName: "Transactions",
-      entityId: "Latest",
-    },
-  }),
+  > => {
+    if (data.type === "transactions") {
+      return {
+        typeId: "topbar",
+        data: {
+          logo: metadata.network.logoUrl,
+          entityTypeName: "Transactions",
+          entityId: "Latest",
+        },
+      };
+    }
+    // if(data.type === "blocks") {
+    return {
+      typeId: "topbar",
+      data: {
+        logo: metadata.network.logoUrl,
+        entityTypeName: "Blocks",
+        entityId: "Latest",
+      },
+    };
+  },
 };

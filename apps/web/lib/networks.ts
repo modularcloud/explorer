@@ -84,15 +84,26 @@ export function getEngine() {
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
-        "https://assasinscreed-1681214356120807-1.jsonrpc.sp1.sagarpc.io ",
+        "https://anotherworld-1681423864760549-1.jsonrpc.sp1.sagarpc.io",
       network: {
-        id: "saga",
-        displayName: "Saga",
-        nativeToken: "ETH",
+        id: "another-world",
+        displayName: "Another World",
+        nativeToken: "SAGA",
         logoUrl: "/images/saga.png",
       },
     });
-    Engine.addConfig("saga", config);
+    Engine.addConfig("another-world", config);
+    config = CreateEVMConfig({
+      endpoint:
+        "https://modularcloud-1684977602894776-1.jsonrpc.sp1.sagarpc.io",
+      network: {
+        id: "modular-cloud",
+        displayName: "Modular Cloud",
+        nativeToken: "MOD",
+        logoUrl: "/images/saga.png",
+      },
+    });
+    Engine.addConfig("modular-cloud", config);
   } else if (whitelabel.env === "caldera") {
     config = CreateEVMConfig({
       endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
@@ -121,7 +132,7 @@ export function getEngine() {
         id: "eclipse-nautilus",
         displayName: "Triton",
         nativeToken: "ZBC",
-        logoUrl: "/images/eclipse.png",
+        logoUrl: "/images/nautilus.png",
       },
     });
     Engine.addConfig("eclipse-nautilus", config);
@@ -237,7 +248,7 @@ type NetworkConfig = {
 
   // URL for the node
   rpcUrl: string;
-}
+};
 
 type ExplorerConfig = {
   // Name in a format that can be rendered with a gradient, i.e. ["Celestia", "Scan"]
@@ -262,4 +273,4 @@ type ExplorerConfig = {
 
   // Should networks be included in this explorer even if they do not designate this explorer in their explorer id?
   includeAllNetworks: boolean;
-}
+};

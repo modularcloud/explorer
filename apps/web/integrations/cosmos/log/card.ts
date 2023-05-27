@@ -19,18 +19,18 @@ export const CardTransform = {
         attributes[key] = {
           type: "standard",
           payload: value.payload,
-        }
+        };
       }
-      if(value.type === "time") {
+      if (value.type === "time") {
         attributes[key] = {
           type: "standard",
           payload: new Date(value.payload).toUTCString(),
-        }
+        };
       }
-      if(value.type === "status" || value.type === "list") {
+      if (value.type === "status" || value.type === "list") {
         attributes[key] = value;
       }
-    };
+    }
     return {
       typeId: "card",
       data: {
