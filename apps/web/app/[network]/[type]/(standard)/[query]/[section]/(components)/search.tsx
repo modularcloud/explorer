@@ -70,12 +70,16 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             <input
               ref={searchInput}
               onChange={(event: any) =>
-                router.prefetch(`/${option}/search/${event.target.value}`)
+                router.prefetch(
+                  `/${option}/search/${event.target.value.trim()}`
+                )
               }
               onKeyDown={(event: any) => {
                 if (event.code === "Enter" || event.code === "NumpadEnter")
-                  if (searchInput.current?.value) {
-                    router.push(`/${option}/search/${event.target.value}`);
+                  if (searchInput.current?.value.trim()) {
+                    router.push(
+                      `/${option}/search/${event.target.value.trim()}`
+                    );
                   }
               }}
               className="placeholder:text-gray mx-3 py-[0.3125rem] outline-none w-full"
@@ -84,8 +88,10 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             />
             <button
               onClick={() => {
-                if (searchInput.current?.value)
-                  router.push(`/${option}/search/${searchInput.current.value}`);
+                if (searchInput.current?.value.trim())
+                  router.push(
+                    `/${option}/search/${searchInput.current.value.trim()}`
+                  );
               }}
               className="px-3 flex items-center"
             >
