@@ -25,7 +25,7 @@ export function ViewSwitcher() {
       >
         <ToggleGroup.Item
           value="table"
-          className="h-[34px] w-[34px] p-[7px]  disabled:cursor-pointer"
+          className="h-[34px] w-[34px] p-[7px] disabled:cursor-pointer"
           disabled={view === "table"}
         >
           {view === "table" ? <SvgListViewOn /> : <SvgListViewOff />}
@@ -37,7 +37,7 @@ export function ViewSwitcher() {
         />
         <ToggleGroup.Item
           value="feed"
-          className="h-[34px] w-[34px] p-[7px]"
+          className="h-[34px] w-[34px] p-[7px] disabled:cursor-pointer"
           disabled={view === "feed"}
         >
           {view === "feed" ? <SvgCardOn /> : <SvgCardOff />}
