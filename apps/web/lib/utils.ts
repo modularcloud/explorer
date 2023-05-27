@@ -163,13 +163,18 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Saga: [
             {
-              displayName: "Saga",
-              id: "saga",
+              displayName: "Another World",
+              id: "another-world",
+            },
+            {
+              displayName: "Modular Cloud",
+              id: "modular-cloud",
             },
           ],
         },
         defaultNetwork: "saga",
-        name: ["Saga", "Scan"],
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
         env: "saga",
       };
     default:
@@ -226,4 +231,20 @@ export function getWhitelabel(): Whitelabel {
 
 export function slugify(str: string): string {
   return _slugify(str, { lower: true, strict: true });
+}
+
+export function truncateString(
+  address: string,
+  numCharsBefore = 6,
+  numCharsAfter = 4
+) {
+  if (!address) return "";
+
+  if (address.length <= numCharsBefore + numCharsAfter + 2) {
+    return address;
+  }
+
+  const start = address.slice(0, numCharsBefore);
+  const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
+  return `${start}....${end}`;
 }

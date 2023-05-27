@@ -53,9 +53,9 @@ export const RowTransform = {
             cell: {
               type: "badge",
               payload: {
-                      text: data.messages[0].uniqueIdentifier,
-                      extraCount: data.messages.length - 1,
-                    }
+                text: data.messages[0].uniqueIdentifier,
+                extraCount: data.messages.length - 1,
+              },
             },
           },
           {

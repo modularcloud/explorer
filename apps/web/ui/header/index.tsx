@@ -1,9 +1,9 @@
-import { Search } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/search";
+import { Search } from "../search";
 import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HeaderMenu } from "./menu";
-import { MobileActions } from "../../app/[network]/[type]/(standard)/[query]/[section]/(components)/mobile-actions";
+import { MobileActions } from "../mobile-actions";
 
 type Props = {
   resourcePath: FetchLoadArgs;

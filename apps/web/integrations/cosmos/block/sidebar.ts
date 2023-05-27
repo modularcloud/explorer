@@ -32,7 +32,7 @@ export const SidebarTransform = {
         Proposer: {
           type: "standard",
           payload: data.result.block.header.proposer_address,
-        }
+        },
       },
     },
   }),

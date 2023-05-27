@@ -103,10 +103,16 @@ export default async function EntityPage({ params }: Props) {
   if (values.length === 0) {
     // using the sidebar component is bad practice, but just doing this until this component is refactored
     return (
-      <AssociatedNotFound
-        primaryTypeSingular={entity.components.sidebar.data.entityTypeName}
-        secondaryTypePlural={label}
-      />
+      <>
+        <AssociatedNotFound
+          primaryTypeSingular={entity.components.sidebar.data.entityTypeName}
+          secondaryTypePlural={label}
+        />
+        <Suspense>
+          {/* @ts-expect-error Async Server Component */}
+          <Tabs params={params} />
+        </Suspense>
+      </>
     );
   }
 

@@ -16,8 +16,9 @@ export async function AssociatedViewContextProvider({
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
-  })
-  const value = entity?.components.page.data.defaultView ?? DEFAULT_ASSOCIATED_VIEW;
+  });
+  const value =
+    entity?.components.page.data.defaultView ?? DEFAULT_ASSOCIATED_VIEW;
   return (
     <ClientAssociatedViewContextProvider value={value}>
       {children}

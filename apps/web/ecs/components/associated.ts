@@ -17,7 +17,7 @@ const AssociatedValueSchema = z.discriminatedUnion("type", [
     type: z.literal("paginated"),
     value: EntityRefSchema,
   }),
-])
+]);
 
 const AssociatedSchema = z.record(
   AssociatedKeySchema, // Collection name

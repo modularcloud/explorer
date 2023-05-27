@@ -11,6 +11,17 @@ const SidebarSchema = z.object({
   // Attributes
   attributesHeader: z.string(),
   attributes: z.record(ValueSchema),
+  asyncAttributes: z
+    .object({
+      fallback: z.record(ValueSchema),
+      src: z.object({
+        network: z.string(),
+        type: z.string(),
+        query: z.string(),
+      }),
+    })
+    .array()
+    .optional(),
 });
 
 export const SidebarComponent = createComponentSchema(SidebarSchema, "sidebar");

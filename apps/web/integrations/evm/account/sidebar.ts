@@ -12,24 +12,6 @@ export const SidebarTransform = {
   }: TransformInput<typeof AccountExtract>): Promise<
     TransformOutput<typeof SidebarComponent>
   > => {
-    const balances: Record<string, Value> = {};
-    if (data.balances.nativeTokenBalance) {
-      balances[metadata.network.nativeToken] = {
-        type: "standard",
-        // from wei
-        payload: new Decimal(data.balances.nativeTokenBalance)
-          .dividedBy(new Decimal(10).pow(18))
-          .toString(),
-      };
-    }
-    for (const balance of data.balances.balances ?? []) {
-      balances[balance.token.name] = {
-        type: "standard",
-        payload: new Decimal(balance.balance)
-          .dividedBy(new Decimal(10).pow(String(balance.token.decimals)))
-          .toString(),
-      };
-    }
     return {
       typeId: "sidebar",
       data: {
@@ -37,7 +19,22 @@ export const SidebarTransform = {
         entityTypeName: "Account",
         entityId: data.address,
         attributesHeader: "Balances",
-        attributes: balances,
+        attributes: {
+          Type: { type: "standard", payload: "Externally Owned Account" },
+          NFTs: { type: "standard", payload: String(data.nfts.length) },
+        },
+        asyncAttributes: [
+          {
+            fallback: {
+              Balances: { type: "standard", payload: "Scanning tokens..." },
+            },
+            src: {
+              network: metadata.network.id,
+              type: "balances",
+              query: data.address,
+            },
+          },
+        ],
       },
     };
   },

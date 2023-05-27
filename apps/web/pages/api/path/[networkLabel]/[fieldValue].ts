@@ -72,7 +72,9 @@ export default async function handler(
     const token = await getEntity(network, "token", "address", fieldValue);
     if (token) {
       res.json({
-        path: useShortPath ? `/token/${fieldValue}` : `/${networkLabel}/token/address/${fieldValue}`,
+        path: useShortPath
+          ? `/token/${fieldValue}`
+          : `/${networkLabel}/token/address/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -81,7 +83,9 @@ export default async function handler(
     const account = await getEntity(network, "account", "address", fieldValue);
     if (account) {
       res.json({
-        path: useShortPath ? `/address/${fieldValue}` : `/${networkLabel}/account/address/${fieldValue}`,
+        path: useShortPath
+          ? `/address/${fieldValue}`
+          : `/${networkLabel}/account/address/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -93,7 +97,9 @@ export default async function handler(
     const hBlock = await getEntity(network, "block", "height", fieldValue);
     if (hBlock) {
       res.json({
-        path: useShortPath ? `/block/${fieldValue}` : `/${networkLabel}/block/height/${fieldValue}`,
+        path: useShortPath
+          ? `/block/${fieldValue}`
+          : `/${networkLabel}/block/height/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -137,7 +143,9 @@ export default async function handler(
     );
     if (transaction) {
       res.json({
-        path: useShortPath ? `/tx/${fieldValue}` : `/${networkLabel}/transaction/hash/${fieldValue}`,
+        path: useShortPath
+          ? `/tx/${fieldValue}`
+          : `/${networkLabel}/transaction/hash/${fieldValue}`,
       });
       return res.status(200).end();
     }
@@ -146,7 +154,9 @@ export default async function handler(
     const block = await getEntity(network, "block", "hash", fieldValue);
     if (block) {
       res.json({
-        path: useShortPath ? `/block/${fieldValue}` : `/${networkLabel}/block/hash/${fieldValue}`,
+        path: useShortPath
+          ? `/block/${fieldValue}`
+          : `/${networkLabel}/block/hash/${fieldValue}`,
       });
       return res.status(200).end();
     }

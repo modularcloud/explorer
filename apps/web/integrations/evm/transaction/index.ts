@@ -22,7 +22,7 @@ export async function TransactionExtract(
     receipt.logs[0]?.topics?.[0]
   );
   const block = await web3.eth.getBlock(receipt.blockNumber);
-  
+
   return {
     ...transaction,
     receipt,
