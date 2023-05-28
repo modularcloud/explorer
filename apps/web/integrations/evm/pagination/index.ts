@@ -26,7 +26,8 @@ export async function PaginationExtract(
     if (value === "transactions") {
       const latest = await mc.evm.getRecentTransactions(
         metadata.network.id,
-        30
+        30,
+        nextToken
       );
       return {
         value,
