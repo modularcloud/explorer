@@ -33,12 +33,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EntityPage({ params }: Props) {
-  asyncUseEntity({
+  const entity = await asyncUseEntity({
     resourcePath: params,
     archetype: PageArchetype,
-  }).then((entity) => {
-    if (!entity) notFound();
   });
+  if (!entity) notFound();
 
   return (
     <>
