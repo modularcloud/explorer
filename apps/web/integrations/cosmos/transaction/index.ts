@@ -5,6 +5,7 @@ import { JSONRPCResponse, Transaction } from "../../../lib/service-manager";
 import { AssociatedTransform } from "./associated";
 import { CardTransform } from "./card";
 import { PageTransform } from "./page";
+import { RawTransform } from "./raw";
 import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
@@ -39,4 +40,5 @@ export const TransactionLoader = createLoader()
   .addTransform(CardTransform)
   .addTransform(RowTransform)
   .addTransform(PageTransform)
+  .addTransform(RawTransform)
   .finish();

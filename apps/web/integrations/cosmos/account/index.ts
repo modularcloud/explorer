@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ABCIResponse, JSONRPCResponse } from "../../../lib/service-manager";
 import { AssociatedTransform } from "./associated";
 import { PageTransform } from "./page";
+import { RawTransform } from "./raw";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -49,4 +50,5 @@ export const AccountLoader = createLoader()
   .addTransform(SidebarTransform)
   .addTransform(AssociatedTransform)
   .addTransform(PageTransform)
+  .addTransform(RawTransform)
   .finish();

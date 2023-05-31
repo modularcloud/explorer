@@ -52,6 +52,7 @@ export default async function EntityPage({ params }: Props) {
         title={`${entityTypeName} Information`}
         subTitle={entityId}
       />
+      {/* <Raw resourcePath={params} /> */}
       <Suspense>
         {/* @ts-expect-error Async Server Component */}
         <Tabs params={params} />

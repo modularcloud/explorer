@@ -3,6 +3,7 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { z } from "zod";
 import { AssociatedTransform } from "./associated";
 import { PageTransform } from "./page";
+import { RawTransform } from "./raw";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -32,4 +33,5 @@ export const AccountLoader = createLoader()
   .addTransform(SidebarTransform)
   .addTransform(AssociatedTransform)
   .addTransform(PageTransform)
+  .addTransform(RawTransform)
   .finish();
