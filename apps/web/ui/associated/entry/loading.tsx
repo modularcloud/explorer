@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AssociatedViewContext } from "../context/client";
+import { ViewContext } from "../../view-context/client";
 
 function FeedEntryFallback() {
   return (
@@ -31,8 +31,8 @@ function TableEntryFallback() {
 }
 
 export function AssociatedEntryLoadingFallback() {
-  const view = useContext(AssociatedViewContext);
-  switch (view) {
+  const view = useContext(ViewContext);
+  switch (view.associated) {
     case "feed":
       return <FeedEntryFallback />;
     case "table":

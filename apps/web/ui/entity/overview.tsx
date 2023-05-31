@@ -7,9 +7,10 @@ import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { AttributesArchetype } from "../../ecs/archetypes/attributes";
 import { Suspense } from "react";
 import { PageArchetype } from "../../ecs/archetypes/page";
+import { Entity } from "@modularcloud/ecs";
 
 type Props = {
-  resourcePath: FetchLoadArgs;
+  entity: Entity<typeof PageArchetype>;
 };
 
 function Entry({ label, value }: { label: string; value: Value }) {
@@ -79,15 +80,9 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   );
 }
 
-export default async function DescriptionList({
-  resourcePath,
-}: Props) {
-  const entity = await asyncUseEntity({
-    resourcePath: resourcePath,
-    archetype: PageArchetype,
-  });
-  if (!entity) return null;
-  const { attributes, asyncAttributes, entityTypeName, entityId } = entity.components.sidebar.data;
+export default function Overview({ entity }: Props) {
+  const { attributes, asyncAttributes, entityTypeName, entityId } =
+    entity.components.sidebar.data;
   return (
     <div className="flex w-full p-6 justify-center">
       <div className="bg-translucent backdrop-blur-xs w-full overflow-hidden border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-xl max-w-7xl">

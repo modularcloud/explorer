@@ -1,5 +1,5 @@
 import { FetchLoadArgs } from "../../../../../lib/utils";
-import { AssociatedViewContextProvider } from "../../../../../ui/associated/context";
+import { ViewContextProvider } from "../../../../../ui/view-context";
 import { Header } from "../../../../../ui/header";
 
 type Props = {
@@ -10,10 +10,10 @@ type Props = {
 export default async function EntityLayout({ params, children }: Props) {
   return (
     // @ts-expect-error Async Server Component
-    <AssociatedViewContextProvider resourcePath={params}>
+    <ViewContextProvider resourcePath={params}>
       <Header resourcePath={params} />
       {children}
-    </AssociatedViewContextProvider>
+    </ViewContextProvider>
   );
 }
 

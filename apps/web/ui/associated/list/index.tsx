@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AssociatedViewContext } from "../context/client";
+import { ViewContext } from "../../view-context/client";
 import { FeedList } from "./feed";
 import { TableList } from "./table/table";
 
@@ -13,8 +13,8 @@ export interface Props {
 
 // TODO use memo so that table header does not re-render
 export function AssociatedList({ label, children, tableHeader }: Props) {
-  const view = useContext(AssociatedViewContext);
-  switch (view) {
+  const view = useContext(ViewContext);
+  switch (view.associated) {
     case "feed":
       return <FeedList>{children}</FeedList>;
     case "table":
