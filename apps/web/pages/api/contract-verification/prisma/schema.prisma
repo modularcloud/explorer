@@ -2,6 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum VerificationStatus {
+  FULL
+  PARTIAL
+}
+
 datasource db {
   provider          = "postgresql"
   url               = env("POSTGRES_PRISMA_URL")
@@ -12,9 +17,11 @@ datasource db {
 model Verification {
   id              Int      @id @default(autoincrement())
   contractAddress String   @db.VarChar(255)
+  chainID         String
   isVerified      Boolean
   sourceCode      String
   bytecode        String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  verificationStatus VerificationStatus
 }
