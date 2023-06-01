@@ -433,7 +433,7 @@ export async function NFTTransferExtract(
     ).methods
       .tokenURI(id)
       .call();
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
@@ -514,7 +514,7 @@ export async function NFTTransferExtract(
       .uri(id)
       .call();
     const uri = baseUri.replace("{id}", web3.utils.padLeft(id, 64));
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
@@ -596,7 +596,7 @@ export async function NFTTransferExtract(
       .uri(ids[0])
       .call();
     const uri = baseUri.replace("{id}", String(web3.utils.padLeft(ids[0], 64)));
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
