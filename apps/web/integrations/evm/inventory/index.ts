@@ -3,6 +3,7 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { uploadFile } from "@uploadcare/upload-client";
 import Web3 from "web3";
 import { z } from "zod";
+import { convertToHttpIfIpfs } from "../../../lib/utils";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 
@@ -40,7 +41,7 @@ export async function InventoryExtract(
     })
     .then(async (res) => {
       if (res) {
-        const fimg = await fetch(res.image);
+        const fimg = await fetch(convertToHttpIfIpfs(res.image));
         const fimgb = Buffer.from(await fimg.arrayBuffer());
         const result = await uploadFile(fimgb, {
           publicKey: process.env.UPLOADCARE_API_KEY as string,

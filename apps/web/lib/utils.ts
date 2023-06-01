@@ -2,6 +2,13 @@ import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
 
+export function convertToHttpIfIpfs(url: string) {
+  if (url.startsWith("ipfs://")) {
+    return `${process.env.IPFS_GATEWAY}/${url.replace("ipfs://", "")}`;
+  }
+  return url;
+}
+
 export function decodeEvmAddressParam(address: string) {
   if (address.indexOf("000000000000000000000000") !== -1) {
     return address.replace("000000000000000000000000", "");

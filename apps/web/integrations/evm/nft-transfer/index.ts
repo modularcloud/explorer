@@ -6,6 +6,7 @@ import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { uploadFile } from "@uploadcare/upload-client";
+import { convertToHttpIfIpfs } from "../../../lib/utils";
 
 const MetadataSchema = z.object({
   name: z.string().optional(),
@@ -441,7 +442,7 @@ export async function NFTTransferExtract(
       })
       .then(async (res) => {
         if (res) {
-          const fimg = await fetch(res.image);
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
             publicKey: process.env.UPLOADCARE_API_KEY as string,
@@ -522,7 +523,7 @@ export async function NFTTransferExtract(
       })
       .then(async (res) => {
         if (res) {
-          const fimg = await fetch(res.image);
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
             publicKey: process.env.UPLOADCARE_API_KEY as string,
@@ -604,7 +605,7 @@ export async function NFTTransferExtract(
       })
       .then(async (res) => {
         if (res) {
-          const fimg = await fetch(res.image);
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
             publicKey: process.env.UPLOADCARE_API_KEY as string,

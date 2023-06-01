@@ -25,7 +25,8 @@
         "METRICS_API_URL",
         "ETHEREUM_RPC",
         "NEXT_PUBLIC_VERCEL_URL",
-        "UPLOADCARE_API_KEY"
+        "UPLOADCARE_API_KEY",
+        "IPFS_GATEWAY"
       ]
     }
   }
