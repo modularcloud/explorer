@@ -34,7 +34,7 @@ export async function InventoryExtract(
           Web3.utils.padLeft(balance.balance.balance.tokenId, 64)
         )
       : balance.balance.balance.tokenUri;
-  const md = await fetch(uri)
+  const md = await fetch(convertToHttpIfIpfs(uri))
     .then((res) => res.json())
     .then((res) => {
       return MetadataSchema.parse(res);
