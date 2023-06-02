@@ -134,6 +134,10 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Celestia: [
             {
+              displayName: "Blockspace Race",
+              id: "blockspace-race",
+            },
+            {
               displayName: "Mocha",
               id: "mocha",
             },
@@ -188,6 +192,10 @@ export function getWhitelabel(): Whitelabel {
       return {
         searchOptions: {
           Celestia: [
+            {
+              displayName: "Blockspace Race",
+              id: "celestia-blockspace-race",
+            },
             {
               displayName: "Mocha",
               id: "celestia-mocha",

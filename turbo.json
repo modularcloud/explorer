@@ -26,7 +26,8 @@
         "ETHEREUM_RPC",
         "NEXT_PUBLIC_VERCEL_URL",
         "UPLOADCARE_API_KEY",
-        "IPFS_GATEWAY"
+        "IPFS_GATEWAY",
+        "CELESTIA_BLOCKSPACE_RACE_RPC"
       ]
     }
   }

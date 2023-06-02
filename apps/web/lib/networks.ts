@@ -81,6 +81,16 @@ export function getEngine() {
       },
     });
     Engine.addConfig("mocha", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
+      network: {
+        id: "blockspace-race",
+        displayName: "Blockspace Race",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("blockspace-race", config);
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
@@ -126,6 +136,16 @@ export function getEngine() {
     });
     Engine.addConfig("polygon", config);
   } else {
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
+      network: {
+        id: "celestia-blockspace-race",
+        displayName: "Blockspace Race",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("celestia-blockspace-race", config);
     config = CreateEVMConfig({
       endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
       network: {

@@ -167,6 +167,24 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     },
   },
   // Celestia
+  CELESTIA_BLOCKSPACE_RACE: {
+    mcId: "N/A",
+    displayName: "Blockspace Race",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "celestia",
+    slug: "blockspace-race",
+    slugPrefix: "celestia",
+    vm: "cosmos",
+    nativeToken: "TIA",
+    logoUrl: "/images/celestia.png",
+    searchOptionGroup: "Celestia",
+    rpcUrl: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
+    stack: {
+      Type: "Data Availability",
+      Execution: "Cosmos SDK",
+    },
+  },
   CELESTIA_MOCHA: {
     mcId: "N/A",
     displayName: "Mocha",

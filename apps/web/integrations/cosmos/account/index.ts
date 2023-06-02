@@ -21,8 +21,12 @@ export async function AccountExtract(
     denom = "DYM";
   } else if (address.match(/^celestia\w{39}$/)) {
     // celestia mocha
+    const celestiaBase =
+      metadata.network.id.indexOf("mocha") !== -1
+        ? "https://rpc-mocha.pops.one"
+        : "https://rpc-blockspacerace.pops.one";
     const data = getBalanceQueryData(address, "utia");
-    queryInput = `https://rpc-mocha.pops.one/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
+    queryInput = `${celestiaBase}/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "TIA";
   } else if (address.match(/^rol\w{39}$/)) {
     // dymension rollappX
