@@ -12,7 +12,7 @@ export const AssociatedTransform = {
   > => ({
     typeId: "associated",
     data: {
-      Logs: {
+      Messages: {
         type: "static",
         values: data.messages.map((log, index) => ({
           network: metadata.network.id,

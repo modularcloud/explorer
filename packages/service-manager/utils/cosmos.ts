@@ -126,7 +126,7 @@ export function parseBalance(str: string) {
 
 export function getMessages(txstr: string): Entity[] {
   const registry = new Registry(defaultRegistryTypes);
-  registry.register("/blob.MsgPayForBlobs", MsgPayForBlobs);
+  registry.register("/celestia.blob.v1.MsgPayForBlobs", MsgPayForBlobs);
   registry.register("/payment.MsgPayForData", MsgPayForBlobs);
   let raw = fromBase64(txstr);
   let tx;
@@ -138,6 +138,7 @@ export function getMessages(txstr: string): Entity[] {
   const decodedMessages: Entity[] = [];
   tx.body.messages.forEach((message, index) => {
     try {
+      console.log(message)
       const decodedMsg = registry.decode(message);
       decodedMessages.push({
         uniqueIdentifier: convertToName(message.typeUrl),
