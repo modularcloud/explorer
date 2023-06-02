@@ -138,7 +138,6 @@ export function getMessages(txstr: string): Entity[] {
   const decodedMessages: Entity[] = [];
   tx.body.messages.forEach((message, index) => {
     try {
-      console.log(message)
       const decodedMsg = registry.decode(message);
       decodedMessages.push({
         uniqueIdentifier: convertToName(message.typeUrl),
