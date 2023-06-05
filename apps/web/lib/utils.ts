@@ -129,6 +129,21 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "aeg",
       };
+      case "apricot":
+        return {
+          searchOptions: {
+            Apricot: [
+              {
+                displayName: "Apricot",
+                id: "apricot",
+              },
+            ],
+          },
+          defaultNetwork: "apricot",
+          subText: "Explorer",
+          name: ["Modular", "Cloud"],
+          env: "apricot",
+        };
     case "celestia":
       return {
         searchOptions: {

@@ -39,6 +39,17 @@ export function getEngine() {
       },
     });
     Engine.addConfig("aeg", config);
+  } else if (whitelabel.env === "apricot") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.apricot.eclipsenetwork.xyz/solana",
+      network: {
+        id: "apricot",
+        displayName: "apricot",
+        nativeToken: "NEON",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("apricot", config);
   } else if (whitelabel.env === "dymension") {
     config = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",

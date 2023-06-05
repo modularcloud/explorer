@@ -104,6 +104,26 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Platform: "Eclipse",
     },
   },
+  ECLIPSE_APRICOT: {
+    mcId: "ep/5",
+    displayName: "Apricot",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "apricot",
+    slug: "apricot",
+    slugPrefix: "eclipse",
+    vm: "evm",
+    nativeToken: "NEON",
+    logoUrl: "/images/eclipse.png",
+    searchOptionGroup: "Eclipse",
+    rpcUrl: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
   // Dymension
   DYMENSION_HUB: {
     mcId: "N/A",

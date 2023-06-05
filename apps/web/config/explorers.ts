@@ -79,6 +79,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "aeg",
     includeAllNetworks: true,
   },
+  APRICOT: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Apricot ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, apricot",
+    defaultSearchOptionGroup: "Apricot",
+    env: "apricot",
+    id: "apricot",
+    includeAllNetworks: true,
+  },
   SAGA: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
