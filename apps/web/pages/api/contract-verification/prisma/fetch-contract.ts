@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 const { PrismaClient } = require("@prisma/client");
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 export default async function verifyContract(
   req: NextApiRequest,
@@ -18,16 +18,16 @@ export default async function verifyContract(
         files: files,
       });
       if (response.status == 200) {
-        // const record = await prisma.verification.create({
-        //   data: {
-        //     verificationStatus:
-        //       response.data.result[0].status == "perfect" ? "FULL" : "PARTIAL",
-        //     contractAddress,
-        //     chainId,
-        //     isVerified: true,
-        //     sourceCode: files,
-        //   },
-        // });
+        const record = await prisma.verification.create({
+          data: {
+            verificationStatus:
+              response.data.result[0].status == "perfect" ? "FULL" : "PARTIAL",
+            contractAddress,
+            chainId,
+            isVerified: true,
+            sourceCode: files,
+          },
+        });
       }
       res.status(response.status).json(response.data);
     } catch (error) {
