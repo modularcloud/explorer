@@ -44,7 +44,7 @@ export function getEngine() {
       endpoint: "https://api.evm.apricot.eclipsenetwork.xyz/solana",
       network: {
         id: "apricot",
-        displayName: "apricot",
+        displayName: "Apricot",
         nativeToken: "NEON",
         logoUrl: "/images/eclipse.png",
       },
