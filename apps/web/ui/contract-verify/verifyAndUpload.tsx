@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
-
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 export function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -14,45 +15,78 @@ export function VerifyAndUpload() {
     chainId: "91002",
     files: {},
   };
-  const success = () => {
-    toast.success("🦄 Wow so easy!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
-  const verifyAndUpload = async (e) => {
-    for (let i = 0; i < files.length; i++) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const fileContents = e.target.result;
-        data.files[files[i].name] = fileContents;
-      };
-      await reader.readAsText(files[i]);
-    }
-    await axios
-      .post(
+  const verify = async (data) => {
+    try {
+      const response = await axios.post(
         "http://localhost:3000/api/contract-verification/prisma/fetch-contract",
         data
-      )
-      .then((response) => {
-        if (response.status === 200 && response.data.status == "perfect") {
-          setVerified(true);
-          success();
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+      );
+      return response; // Return the API response data
+    } catch (error) {
+      console.error("Error calling API:", error);
+      return error.response.data;
+    }
+  };
+  const verifyAndUpload = async () => {
+    if (files) {
+      const id = toast.loading("Verifying Files", {
+        position: "top-center",
+        closeOnClick: true,
       });
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const fileContents = e.target?.result;
+          data.files[files[i].name] = fileContents;
+        };
+        reader.readAsText(files[i]);
+      }
+      const verifyResult = await verify(data);
+      if (verifyResult?.status === 200) {
+        if (verifyResult?.data.result[0]?.storageTimestamp) {
+          toast.update(id, {
+            render: "Files Already Verified",
+            type: "Warning",
+            isLoading: false,
+            closeOnClick: true,
+          });
+          setVerified(true);
+        } else if (verifyResult.data.result[0].status == "perfect") {
+          toast.update(id, {
+            render: "Verified Successfully",
+            type: "success",
+            isLoading: false,
+            closeOnClick: true,
+          });
+          setVerified(true);
+        }
+      } else {
+        console.log(verifyResult);
+        toast.update(id, {
+          render: `Verification Failed ${verifyResult.error}`,
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+        });
+      }
+    } else {
+      console.log(false);
+      toast.error("Please add files to verify", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
     <div className="flex flex-col justify-center items-center">
+      <ToastContainer />
       <div className="border-[#234594] border-t-4 rounded-xl  my-7 border-solid flex flex-col gap-y-6 justify-center items-center">
         <div className="px-14 py-10 bg-white w-[80vw] rounded-lg">
           <div>

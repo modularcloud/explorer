@@ -1,6 +1,7 @@
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
 module.exports = {
+  mode: "jit",
   content: [
     // app content
     "./app/**/*.{js,ts,jsx,tsx}",
@@ -18,7 +19,7 @@ module.exports = {
         header: "4.25rem",
       },
       backdropBlur: {
-        xs: '3px',
+        xs: "3px",
       },
       screens: {
         xs: "375px",
@@ -137,7 +138,7 @@ module.exports = {
         },
         translucent: {
           DEFAULT: "rgba(255, 255, 255, 0.88)",
-        }
+        },
       },
       keyframes: {
         "right-to-left": {
