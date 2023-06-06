@@ -16,7 +16,7 @@ datasource db {
 
 model Verification {
   id              Int      @id @default(autoincrement())
-  contractAddress String   @db.VarChar(255)
+  contractAddress String   @unique @db.VarChar(255)
   chainID         String
   isVerified      Boolean
   sourceCode      String

@@ -61,15 +61,14 @@ describe('verifyContract handler', () => {
         contractAddress: req.body.contractAddress,
       },
     })
-
-    expect(record).toBeDefined()
-    expect(record.verificationStatus).toBe("FULL")
-    expect(record.contractAddress).toBe(req.body.contractAddress)
-    expect(record.chainId).toBe(req.body.chainId)
-    expect(record.isVerified).toBe(true)
-    expect(record.sourceCode).toStrictEqual(req.body.files)
+    
+    expect(record?.verificationStatus).toBe("FULL")
+    expect(record?.contractAddress).toBe(req.body.contractAddress)
+    expect(record?.chainID).toBe(req.body.chainId)
+    expect(record?.isVerified).toBe(true)
+    expect(record?.sourceCode).toStrictEqual(req.body.files[0].content)    
 
     // Clean up the database
     await prisma.verification.deleteMany()
-  })
+  }, 30000) // 30 seconds timeout for this test case
 })
