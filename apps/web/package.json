@@ -38,6 +38,7 @@
     "autoprefixer": "^10.4.13",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
+    "jest": "^29.5.0",
     "msw": "^1.2.1",
     "postcss": "^8.4.21",
     "prisma": "^4.15.0",
