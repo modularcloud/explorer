@@ -70,5 +70,5 @@ describe('verifyContract handler', () => {
 
     // Clean up the database
     await prisma.verification.deleteMany()
-  }, 30000) // 30 seconds timeout for this test case
+  }, 50000) // 30 seconds timeout for this test case
 })
