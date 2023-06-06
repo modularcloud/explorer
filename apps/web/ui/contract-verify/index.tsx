@@ -14,18 +14,7 @@ export function VerifyContract() {
     chainId: "91002",
     files: {},
   };
-  const success = () => {
-    toast.success("🦄 Wow so easy!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
+
   const verifyAndUpload = async (e) => {
     for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();

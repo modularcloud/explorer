@@ -4,15 +4,24 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
-    }
+      "*": [
+        "node_modules/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "jest.config.js"  ],
+    ".next/types/**/*.ts",
+    "jest.config.js"
+  ],
   "exclude": [
     "node_modules"
   ]

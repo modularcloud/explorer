@@ -15,10 +15,11 @@ export function VerifyAndUpload() {
     chainId: "91002",
     files: {},
   };
+
   const verify = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/contract-verification/prisma/fetch-contract",
+        "http://localhost:3000/api/contract-verification/prisma/contract-verification",
         data
       );
       return response; // Return the API response data
@@ -27,6 +28,7 @@ export function VerifyAndUpload() {
       return error.response.data;
     }
   };
+
   const verifyAndUpload = async () => {
     if (files) {
       const id = toast.loading("Verifying Files", {
@@ -70,7 +72,6 @@ export function VerifyAndUpload() {
         });
       }
     } else {
-      console.log(false);
       toast.error("Please add files to verify", {
         position: "top-right",
         autoClose: 5000,
