@@ -34,7 +34,7 @@ describe('verifyContract handler', () => {
     const req: any = {
       body: {
         contractAddress: "0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71",
-        chainId: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
+        chainId: "91002",   // Nautilus Triton testnet
         files: [
           {
             fileName: "Contract.sol",
