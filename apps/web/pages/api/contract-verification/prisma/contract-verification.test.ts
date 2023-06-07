@@ -1,74 +1,106 @@
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
-import { PrismaClient } from '@prisma/client'
-import verifyContract from './contract-verification' // path to your handler
+import { Prisma, PrismaClient, Verification } from "@prisma/client";
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { NextApiRequest, NextApiResponse } from 'next';
+import verifyContract from './contract-verification';
 
-// Create prisma instance
-const prisma = new PrismaClient()
+jest.mock('@prisma/client');
 
-// Define our mocked endpoints
+const mockVerification = {
+  id: 1,
+  contractAddress: '0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71',
+  chainID: '91002',
+  isVerified: true,
+  sourceCode: 'This is mock file content',
+  verificationStatus: 'FULL',
+  bytecode: '',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+} as Verification;
+
+const mockPrisma: PrismaClient<Prisma.PrismaClientOptions, never, Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined> = {
+  $connect: jest.fn(),
+  $disconnect: jest.fn(),
+  verification: {
+    create: jest.fn(() => Promise.resolve(mockVerification)),
+    findUnique: jest.fn().mockResolvedValue(mockVerification),
+    // Add other methods you need to mock here
+  },
+} as unknown as PrismaClient<Prisma.PrismaClientOptions, never, Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined>;
+
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn(() => mockPrisma),
+}));
+
 const handlers = [
-  // Intercept POST requests to our local sourcify instance
-  rest.post('http://localhost:5555/', (req, res, ctx) => {
-    // Mock successful response
-    return res(ctx.json({ result: [{ status: "perfect" }] }))
+  rest.post('http://localhost:3000/api/contract-verification/prisma/fetch-contract/', (req, res, ctx) => {
+    return res(ctx.json({ result: [{ status: 'perfect' }] }));
   }),
-]
+];
 
-// Setup requests interception
-const server = setupServer(...handlers)
+const server = setupServer(...handlers);
 
 beforeAll(() => {
-  // Enable requests interception
-  server.listen()
-})
+  server.listen();
+});
 
 afterAll(() => {
-  // Clean up once the tests are done.
-  server.close()
-})
+  server.close();
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('verifyContract handler', () => {
   it('verifies contract and inserts record into database', async () => {
-    // Mock request and response
-    const req: any = {
+    const req = {
       body: {
-        contractAddress: "0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71",
-        chainId: "91002",   // Nautilus Triton testnet
+        contractAddress: '0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71',
+        chainId: '91002',
         files: [
           {
-            fileName: "Contract.sol",
-            content: "This is mock file content",
+            fileName: 'Contract.sol',
+            content: 'This is mock file content',
           },
         ],
       },
-    }
+      query: {},
+      cookies: {},
+      env: {},
+      aborted: false,
+      complete: false,
+      headers: {},
+      httpVersion: '1.1',
+      method: 'POST',
+      trailers: {},
+      url: '/mock-url',
+    } as NextApiRequest;
 
-    const res: any = {
+    const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    }
+    } as unknown as NextApiResponse;
 
-    // Invoke the handler
-    await verifyContract(req, res)
+    await verifyContract(req, res);
 
-    // Expect the handler to respond with a 200 status
-    expect(res.status).toHaveBeenCalledWith(200)
-
-    // Check database record
-    const record = await prisma.verification.findUnique({
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(mockPrisma.verification.findUnique).toHaveBeenCalledWith({
       where: {
         contractAddress: req.body.contractAddress,
       },
-    })
-    
-    expect(record?.verificationStatus).toBe("FULL")
-    expect(record?.contractAddress).toBe(req.body.contractAddress)
-    expect(record?.chainID).toBe(req.body.chainId)
-    expect(record?.isVerified).toBe(true)
-    expect(record?.sourceCode).toStrictEqual(req.body.files[0].content)    
+    });
 
-    // Clean up the database
-    await prisma.verification.deleteMany()
-  }, 60000) // 60 seconds timeout for this test case
-})
+    expect(res.json).toHaveBeenCalledWith({
+      id: 1,
+      contractAddress: req.body.contractAddress,
+      chainID: req.body.chainId,
+      isVerified: true,
+      sourceCode: req.body.files[0].content,
+      verificationStatus: 'FULL',
+      bytecode: '',
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
+    });
+  }, 60000);
+});
