@@ -51,7 +51,7 @@ export function getEngine() {
     });
     Engine.addConfig("apricot", config);
   } else if (whitelabel.env === "dymension") {
-    config = CreateEVMConfig({
+    let primary = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
       network: {
         id: "evm-rollapp",
@@ -60,7 +60,20 @@ export function getEngine() {
         logoUrl: "/images/dymension.png",
       },
     });
-    Engine.addConfig("evm-rollapp", config);
+    let secondary = CreateCosmosConfig({
+      endpoint: "https://rpc-rollappevm-35c.dymension.xyz",
+      network: {
+        id: "evm-rollapp",
+        displayName: "EVM RollApp",
+        nativeToken: "tEVMOS",
+        logoUrl: "/images/dymension.png",
+      },
+    });
+    Engine.addConfig("evm-rollapp", {
+      primary,
+      secondary,
+      conflicts: ["block"],
+    });
     config = CreateCosmosConfig({
       endpoint: process.env.DYMENSION_HUB_RPC ?? "",
       network: {
@@ -197,7 +210,7 @@ export function getEngine() {
       },
     });
     Engine.addConfig("celestia-mocha", config);
-    config = CreateEVMConfig({
+    let primary = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
       network: {
         id: "dymension-evm-rollapp",
@@ -206,7 +219,20 @@ export function getEngine() {
         logoUrl: "/images/dymension.png",
       },
     });
-    Engine.addConfig("dymension-evm-rollapp", config);
+    let secondary = CreateCosmosConfig({
+      endpoint: "https://rpc-rollappevm-35c.dymension.xyz",
+      network: {
+        id: "dymension-evm-rollapp",
+        displayName: "EVM RollApp",
+        nativeToken: "tEVMOS",
+        logoUrl: "/images/dymension.png",
+      },
+    });
+    Engine.addConfig("dymension-evm-rollapp", {
+      primary,
+      secondary,
+      conflicts: ["block"],
+    });
     config = CreateCosmosConfig({
       endpoint: process.env.DYMENSION_HUB_RPC ?? "",
       network: {

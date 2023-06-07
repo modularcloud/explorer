@@ -16,7 +16,7 @@ export async function TransactionExtract(
 ) {
   const hash = z.string().parse(_q);
   const response = await fetch(
-    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}`
+    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`
   );
 
   if (!response.ok) {
