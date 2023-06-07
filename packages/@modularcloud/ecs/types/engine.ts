@@ -57,10 +57,18 @@ export const Engine = {
           return await backup;
         }
       }
-      return await Promise.any([
-        load(config.primary.metadata, config.primary.loaders[type], query),
-        load(config.secondary.metadata, config.secondary.loaders[type], query),
-      ]);
+      const loads = [];
+      if (config.primary.loaders[type]) {
+        loads.push(
+          load(config.primary.metadata, config.primary.loaders[type], query)
+        );
+      }
+      if (config.secondary.loaders[type]) {
+        loads.push(
+          load(config.secondary.metadata, config.secondary.loaders[type], query)
+        );
+      }
+      return await Promise.any(loads);
     } else {
       return await load(config.metadata, config.loaders[type], query);
     }

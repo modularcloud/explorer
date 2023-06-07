@@ -12,7 +12,7 @@ export async function MessageExtract(
   const query = z.string().parse(_q);
   const [hash, index] = query.split(":");
   const response = await fetch(
-    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}`
+    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`
   );
 
   if (!response.ok) {
