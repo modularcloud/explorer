@@ -238,3 +238,14 @@ export async function Stats({ extended }: Props) {
     </>
   );
 }
+
+
+export async function RecentBlocksAndTransactions() {
+  return (
+    <>
+      <div className="w-full px-4 py-6 md:py-10 flex justify-center radial-bg">
+        <BlocksAndTransactionsSummaryDisplay />
+      </div>
+    </>
+  );
+}

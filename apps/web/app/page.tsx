@@ -2,6 +2,7 @@ import { getWhitelabel } from "../lib/utils";
 import { BigLogo } from "../ui/big-logo";
 import { Footer } from "../ui/footer";
 import { Stats } from "../ui/stats";
+import { RecentBlocksAndTransactions } from "../ui/stats";
 import { Search } from "../ui/search";
 import { EXPLORER_CONFIG } from "../config/explorers";
 import { Metadata } from "next";
@@ -33,6 +34,7 @@ export default function HomePage() {
       </div>
       {/* @ts-expect-error Async Server Component */}
       {explorerId === "nautilus" ? <Stats extended={true} /> : null}
+      {explorerId === "saga" ? <RecentBlocksAndTransactions/> : null}
       <Footer />
     </div>
   );
