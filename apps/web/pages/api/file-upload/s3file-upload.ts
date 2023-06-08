@@ -3,7 +3,7 @@ const aws = require("aws-sdk");
 const accessKeyId = process.env.AWS_S3_ACCESSKEY_ID;
 const secretAccessKey = process.env.AWS_S3_ACCESSKEY_SECRET;
 const region = "us-east-2";
-const name = "daohq-dao-images";
+const name = "contract-verification";
 
 const s3 = new aws.S3({
   region,
