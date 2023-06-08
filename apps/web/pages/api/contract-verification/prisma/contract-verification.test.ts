@@ -4,11 +4,9 @@ import { setupServer } from 'msw/node';
 import { NextApiRequest, NextApiResponse } from 'next';
 import verifyContract from './contract-verification';
 
-jest.mock('@prisma/client');
-
 const mockVerification = {
   id: 1,
-  contractAddress: '0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71',
+  contractAddress: '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40',
   chainID: '91002',
   isVerified: true,
   sourceCode: 'This is mock file content',
@@ -56,7 +54,7 @@ describe('verifyContract handler', () => {
   it('verifies contract and inserts record into database', async () => {
     const req = {
       body: {
-        contractAddress: '0x254A2867D1B653Bf93456A3B5B74cb8edf5C3B71',
+        contractAddress: '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40',
         chainId: '91002',
         files: [
           {
