@@ -2,75 +2,38 @@ import { ChangeEvent, useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+
 export function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
+  const [verified, setVerified] = useState<boolean>(false);
+  const [contractAddress, setContractAddress] = useState<string>("");
+  type ContractData = {
+    contractAddress: typeof contractAddress;
+    chainId: string;
+    files: object;
+  };
+  let data: ContractData = {
+    contractAddress: contractAddress,
+    chainId: "91002",
+    files: {},
+  };
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFiles(event.target.files);
     }
   };
-  const [verified, setVerified] = useState<boolean>(false);
-  let data = {
-    contractAddress: "0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40",
-    chainId: "91002",
-    files: {},
-  };
 
-  const verify = async (data) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/contract-verification/prisma/contract-verification",
-        data
-      );
-      return response; // Return the API response data
-    } catch (error) {
-      console.error("Error calling API:", error);
-      return error.response.data;
-    }
+  const onContractAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setContractAddress(event.target.value);
   };
 
   const verifyAndUpload = async () => {
     if (files) {
-      const id = toast.loading("Verifying Files", {
-        position: "top-center",
-        closeOnClick: true,
-      });
       for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const fileContents = e.target?.result;
-          data.files[files[i].name] = fileContents;
-        };
-        reader.readAsText(files[i]);
+        data.files[files[i].name] = await readFileData(files[i]);
       }
-      const verifyResult = await verify(data);
-      if (verifyResult?.status === 200) {
-        if (verifyResult?.data.result[0]?.storageTimestamp) {
-          toast.update(id, {
-            render: "Files Already Verified",
-            type: "Warning",
-            isLoading: false,
-            closeOnClick: true,
-          });
-          setVerified(true);
-        } else if (verifyResult.data.result[0].status == "perfect") {
-          toast.update(id, {
-            render: "Verified Successfully",
-            type: "success",
-            isLoading: false,
-            closeOnClick: true,
-          });
-          setVerified(true);
-        }
-      } else {
-        console.log(verifyResult);
-        toast.update(id, {
-          render: `Verification Failed ${verifyResult.error}`,
-          type: "error",
-          isLoading: false,
-          closeOnClick: true,
-        });
-      }
+      await verifyAndToast(data);
     } else {
       toast.error("Please add files to verify", {
         position: "top-right",
@@ -82,6 +45,66 @@ export function VerifyAndUpload() {
         progress: undefined,
         theme: "light",
       });
+    }
+  };
+
+  async function readFileData(file: File) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const fileContents = e.target?.result;
+        resolve(fileContents);
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const verifyAndToast = async (data: ContractData) => {
+    const id = toast.loading("Verifying Files", {
+      position: "top-center",
+      closeOnClick: true,
+    });
+    try {
+      const verifyResult = await axios.post(
+        "http://localhost:3000/api/contract-verification/prisma/contract-verification",
+        data
+      );
+      if (verifyResult?.status === 200) {
+        if (verifyResult?.data?.result?.[0]?.storageTimestamp) {
+          toast.update(id, {
+            render: "Contract Already Verified",
+            type: "Warning",
+            isLoading: false,
+            closeOnClick: true,
+          });
+          setVerified(true);
+        } else if (verifyResult.data.result[0].status == "perfect") {
+          toast.update(id, {
+            render: " Verified Successfully",
+            type: "success",
+            isLoading: false,
+            closeOnClick: true,
+          });
+          setVerified(true);
+        }
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        toast.update(id, {
+          render: ` Verification Failed \n ${axiosError.response?.data?.errors?.[0]?.message}`,
+          type: "error",
+          isLoading: false,
+          closeOnClick: true,
+        });
+      }
+
+      console.error("Error calling API:", error);
     }
   };
 
@@ -103,6 +126,14 @@ export function VerifyAndUpload() {
             htmlFor="file-upload"
             className="custom-file-upload w-full relative pt-5 "
           >
+            <div className=" w-full py-4">
+              <input
+                type="text"
+                onChange={onContractAddressChange}
+                className=" w-full h-10 border-2 font-light border-[#2753bb] rounded-lg  indent-2 placeholder:text-gray-800"
+                placeholder="Contract Address"
+              />
+            </div>
             <div className="border-2 font-light border-[#234594] rounded-xl  cursor-pointer border-dashed p-20 relative flex flex-col  justify-center items-center">
               <p>Drag and drop here or </p>
               <p>Browse files</p>

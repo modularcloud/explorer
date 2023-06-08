@@ -24,7 +24,10 @@
         "VERCEL_URL",
         "METRICS_API_URL",
         "ETHEREUM_RPC",
-        "NEXT_PUBLIC_VERCEL_URL"
+        "NEXT_PUBLIC_VERCEL_URL",
+        "SOURCIFY_URL",
+        "AWS_S3_ACCESSKEY_SECRET",
+        "AWS_S3_ACCESSKEY_ID"
       ]
     }
   }
