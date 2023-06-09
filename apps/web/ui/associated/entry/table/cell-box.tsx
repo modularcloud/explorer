@@ -37,7 +37,7 @@ export function CellBox({ value }: { value: Cell }) {
   }
   if (value.type === "block") {
     return (
-      <div className="whitespace-nowrap flex flex-nowrap">
+      <div className="flex flex-nowrap whitespace-nowrap">
         {value.payload.number}
         <CompactDate
           classes="pl-1 before:content-['('] after:content-[')'] hidden md:block"

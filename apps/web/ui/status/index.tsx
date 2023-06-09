@@ -18,7 +18,7 @@ export function Status({ children, status, mode }: Props) {
   ) : (
     <div
       className={clsx(
-        "flex gap-2 items-center",
+        "flex items-center gap-2",
         status ? "text-specialty-green" : "text-specialty-red"
       )}
     >

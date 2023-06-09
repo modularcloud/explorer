@@ -10,9 +10,9 @@ export const SummaryPresenter: React.FC<Props> = ({ icon, title, value }) => {
   return (
     <div className="flex items-start justify-start gap-2">
       <div className="mt-[6px]">{icon}</div>
-      <div className="flex flex-col min-w-fit">
-        <span className="font-bold text-night whitespace-nowrap">{title}</span>
-        <span className="text-[mid-dark] whitespace-nowrap min-w-fit">
+      <div className="flex min-w-fit flex-col">
+        <span className="text-night whitespace-nowrap font-bold">{title}</span>
+        <span className="min-w-fit whitespace-nowrap text-[mid-dark]">
           {value}
         </span>
       </div>

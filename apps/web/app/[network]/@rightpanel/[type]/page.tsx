@@ -36,7 +36,7 @@ export default async function RightPanelPage() {
     <RightPanel
       data={data}
       alt={alt}
-      className="shrink-0 sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+      className="sticky top-0 hidden w-80 shrink-0 lg:flex xl:w-[27.875rem]"
     />
   );
 }

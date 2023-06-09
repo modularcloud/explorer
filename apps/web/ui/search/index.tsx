@@ -23,12 +23,12 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>
       <Popover.Anchor>
-        <div className="flex items-center h-[2.125rem] border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-lg w-full bg-white overflow-hidden">
+        <div className="border-mid-dark-100 flex h-[2.125rem] w-full items-center overflow-hidden rounded-lg border bg-white shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
           <Select.Root
             value={option}
             onValueChange={(value) => setOption(value)}
           >
-            <Select.Trigger className="outline-none flex items-center justify-center h-full pl-4 py-[0.3125rem] pr-2 font-semibold flex-none border-r border-[#2C2C2C1A]">
+            <Select.Trigger className="flex h-full flex-none items-center justify-center border-r border-[#2C2C2C1A] py-[0.3125rem] pl-4 pr-2 font-semibold outline-none">
               <Select.Value defaultValue={option}></Select.Value>
               <Select.Icon>
                 <SvgChevronDown />
@@ -36,19 +36,19 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             </Select.Trigger>
             <Select.Portal>
               <Select.Content position="popper" className="z-10" sideOffset={8}>
-                <div className="overflow-scroll max-h-[8.5rem] min-w-[10.5rem] overflow-auto bg-white rounded-lg border-mid-dark-100 shadow-[0px_12px_16px_rgba(42,43,46,0.14),0px_3px_6px_rgba(42,_43,_46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
+                <div className="border-mid-dark-100 max-h-[8.5rem] min-w-[10.5rem] overflow-auto overflow-scroll rounded-lg bg-white shadow-[0px_12px_16px_rgba(42,43,46,0.14),0px_3px_6px_rgba(42,_43,_46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
                   <Select.Viewport>
                     {Object.entries(optionGroups).map((entry, index) => {
                       const [groupDisplayName, options] = entry;
                       return (
                         <Select.Group key={index}>
-                          <Select.Label className="font-semibold bg-gray/[.08] border-b border-slate-100 py-1 px-3">
+                          <Select.Label className="bg-gray/[.08] border-b border-slate-100 px-3 py-1 font-semibold">
                             {groupDisplayName}
                           </Select.Label>
-                          <div className="py-2 px-3 space-y-0.5">
+                          <div className="space-y-0.5 px-3 py-2">
                             {options.map((option, index) => (
                               <Select.Item
-                                className="outline-none hover:text-ocean cursor-pointer"
+                                className="hover:text-ocean cursor-pointer outline-none"
                                 key={index}
                                 value={option.id}
                               >
@@ -66,7 +66,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
               </Select.Content>
             </Select.Portal>
           </Select.Root>
-          <div className="grid grid-cols-[1fr_auto] items-center grow">
+          <div className="grid grow grid-cols-[1fr_auto] items-center">
             <input
               ref={searchInput}
               onChange={(event: any) =>
@@ -76,7 +76,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
                 if (event.code === "Enter" || event.code === "NumpadEnter")
                   router.push(`/${option}/search/${event.target.value}`);
               }}
-              className="placeholder:text-gray mx-3 py-[0.3125rem] outline-none w-full"
+              className="placeholder:text-gray mx-3 w-full py-[0.3125rem] outline-none"
               type="text"
               placeholder="Go to hash, height, or address"
             />
@@ -85,7 +85,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
                 if (searchInput.current)
                   router.push(`/${option}/search/${searchInput.current.value}`);
               }}
-              className="px-3 flex items-center"
+              className="flex items-center px-3"
             >
               <SvgSearchOff />
             </button>
@@ -93,16 +93,16 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
         </div>
       </Popover.Anchor>
       <Popover.Content className="min-w-[90%]">
-        <div className="flex flex-col justify-center items-center text-center p-5 border rounded-lg shadow-md bg-white mt-2 z-100 w-[300px] sm:w-auto">
-          <div className="block py-3 m-auto">
+        <div className="z-100 mt-2 flex w-[300px] flex-col items-center justify-center rounded-lg border bg-white p-5 text-center shadow-md sm:w-auto">
+          <div className="m-auto block py-3">
             <SvgCubesOn />
           </div>
-          <span className="font-bold text-md">Not found.</span>
-          <p className="flex flex-wrap text-slate my-2">
+          <span className="text-md font-bold">Not found.</span>
+          <p className="text-slate my-2 flex flex-wrap">
             Something went wrong - we could not find this result.
           </p>
           <span className="font-bold">Please try again.</span>
-          <button className="border border-gray-200 p-2 px-3 rounded-full block sm:hidden">
+          <button className="block rounded-full border border-gray-200 p-2 px-3 sm:hidden">
             Try Again
           </button>
         </div>

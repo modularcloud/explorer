@@ -10,7 +10,7 @@ const paddingStyle = {
 export function FeedList({ children }: Props) {
   return (
     <div style={paddingStyle} className="w-full">
-      <div className="flex flex-col space-y-6 w-full p-6 sm:p-8 md:px-12 items-center">
+      <div className="flex w-full flex-col items-center space-y-6 p-6 sm:p-8 md:px-12">
         {children}
       </div>
     </div>

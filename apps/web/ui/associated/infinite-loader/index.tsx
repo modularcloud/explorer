@@ -29,7 +29,7 @@ export function InfiniteLoader({ next, children }: Props) {
   };
 
   return (
-    <div className="top-0 absolute w-full">
+    <div className="absolute top-0 w-full">
       <InfiniteScroll
         next={loadNextPage}
         hasMore={!!nextPage}

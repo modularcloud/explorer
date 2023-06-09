@@ -19,7 +19,7 @@ export default function RootLayout({
   const whitelabel = getWhitelabel();
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans text-sleek text-night`}>
+      <body className={`${inter.variable} text-sleek text-night font-sans`}>
         {children}
         <Analytics />
       </body>

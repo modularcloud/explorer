@@ -18,7 +18,7 @@ export function MobileActions({
   rightPanelDisabled,
 }: Props) {
   return (
-    <div className="flex gap-4 items-center lg:hidden">
+    <div className="flex items-center gap-4 lg:hidden">
       <DialogPanel
         btnClass="h-7 flex justify-center items-center rounded-full border-mid-dark-100 border p-1 shadow-[0px_3px_6px_rgba(42,43,46,0.07),0px_1px_2px_rgba(42,43,46,0.04)]"
         contentClass="z-10 block fixed top-12 inset-x-0 animate-fadeIn"
@@ -26,7 +26,7 @@ export function MobileActions({
         triggerIcon={<SvgSearchOff />}
         removeCloseBtn
       >
-        <span className="w-full flex justify-center">
+        <span className="flex w-full justify-center">
           <span className="max-w-[21.4375rem] sm:w-[32rem] md:w-[36rem]">
             <Search optionGroups={searchOptions} />
           </span>

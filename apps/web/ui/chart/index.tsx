@@ -71,7 +71,7 @@ export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
         <Tooltip />
         <Legend
           content={() => (
-            <div className="mx-auto w-fit mb-6 text-center text-gray">
+            <div className="text-gray mx-auto mb-6 w-fit text-center">
               {`Last ${daysFilter} day${
                 daysFilter !== 1 ? "s" : ""
               } transaction histoy`}

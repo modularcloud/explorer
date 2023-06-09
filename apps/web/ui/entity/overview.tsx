@@ -18,9 +18,9 @@ function Entry({ label, value }: { label: string; value: Value }) {
   if (!payload) return null;
   return (
     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-      <dt className="text-sm font-medium leading-6 text-temp-900">{label}</dt>
+      <dt className="text-temp-900 text-sm font-medium leading-6">{label}</dt>
       {type === "image" ? (
-        <dd className="mt-1 text-sm leading-6 text-temp-700 sm:col-span-2 sm:mt-0">
+        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
           <Image
             src={payload.src}
             alt={payload.alt}
@@ -30,14 +30,14 @@ function Entry({ label, value }: { label: string; value: Value }) {
         </dd>
       ) : null}
       {type === "status" ? (
-        <dd className="mt-1 text-sm leading-6 text-temp-700 sm:col-span-2 sm:mt-0">
+        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
           <Status status={payload} />
         </dd>
       ) : null}
       {type === "list" ? (
         <dd
           className={clsx(
-            "mt-1 text-sm leading-6 text-temp-700 sm:col-span-2 sm:mt-0",
+            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
             "truncate"
           )}
         >
@@ -53,7 +53,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
       {type === "standard" ? (
         <dd
           className={clsx(
-            "mt-1 text-sm leading-6 text-temp-700 sm:col-span-2 sm:mt-0",
+            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
             "truncate"
           )}
         >
@@ -84,18 +84,18 @@ export default function Overview({ entity }: Props) {
   const { attributes, asyncAttributes, entityTypeName, entityId } =
     entity.components.sidebar.data;
   return (
-    <div className="flex w-full p-6 justify-center">
-      <div className="bg-translucent backdrop-blur-xs w-full overflow-hidden border border-mid-dark-100 shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)] rounded-xl max-w-7xl">
+    <div className="flex w-full justify-center p-6">
+      <div className="bg-translucent backdrop-blur-xs border-mid-dark-100 w-full max-w-7xl overflow-hidden rounded-xl border shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
         <div className=" p-6">
-          <h3 className="text-base font-semibold leading-7 text-temp-900">
+          <h3 className="text-temp-900 text-base font-semibold leading-7">
             {`${entityTypeName} Information`}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-temp-500 truncate">
+          <p className="text-temp-500 mt-1 max-w-2xl truncate text-sm leading-6">
             {entityId}
           </p>
         </div>
         <div className="mx-6">
-          <dl className="divide-y divide-temp-100">
+          <dl className="divide-temp-100 divide-y">
             {Object.entries(attributes).map(([key, value]) => {
               return <Entry key={key} label={key} value={value} />;
             })}

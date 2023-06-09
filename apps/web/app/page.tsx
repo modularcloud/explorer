@@ -23,11 +23,11 @@ export function generateMetadata(): Metadata {
 }
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-top bg-no-repeat  min-h-screen">
-      <div className="flex flex-col items-center justify-start w-full flex-1 space-y-10 pt-6 sm:pt-14 md:pt-18 tab:pt-28">
+    <div className="bg-specialty-gray flex min-h-screen flex-col items-center bg-[url('/images/home-bg.svg')] bg-top  bg-no-repeat">
+      <div className="md:pt-18 tab:pt-28 flex w-full flex-1 flex-col items-center justify-start space-y-10 pt-6 sm:pt-14">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
-        <div className="w-full sm:max-w-[27.875rem] px-2">
+        <div className="w-full px-2 sm:max-w-[27.875rem]">
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>

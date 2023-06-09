@@ -25,7 +25,7 @@ export async function HeaderMenu({ resourcePath }: Props) {
     );
 
   return (
-    <div className="flex gap-6 items-center">
+    <div className="flex items-center gap-6">
       <ViewSwitcher />
       <MobileActions searchOptions={whitelabel.searchOptions}>
         {/* @ts-expect-error Async Server Component */}

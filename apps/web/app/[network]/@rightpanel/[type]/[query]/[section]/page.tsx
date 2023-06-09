@@ -21,7 +21,7 @@ export default async function RightPanelPage({ params }: Props) {
     <RightPanel
       data={entity.components.sidebar.data}
       alt={params.network}
-      className="shrink-0 sticky top-0 hidden lg:flex w-80 xl:w-[27.875rem]"
+      className="sticky top-0 hidden w-80 shrink-0 lg:flex xl:w-[27.875rem]"
     />
   );
 }

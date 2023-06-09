@@ -14,8 +14,8 @@ export const RawTransform = {
     data: {
       Token: {
         language: "json",
-        content: "// No source data found"
-      }
+        content: "// No source data found",
+      },
     },
   }),
 };

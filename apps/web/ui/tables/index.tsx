@@ -26,7 +26,7 @@ const TableHeader: React.FC<HeaderProps> = ({
         {title}
       </h3>
 
-      <Link href={href} className="border rounded-lg py-1 px-2">
+      <Link href={href} className="rounded-lg border px-2 py-1">
         {buttonText ?? "View All"}
       </Link>
     </div>
@@ -36,7 +36,7 @@ const TableHeader: React.FC<HeaderProps> = ({
 export const BlocksAndTransactionsSummaryDisplay = () => {
   // const isMobile = true;
   return (
-    <div className="w-full flex items-stretch space-between max-w-[76rem] gap-6 lg:gap-8 flex-col lg:flex-row">
+    <div className="space-between flex w-full max-w-[76rem] flex-col items-stretch gap-6 lg:flex-row lg:gap-8">
       {/* @ts-expect-error Async Server Component */}
       <BlockSummaryTable /> <TransactionsSummaryTable />
     </div>
@@ -68,14 +68,14 @@ export const BlockSummaryTable = async () => {
     };
   });
   return (
-    <div className="flex-1 bg-white px-4 py-6 rounded-lg border border-mid-dark-100 lifting-shadow">
+    <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg border bg-white px-4 py-6">
       <TableHeader
         href="/triton/latest/blocks/blocks"
         icon={<SvgBlocksIcon />}
         title="Latest Blocks"
       />
-      <div className="w-full mt-8 md:hidden">
-        <ul className="divide-y px-1 space-y-2">
+      <div className="mt-8 w-full md:hidden">
+        <ul className="space-y-2 divide-y px-1">
           {blockData.map((block) => (
             <li className="py-2" key={block.height}>
               <div className="flex items-center justify-between">
@@ -104,7 +104,7 @@ export const BlockSummaryTable = async () => {
         </ul>
       </div>
 
-      <table className="responsive border-collapse hidden md:table w-full mt-8">
+      <table className="responsive mt-8 hidden w-full border-collapse md:table">
         <tbody>
           {blockData.map((block) => {
             return (
@@ -176,14 +176,14 @@ export const TransactionsSummaryTable = async () => {
   );
 
   return (
-    <div className="flex-1 bg-white px-4 py-6  rounded-lg border border-mid-dark-100 lifting-shadow">
+    <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg  border bg-white px-4 py-6">
       <TableHeader
         href="/triton/latest/transactions/transactions"
         icon={<SvgBarChartIcon />}
         title="Latest Transactions"
       />
-      <div className="w-full mt-8 md:hidden">
-        <ul className="divide-y px-1 space-y-2">
+      <div className="mt-8 w-full md:hidden">
+        <ul className="space-y-2 divide-y px-1">
           {transactionData.map((transaction) => (
             <li key={transaction.hash} className="py-2">
               <div className="flex items-center justify-between">
@@ -199,7 +199,7 @@ export const TransactionsSummaryTable = async () => {
                 <Badge long text={`${transaction.amount} ZBC`} />
               </div>
 
-              <div className="flex flex-col gap-1 mt-2 whitespace-nowrap">
+              <div className="mt-2 flex flex-col gap-1 whitespace-nowrap">
                 <span>
                   <span className="block">From: </span>
                   <Link
@@ -228,7 +228,7 @@ export const TransactionsSummaryTable = async () => {
         </ul>
       </div>
 
-      <table className="responsive border-collapse w-full mt-8 hidden md:table">
+      <table className="responsive mt-8 hidden w-full border-collapse md:table">
         <tbody>
           {transactionData.map((transaction) => {
             return (
@@ -275,8 +275,8 @@ export const TransactionsSummaryTable = async () => {
                     </span>
                   </div>
                 </td>
-                <td className="text-right py-2">
-                  <div className="w-fit ml-auto">
+                <td className="py-2 text-right">
+                  <div className="ml-auto w-fit">
                     <Badge long text={`${transaction.amount} ZBC`} />
                   </div>
                 </td>

@@ -16,7 +16,7 @@ export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
     <div
       className={clsx(
         toggled ? "border-ocean-700" : "border-mid-dark-100",
-        "bg-white flex gap-2 border rounded-[2.5rem] pl-3 py-[.1875rem] items-center whitespace-nowrap",
+        "flex items-center gap-2 whitespace-nowrap rounded-[2.5rem] border bg-white py-[.1875rem] pl-3",
         long ? "max-w-min" : "w-max",
         hasExtra ? "pr-[.1875rem]" : "pr-3"
       )}
@@ -30,7 +30,7 @@ export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
         {text}
       </div>
       {hasExtra ? (
-        <div className="w-8 py-1 flex justify-center items-center bg-slate-100 text-[#80838D] rounded-2xl text-xs">
+        <div className="flex w-8 items-center justify-center rounded-2xl bg-slate-100 py-1 text-xs text-[#80838D]">
           +{extra}
         </div>
       ) : null}

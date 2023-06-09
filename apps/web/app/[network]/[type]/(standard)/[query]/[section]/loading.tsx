@@ -1,3 +1,3 @@
 export default function Loading() {
-  return <div className="w-full text-slate text-center pt-5">Loading...</div>;
+  return <div className="text-slate w-full pt-5 text-center">Loading...</div>;
 }

@@ -30,7 +30,7 @@ export function DialogPanel({
       <Dialog.Portal>
         <Dialog.Overlay
           className={clsx(
-            "fixed inset-0 bg-night/50 backdrop-blur-sm",
+            "bg-night/50 fixed inset-0 backdrop-blur-sm",
             overlayClass
           )}
         />
@@ -38,7 +38,7 @@ export function DialogPanel({
           {children}
           <Dialog.Close asChild>
             <button
-              className={clsx("inline-flex absolute right-9 top-9", {
+              className={clsx("absolute right-9 top-9 inline-flex", {
                 hidden: removeCloseBtn,
               })}
               aria-label="Close"

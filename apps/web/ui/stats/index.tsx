@@ -116,11 +116,11 @@ export async function Stats({ extended }: Props) {
   ]);
   return (
     <>
-      <div className="w-full bg-gradient-blend py-8 md:py-12 px-2 md:px-4 mt-10 border-y border-transluscent">
-        <div className="flex items-center flex-col lg:flex-row justify-center mx-auto gap-6 md:gap-12 md:gap-6 max-w-4xl md:max-w-5xl flex-wrap md:flex-nowrap">
+      <div className="bg-gradient-blend border-transluscent mt-10 w-full border-y px-2 py-8 md:px-4 md:py-12">
+        <div className="mx-auto flex max-w-4xl flex-col flex-wrap items-center justify-center gap-6 md:max-w-5xl md:flex-nowrap md:gap-12 md:gap-6 lg:flex-row">
           {extended ? (
-            <div className="w-full md:flex-1 px-4 md:px-2">
-              <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
+            <div className="w-full px-4 md:flex-1 md:px-2">
+              <div className="grid w-full grid-cols-2 content-start items-center justify-start gap-x-8 gap-y-6 md:grid-cols-3 md:gap-3">
                 <SummaryPresenter
                   icon={<SvgDollarCircle />}
                   title="ZBC Price"
@@ -131,8 +131,8 @@ export async function Stats({ extended }: Props) {
                   title="Market Cap"
                   value={currencyFormatter.format(zbcPrice * 700000000)}
                 />
-                <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
-                  <hr className="w-full md:hidden mb-3" />
+                <div className="col-span-2 flex flex-col items-center md:col-span-1 md:items-start">
+                  <hr className="mb-3 w-full md:hidden" />
                   <SummaryPresenter
                     icon={<SvgFuelTankIcon />}
                     title="Gas Price"
@@ -146,19 +146,19 @@ export async function Stats({ extended }: Props) {
               </div>
             </div>
           ) : null}
-          <div className="flex-1 w-full max-w-xs xs:max-w-md md:max-w-xl md:max-w-xl justify-self-center order-first lg:order-last -ml-8">
+          <div className="xs:max-w-md order-first -ml-8 w-full max-w-xs flex-1 justify-self-center md:max-w-xl md:max-w-xl lg:order-last">
             <ExplorerLineChart data={transactionVolumes} />
           </div>
         </div>
-        <div className="border lifting-shadow rounded-xl lg:py-6 py-10 bg-white max-w-[64rem] mx-auto divide-y md:divide-x lg:divide-y-0 mt-8 flex-wrap px-2 flex lg:flex-nowrap items-center justify-center gap-0">
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+        <div className="lifting-shadow mx-auto mt-8 flex max-w-[64rem] flex-wrap items-center justify-center gap-0 divide-y rounded-xl border bg-white px-2 py-10 md:divide-x lg:flex-nowrap lg:divide-y-0 lg:py-6">
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${blockMetrics.avgBlockTime.toPrecision(3)} seconds`}
               title="Avg Block Time"
               icon={<SvgClockCount />}
             />
           </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.totalTransactions.toLocaleString(
                 "en-US"
@@ -167,14 +167,14 @@ export async function Stats({ extended }: Props) {
               icon={<SvgBarChartIcon />}
             />
           </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${blockMetrics.latestBlock.toLocaleString("en-US")}`}
               title="Total Blocks"
               icon={<SvgBlocksIcon />}
             />
           </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.walletAddresses.toLocaleString(
                 "en-US"
@@ -183,7 +183,7 @@ export async function Stats({ extended }: Props) {
               icon={<SvgWalletIcon />}
             />
           </div>
-          <div className="max-lg:py-4 lg:px-4 w-full flex justify-center">
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.contractsDeployed.toLocaleString(
                 "en-US"
@@ -196,8 +196,8 @@ export async function Stats({ extended }: Props) {
       </div>
 
       {extended ? null : (
-        <div className="w-full max-w-2xl px-4 flex gap-16 items-center mt-4 mb-20 justify-center">
-          <div className="grid grid-cols-2 md:grid-cols-3 items-center content-start justify-start w-full gap-x-8 md:gap-3 gap-y-6">
+        <div className="mb-20 mt-4 flex w-full max-w-2xl items-center justify-center gap-16 px-4">
+          <div className="grid w-full grid-cols-2 content-start items-center justify-start gap-x-8 gap-y-6 md:grid-cols-3 md:gap-3">
             <SummaryPresenter
               icon={<SvgDollarCircle />}
               title="ZBC Price"
@@ -208,8 +208,8 @@ export async function Stats({ extended }: Props) {
               title="Market Cap"
               value={currencyFormatter.format(zbcPrice * 700000000)}
             />
-            <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start">
-              <hr className="w-full md:hidden mb-3" />
+            <div className="col-span-2 flex flex-col items-center md:col-span-1 md:items-start">
+              <hr className="mb-3 w-full md:hidden" />
               <SummaryPresenter
                 icon={<SvgFuelTankIcon />}
                 title="Gas Price"
@@ -231,7 +231,7 @@ export async function Stats({ extended }: Props) {
       </div> */}
 
       {extended && (
-        <div className="w-full px-4 py-6 md:py-10 flex justify-center radial-bg">
+        <div className="radial-bg flex w-full justify-center px-4 py-6 md:py-10">
           <BlocksAndTransactionsSummaryDisplay />
         </div>
       )}

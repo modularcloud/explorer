@@ -14,8 +14,8 @@ export const RawTransform = {
     data: {
       Account: {
         language: "json",
-        content: "// No source data found"
-      }
+        content: "// No source data found",
+      },
     },
   }),
 };

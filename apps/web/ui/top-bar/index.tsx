@@ -16,7 +16,7 @@ export async function TopBar({ resourcePath }: Props) {
   const topbar = entity.components.topbar.data;
   const whitelabel = getWhitelabel();
   return (
-    <div className="lg:hidden h-12 bg-specialty-gray py-2 px-6 flex flex-row xs:justify-between gap-16 border-b border-mid-dark/5 shadow-[inset_0px_1px_7px_rgba(42,43,46,0.06)]">
+    <div className="bg-specialty-gray xs:justify-between border-mid-dark/5 flex h-12 flex-row gap-16 border-b px-6 py-2 shadow-[inset_0px_1px_7px_rgba(42,43,46,0.06)] lg:hidden">
       {whitelabel.env === "default" ? (
         <Image
           src={topbar.logo}
@@ -25,8 +25,8 @@ export async function TopBar({ resourcePath }: Props) {
           width="142"
         />
       ) : null}
-      <div className="flex flex-row gap-2 items-center truncate">
-        <span className="flex flex-row gap-2 items-center">
+      <div className="flex flex-row items-center gap-2 truncate">
+        <span className="flex flex-row items-center gap-2">
           <SvgCardOff />
           <p className="font-semibold">{topbar.entityTypeName}</p>
         </span>

@@ -65,7 +65,7 @@ export function ViewSwitcher() {
                 <>
                   <Separator.Root
                     key={index}
-                    className="mx-1 bg-slate-200 w-px h-5"
+                    className="mx-1 h-5 w-px bg-slate-200"
                     decorative
                     orientation="vertical"
                   />
