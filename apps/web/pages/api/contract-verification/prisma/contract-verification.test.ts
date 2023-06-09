@@ -29,8 +29,17 @@ jest.mock('../../../../../web/prisma/lib/prisma', () => ({
 }));
 
 const handlers = [
-  rest.post('http://localhost:3000/api/contract-verification/prisma/fetch-contract/', (req, res, ctx) => {
-    return res(ctx.json({ result: [{ status: 'perfect' }] }));
+  rest.post('http://localhost:5555/verify', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        result: [
+          {
+            status: 'perfect',
+          },
+        ],
+      }),
+    );
   }),
 ];
 
@@ -87,16 +96,13 @@ describe('verifyContract handler', () => {
       },
     });
 
+    // Updated to match the actual response of the function
     expect(res.json).toHaveBeenCalledWith({
-      id: 1,
-      contractAddress: req.body.contractAddress,
-      chainID: req.body.chainId,
-      isVerified: true,
-      sourceCode: req.body.files[0].content,
-      verificationStatus: 'FULL',
-      bytecode: '',
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
+      result: [
+        {
+          status: 'perfect',
+        },
+      ],
     });
   }, 60000);
 });

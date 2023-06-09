@@ -33,6 +33,14 @@ export default async function verifyContract(
         },
       });
       console.log("Record created.");
+      
+      console.log("Looking up the record...");
+      const foundRecord = await prisma.verification.findUnique({
+        where: {
+          contractAddress: contractAddress,
+        },
+      });
+      console.log("Record found:", foundRecord);
     }
 
     console.log("Setting response status...");
