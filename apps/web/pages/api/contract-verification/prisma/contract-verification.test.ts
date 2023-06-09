@@ -1,9 +1,9 @@
-import { Prisma, Verification } from "@prisma/client";
+import { Prisma, PrismaClient, Verification } from "@prisma/client";
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { NextApiRequest, NextApiResponse } from 'next';
 import verifyContract from './contract-verification';
-import prisma from '../../../../../web/prisma/lib/prisma'; // Import your own Prisma instance
+import prisma from '../../../../../web/prisma/lib/prisma';
 
 const mockVerification = {
   id: 1,
@@ -20,7 +20,10 @@ const mockVerification = {
 jest.mock('../../../../../web/prisma/lib/prisma', () => ({
   verification: {
     create: jest.fn(() => Promise.resolve(mockVerification)),
-    findUnique: jest.fn().mockResolvedValue(mockVerification),
+    findUnique: jest.fn().mockImplementation((args) => {
+      console.log('findUnique was called with these arguments:', args);
+      return Promise.resolve(mockVerification);
+    }),
     // Add other methods you need to mock here
   },
 }));
