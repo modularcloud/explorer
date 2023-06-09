@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { VerifyAndUpload } from "./verifyAndUpload";
+
 export function VerifyContract() {
   const [files, setFiles] = useState<FileList>();
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {

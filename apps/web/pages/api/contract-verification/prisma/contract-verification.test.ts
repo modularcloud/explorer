@@ -1,8 +1,9 @@
-import { Prisma, PrismaClient, Verification } from "@prisma/client";
+import { Prisma, Verification } from "@prisma/client";
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { NextApiRequest, NextApiResponse } from 'next';
 import verifyContract from './contract-verification';
+import prisma from '../../../../../web/prisma/lib/prisma'; // Import your own Prisma instance
 
 const mockVerification = {
   id: 1,
@@ -16,18 +17,12 @@ const mockVerification = {
   updatedAt: new Date(),
 } as Verification;
 
-const mockPrisma: PrismaClient<Prisma.PrismaClientOptions, never, Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined> = {
-  $connect: jest.fn(),
-  $disconnect: jest.fn(),
+jest.mock('../../../../../web/prisma/lib/prisma', () => ({
   verification: {
     create: jest.fn(() => Promise.resolve(mockVerification)),
     findUnique: jest.fn().mockResolvedValue(mockVerification),
     // Add other methods you need to mock here
   },
-} as unknown as PrismaClient<Prisma.PrismaClientOptions, never, Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined>;
-
-jest.mock('@prisma/client', () => ({
-  PrismaClient: jest.fn(() => mockPrisma),
 }));
 
 const handlers = [
@@ -83,7 +78,7 @@ describe('verifyContract handler', () => {
     await verifyContract(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(mockPrisma.verification.findUnique).toHaveBeenCalledWith({
+    expect(prisma.verification.findUnique).toHaveBeenCalledWith({
       where: {
         contractAddress: req.body.contractAddress,
       },
