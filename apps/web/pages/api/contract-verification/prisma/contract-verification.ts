@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+import prisma from '../../../../../web/prisma/lib/prisma';
 
 export default async function verifyContract(
   req: NextApiRequest,
@@ -25,13 +23,14 @@ export default async function verifyContract(
           verificationStatus:
             response.data.result[0].status == "perfect" ? "FULL" : "PARTIAL",
           contractAddress,
-          chainId,
+          chainID: chainId, 
           isVerified: true,
           sourceCode: files,
+          bytecode: "your_bytecode_here", // Add the bytecode field here
         },
       });
       console.log('Record created.');
-    }
+    }    
     
     console.log('Setting response status...');
     res.status(response.status).json(response.data);
