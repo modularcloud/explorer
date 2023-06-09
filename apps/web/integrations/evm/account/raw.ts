@@ -11,6 +11,11 @@ export const RawTransform = {
     TransformOutput<typeof RawComponent>
   > => ({
     typeId: "raw",
-    data: {},
+    data: {
+      Account: {
+        language: "json",
+        content: "// No source data found"
+      }
+    },
   }),
 };
