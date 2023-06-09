@@ -1,7 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
-const generateS3Url = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log("generateS3Url");
-  const url = await s3.generateUploadUrl(req.body.fileType);
+import generateUploadUrl from "./s3file-upload";
+export default async function generateS3Url(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const url = await generateUploadUrl(
+    req.query.file,
+    req.query.contractaddress
+  );
   res.send({ url });
-};
+}

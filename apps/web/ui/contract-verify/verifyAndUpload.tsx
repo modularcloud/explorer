@@ -5,17 +5,18 @@ import { ToastContainer, toast } from "react-toastify";
 
 export function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
-  const [verified, setVerified] = useState<boolean>(false);
   const [contractAddress, setContractAddress] = useState<string>("");
   type ContractData = {
     contractAddress: typeof contractAddress;
     chainId: string;
     files: object;
+    fileUploadedUrls: object;
   };
   let data: ContractData = {
     contractAddress: contractAddress,
     chainId: "91002",
     files: {},
+    fileUploadedUrls: {},
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +33,7 @@ export function VerifyAndUpload() {
     if (files) {
       for (let i = 0; i < files.length; i++) {
         data.files[files[i].name] = await readFileData(files[i]);
+        data.fileUploadedUrls[files[i].name] = await uploadFile(files[i]);
       }
       await verifyAndToast(data);
     } else {
@@ -51,7 +53,6 @@ export function VerifyAndUpload() {
   async function readFileData(file: File) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.onload = (e) => {
         const fileContents = e.target?.result;
         resolve(fileContents);
@@ -60,7 +61,7 @@ export function VerifyAndUpload() {
       reader.onerror = (error) => {
         reject(error);
       };
-      reader.readAsDataURL(file);
+      reader.readAsText(file);
     });
   }
 
@@ -71,7 +72,7 @@ export function VerifyAndUpload() {
     });
     try {
       const verifyResult = await axios.post(
-        "http://localhost:3000/api/contract-verification/prisma/contract-verification",
+        "api/contract-verification/prisma/contract-verification",
         data
       );
       if (verifyResult?.status === 200) {
@@ -105,6 +106,23 @@ export function VerifyAndUpload() {
       }
 
       console.error("Error calling API:", error);
+    }
+  };
+  const uploadFile = async (file: File) => {
+    const getImageUploadUrl = await axios.get(
+      `api/file-upload/generateurl?file=${file.name}&contractaddress=${contractAddress}`
+    );
+    if (getImageUploadUrl.status === 200) {
+      const UploadImage = await axios.put(getImageUploadUrl.data.url, file, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (UploadImage.status === 200) {
+        return getImageUploadUrl.data.url.split("?")[0];
+      } else {
+        toast.error(UploadImage.status.toString());
+      }
     }
   };
 

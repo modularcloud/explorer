@@ -1,32 +1,36 @@
-const aws = require("aws-sdk");
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+const { S3 } = require("@aws-sdk/client-s3");
 
 const accessKeyId = process.env.AWS_S3_ACCESSKEY_ID;
 const secretAccessKey = process.env.AWS_S3_ACCESSKEY_SECRET;
-const region = "us-east-2";
 const name = "contract-verification";
 
-const s3 = new aws.S3({
-  region,
-  accessKeyId,
-  secretAccessKey,
-  signatureVersion: "v4",
-});
+export default async function generateUploadUrl(
+  file: string,
+  contractAddress: string
+) {
+  const fileAddress = contractAddress + "/" + file;
+  const splitedFileName = file.split(".");
+  const s3Params = {
+    Bucket: name,
+    Key: fileAddress,
+    ContentType: splitedFileName[splitedFileName.length - 1],
+    // ACL: 'bucket-owner-full-control'
+  };
+  const s3 = new S3Client({
+    region: "us-east-2",
+    credentials: {
+      accessKeyId: accessKeyId,
+      secretAccessKey: secretAccessKey,
+    },
+  });
+  const command = new PutObjectCommand(s3Params);
 
-async function generateUploadUrl(datatype: string) {
   try {
-    const imageName = "/contract-files" + +"." + datatype;
-    const params = {
-      Bucket: name,
-      Key: imageName,
-      Expires: 120,
-    };
-    const uploadURL = await s3.getSignedUrlPromise("putObject", params);
-    return uploadURL;
-  } catch (e) {
-    console.error(e);
+    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
+    return signedUrl;
+  } catch (err) {
+    console.error(err);
   }
 }
-
-module.exports = {
-  generateUploadUrl,
-};

@@ -27,10 +27,7 @@ export function VerifyContract() {
       await reader.readAsText(files[i]);
     }
     await axios
-      .post(
-        "http://localhost:3000/api/contract-verification/prisma/fetch-contract",
-        data
-      )
+      .post("api/contract-verification/prisma/fetch-contract", data)
       .then((response) => {
         if (response.status === 200 && response.data.status == "perfect") {
           setVerified(true);
