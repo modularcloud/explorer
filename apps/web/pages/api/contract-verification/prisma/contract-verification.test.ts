@@ -3,7 +3,7 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { NextApiRequest, NextApiResponse } from 'next';
 import verifyContract from './contract-verification';
-import prisma from '../../../../../web/prisma/lib/prisma';
+import prisma from './lib/prisma';
 
 const mockVerification = {
   id: 1,
@@ -34,7 +34,7 @@ const mockVerification = {
 } as Verification;
 
 
-jest.mock('../../../../../web/prisma/lib/prisma', () => ({
+jest.mock('./lib/prisma', () => ({
   verification: {
     create: jest.fn(() => Promise.resolve(mockVerification)),
     findUnique: jest.fn().mockImplementation((args) => {

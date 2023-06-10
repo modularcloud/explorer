@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
-import prisma from "../../../../../web/prisma/lib/prisma";
+import prisma from "./lib/prisma";
 
 export default async function verifyContract(
   req: NextApiRequest,
