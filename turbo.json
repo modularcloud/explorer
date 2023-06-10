@@ -27,7 +27,8 @@
         "NEXT_PUBLIC_VERCEL_URL",
         "SOURCIFY_URL",
         "AWS_S3_ACCESSKEY_SECRET",
-        "AWS_S3_ACCESSKEY_ID"
+        "AWS_S3_ACCESSKEY_ID",
+        "NODE_ENV"
       ]
     }
   }
