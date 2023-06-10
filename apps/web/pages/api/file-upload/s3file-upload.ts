@@ -1,10 +1,13 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-const { S3 } = require("@aws-sdk/client-s3");
 
 const accessKeyId = process.env.AWS_S3_ACCESSKEY_ID;
 const secretAccessKey = process.env.AWS_S3_ACCESSKEY_SECRET;
 const name = "contract-verification";
+
+if (!accessKeyId || !secretAccessKey) {
+  throw new Error("AWS credentials are not set");
+}
 
 export default async function generateUploadUrl(
   file: string,
@@ -18,13 +21,15 @@ export default async function generateUploadUrl(
     ContentType: splitedFileName[splitedFileName.length - 1],
     // ACL: 'bucket-owner-full-control'
   };
+
   const s3 = new S3Client({
     region: "us-east-2",
     credentials: {
-      accessKeyId: accessKeyId,
-      secretAccessKey: secretAccessKey,
+      accessKeyId: accessKeyId!,
+      secretAccessKey: secretAccessKey!,
     },
   });
+
   const command = new PutObjectCommand(s3Params);
 
   try {
@@ -32,5 +37,6 @@ export default async function generateUploadUrl(
     return signedUrl;
   } catch (err) {
     console.error(err);
+    throw err;
   }
 }
