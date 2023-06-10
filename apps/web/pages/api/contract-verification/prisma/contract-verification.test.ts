@@ -10,12 +10,29 @@ const mockVerification = {
   contractAddress: '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40',
   chainID: '91002',
   isVerified: true,
-  sourceCode: 'This is mock file content',
+  sourceCode: `
+    // SPDX-License-Identifier: MIT
+    pragma solidity ^0.8.17;
+
+    contract HelloWorld {
+    
+    string saySomething;
+
+    constructor() {
+        saySomething = "Hello World!";
+    }
+
+    function speak() public view returns(string memory) {
+        return saySomething;
+    }
+    }
+  `,
   verificationStatus: 'FULL',
   bytecode: '',
   createdAt: new Date(),
   updatedAt: new Date(),
 } as Verification;
+
 
 jest.mock('../../../../../web/prisma/lib/prisma', () => ({
   verification: {
@@ -24,7 +41,6 @@ jest.mock('../../../../../web/prisma/lib/prisma', () => ({
       console.log('findUnique was called with these arguments:', args);
       return Promise.resolve(mockVerification);
     }),
-    // Add other methods you need to mock here
   },
 }));
 
@@ -65,7 +81,7 @@ describe('verifyContract handler', () => {
         chainId: '91002',
         files: [
           {
-            fileName: 'Contract.sol',
+            fileName: 'Caldera.sol',
             content: 'This is mock file content',
           },
         ],
@@ -96,7 +112,6 @@ describe('verifyContract handler', () => {
       },
     });
 
-    // Updated to match the actual response of the function
     expect(res.json).toHaveBeenCalledWith({
       result: [
         {

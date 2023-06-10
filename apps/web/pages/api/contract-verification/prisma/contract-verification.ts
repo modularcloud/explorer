@@ -10,7 +10,7 @@ export default async function verifyContract(
   try {
     console.log("Making API call...");
     const response = await axios.post(
-      process.env.SOURCIFY_URL ?? "http://localhost:5555/verify", //sourificy api call url
+      process.env.SOURCIFY_URL ?? "http://localhost:5555/verify", //sourcify api call url
       {
         address: contractAddress,
         chain: chainId,
@@ -56,7 +56,7 @@ export default async function verifyContract(
         axiosError.response.headers
       );
 
-      // Forward the error response from the Sourcifiy api
+      // Forward the error response from the Sourcify api
       res.status(axiosError.response.status).json(axiosError.response.data);
       console.error("An error occurred:", error);
     }
