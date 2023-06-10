@@ -1,6 +1,5 @@
-import { ChangeEvent, useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
-import { VerifyAndUpload } from "./verifyAndUpload";
+import { ChangeEvent, useState } from "react";
+import axios from "axios";
 
 export function VerifyContract() {
   const [files, setFiles] = useState<FileList>();
@@ -9,6 +8,7 @@ export function VerifyContract() {
       setFiles(event.target.files);
     }
   };
+
   const [verified, setVerified] = useState<boolean>(false);
   let data = {
     contractAddress: "0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40",
@@ -16,7 +16,7 @@ export function VerifyContract() {
     files: {},
   };
 
-  const verifyAndUpload = async (e) => {
+  const verifyAndUpload = async () => {
     for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -47,7 +47,11 @@ export function VerifyContract() {
           and metadata
         </p>
       </div>
-      <VerifyAndUpload />
+      <div className="flex flex-col items-center">
+        <input type="file" onChange={handleFileChange} multiple />
+        <button onClick={verifyAndUpload}>Verify and Upload</button>
+        {verified && <p>Contract is verified!</p>}
+      </div>
     </div>
   );
 }
