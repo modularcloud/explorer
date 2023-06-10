@@ -10,7 +10,7 @@ export function VerifyContract() {
   };
 
   const [verified, setVerified] = useState<boolean>(false);
-  let data = {
+  let data: { contractAddress: string; chainId: string; files: Record<string, any> } = {
     contractAddress: "0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40",
     chainId: "91002",
     files: {},
@@ -25,8 +25,10 @@ export function VerifyContract() {
       const reader = new FileReader();
       reader.onload = function (e) {
         console.log("loader");
-        const fileContents = e.target.result;
-        data.files[files[i].name] = fileContents;
+        if (e.target) {
+          const fileContents = e.target.result;
+          data.files[files[i].name] = fileContents;
+        }
       };
       await reader.readAsText(files[i]);
     }
@@ -47,8 +49,7 @@ export function VerifyContract() {
       <div>
         <p className="text-center font-bold  text-4xl pt-20">Verifier</p>
         <p className="text-center">
-          Verify smart contracts by recompiling with the Solidity source code
-          and metadata
+          Verify smart contracts by recompiling with the Solidity source code and metadata
         </p>
       </div>
       <div className="flex flex-col items-center">
