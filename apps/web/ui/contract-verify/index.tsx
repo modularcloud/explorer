@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import axios from "axios";
 
 export function VerifyContract() {
-  const [files, setFiles] = useState<FileList>();
+  const [files, setFiles] = useState<FileList | undefined>();
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFiles(event.target.files);
@@ -17,6 +17,10 @@ export function VerifyContract() {
   };
 
   const verifyAndUpload = async () => {
+    if (!files) {
+      console.error("No files were uploaded");
+      return;
+    }
     for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -29,7 +33,7 @@ export function VerifyContract() {
     await axios
       .post("api/contract-verification/prisma/fetch-contract", data)
       .then((response) => {
-        if (response.status === 200 && response.data.status == "perfect") {
+        if (response.status === 200 && response.data.status === "perfect") {
           setVerified(true);
         }
       })
@@ -39,10 +43,10 @@ export function VerifyContract() {
   };
 
   return (
-    <div className="bg-gray-100 bg-center bg-no-repeat min-h-screen  ">
+    <div className="bg-gray-100 bg-center bg-no-repeat min-h-screen">
       <div>
         <p className="text-center font-bold  text-4xl pt-20">Verifier</p>
-        <p className="text-center ">
+        <p className="text-center">
           Verify smart contracts by recompiling with the Solidity source code
           and metadata
         </p>
