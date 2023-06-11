@@ -12,6 +12,10 @@ CREATE TABLE "Verification" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "verificationStatus" "VerificationStatus" NOT NULL,
+    "uploadedURL" TEXT NOT NULL,
 
     CONSTRAINT "Verification_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Verification_contractAddress_key" ON "Verification"("contractAddress");
