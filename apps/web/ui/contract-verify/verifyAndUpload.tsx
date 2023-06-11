@@ -30,7 +30,10 @@ export function VerifyAndUpload() {
       toast.error("Please add files to verify");
       return;
     }
-
+    const id = toast.loading("Verifying Files", {
+      position: "top-center",
+      closeOnClick: true,
+    });
     const data: ContractData = {
       contractAddress: contractAddress,
       chainId: "91002",
@@ -54,16 +57,31 @@ export function VerifyAndUpload() {
 
       if (verifyResult?.status === 200) {
         if (verifyResult?.data?.result?.[0]?.storageTimestamp) {
-          toast.warning("Contract Already Verified");
+          toast.update(id, {
+            render: "Contract Already Verified",
+            type: "warning",
+            isLoading: false,
+            closeOnClick: true,
+          });
           setVerified(true);
         } else if (verifyResult.data.result[0].status === "perfect") {
-          toast.success("Verified Successfully");
+          toast.update(id, {
+            render: "Verified Successfully",
+            type: "success",
+            isLoading: false,
+            closeOnClick: true,
+          });
           setVerified(true);
         }
       }
     } catch (error) {
       console.error("Error calling API:", error);
-      toast.error("Verification Failed");
+      toast.update(id, {
+        render: ` Verification Failed`,
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+      });
     }
   };
 
@@ -101,37 +119,35 @@ export function VerifyAndUpload() {
     } catch (error) {
       console.error("Error uploading file:", error);
     }
-
-    throw new Error("Failed to upload file");
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col items-center justify-center">
       <ToastContainer />
-      <div className="border-[#234594] border-t-4 rounded-xl my-7 border-solid flex flex-col gap-y-6 justify-center items-center">
-        <div className="px-14 py-10 bg-white w-[80vw] rounded-lg">
+      <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl border-t-4 border-solid border-[#234594]">
+        <div className="w-[80vw] rounded-lg bg-white px-14 py-10">
           <div>
-            <p className="text-center font-bold text-2xl">Upload files</p>
+            <p className="text-center text-2xl font-bold">Upload files</p>
           </div>
           <div>
-            <p className="text-center pb-5">
+            <p className="pb-5 text-center">
               Add the Solidity source files and metadata of the contract you
               want to verify.
             </p>
           </div>
           <label
             htmlFor="file-upload"
-            className="custom-file-upload w-full relative pt-5"
+            className="custom-file-upload relative w-full pt-5"
           >
             <div className="w-full py-4">
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="w-full h-10 border-2 font-light border-[#2753bb] rounded-lg  indent-2 placeholder:text-gray-800"
+                className="h-10 w-full rounded-lg border-2 border-[#2753bb] indent-2  font-light placeholder:text-gray-800"
                 placeholder="Contract Address"
               />
             </div>
-            <div className="border-2 font-light border-[#234594] rounded-xl cursor-pointer border-dashed p-20 relative flex flex-col justify-center items-center">
+            <div className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#234594] p-20 font-light">
               <p>Drag and drop here or</p>
               <p>Browse files</p>
               <input
@@ -143,7 +159,7 @@ export function VerifyAndUpload() {
               />
             </div>
           </label>
-          <div className="pt-5 flex gap-x-3 text-md">
+          <div className="text-md flex gap-x-3 pt-5">
             <p>Added Files:</p>
             {files &&
               Array.from(files).map((file, index) => (
@@ -153,10 +169,10 @@ export function VerifyAndUpload() {
               ))}
           </div>
           <div
-            className="flex justify-center items-center cursor-pointer"
+            className="flex cursor-pointer items-center justify-center"
             onClick={verifyAndUpload}
           >
-            <div className="bg-[#254ba5] text-white px-4 py-2 rounded-lg">
+            <div className="rounded-lg bg-[#254ba5] px-4 py-2 text-white">
               Verify
             </div>
           </div>
