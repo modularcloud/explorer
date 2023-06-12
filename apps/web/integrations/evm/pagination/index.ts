@@ -85,6 +85,18 @@ export async function PaginationExtract(
       "token-transfers": transfers,
     };
   }
+  if (collection === "contract-logs") {
+    const logs = await mc.evm.listContractLogs(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      "contract-logs": logs,
+    };
+  }
   if (collection === "transactions") {
     const transactions = await mc.evm.getTransactionsByAddress(
       metadata.network.id,

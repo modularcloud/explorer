@@ -74,3 +74,22 @@ export const EventResponseSchema = z.object({
   nextToken: z.string().optional(),
 });
 export type EventResponse = z.infer<typeof EventResponseSchema>;
+
+export const ContractSchema = z.object({
+  type: z.enum(["erc20", "erc721", "erc1155", "na"]),
+  address: z.string(),
+});
+export type Contract = z.infer<typeof ContractSchema>;
+
+export const LogSchema = z.object({
+    transactionHash: z.string(),
+    logIndex: z.number(),
+    blockHeight: z.number(),
+})
+export type Log = z.infer<typeof LogSchema>;
+
+export const LogResponseSchema = z.object({
+    logs: LogSchema.array(),
+    nextToken: z.string().optional(),
+})
+export type LogResponse = z.infer<typeof LogResponseSchema>;

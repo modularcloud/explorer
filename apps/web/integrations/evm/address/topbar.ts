@@ -1,5 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import { AccountExtract } from ".";
+import { AddressExtract } from ".";
 import { TopbarComponent } from "../../../ecs/components/topbar";
 
 export const TopbarTransform = {
@@ -7,13 +7,13 @@ export const TopbarTransform = {
   transform: async ({
     data,
     metadata,
-  }: TransformInput<typeof AccountExtract>): Promise<
+  }: TransformInput<typeof AddressExtract>): Promise<
     TransformOutput<typeof TopbarComponent>
   > => ({
     typeId: "topbar",
     data: {
       logo: metadata.network.logoUrl,
-      entityTypeName: "Account",
+      entityTypeName: "Address",
       entityId: data.address,
     },
   }),

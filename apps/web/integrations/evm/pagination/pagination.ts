@@ -114,6 +114,25 @@ export const PaginationTransform = {
         },
       };
     }
+    if (data?.["contract-logs"]) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: data["contract-logs"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:contract-logs:${data["contract-logs"].nextToken}`,
+              }
+            : undefined,
+          values: data["contract-logs"].logs.map((log) => ({
+            network: metadata.network.id,
+            type: "log",
+            query: `${log.transactionHash}:${log.logIndex}`,
+          })),
+        },
+      };
+    }
     if (data?.transactions) {
       return {
         typeId: "pagination",

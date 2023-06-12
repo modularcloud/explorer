@@ -1,5 +1,5 @@
 import { EngineConfig, EngineConfigMetadata } from "@modularcloud/ecs";
-import { AccountLoader } from "./account";
+import { AddressLoader } from "./address";
 import { BalancesLoader } from "./balances";
 import { BlockLoader } from "./block";
 import { HolderLoader } from "./holder";
@@ -19,10 +19,9 @@ export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
       block: BlockLoader,
       transaction: TransactionLoader,
       log: LogLoader,
-      account: AccountLoader,
+      address: AddressLoader,
       pagination: PaginationLoader,
       transfer: TransferLoader,
-      token: TokenLoader,
       holder: HolderLoader,
       "nft-transfer": NFTTransferLoader,
       inventory: InventoryLoader,

@@ -11,6 +11,10 @@ import {
   TokenBalanceResponse,
   NFTBalance,
   NFTBalanceSchema,
+  Contract,
+  ContractSchema,
+  LogResponse,
+  LogResponseSchema,
 } from "./schemas";
 
 declare global {
@@ -67,6 +71,8 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<TxResponse>;
+    describeContract: (networkId: string, address: string) => Promise<Contract>;
+    listContractLogs: (networkId: string, address: string, maxResults?: number, nextToken?: string) => Promise<LogResponse>;
   };
 }
 
@@ -139,6 +145,27 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         return json.result.balancesV2.map((balance: any) => {
           return NFTBalanceSchema.parse(balance);
         });
+      },
+      listContractLogs: async (
+        networkId: string,
+        address: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/contract-logs/${address.toLowerCase()}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return LogResponseSchema.parse(json.result);
       },
       getEventsByTokenAddress: async (
         networkId: string,
@@ -216,6 +243,20 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = (await response.json()) as APIResponse;
         return TokenSchema.parse(json.result.token);
+      },
+      describeContract: async (networkId: string, address: string) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/contracts/${address.toLowerCase()}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch contract");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return ContractSchema.parse(json.result.contract);
       },
       getAccountBalancesByTokenAddress: async (
         networkId: string,

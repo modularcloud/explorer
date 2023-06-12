@@ -1,5 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import { AccountExtract } from ".";
+import { AddressExtract } from ".";
 import { RawComponent } from "../../../ecs/components/raw";
 
 export const RawTransform = {
@@ -7,10 +7,15 @@ export const RawTransform = {
   transform: async ({
     data,
     metadata,
-  }: TransformInput<typeof AccountExtract>): Promise<
+  }: TransformInput<typeof AddressExtract>): Promise<
     TransformOutput<typeof RawComponent>
   > => ({
     typeId: "raw",
-    data: {},
+    data: {
+      eth_getCode: {
+        language: "plaintext",
+        content: data.code,
+      },
+    },
   }),
 };
