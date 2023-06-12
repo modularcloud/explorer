@@ -34,7 +34,7 @@ export const AssociatedTransform = {
       };
     }
     // contracts only, not EOAs
-    if(data.contract) {
+    if (data.contract) {
       contractSection["Contract Logs"] = {
         type: "paginated",
         value: {

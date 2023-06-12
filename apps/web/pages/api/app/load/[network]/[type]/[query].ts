@@ -10,7 +10,11 @@ export default async function handler(
   const { config, Engine } = getEngine();
   try {
     // temporarily add address/token as search types until we can implement redirections
-    if (req.query.type === "search" || req.query.type === "account" || req.query.type === "token") {
+    if (
+      req.query.type === "search" ||
+      req.query.type === "account" ||
+      req.query.type === "token"
+    ) {
       const types = Object.keys(config.loaders);
       const result = await Promise.any(
         types

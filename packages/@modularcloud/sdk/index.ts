@@ -72,7 +72,12 @@ export interface ModularCloud {
       nextToken?: string
     ) => Promise<TxResponse>;
     describeContract: (networkId: string, address: string) => Promise<Contract>;
-    listContractLogs: (networkId: string, address: string, maxResults?: number, nextToken?: string) => Promise<LogResponse>;
+    listContractLogs: (
+      networkId: string,
+      address: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<LogResponse>;
   };
 }
 

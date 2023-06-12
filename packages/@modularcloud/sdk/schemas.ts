@@ -82,14 +82,14 @@ export const ContractSchema = z.object({
 export type Contract = z.infer<typeof ContractSchema>;
 
 export const LogSchema = z.object({
-    transactionHash: z.string(),
-    logIndex: z.number(),
-    blockHeight: z.number(),
-})
+  transactionHash: z.string(),
+  logIndex: z.number(),
+  blockHeight: z.number(),
+});
 export type Log = z.infer<typeof LogSchema>;
 
 export const LogResponseSchema = z.object({
-    logs: LogSchema.array(),
-    nextToken: z.string().optional(),
-})
+  logs: LogSchema.array(),
+  nextToken: z.string().optional(),
+});
 export type LogResponse = z.infer<typeof LogResponseSchema>;
