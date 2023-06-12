@@ -3,7 +3,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const accessKeyId = process.env.AWS_S3_ACCESSKEY_ID;
 const secretAccessKey = process.env.AWS_S3_ACCESSKEY_SECRET;
-const name = "contract-verification";
+const name = "verified-contracts";
 
 if (!accessKeyId || !secretAccessKey) {
   throw new Error("AWS credentials are not set");
@@ -23,7 +23,7 @@ export default async function generateUploadUrl(
   };
 
   const s3 = new S3Client({
-    region: "us-east-2",
+    region: "us-west-2",
     credentials: {
       accessKeyId: accessKeyId!,
       secretAccessKey: secretAccessKey!,
