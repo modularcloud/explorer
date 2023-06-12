@@ -12,9 +12,15 @@ export function VerifyAndUpload() {
     contractAddress: typeof contractAddress;
     chainId: string;
     files: Record<string, any>;
-    fileUploadedUrls: Record<string, any>;
+    uploadedFilesFolderUrl: string;
   };
 
+  const data: ContractData = {
+    contractAddress: contractAddress,
+    chainId: "91002",
+    files: {},
+    uploadedFilesFolderUrl: "",
+  };
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFiles(event.target.files);
@@ -34,50 +40,57 @@ export function VerifyAndUpload() {
       position: "top-center",
       closeOnClick: true,
     });
-    const data: ContractData = {
-      contractAddress: contractAddress,
-      chainId: "91002",
-      files: {},
-      fileUploadedUrls: {},
-    };
-
     try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileContents = await readFileData(file);
-        const fileUploadedUrl = await uploadFile(file);
-        data.files[file.name] = fileContents;
-        data.fileUploadedUrls[file.name] = fileUploadedUrl;
-      }
-
-      const verifyResult = await axios.post(
-        "api/contract-verification/prisma/contract-verification",
-        data
-      );
-
-      if (verifyResult?.status === 200) {
-        if (verifyResult?.data?.result?.[0]?.storageTimestamp) {
+      await axios
+        .post(
+          `api/contract-verification/prisma/contract-status?contractaddress=${contractAddress}`
+        )
+        .then(async (response) => {
+          if (response.status === 200 && response.data.verified === false) {
+            for (let i = 0; i < files.length; i++) {
+              const file = files[i];
+              const fileContents = await readFileData(file);
+              await uploadFile(file);
+              data.files[file.name] = fileContents;
+            }
+            const verifyResult = await axios.post(
+              "api/contract-verification/prisma/contract-verification",
+              data
+            );
+            if (verifyResult?.status === 200) {
+              toast.update(id, {
+                render: "Verified Successfully",
+                type: "success",
+                isLoading: false,
+                closeOnClick: true,
+              });
+              setVerified(true);
+            }
+          } else if (
+            response?.status === 200 &&
+            response.data.verified === true
+          ) {
+            toast.update(id, {
+              render: "Contract Already Verified",
+              type: "warning",
+              isLoading: false,
+              closeOnClick: true,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error calling API:", error);
           toast.update(id, {
-            render: "Contract Already Verified",
-            type: "warning",
+            render: ` Verification Failed`,
+            type: "error",
             isLoading: false,
             closeOnClick: true,
           });
-          setVerified(true);
-        } else if (verifyResult.data.result[0].status === "perfect") {
-          toast.update(id, {
-            render: "Verified Successfully",
-            type: "success",
-            isLoading: false,
-            closeOnClick: true,
-          });
-          setVerified(true);
-        }
-      }
+        });
     } catch (error) {
-      console.error("Error calling API:", error);
+      console.error(error);
       toast.update(id, {
-        render: ` Verification Failed`,
+        render: ` Internal Server Error`,
         type: "error",
         isLoading: false,
         closeOnClick: true,
@@ -106,6 +119,12 @@ export function VerifyAndUpload() {
       );
 
       if (getImageUploadUrl.status === 200) {
+        const extractedFolderUrl = getImageUploadUrl.data.url
+          .split("?")[0]
+          .split("/");
+        data.uploadedFilesFolderUrl = extractedFolderUrl
+          .slice(0, extractedFolderUrl.length - 1)
+          .join("/");
         const uploadImage = await axios.put(getImageUploadUrl.data.url, file, {
           headers: {
             "Content-Type": "multipart/form-data",

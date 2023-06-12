@@ -6,7 +6,7 @@ export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { contractAddress, chainId, files } = req.body;
+  const { contractAddress, chainId, files, uploadedFilesFolderUrl } = req.body;
   try {
     console.log("Making API call...");
     const response = await axios.post(
@@ -21,26 +21,20 @@ export default async function verifyContract(
 
     if (response.status == 200) {
       console.log("Creating record in database...");
-      const record = await prisma.verification.create({
-        data: {
-          verificationStatus:
-            response.data.result[0].status == "perfect" ? "FULL" : "PARTIAL",
-          contractAddress,
-          chainID: chainId,
-          isVerified: true,
-          sourceCode: files,
-          bytecode: "your_bytecode_here", // Add the bytecode field here
-        },
-      });
-      console.log("Record created.");
-      
-      console.log("Looking up the record...");
-      const foundRecord = await prisma.verification.findUnique({
-        where: {
-          contractAddress: contractAddress,
-        },
-      });
-      console.log("Record found:", foundRecord);
+      try {
+        const record = await prisma.verification.create({
+          data: {
+            verificationStatus:
+              response.data.result[0].status == "perfect" ? "FULL" : "PARTIAL",
+            contractAddress,
+            chainID: chainId,
+            isVerified: true,
+            filesUploadedURL: uploadedFilesFolderUrl,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     console.log("Setting response status...");

@@ -19,10 +19,8 @@ model Verification {
   contractAddress     String   @unique @db.VarChar(255)
   chainID             String
   isVerified          Boolean
-  sourceCode          String
-  bytecode            String
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   verificationStatus  VerificationStatus
-  uploadedURL         String   
+  filesUploadedURL         String   
 }
