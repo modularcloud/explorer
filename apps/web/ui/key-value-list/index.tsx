@@ -1,10 +1,11 @@
 import clsx from "clsx";
-import { Status } from "../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
+import { Status } from "../status";
 import { Value } from "../../schemas/value";
 import Image from "next/image";
 
 interface Props {
   attributes: Record<string, Value>;
+  className?: string;
   type: "card" | "sidebar";
 }
 
@@ -45,14 +46,15 @@ function Entry({ label, value }: { label: string; value: Value }) {
   );
 }
 
-export function KeyValueList({ attributes, type: kvType }: Props) {
+export function KeyValueList({ attributes, type: kvType, className }: Props) {
   return (
     <dl
       className={clsx(
+        className,
         "grid",
         kvType === "card" &&
-          "sm:grid-cols-[minmax(200px,auto)_1fr] grid-cols-[minmax(128px,auto)_1fr] gap-y-2",
-        kvType === "sidebar" && "grid-cols-[auto_1fr] gap-y-4 gap-x-6"
+          "grid-cols-[minmax(128px,auto)_1fr] gap-y-2 sm:grid-cols-[minmax(200px,auto)_1fr]",
+        kvType === "sidebar" && "grid-cols-[auto_1fr] gap-x-6 gap-y-4"
       )}
     >
       {Object.entries(attributes).map(([key, value]) => {

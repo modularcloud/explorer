@@ -1,5 +1,10 @@
 import { load, Loaders } from "./etl";
 
+export type MultiEngineConfig = {
+  primary: EngineConfig;
+  secondary: EngineConfig;
+  conflicts: string[];
+};
 export type EngineConfig = {
   metadata: {
     endpoint: string;
@@ -19,10 +24,10 @@ export type LoadProps = {
   query: unknown;
 };
 
-const _CONFIGS: Record<string, EngineConfig> = {};
+const _CONFIGS: Record<string, EngineConfig | MultiEngineConfig> = {};
 
 export const Engine = {
-  addConfig: (name: string, config: EngineConfig) => {
+  addConfig: (name: string, config: EngineConfig | MultiEngineConfig) => {
     _CONFIGS[name] = config;
   },
   load: async ({ network, type, query }: LoadProps) => {
@@ -30,7 +35,43 @@ export const Engine = {
     if (!config) {
       throw new Error(`No config found for ${network}`);
     }
-    return await load(config.metadata, config.loaders[type], query);
+    if ("primary" in config) {
+      if (config.conflicts.includes(type)) {
+        // initiate the backup, just in case (but don't wait for it)
+        const backup = load(
+          config.secondary.metadata,
+          config.secondary.loaders[type],
+          query
+        );
+        try {
+          const preferred = await load(
+            config.primary.metadata,
+            config.primary.loaders[type],
+            query
+          );
+          if (preferred) {
+            return preferred;
+          }
+          throw new Error("No preferred data found");
+        } catch {
+          return await backup;
+        }
+      }
+      const loads = [];
+      if (config.primary.loaders[type]) {
+        loads.push(
+          load(config.primary.metadata, config.primary.loaders[type], query)
+        );
+      }
+      if (config.secondary.loaders[type]) {
+        loads.push(
+          load(config.secondary.metadata, config.secondary.loaders[type], query)
+        );
+      }
+      return await Promise.any(loads);
+    } else {
+      return await load(config.metadata, config.loaders[type], query);
+    }
   },
 };
 

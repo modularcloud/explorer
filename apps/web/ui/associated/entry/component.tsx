@@ -3,7 +3,7 @@
 import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
 import { Entity } from "@modularcloud/ecs";
 import { useContext } from "react";
-import { AssociatedViewContext } from "../context/client";
+import { ViewContext } from "../../view-context/client";
 import { FeedEntry } from "./feed/feed";
 import { TableEntry } from "./table";
 
@@ -12,8 +12,8 @@ export interface Props {
 }
 
 export function AssociatedEntry({ entity }: Props) {
-  const view = useContext(AssociatedViewContext);
-  switch (view) {
+  const view = useContext(ViewContext);
+  switch (view.associated) {
     case "feed":
       return <FeedEntry entity={entity} />;
     case "table":

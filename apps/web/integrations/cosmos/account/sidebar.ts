@@ -25,7 +25,7 @@ export const SidebarTransform = {
           Spendable: {
             type: "standard",
             payload: `${data.balance} ${metadata.network.nativeToken}`,
-          }
+          },
         },
       },
     };

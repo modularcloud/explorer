@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ABCIResponse, JSONRPCResponse } from "../../../lib/service-manager";
 import { AssociatedTransform } from "./associated";
 import { PageTransform } from "./page";
+import { RawTransform } from "./raw";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -18,10 +19,14 @@ export async function AccountExtract(
     const data = getBalanceQueryData(address, "udym");
     queryInput = `https://rpc-hub-35c.dymension.xyz/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "DYM";
-   } else if (address.match(/^celestia\w{39}$/)) {
+  } else if (address.match(/^celestia\w{39}$/)) {
     // celestia mocha
+    const celestiaBase =
+      metadata.network.id.indexOf("mocha") !== -1
+        ? "https://rpc-mocha.pops.one"
+        : "https://rpc-blockspacerace.pops.one";
     const data = getBalanceQueryData(address, "utia");
-    queryInput = `https://rpc-mocha.pops.one/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
+    queryInput = `${celestiaBase}/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "TIA";
   } else if (address.match(/^rol\w{39}$/)) {
     // dymension rollappX
@@ -49,4 +54,5 @@ export const AccountLoader = createLoader()
   .addTransform(SidebarTransform)
   .addTransform(AssociatedTransform)
   .addTransform(PageTransform)
+  .addTransform(RawTransform)
   .finish();

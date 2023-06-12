@@ -5,6 +5,8 @@ import { AbiItem } from "web3-utils";
 import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
+import { uploadFile } from "@uploadcare/upload-client";
+import { convertToHttpIfIpfs } from "../../../lib/utils";
 
 const MetadataSchema = z.object({
   name: z.string().optional(),
@@ -431,12 +433,29 @@ export async function NFTTransferExtract(
     ).methods
       .tokenURI(id)
       .call();
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              uri,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC721 Transfer",
@@ -495,12 +514,29 @@ export async function NFTTransferExtract(
       .uri(id)
       .call();
     const uri = baseUri.replace("{id}", web3.utils.padLeft(id, 64));
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              uri,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC1155 Transfer",
@@ -560,12 +596,29 @@ export async function NFTTransferExtract(
       .uri(ids[0])
       .call();
     const uri = baseUri.replace("{id}", String(web3.utils.padLeft(ids[0], 64)));
-    const metadata = await fetch(uri)
+    const metadata = await fetch(convertToHttpIfIpfs(uri))
       .then((res) => res.json())
       .then((res) => {
         try {
           return MetadataSchema.parse(res);
         } catch {}
+      })
+      .then(async (res) => {
+        if (res) {
+          const fimg = await fetch(convertToHttpIfIpfs(res.image));
+          const fimgb = Buffer.from(await fimg.arrayBuffer());
+          const result = await uploadFile(fimgb, {
+            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            store: "auto",
+            metadata: {
+              original: res.image,
+            },
+          });
+          return {
+            ...res,
+            image: result.cdnUrl,
+          };
+        }
       });
     return {
       type: "ERC1155 Batch Transfer",

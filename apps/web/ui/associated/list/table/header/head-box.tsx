@@ -28,7 +28,7 @@ export default function HeadBox({
       <div
         className={clsx(
           classes,
-          "h-10 py-2 bg-translucent backdrop-blur-xs border-b border-b-night-100 h-10 font-bold"
+          "bg-translucent backdrop-blur-xs border-b-night-100 h-10 h-10 border-b py-2 font-bold"
         )}
       >
         {hideText ? <div className="invisible">{children}</div> : children}

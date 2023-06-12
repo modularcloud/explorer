@@ -5,6 +5,7 @@ import { getEventSignatureName } from "../../../lib/utils";
 import { AssociatedTransform } from "./associated";
 import { CardTransform } from "./card";
 import { PageTransform } from "./page";
+import { RawTransform } from "./raw";
 import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
@@ -22,7 +23,7 @@ export async function TransactionExtract(
     receipt.logs[0]?.topics?.[0]
   );
   const block = await web3.eth.getBlock(receipt.blockNumber);
-  
+
   return {
     ...transaction,
     receipt,
@@ -39,4 +40,5 @@ export const TransactionLoader = createLoader()
   .addTransform(CardTransform)
   .addTransform(RowTransform)
   .addTransform(PageTransform)
+  .addTransform(RawTransform)
   .finish();

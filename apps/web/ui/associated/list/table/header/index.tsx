@@ -28,7 +28,10 @@ export async function TableHeader({ rows, label }: Props) {
       <HeadBox classes="w-4 sm:w-6 lg:w-8" spacingPurposesOnly={true} />
       {entity.components.row.data.tableData.map((entry) => (
         <HeadBox
-          classes={clsx(generateColumnStyle(entry.column), entry.column.showOnlyIfDifferent && "hidden")}
+          classes={clsx(
+            generateColumnStyle(entry.column),
+            entry.column.showOnlyIfDifferent && "hidden"
+          )}
           key={entry.column.columnLabel}
           hideText={entry.column.hideHeader}
         >

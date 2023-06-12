@@ -1,5 +1,7 @@
 import { Metadata } from "next";
-import EntityPage, { generateMetadata as _generateMetadata } from "../(standard)/[query]/[[...viewPath]]/page";
+import EntityPage, {
+  generateMetadata as _generateMetadata,
+} from "../(standard)/[query]/page";
 import { getWhitelabel } from "../../../../lib/utils";
 import { ShortenedResourcePath, mapTypes } from "./helpers";
 

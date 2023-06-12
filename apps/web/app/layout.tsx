@@ -1,6 +1,7 @@
 import { Inter } from "@next/font/google";
 import Script from "next/script";
 import { getWhitelabel } from "../lib/utils";
+import { Analytics } from "@vercel/analytics/react";
 import "../styles/globals.css";
 
 const inter = Inter({
@@ -18,7 +19,10 @@ export default function RootLayout({
   const whitelabel = getWhitelabel();
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans text-sleek text-night`}>{children}</body>
+      <body className={`${inter.variable} text-sleek text-night font-sans`}>
+        {children}
+        <Analytics />
+      </body>
       {whitelabel.env === "nautilus" ? (
         <>
           <Script

@@ -16,15 +16,3 @@ export async function asyncUseEntity<T extends AnyArchetypeSchema>({
 
   return verifyArchetype(archetype, entity);
 }
-
-// Client-side hook
-// export function useEntity<T extends AnyArchetypeSchema>({
-//   resourcePath,
-//   archetype,
-// }: Args<T>) {
-//   return useSWRImmutable(
-//     resourcePath,
-//     () => asyncUseEntity({ resourcePath, archetype }),
-//     { suspense: true }
-//   );
-// }

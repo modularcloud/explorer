@@ -1,6 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { PaginationExtract } from ".";
 import { PaginationComponent } from "../../../ecs/components/pagination";
+import { FetchLoadArgs } from "../../../lib/utils";
 
 export const PaginationTransform = {
   schema: PaginationComponent,
@@ -26,6 +27,33 @@ export const PaginationTransform = {
             type: "transaction",
             query: transaction.hash,
           })),
+        },
+      };
+    }
+
+    if (data?.["latestBlockNumber"]) {
+      const values: FetchLoadArgs[] = [];
+      const MAX_BLOCKS =
+        data.latestBlockNumber > 30 ? 30 : data.latestBlockNumber;
+      for (let i = 0; i < MAX_BLOCKS; i++) {
+        values.push({
+          network: metadata.network.id,
+          type: "block",
+          query: `${data.latestBlockNumber - i}`,
+        });
+      }
+      return {
+        typeId: "pagination",
+        data: {
+          next:
+            data.latestBlockNumber > 30
+              ? {
+                  network: metadata.network.id,
+                  type: "pagination",
+                  query: `${data.value}:latest:${data.latestBlockNumber - 30}`,
+                }
+              : undefined,
+          values,
         },
       };
     }
@@ -82,6 +110,25 @@ export const PaginationTransform = {
             network: metadata.network.id,
             type: "transfer",
             query: `${transfer.transactionHash}:${transfer.logIndex}`,
+          })),
+        },
+      };
+    }
+    if (data?.["contract-logs"]) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: data["contract-logs"].nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:contract-logs:${data["contract-logs"].nextToken}`,
+              }
+            : undefined,
+          values: data["contract-logs"].logs.map((log) => ({
+            network: metadata.network.id,
+            type: "log",
+            query: `${log.transactionHash}:${log.logIndex}`,
           })),
         },
       };

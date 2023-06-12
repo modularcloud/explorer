@@ -54,7 +54,7 @@ export function LongVal({
       <div className="hidden sm:block md:hidden">
         {forceLength(value, max - step * 3, strategy)}
       </div>
-      <div className="hidden xs:block sm:hidden">
+      <div className="xs:block hidden sm:hidden">
         {forceLength(value, max - step * 4, strategy)}
       </div>
       <div className="xs:hidden">

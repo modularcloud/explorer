@@ -60,7 +60,11 @@ export const RowTransform = {
           },
         },
       ],
-      link: { network: metadata.network.id, type: "block", query: data.result.block_id.hash },
+      link: {
+        network: metadata.network.id,
+        type: "block",
+        query: data.result.block_id.hash,
+      },
     },
   }),
 };

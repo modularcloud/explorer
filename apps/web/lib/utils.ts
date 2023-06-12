@@ -2,6 +2,13 @@ import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
 
+export function convertToHttpIfIpfs(url: string) {
+  if (url.startsWith("ipfs://")) {
+    return `${process.env.IPFS_GATEWAY}/${url.replace("ipfs://", "")}`;
+  }
+  return url;
+}
+
 export function decodeEvmAddressParam(address: string) {
   if (address.indexOf("000000000000000000000000") !== -1) {
     return address.replace("000000000000000000000000", "");
@@ -122,10 +129,29 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "aeg",
       };
+    case "apricot":
+      return {
+        searchOptions: {
+          Apricot: [
+            {
+              displayName: "Apricot",
+              id: "apricot",
+            },
+          ],
+        },
+        defaultNetwork: "apricot",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "apricot",
+      };
     case "celestia":
       return {
         searchOptions: {
           Celestia: [
+            {
+              displayName: "Blockspace Race",
+              id: "blockspace-race",
+            },
             {
               displayName: "Mocha",
               id: "mocha",
@@ -163,19 +189,28 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Saga: [
             {
-              displayName: "Saga",
-              id: "saga",
+              displayName: "Another World",
+              id: "another-world",
+            },
+            {
+              displayName: "Modular Cloud",
+              id: "modular-cloud",
             },
           ],
         },
         defaultNetwork: "saga",
-        name: ["Saga", "Scan"],
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
         env: "saga",
       };
     default:
       return {
         searchOptions: {
           Celestia: [
+            {
+              displayName: "Blockspace Race",
+              id: "celestia-blockspace-race",
+            },
             {
               displayName: "Mocha",
               id: "celestia-mocha",
@@ -226,4 +261,20 @@ export function getWhitelabel(): Whitelabel {
 
 export function slugify(str: string): string {
   return _slugify(str, { lower: true, strict: true });
+}
+
+export function truncateString(
+  address: string,
+  numCharsBefore = 6,
+  numCharsAfter = 4
+) {
+  if (!address) return "";
+
+  if (address.length <= numCharsBefore + numCharsAfter + 2) {
+    return address;
+  }
+
+  const start = address.slice(0, numCharsBefore);
+  const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
+  return `${start}....${end}`;
 }

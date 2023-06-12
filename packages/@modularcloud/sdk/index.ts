@@ -11,6 +11,10 @@ import {
   TokenBalanceResponse,
   NFTBalance,
   NFTBalanceSchema,
+  Contract,
+  ContractSchema,
+  LogResponse,
+  LogResponseSchema,
 } from "./schemas";
 
 declare global {
@@ -67,6 +71,8 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<TxResponse>;
+    describeContract: (networkId: string, address: string) => Promise<Contract>;
+    listContractLogs: (networkId: string, address: string, maxResults?: number, nextToken?: string) => Promise<LogResponse>;
   };
 }
 
@@ -82,6 +88,17 @@ const NETWORK_ID_MAP: Record<string, string> = {
   goerli: "clo/1",
   polygon: "clo/2",
   aeg: "ep/4",
+  "nautilus-triton": "eclipse/91002",
+  "saga-saga": "sg/1",
+  "eclipse-worlds": "ep/3",
+  "dymension-evm-rollapp": "dym/2",
+  "caldera-goerli": "clo/1",
+  "caldera-polygon": "clo/2",
+  "eclipse-aeg": "ep/4",
+  "modular-cloud": "sg/3",
+  "saga-modular-cloud": "sg/3",
+  "another-world": "sg/2",
+  "saga-another-world": "sg/2",
 };
 
 function normalizeNetworkId(networkId: string) {
@@ -128,6 +145,27 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         return json.result.balancesV2.map((balance: any) => {
           return NFTBalanceSchema.parse(balance);
         });
+      },
+      listContractLogs: async (
+        networkId: string,
+        address: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/contract-logs/${address.toLowerCase()}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return LogResponseSchema.parse(json.result);
       },
       getEventsByTokenAddress: async (
         networkId: string,
@@ -205,6 +243,20 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = (await response.json()) as APIResponse;
         return TokenSchema.parse(json.result.token);
+      },
+      describeContract: async (networkId: string, address: string) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/contracts/${address.toLowerCase()}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch contract");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return ContractSchema.parse(json.result.contract);
       },
       getAccountBalancesByTokenAddress: async (
         networkId: string,

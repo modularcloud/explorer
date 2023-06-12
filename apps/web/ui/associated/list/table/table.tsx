@@ -8,7 +8,7 @@ export function TableList({ children, header, label }: Props) {
   return (
     <div className="w-full">
       <table className="w-full text-left" cellSpacing={0} cellPadding={0}>
-        <caption className="xs:hidden text-left px-4 w-full sticky top-header z-10 py-2 bg-translucent backdrop-blur-xs border-b border-b-night-100 h-10 font-bold">
+        <caption className="xs:hidden top-header bg-translucent backdrop-blur-xs border-b-night-100 sticky z-10 h-10 w-full border-b px-4 py-2 text-left font-bold">
           {label}
         </caption>
         <thead className="max-xs:hidden">{header}</thead>

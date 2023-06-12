@@ -1,11 +1,11 @@
-import SvgGreenTick from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/GreenTick";
-import SvgRedCross from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/(icons)/RedCross";
-import { Badge } from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/badge";
-import { Status } from "../../../../app/[network]/[type]/(standard)/[query]/[[...viewPath]]/(components)/status";
+import { Badge } from "../../../badge";
+import { Status } from "../../../status";
 import { Cell } from "../../../../ecs/components/row";
 import { CompactDate } from "../../../compact-date";
 import { LongVal } from "../../../long-val";
 import Image from "next/image";
+import SvgGreenTick from "../../../icons/GreenTick";
+import SvgRedCross from "../../../icons/RedCross";
 
 export function CellBox({ value }: { value: Cell }) {
   if (value.type === "badge") {
@@ -37,7 +37,7 @@ export function CellBox({ value }: { value: Cell }) {
   }
   if (value.type === "block") {
     return (
-      <div className="whitespace-nowrap flex flex-nowrap">
+      <div className="flex flex-nowrap whitespace-nowrap">
         {value.payload.number}
         <CompactDate
           classes="pl-1 before:content-['('] after:content-[')'] hidden md:block"

@@ -1,8 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import Decimal from "decimal.js";
 import { InventoryExtract } from ".";
 import { RowComponent } from "../../../ecs/components/row";
-import { decodeEvmAddressParam } from "../../../lib/utils";
 
 export const RowTransform = {
   schema: RowComponent,
@@ -23,7 +21,7 @@ export const RowTransform = {
             type: "image",
             payload: data.metadata
               ? {
-                  src: data.metadata.image,
+                  src: data.metadata.image ?? "/images/placeholder-square.jpg",
                   alt: data.metadata.description ?? data.metadata.name ?? "",
                   height: 24,
                   width: 24,
@@ -38,7 +36,7 @@ export const RowTransform = {
           cell: {
             type: "standard",
             payload: "#" + data.balance.balance.tokenId,
-          }
+          },
         },
         {
           column: {
@@ -52,8 +50,8 @@ export const RowTransform = {
               maxLength: 25,
               stepDown: 5,
               strategy: "end",
-            }
-          }
+            },
+          },
         },
         {
           column: {
@@ -63,11 +61,11 @@ export const RowTransform = {
             type: "badge",
             payload: {
               text: data.tokenType,
-            }
+            },
           },
         },
-         // TODO: fix decimals
-         {
+        // TODO: fix decimals
+        {
           column: {
             columnLabel: "Qty",
           },

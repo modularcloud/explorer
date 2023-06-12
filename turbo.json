@@ -28,7 +28,10 @@
         "SOURCIFY_URL",
         "AWS_S3_ACCESSKEY_SECRET",
         "AWS_S3_ACCESSKEY_ID",
-        "NODE_ENV"
+        "NODE_ENV",
+        "UPLOADCARE_API_KEY",
+        "IPFS_GATEWAY",
+        "CELESTIA_BLOCKSPACE_RACE_RPC"
       ]
     }
   }
