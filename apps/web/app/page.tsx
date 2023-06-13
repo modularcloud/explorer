@@ -31,6 +31,8 @@ export default function HomePage() {
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>
+      {/* @ts-expect-error Async Server Component */}
+      {explorerId === "nautilus" ? <Stats extended={true} /> : null}
       <Footer />
     </div>
   );
