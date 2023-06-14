@@ -16,7 +16,6 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.21.5",
     "@types/node": "^20.2.5",
     "eslint-config-custom": "*",
     "prettier": "latest",
