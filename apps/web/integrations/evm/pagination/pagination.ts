@@ -183,7 +183,26 @@ export const PaginationTransform = {
           values: data.owners.owners.map((owner) => ({
             network: metadata.network.id,
             type: "address",
-            query: owner.address,
+            query: `${owner.address}:${owner.balance.balance}`,
+          })),
+        },
+      };
+    }
+    if (data?.collection) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: data.collection.nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:collection:${data.collection.nextToken}`,
+              }
+            : undefined,
+          values: data.collection.tokens.map((token) => ({
+            network: metadata.network.id,
+            type: "nft",
+            query: `${data.value}:${token.tokenId}`,
           })),
         },
       };

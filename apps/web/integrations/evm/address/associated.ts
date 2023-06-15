@@ -15,6 +15,16 @@ export const AssociatedTransform = {
     TransformOutput<typeof AssociatedComponent>
   > => {
     const contractSection: Record<AssociatedKey, AssociatedValue> = {};
+    if (data.contract?.type === "erc721" || data.contract?.type === "erc1155") {
+      contractSection.Collection = {
+        type: "paginated",
+        value: {
+          network: metadata.network.id,
+          type: "pagination",
+          query: `${data.address}:collection`,
+        },
+      };
+    }
     if (data.contract?.type === "erc20") {
       contractSection.Transfers = {
         type: "paginated",
@@ -78,7 +88,9 @@ export const AssociatedTransform = {
             data.nftBalances?.map((redundant) => ({
               network: metadata.network.id,
               type: "nft",
-              query: `${redundant.balance.token.address}:${redundant.balance.balance.tokenId}:${redundant.balance.balance.value || "0"}`,
+              query: `${redundant.balance.token.address}:${
+                redundant.balance.balance.tokenId
+              }:${redundant.balance.balance.value || "0"}`,
             })) ?? [],
         },
       },

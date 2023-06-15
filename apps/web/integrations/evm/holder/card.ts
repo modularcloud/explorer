@@ -17,7 +17,7 @@ export const CardTransform = {
       badge: "ERC20 Holder",
       link: {
         network: metadata.network.id,
-        type: "account",
+        type: "address",
         query: data.address,
       },
       attributes: {

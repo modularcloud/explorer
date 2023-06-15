@@ -122,3 +122,14 @@ export const OwnerResponseSchema = z.object({
   nextToken: z.string().optional(),
 });
 export type OwnerResponse = z.infer<typeof OwnerResponseSchema>;
+
+export const NFTSchema = z.object({
+  tokenId: z.string(),
+});
+export type NFT = z.infer<typeof NFTSchema>;
+
+export const CollectionResponseSchema = z.object({
+  tokens: NFTSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;

@@ -135,6 +135,18 @@ export async function PaginationExtract(
       owners,
     };
   }
+  if (collection === "collection") {
+    const collection = await mc.evm.listNFTCollection(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      collection,
+    };
+  }
 }
 
 export const PaginationLoader = createLoader()
