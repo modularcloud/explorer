@@ -33,7 +33,9 @@ export const RowTransform = {
             type: "block",
             payload: {
               number: Number(data.block.result.block.header.height),
-              timestamp: new Date(data.block.result.block.header.time).getTime(),
+              timestamp: new Date(
+                data.block.result.block.header.time
+              ).getTime(),
             },
           },
         },

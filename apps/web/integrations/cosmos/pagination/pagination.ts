@@ -10,6 +10,23 @@ export const PaginationTransform = {
   }: TransformInput<typeof PaginationExtract>): Promise<
     TransformOutput<typeof PaginationComponent>
   > => {
+    if (data?.blobs) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: {
+            network: metadata.network.id,
+            type: "pagination",
+            query: `${data.value}:blobs:${data.nextToken}`,
+          },
+          values: data.blobs.map((blob) => ({
+            network: metadata.network.id,
+            type: "blob",
+            query: `${blob.height}:${blob.blobIndex}`,
+          })),
+        },
+      };
+    }
     if (data?.transactions) {
       return {
         typeId: "pagination",

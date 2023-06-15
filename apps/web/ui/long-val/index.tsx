@@ -43,7 +43,9 @@ export function LongVal({
   max = Math.min(max, UI_MAX);
   return (
     <>
-      <div className="hidden 2xl:block">{forceLength(value, UI_MAX, strategy)}</div>
+      <div className="hidden 2xl:block">
+        {forceLength(value, UI_MAX, strategy)}
+      </div>
       <div className="hidden xl:block 2xl:hidden">
         {forceLength(value, max, strategy)}
       </div>

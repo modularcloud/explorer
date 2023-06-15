@@ -22,7 +22,7 @@ export async function BlobExtract(_q: unknown, metadata: EngineConfigMetadata) {
 
   const block = (await response.json()) as JSONRPCResponse<Block>;
   const blob = block.result.block.data.blobs?.[parseInt(index)];
-    if (!blob) {
+  if (!blob) {
     throw Error(`Blob not found at index ${index}`);
   }
   return {

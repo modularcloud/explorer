@@ -93,3 +93,17 @@ export const LogResponseSchema = z.object({
   nextToken: z.string().optional(),
 });
 export type LogResponse = z.infer<typeof LogResponseSchema>;
+
+export const BlobSchema = z.object({
+  shareVersion: z.number(),
+  height: z.string(),
+  blobIndex: z.number(),
+  txHash: z.string(),
+});
+export type Blob = z.infer<typeof BlobSchema>;
+
+export const BlobResponseSchema = z.object({
+  blobs: BlobSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type BlobResponse = z.infer<typeof BlobResponseSchema>;

@@ -3,6 +3,7 @@ import { AccountLoader } from "./account";
 import { BlobLoader } from "./blob";
 import { BlockLoader } from "./block";
 import { MessageLoader } from "./log";
+import { NamespaceLoader } from "./namespace";
 import { PaginationLoader } from "./pagination";
 import { TransactionLoader } from "./transaction";
 
@@ -18,6 +19,7 @@ export function CreateCosmosConfig(
       account: AccountLoader,
       pagination: PaginationLoader,
       blob: BlobLoader,
+      namespace: NamespaceLoader,
     },
   };
 }

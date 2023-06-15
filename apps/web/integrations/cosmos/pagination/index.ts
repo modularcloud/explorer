@@ -65,6 +65,22 @@ export async function PaginationExtract(
       page,
     };
   }
+  if (collection === "blobs") {
+    // temporarily pass in the namespace endpoint
+    const mc = createModularCloud(process.env.NAMESPACE_ENDPOINT);
+    const nextToken = page === "1" ? undefined : page;
+    const blobs = await mc.celestia.listBlobsByNamespace(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      blobs: blobs.blobs,
+      nextToken: blobs.nextToken,
+    };
+  }
 }
 
 export const PaginationLoader = createLoader()
