@@ -171,6 +171,23 @@ export const PaginationTransform = {
         },
       };
     }
+    if (data?.owners) {
+      return {
+        typeId: "pagination",
+        data: {
+          next: {
+            network: metadata.network.id,
+            type: "pagination",
+            query: `${data.value}:owners:${data.owners.nextToken}`,
+          },
+          values: data.owners.owners.map((owner) => ({
+            network: metadata.network.id,
+            type: "address",
+            query: owner.address,
+          })),
+        },
+      };
+    }
     return {
       typeId: "pagination",
       data: {

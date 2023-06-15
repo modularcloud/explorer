@@ -17,6 +17,8 @@ import {
   LogResponseSchema,
   BlobResponse,
   BlobResponseSchema,
+  OwnerResponse,
+  OwnerResponseSchema,
 } from "./schemas";
 
 declare global {
@@ -88,6 +90,13 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<LogResponse>;
+    listNFTOwners: (
+      networkId: string,
+      address: string,
+      tokenId: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<OwnerResponse>;
   };
 }
 
@@ -359,6 +368,28 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = (await response.json()) as APIResponse;
         return TxResponseSchema.parse(json.result);
+      },
+      listNFTOwners: async (
+        networkId: string,
+        address: string,
+        tokenId: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/nft/owners/${address.toLowerCase()}/${tokenId}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch owners");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return OwnerResponseSchema.parse(json.result);
       },
     },
   };

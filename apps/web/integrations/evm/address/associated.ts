@@ -75,10 +75,10 @@ export const AssociatedTransform = {
         Inventory: {
           type: "static",
           values:
-            data.nftBalances?.map((_, index) => ({
+            data.nftBalances?.map((redundant) => ({
               network: metadata.network.id,
-              type: "inventory",
-              query: `${data.address}:${index}`,
+              type: "nft",
+              query: `${redundant.balance.token.address}:${redundant.balance.balance.tokenId}:${redundant.balance.balance.value || "0"}`,
             })) ?? [],
         },
       },

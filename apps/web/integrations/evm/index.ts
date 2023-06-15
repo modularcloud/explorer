@@ -3,7 +3,7 @@ import { AddressLoader } from "./address";
 import { BalancesLoader } from "./balances";
 import { BlockLoader } from "./block";
 import { HolderLoader } from "./holder";
-import { InventoryLoader } from "./inventory";
+import { NFTLoader } from "./nft";
 import { LatestLoader } from "./latest";
 import { LogLoader } from "./log";
 import { NFTTransferLoader } from "./nft-transfer";
@@ -24,7 +24,7 @@ export function CreateEVMConfig(metadata: EngineConfigMetadata): EngineConfig {
       transfer: TransferLoader,
       holder: HolderLoader,
       "nft-transfer": NFTTransferLoader,
-      inventory: InventoryLoader,
+      nft: NFTLoader,
       latest: LatestLoader,
       balances: BalancesLoader,
     },
