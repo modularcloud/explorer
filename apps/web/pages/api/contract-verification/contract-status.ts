@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "./lib/prisma";
+import prisma from "../../../prisma/lib/prisma";
 export default async function isContractVerified(
   req: NextApiRequest,
   res: NextApiResponse
