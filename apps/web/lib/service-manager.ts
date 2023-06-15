@@ -96,6 +96,11 @@ export type Block = {
         // TODO: remove any
         msgs: null | any[];
       };
+      blobs?: {
+        NamespaceID: string;
+        Data: string;
+        ShareVersion: number;
+      }[];
       square_size?: string;
     };
     last_commit: {

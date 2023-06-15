@@ -39,9 +39,13 @@ export function LongVal({
   step: number;
   strategy?: "middle" | "end";
 }) {
+  const UI_MAX = 80;
+  max = Math.min(max, UI_MAX);
   return (
     <>
-      <div className="hidden 2xl:block">{value}</div>
+      <div className="hidden 2xl:block">
+        {forceLength(value, UI_MAX, strategy)}
+      </div>
       <div className="hidden xl:block 2xl:hidden">
         {forceLength(value, max, strategy)}
       </div>

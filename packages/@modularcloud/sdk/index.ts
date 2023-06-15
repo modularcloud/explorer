@@ -15,6 +15,8 @@ import {
   ContractSchema,
   LogResponse,
   LogResponseSchema,
+  BlobResponse,
+  BlobResponseSchema,
 } from "./schemas";
 
 declare global {
@@ -22,6 +24,14 @@ declare global {
 }
 
 export interface ModularCloud {
+  celestia: {
+    listBlobsByNamespace: (
+      networkId: string,
+      namespace: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<BlobResponse>;
+  };
   evm: {
     getTokenBalancesByAddress: (
       networkId: string,
@@ -72,7 +82,12 @@ export interface ModularCloud {
       nextToken?: string
     ) => Promise<TxResponse>;
     describeContract: (networkId: string, address: string) => Promise<Contract>;
-    listContractLogs: (networkId: string, address: string, maxResults?: number, nextToken?: string) => Promise<LogResponse>;
+    listContractLogs: (
+      networkId: string,
+      address: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<LogResponse>;
   };
 }
 
@@ -99,6 +114,8 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "saga-modular-cloud": "sg/3",
   "another-world": "sg/2",
   "saga-another-world": "sg/2",
+  "blockspace-race": "2",
+  "celestia-blockspace-race": "2",
 };
 
 function normalizeNetworkId(networkId: string) {
@@ -111,6 +128,29 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
   }
 
   const instance: ModularCloud = {
+    celestia: {
+      listBlobsByNamespace: async (
+        networkId: string,
+        namespace: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/blobs-summary/${namespace}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch blobs");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return BlobResponseSchema.parse(json.result);
+      },
+    },
     evm: {
       getTokenBalancesByAddress: async (networkId: string, address: string) => {
         const response = await fetch(

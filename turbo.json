@@ -31,7 +31,8 @@
         "NODE_ENV",
         "UPLOADCARE_API_KEY",
         "IPFS_GATEWAY",
-        "CELESTIA_BLOCKSPACE_RACE_RPC"
+        "CELESTIA_BLOCKSPACE_RACE_RPC",
+        "NAMESPACE_ENDPOINT"
       ]
     }
   }

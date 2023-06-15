@@ -1,7 +1,9 @@
 import { EngineConfig, EngineConfigMetadata } from "@modularcloud/ecs";
 import { AccountLoader } from "./account";
+import { BlobLoader } from "./blob";
 import { BlockLoader } from "./block";
 import { MessageLoader } from "./log";
+import { NamespaceLoader } from "./namespace";
 import { PaginationLoader } from "./pagination";
 import { TransactionLoader } from "./transaction";
 
@@ -16,6 +18,8 @@ export function CreateCosmosConfig(
       message: MessageLoader,
       account: AccountLoader,
       pagination: PaginationLoader,
+      blob: BlobLoader,
+      namespace: NamespaceLoader,
     },
   };
 }
