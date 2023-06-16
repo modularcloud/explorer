@@ -2,18 +2,22 @@ import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import prisma from "../../../prisma/lib/prisma";
 import { getEngine } from "../../../lib/networks";
+
 export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { contractAddress, files, uploadedFilesFolderUrl } = req.body;
+  const engine = getEngine();
+  const chainId = engine.config.metadata.network.sourcifyChainId ?? 1;
+
   try {
     console.log("Making API call...");
     const response = await axios.post(
-      process.env.SOURCIFY_URL ?? "http://localhost:5555/verify", //sourcify api call url
+      process.env.SOURCIFY_URL ?? "http://localhost:5555/verify",
       {
         address: contractAddress,
-        chain: getEngine().config.network.sourcifyChainId,
+        chain: chainId,
         files: files,
       }
     );
@@ -50,7 +54,6 @@ export default async function verifyContract(
         axiosError.response.headers
       );
 
-      // Forward the error response from the Sourcify api
       res.status(axiosError.response.status).json(axiosError.response.data);
       console.error("An error occurred:", error);
     }
