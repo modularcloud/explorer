@@ -4,7 +4,9 @@ export default async function isContractVerified(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const contractAddress = Array.isArray(req.query.contractaddress) ? req.query.contractaddress[0] : req.query.contractaddress;
+  const contractAddress = Array.isArray(req.query.contractaddress)
+    ? req.query.contractaddress[0]
+    : req.query.contractaddress;
 
   if (contractAddress) {
     try {
@@ -20,6 +22,7 @@ export default async function isContractVerified(
         res.status(200).json({ verified: false });
       }
     } catch (error) {
+      console.error(error);
       res.status(500).json("serverError");
     }
   }

@@ -14,6 +14,7 @@ export function getEngine() {
         displayName: "Triton",
         nativeToken: "ZBC",
         logoUrl: "/images/nautilus.png",
+        sourcifyChainId: 91002,
       },
     });
     Engine.addConfig("triton", config);

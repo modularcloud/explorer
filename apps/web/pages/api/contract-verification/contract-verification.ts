@@ -1,19 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import prisma from "../../../prisma/lib/prisma";
-
+import { getEngine } from "../../../lib/networks";
 export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { contractAddress, chainId, files, uploadedFilesFolderUrl } = req.body;
+  const { contractAddress, files, uploadedFilesFolderUrl } = req.body;
   try {
     console.log("Making API call...");
     const response = await axios.post(
       process.env.SOURCIFY_URL ?? "http://localhost:5555/verify", //sourcify api call url
       {
         address: contractAddress,
-        chain: chainId,
+        chain: getEngine().config.network.sourcifyChainId,
         files: files,
       }
     );
