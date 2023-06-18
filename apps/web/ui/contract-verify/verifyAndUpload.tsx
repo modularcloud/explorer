@@ -43,7 +43,7 @@ export function VerifyAndUpload() {
     try {
       await axios
         .post(
-          `api/contract-verification/prisma/contract-status?contractaddress=${contractAddress}`
+          `api/contract-verification/contract-status?contractaddress=${contractAddress}`
         )
         .then(async (response) => {
           if (response.status === 200 && response.data.verified === false) {
@@ -54,7 +54,7 @@ export function VerifyAndUpload() {
               data.files[file.name] = fileContents;
             }
             const verifyResult = await axios.post(
-              "api/contract-verification/prisma/contract-verification",
+              "api/contract-verification/contract-verification",
               data
             );
             if (verifyResult?.status === 200) {
