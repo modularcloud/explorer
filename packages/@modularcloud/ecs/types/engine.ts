@@ -13,7 +13,7 @@ export type EngineConfig = {
       displayName: string;
       logoUrl: string;
       nativeToken: string;
-      sourcifyChainId?: number;
+      sourcifyChainId?: string;
     };
   };
   loaders: Loaders;

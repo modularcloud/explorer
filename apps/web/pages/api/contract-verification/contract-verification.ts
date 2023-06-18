@@ -9,10 +9,17 @@ export default async function verifyContract(
 ) {
   const { contractAddress, files, uploadedFilesFolderUrl } = req.body;
   const engine = getEngine();
-  const chainId = engine.config.metadata.network.sourcifyChainId ?? 1;
+  const chainId = engine.config.metadata.network.sourcifyChainId ?? null;
 
   try {
+    if (!chainId) {
+      res
+        .status(500)
+        .json({ error: "Chain is not available for verification yet" });
+      return;
+    }
     console.log("Making API call...");
+
     const response = await axios.post(
       process.env.SOURCIFY_URL ?? "http://localhost:5555/verify",
       {
@@ -22,7 +29,6 @@ export default async function verifyContract(
       }
     );
     console.log("API call completed, response status:", response.status);
-
     if (response.status == 200) {
       console.log("Creating record in database...");
       try {
@@ -44,6 +50,7 @@ export default async function verifyContract(
     console.log("Setting response status...");
     res.status(response.status).json(response.data);
     console.log("Response status set.");
+    return;
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {
@@ -56,6 +63,7 @@ export default async function verifyContract(
 
       res.status(axiosError.response.status).json(axiosError.response.data);
       console.error("An error occurred:", error);
+      return;
     }
   }
 }
