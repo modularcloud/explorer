@@ -39,6 +39,7 @@ export { default as RightSidebarOff } from "./RightSidebarOff";
 export { default as RightSidebarOn } from "./RightSidebarOn";
 export { default as SearchOff } from "./SearchOff";
 export { default as SearchOn } from "./SearchOn";
+export { default as Spinner } from "./Spinner";
 export { default as SunOff } from "./SunOff";
 export { default as SunOn } from "./SunOn";
 export { default as UserOff } from "./UserOff";
