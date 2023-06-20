@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import { AppProps } from 'next/app';
-import { VerifyAndUpload } from '../ui/contract-verify/verifyAndUpload';
+import { VerifyAndUpload } from '../../verify/contract-verify/verifyAndUpload';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

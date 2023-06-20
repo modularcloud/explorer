@@ -1,6 +1,6 @@
 import { VerifyAndUpload } from "./verifyAndUpload";
 
-export function VerifyContract() {
+export default function VerifyContract() {
   return (
     <div className="min-h-screen bg-gray-100 bg-center bg-no-repeat">
       <div>
