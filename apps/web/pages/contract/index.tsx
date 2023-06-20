@@ -1,4 +1,4 @@
-import { VerifyAndUpload } from "../../../verify/contract-verify";
+import { VerifyAndUpload } from "apps/verify/contract-verify/pages/verifyAndUpload";
 
 export default function Contract() {
   return (
