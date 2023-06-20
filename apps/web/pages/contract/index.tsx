@@ -1,9 +1,9 @@
-import { VerifyContract } from "../../../verify/contract-verify";
+import { VerifyAndUpload } from "../../../verify/contract-verify";
 
 export default function Contract() {
   return (
     <div>
-      <VerifyContract />
+      <VerifyAndUpload />
     </div>
   );
 }
