@@ -2,11 +2,11 @@ import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import JSZip from "jszip";
 
 export function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
-  const [verified, setVerified] = useState<boolean>(false);
 
   type ContractData = {
     contractAddress: typeof contractAddress;
@@ -26,7 +26,6 @@ export function VerifyAndUpload() {
       setFiles(event.target.files);
     }
   };
-
   const onContractAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
     setContractAddress(event.target.value.toLowerCase());
   };
@@ -47,12 +46,17 @@ export function VerifyAndUpload() {
         )
         .then(async (response) => {
           if (response.status === 200 && response.data.isVerified === false) {
+            let zip = new JSZip();
             for (let i = 0; i < files.length; i++) {
               const file = files[i];
               const fileContents = await readFileData(file);
-              // await uploadFile(file);
               data.files[file.name] = fileContents;
+              zip.file(file.name, file);
             }
+            zip.generateAsync({ type: "blob" }).then(async (content) => {
+              const zipFile = new Blob([content], { type: "application/zip" });
+              await uploadFile(zipFile);
+            });
             const verifyResult = await axios.post(
               "api/contract-verification/contract-verification",
               data
@@ -64,7 +68,6 @@ export function VerifyAndUpload() {
                 isLoading: false,
                 closeOnClick: true,
               });
-              setVerified(true);
             }
           } else if (
             response?.status === 200 &&
@@ -112,10 +115,12 @@ export function VerifyAndUpload() {
     });
   };
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (file: File | Blob) => {
     try {
       const getImageUploadUrl = await axios.get(
-        `api/file-upload/generateurl?file=${file.name}&contractaddress=${contractAddress}`
+        `api/file-upload/generateurl?file=${
+          file.name ?? `${contractAddress + "_sourcefiles.zip"}`
+        }&contractaddress=${contractAddress}`
       );
 
       if (getImageUploadUrl.status === 200) {

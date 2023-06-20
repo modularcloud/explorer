@@ -1,15 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import prisma from "../../../prisma/lib/prisma";
-import { getEngine } from "../../../../../web/lib/networks";
 
 export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { contractAddress, files, uploadedFilesFolderUrl } = req.body;
-  const engine = getEngine();
-  const chainId = engine.config.metadata.network.sourcifyChainId ?? null;
+  const chainId = "91002"; // this value is hard coded as of now, it might change in the future
 
   try {
     if (!chainId) {
