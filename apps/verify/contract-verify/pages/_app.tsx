@@ -1,4 +1,4 @@
-import '/workspaces/explorer/apps/web/styles/globals.css';
+import '../styles/globals.css';
 import { AppProps } from 'next/app';
 
 function MyApp({ Component, pageProps }: AppProps) {
