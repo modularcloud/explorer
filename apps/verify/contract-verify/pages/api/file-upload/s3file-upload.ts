@@ -13,7 +13,9 @@ export default async function generateUploadUrl(
   file: string,
   contractAddress: string
 ) {
-  const fileAddress = contractAddress + "/" + file;
+
+  const lowerCaseContractAddress = contractAddress.toLowerCase();
+  const fileAddress = lowerCaseContractAddress + "/" + file;
   const splitedFileName = file.split(".");
   const s3Params = {
     Bucket: name,
