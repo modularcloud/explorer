@@ -10,14 +10,19 @@ if (!accessKeyId || !secretAccessKey) {
   throw new Error("AWS credentials are not set");
 }
 
-export default async function zipAndUploadFile(file: string, contractAddress: string) {
+export default async function zipAndUploadFiles(files: string[], contractAddress: string) {
   const lowerCaseContractAddress = contractAddress.toLowerCase();
-  const fileAddress = lowerCaseContractAddress + "/" + file + ".zip"; // Change the name to be a zip file
+  const zipFileName = lowerCaseContractAddress + "/contractFiles.zip"; // Name for the zip file
   
   const output = new stream.PassThrough(); // Create a PassThrough stream, this will be our "file"
   const archive = archiver('zip');
   archive.pipe(output); // Pipe the archive data to our file
-  archive.file(file, { name: file });
+
+  // Add each file to the archive
+  files.forEach(file => {
+    archive.file(file, { name: file });
+  });
+
   archive.finalize();
 
   const s3 = new S3Client({
@@ -30,7 +35,7 @@ export default async function zipAndUploadFile(file: string, contractAddress: st
 
   const s3Params = {
     Bucket: name,
-    Key: fileAddress,
+    Key: zipFileName,
     Body: output
   };
 
