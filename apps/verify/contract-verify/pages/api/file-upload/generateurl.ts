@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import zipAndUploadFile from "./s3file-upload";
+import generateUploadUrl from "./s3file-upload";
 
 export default async function generateS3Url(
   req: NextApiRequest,
@@ -9,9 +9,9 @@ export default async function generateS3Url(
   const contractaddress = req.query.contractaddress as string | undefined;
 
   if (!file || !contractaddress) {
-    res.status(400).send('Bad Request: Missing required parameters.');
+    res.status(400).send("Bad Request: Missing required parameters.");
   } else {
-    const response = await zipAndUploadFile(file, contractaddress); 
-    res.send({ response }); // the response is now the result of the upload, not a URL
+    const url = await generateUploadUrl(file, contractaddress);
+    res.send({ url });
   }
 }
