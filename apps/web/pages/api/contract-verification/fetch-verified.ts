@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma/lib/prisma";
-export default async function isContractVerified(
+export default async function FetchVerifiedContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -15,15 +15,14 @@ export default async function isContractVerified(
           contractAddress: contractAddress,
         },
       });
-      console.log(findContractAddress);
       if (findContractAddress) {
-        res.status(200).json({ verified: true });
+        res.status(200).json(findContractAddress);
       } else {
-        res.status(200).json({ verified: false });
+        res.status(200).json({ isVerified: false });
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json("serverError");
+      res.status(500).json(error);
     }
   }
 }

@@ -43,14 +43,14 @@ export function VerifyAndUpload() {
     try {
       await axios
         .post(
-          `api/contract-verification/contract-status?contractaddress=${contractAddress}`
+          `api/contract-verification/fetch-verified?contractaddress=${contractAddress}`
         )
         .then(async (response) => {
-          if (response.status === 200 && response.data.verified === false) {
+          if (response.status === 200 && response.data.isVerified === false) {
             for (let i = 0; i < files.length; i++) {
               const file = files[i];
               const fileContents = await readFileData(file);
-              await uploadFile(file);
+              // await uploadFile(file);
               data.files[file.name] = fileContents;
             }
             const verifyResult = await axios.post(
@@ -68,7 +68,7 @@ export function VerifyAndUpload() {
             }
           } else if (
             response?.status === 200 &&
-            response.data.verified === true
+            response.data.isVerified === true
           ) {
             toast.update(id, {
               render: "Contract Already Verified",
