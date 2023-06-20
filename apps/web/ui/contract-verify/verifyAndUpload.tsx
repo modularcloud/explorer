@@ -28,7 +28,7 @@ export function VerifyAndUpload() {
   };
 
   const onContractAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setContractAddress(event.target.value);
+    setContractAddress(event.target.value.toLowerCase());
   };
 
   const verifyAndUpload = async () => {
@@ -42,7 +42,7 @@ export function VerifyAndUpload() {
     });
     try {
       await axios
-        .post(
+        .get(
           `api/contract-verification/fetch-verified?contractaddress=${contractAddress}`
         )
         .then(async (response) => {
