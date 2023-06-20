@@ -6,7 +6,7 @@ export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { contractAddress, files, uploadedFilesFolderUrl } = req.body;
+  const { contractAddress, files, uploadedUrl } = req.body;
   const chainId = "91002"; // this value is hard coded as of now, it might change in the future
 
   try {
@@ -37,7 +37,7 @@ export default async function verifyContract(
             contractAddress,
             chainID: chainId,
             isVerified: true,
-            filesUploadedURL: uploadedFilesFolderUrl,
+            UPLOADEDURL: uploadedUrl,
           },
         });
       } catch (error) {

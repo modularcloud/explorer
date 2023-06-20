@@ -12,14 +12,14 @@ export function VerifyAndUpload() {
     contractAddress: typeof contractAddress;
     chainId: string;
     files: Record<string, any>;
-    uploadedFilesFolderUrl: string;
+    uploadedUrl: string;
   };
 
   const data: ContractData = {
     contractAddress: contractAddress,
     chainId: "91002",
     files: {},
-    uploadedFilesFolderUrl: "",
+    uploadedUrl: "",
   };
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -124,12 +124,7 @@ export function VerifyAndUpload() {
       );
 
       if (getImageUploadUrl.status === 200) {
-        const extractedFolderUrl = getImageUploadUrl.data.url
-          .split("?")[0]
-          .split("/");
-        data.uploadedFilesFolderUrl = extractedFolderUrl
-          .slice(0, extractedFolderUrl.length - 1)
-          .join("/");
+        data.uploadedUrl = getImageUploadUrl.data.url.split("?")[0];
         const uploadImage = await axios.put(getImageUploadUrl.data.url, file, {
           headers: {
             "Content-Type": "multipart/form-data",
