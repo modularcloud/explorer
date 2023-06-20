@@ -22,5 +22,5 @@ model Verification {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   verificationStatus  VerificationStatus
-  filesUploadedURL         String   
+  uploadedUrl        String   
 }

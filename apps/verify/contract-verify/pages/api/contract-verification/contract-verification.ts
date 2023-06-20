@@ -37,7 +37,7 @@ export default async function verifyContract(
             contractAddress,
             chainID: chainId,
             isVerified: true,
-            UPLOADEDURL: uploadedUrl,
+            uploadedUrl: uploadedUrl,
           },
         });
       } catch (error) {
