@@ -1,0 +1,27 @@
+{
+  "extends": "tsconfig/nextjs.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"],
+      "apps/*": ["apps/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "jest.config.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
