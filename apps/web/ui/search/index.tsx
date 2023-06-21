@@ -72,11 +72,16 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             <input
               ref={searchInput}
               onChange={(event: any) =>
-                router.prefetch(`/${option}/search/${event.target.value.trim()}`)
+                router.prefetch(
+                  `/${option}/search/${event.target.value.trim()}`
+                )
               }
               onKeyDown={(event: any) => {
-                if ((event.code === "Enter" || event.code === "NumpadEnter") && event.target.value.trim() !== "") {
-                  startTransition(() => setIsSearching(true))
+                if (
+                  (event.code === "Enter" || event.code === "NumpadEnter") &&
+                  event.target.value.trim() !== ""
+                ) {
+                  startTransition(() => setIsSearching(true));
                   router.push(`/${option}/search/${event.target.value.trim()}`);
                 }
               }}
@@ -86,9 +91,14 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             />
             <button
               onClick={() => {
-                if (searchInput.current && searchInput.current.value.trim() !== "") {
-                  startTransition(() => setIsSearching(true))
-                  router.push(`/${option}/search/${searchInput.current.value.trim()}`);
+                if (
+                  searchInput.current &&
+                  searchInput.current.value.trim() !== ""
+                ) {
+                  startTransition(() => setIsSearching(true));
+                  router.push(
+                    `/${option}/search/${searchInput.current.value.trim()}`
+                  );
                 }
               }}
               className="flex items-center px-3"

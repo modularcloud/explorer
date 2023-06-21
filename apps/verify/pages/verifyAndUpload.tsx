@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 
-export function VerifyAndUpload() {
+export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
 
@@ -119,7 +119,7 @@ export function VerifyAndUpload() {
     try {
       const getImageUploadUrl = await axios.get(
         `api/file-upload/generateurl?file=${
-          file.name ?? `${contractAddress + "_sourcefiles.zip"}`
+          "name" in file ? file.name : `${contractAddress + "_sourcefiles.zip"}`
         }&contractaddress=${contractAddress}`
       );
 
