@@ -21,6 +21,8 @@ import {
   OwnerResponseSchema,
   CollectionResponse,
   CollectionResponseSchema,
+  VerificationResponseSchema,
+  VerificationResponse
 } from "./schemas";
 
 declare global {
