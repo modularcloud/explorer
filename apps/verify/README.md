@@ -39,3 +39,77 @@ To apply pending migrations to the database, run:
 ```bash
 npx prisma migrate deploy
 ```
+
+## API
+
+### Contract Verification
+
+This documentation provides details on the two key API endpoints included within the contract verification system. These endpoints allow for the verification and retrieval of smart contracts, providing developers a way to check and validate their contracts.
+
+**/api/contract-verification**
+
+Request method:
+POST
+
+Description:
+This endpoint is used to verify a smart contract. The verification is done by making an API call to a Sourcify service (or a localhost if no Sourcify URL is provided in the environment variables). Depending on the response from this service, a record is created in the database that stores the verification status of the contract.
+
+Request Body:
+```json
+{
+  "contractAddress": "string",
+  "files": "Object",
+  "uploadedUrl": "string"
+}
+```
+
+* contractAddress: The Ethereum address of the contract you want to verify.
+* files: The contract source files.
+* uploadedUrl: The URL where the contract was uploaded.
+
+Responses:
+* 200 OK: The contract was verified successfully. The response body will contain data from the Sourcify service.
+* 500 Internal Server Error: If the chainId isn't available for verification, or if there's an error while creating a record in the database, a 500 error will be returned along with an error message.
+
+**/api/fetch-verified**
+
+Request method:
+GET
+
+Description:
+This endpoint is used to check if a contract has been previously verified.
+
+Query parameters:
+* contractaddress: The Ethereum address of the contract whose verification status you want to fetch.
+
+Responses:
+* 200 OK: The operation was successful. The response body will contain the verification data for the contract. If no contract is found with the provided address, { "isVerified": false } will be returned.
+* 500 Internal Server Error: If there's an error while querying the database, a 500 error will be returned along with an error message.
+
+### S3 File Upload
+
+This documentation provides details on the two key API endpoints included within the S3 file upload system. These endpoints enable the generation of an S3 URL, which can be used to upload a file to an Amazon S3 bucket.
+
+**/api/file-upload/generateurl**
+
+Request method:
+GET
+
+Description:
+This endpoint is used to generate an S3 URL for a specific file. The generated URL can be used to upload a file to an Amazon S3 bucket.
+
+Query parameters:
+* file: The name of the file for which you want to generate an S3 URL.
+* contractaddress: The Ethereum address of the contract to which the file belongs.
+
+Responses:
+* 200 OK: The operation was successful. The response body will contain the generated S3 URL.
+* 400 Bad Request: If the file or contractaddress parameters are not provided, a 400 error will be returned along with an error message.
+
+**/api/file-upload/s3file-upload**
+
+Request method:
+This is not an API endpoint, but a function that is used by the generateurl endpoint to generate an S3 URL.
+
+Description:
+This function takes in a file name and a contract address, combines them to create a file address, and then uses AWS S3 SDK to generate a signed URL that can be used to upload the file to an S3 bucket.
