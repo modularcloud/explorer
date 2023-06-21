@@ -133,3 +133,9 @@ export const CollectionResponseSchema = z.object({
   nextToken: z.string().optional(),
 });
 export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
+
+export const VerificationResponseSchema = z.object({
+  verified: z.boolean(),
+});
+export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
+
