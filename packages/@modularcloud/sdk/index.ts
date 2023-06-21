@@ -432,7 +432,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       },
       isContractVerified: async (networkId: string, address: string) => {
         const response = await fetch(
-          `${baseUrl}/api/contract-verification/fetch-verified?contractaddress=${address}&readfiles=${readFiles}`
+          `${baseUrl}/api/contract-verification/fetch-verified?contractaddress=${address}`
         );
 
         if (!response.ok) {
@@ -444,23 +444,18 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         return result; // result is now of type VerificationResponse and properly type-checked
       },
       
-      verifyContract: async (/* parameters here */) => {
+      getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
-          `${baseUrl}/api/contract-verification/verify-contract`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ /* parameters here */ }),
-          }
+          `${baseUrl}/${normalizeNetworkId(networkId)}/contract-verification/source/${address}`
         );
 
         if (!response.ok) {
-          throw new Error("Failed to verify contract");
+          throw new Error("Failed to fetch verified contract source");
         }
 
         const json = await response.json();
-        const result = VerificationResponseSchema.parse(json.result); // Use the schema to validate the data
-        return result; // result is now of type VerificationResponse and properly type-checked
+        const result = VerificationResponseSchema.parse(json.result);
+        return result;
       }
     },
   };
