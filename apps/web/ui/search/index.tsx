@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, startTransition } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
 import { OptionGroups } from "../../lib/utils";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import SvgChevronDown from "../icons/ChevronDown";
 import SvgSearchOff from "../icons/SearchOff";
 import SvgCubesOn from "../icons/CubesOn";
+import SvgSpinner from "../icons/Spinner";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -19,6 +20,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
   const [option, setOption] = useState(
     defaultValue ?? Object.values(optionGroups)[0][0].id
   );
+  const [isSearching, setIsSearching] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
   return (
     <Popover.Root open={false} onOpenChange={() => console.log("opened")}>
@@ -70,11 +72,18 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             <input
               ref={searchInput}
               onChange={(event: any) =>
-                router.prefetch(`/${option}/search/${event.target.value}`)
+                router.prefetch(
+                  `/${option}/search/${event.target.value.trim()}`
+                )
               }
               onKeyDown={(event: any) => {
-                if (event.code === "Enter" || event.code === "NumpadEnter")
-                  router.push(`/${option}/search/${event.target.value}`);
+                if (
+                  (event.code === "Enter" || event.code === "NumpadEnter") &&
+                  event.target.value.trim() !== ""
+                ) {
+                  startTransition(() => setIsSearching(true));
+                  router.push(`/${option}/search/${event.target.value.trim()}`);
+                }
               }}
               className="placeholder:text-gray mx-3 w-full py-[0.3125rem] outline-none"
               type="text"
@@ -82,12 +91,19 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
             />
             <button
               onClick={() => {
-                if (searchInput.current)
-                  router.push(`/${option}/search/${searchInput.current.value}`);
+                if (
+                  searchInput.current &&
+                  searchInput.current.value.trim() !== ""
+                ) {
+                  startTransition(() => setIsSearching(true));
+                  router.push(
+                    `/${option}/search/${searchInput.current.value.trim()}`
+                  );
+                }
               }}
               className="flex items-center px-3"
             >
-              <SvgSearchOff />
+              {isSearching ? <SvgSpinner /> : <SvgSearchOff />}
             </button>
           </div>
         </div>

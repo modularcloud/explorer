@@ -121,6 +121,32 @@ export async function PaginationExtract(
       holders,
     };
   }
+  if (collection === "owners") {
+    const [address, id] = value.split("-");
+    const owners = await mc.evm.listNFTOwners(
+      metadata.network.id,
+      address,
+      id,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      owners,
+    };
+  }
+  if (collection === "collection") {
+    const collection = await mc.evm.listNFTCollection(
+      metadata.network.id,
+      value,
+      30,
+      nextToken
+    );
+    return {
+      value,
+      collection,
+    };
+  }
 }
 
 export const PaginationLoader = createLoader()

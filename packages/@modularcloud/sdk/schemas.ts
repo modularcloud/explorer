@@ -107,3 +107,29 @@ export const BlobResponseSchema = z.object({
   nextToken: z.string().optional(),
 });
 export type BlobResponse = z.infer<typeof BlobResponseSchema>;
+
+export const OwnerSchema = z.object({
+  address: z.string(),
+  balance: z.object({
+    tokenId: z.string(),
+    balance: z.string(),
+  }),
+});
+export type Owner = z.infer<typeof OwnerSchema>;
+
+export const OwnerResponseSchema = z.object({
+  owners: OwnerSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type OwnerResponse = z.infer<typeof OwnerResponseSchema>;
+
+export const NFTSchema = z.object({
+  tokenId: z.string(),
+});
+export type NFT = z.infer<typeof NFTSchema>;
+
+export const CollectionResponseSchema = z.object({
+  tokens: NFTSchema.array(),
+  nextToken: z.string().optional(),
+});
+export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;

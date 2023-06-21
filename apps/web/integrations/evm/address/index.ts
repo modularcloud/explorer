@@ -3,8 +3,10 @@ import { createModularCloud } from "@modularcloud/sdk";
 import Web3 from "web3";
 import { z } from "zod";
 import { AssociatedTransform } from "./associated";
+import { CardTransform } from "./card";
 import { PageTransform } from "./page";
 import { RawTransform } from "./raw";
+import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
 
@@ -20,7 +22,9 @@ export async function AddressExtract(
   _q: unknown,
   metadata: EngineConfigMetadata
 ) {
-  const address = z.string().parse(_q);
+  const query = z.string().parse(_q);
+  // instead of passing the balance directly, in the future we should load the context which will pull the balance
+  const [address, balance] = query.split(":");
   if (!address || !address.match(/^\w{42}$/)) {
     throw new Error("Invalid address");
   }
@@ -39,6 +43,7 @@ export async function AddressExtract(
     contract,
     nftBalances,
     erc20Token,
+    balance,
   };
 }
 
@@ -49,4 +54,6 @@ export const AddressLoader = createLoader()
   .addTransform(AssociatedTransform)
   .addTransform(PageTransform)
   .addTransform(RawTransform)
+  .addTransform(CardTransform)
+  .addTransform(RowTransform)
   .finish();

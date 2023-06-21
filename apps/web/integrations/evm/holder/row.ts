@@ -45,7 +45,7 @@ export const RowTransform = {
       ],
       link: {
         network: metadata.network.id,
-        type: "account",
+        type: "address",
         query: data.address,
       },
     },

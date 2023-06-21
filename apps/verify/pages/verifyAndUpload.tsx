@@ -5,7 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
 import { uploadFile } from "../utils/uploadFile";
-export function VerifyAndUpload() {
+
+export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
 

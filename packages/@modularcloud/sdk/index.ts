@@ -17,6 +17,10 @@ import {
   LogResponseSchema,
   BlobResponse,
   BlobResponseSchema,
+  OwnerResponse,
+  OwnerResponseSchema,
+  CollectionResponse,
+  CollectionResponseSchema,
 } from "./schemas";
 
 declare global {
@@ -88,6 +92,19 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<LogResponse>;
+    listNFTOwners: (
+      networkId: string,
+      address: string,
+      tokenId: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<OwnerResponse>;
+    listNFTCollection: (
+      networkId: string,
+      address: string,
+      maxResults?: number,
+      nextToken?: string
+    ) => Promise<CollectionResponse>;
   };
 }
 
@@ -359,6 +376,49 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = (await response.json()) as APIResponse;
         return TxResponseSchema.parse(json.result);
+      },
+      listNFTOwners: async (
+        networkId: string,
+        address: string,
+        tokenId: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/nft/owners/${address.toLowerCase()}/${tokenId}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch owners");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return OwnerResponseSchema.parse(json.result);
+      },
+      listNFTCollection: async (
+        networkId: string,
+        address: string,
+        maxResults: number = 30,
+        nextToken?: string
+      ) => {
+        const response = await fetch(
+          `${baseUrl}/${normalizeNetworkId(
+            networkId
+          )}/nft/collection/${address.toLowerCase()}?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch collection");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return CollectionResponseSchema.parse(json.result);
       },
     },
   };
