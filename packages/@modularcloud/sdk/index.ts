@@ -420,6 +420,36 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const json = (await response.json()) as APIResponse;
         return CollectionResponseSchema.parse(json.result);
       },
+      fetchVerifiedContract: async (contractAddress: string, readFiles: boolean) => {
+        const response = await fetch(
+          `${baseUrl}/api/contract-verification/fetch-verified?contractaddress=${contractAddress}&readfiles=${readFiles}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch verified contract");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return json.result; // Adjust according to actual response structure
+      },
+      
+      verifyContract: async (/* parameters here */) => {
+        const response = await fetch(
+          `${baseUrl}/api/contract-verification/verify-contract`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ /* parameters here */ }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to verify contract");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return json.result; // Adjust according to actual response structure
+      }
     },
   };
 
