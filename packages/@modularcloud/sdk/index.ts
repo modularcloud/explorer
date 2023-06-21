@@ -441,7 +441,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
         const json = await response.json();
         const result = VerificationResponseSchema.parse(json.result); // Use the schema to validate the data
-        return result; // result is now of type VerificationResponse and properly type-checked
+        return result; 
       },
       
       getVerifiedSource: async (networkId: string, address: string) => {
