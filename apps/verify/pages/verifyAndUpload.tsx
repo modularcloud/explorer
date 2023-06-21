@@ -4,17 +4,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
-import { uploadFile } from "../utils/uploadFile";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
+
+  type VerificationStatus = "FULL" | "PARTIAL" | null;
 
   type ContractData = {
     contractAddress: typeof contractAddress;
     chainId: string;
     files: Record<string, any>;
     uploadedUrl: string;
+    verificationStatus: VerificationStatus;
   };
 
   const data: ContractData = {
@@ -22,6 +24,7 @@ export default function VerifyAndUpload() {
     chainId: "91002", // hardcoded as of now
     files: {},
     uploadedUrl: "",
+    verificationStatus: null,
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +36,7 @@ export default function VerifyAndUpload() {
   const onContractAddressChange = (event: ChangeEvent<HTMLInputElement>) => {
     setContractAddress(event.target.value.toLowerCase());
   };
-  let toastId;
+  let toastId: any;
   const onSubmit = async () => {
     if (!files) {
       toast.error("Please add files to verify");
@@ -88,10 +91,10 @@ export default function VerifyAndUpload() {
           closeOnClick: true,
         });
       });
-    return response.data.isVerified;
+    return response?.data?.isVerified;
   };
 
-  const verifyAndPost = async (zipFile) => {
+  const verifyAndPost = async (zipFile: Blob) => {
     const sourcifyResponse = await axios.post(
       process.env.SOURCIFY_URL ?? "http://localhost:5554/verify",
       {
@@ -106,7 +109,6 @@ export default function VerifyAndUpload() {
         sourcifyResponse.data.result[0].status == "perfect"
           ? "FULL"
           : "PARTIAL";
-      delete data.files;
       const verifyResult = await axios.post(
         "api/contract-verification/verify-contract",
         data
@@ -122,20 +124,47 @@ export default function VerifyAndUpload() {
     }
   };
 
+  const uploadFile = async (file: File | Blob) => {
+    try {
+      const getImageUploadUrl = await axios.get(
+        `api/file-upload/generateurl?file=${`${
+          contractAddress + "_sourcefiles.zip"
+        }`}&contractaddress=${contractAddress}`
+      );
+
+      if (getImageUploadUrl.status === 200) {
+        data.uploadedUrl = getImageUploadUrl.data.url.split("?")[0];
+        const uploadImage = await axios.put(getImageUploadUrl.data.url, file, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (uploadImage.status === 200) {
+          return getImageUploadUrl.data.url.split("?")[0];
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
   const readAndZipFiles = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<Blob>(async (resolve, reject) => {
       let zip = new JSZip();
       let zipFile;
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileContents = await readFileData(file);
-        data.files[file.name] = fileContents;
-        zip.file(file.name, file);
+      if (files) {
+        for (let i = 0; i < files?.length; i++) {
+          const file = files[i];
+          const fileContents = await readFileData(file);
+          data.files[file.name] = fileContents;
+          zip.file(file.name, file);
+        }
+        zip.generateAsync({ type: "blob" }).then(async (content) => {
+          zipFile = new Blob([content], { type: "application/zip" });
+          resolve(zipFile);
+        });
       }
-      zip.generateAsync({ type: "blob" }).then(async (content) => {
-        zipFile = new Blob([content], { type: "application/zip" });
-        resolve(zipFile);
-      });
     });
   };
 

@@ -11,29 +11,29 @@ export default async function FetchVerifiedContract(
   let contractAddress = Array.isArray(req.query.contractaddress)
     ? req.query.contractaddress[0]
     : req.query.contractaddress;
-  contractAddress = contractAddress.toLowerCase();
+  contractAddress = contractAddress?.toLowerCase();
   const readFiles = req.query.readfiles ?? null;
   if (contractAddress) {
     try {
-      const findContractAddress = await prisma.verification.findUnique({
+      const contractData = await prisma.verification.findUnique({
         where: {
           contractAddress: contractAddress,
         },
       });
-      if (findContractAddress && readFiles === "true") {
-        const url = findContractAddress.uploadedUrl;
+      if (contractData && readFiles === "true") {
+        const url = contractData.uploadedUrl;
         await axios
           .get(url, { responseType: "stream" })
           .then(async (response: AxiosResponse<any>) => {
-            await unzipAndRead(response, findContractAddress);
-            res.status(200).json(findContractAddress);
+            const data = await unzipAndRead(response, contractData);
+            res.status(200).json(data);
           })
           .catch((error: Error) => {
             console.log(error);
             res.status(500).json(error);
           });
-      } else if (findContractAddress) {
-        res.status(200).json(findContractAddress);
+      } else if (contractData) {
+        res.status(200).json(contractData);
       } else {
         res.status(200).json({ isVerified: false });
       }
@@ -46,10 +46,11 @@ export default async function FetchVerifiedContract(
 
 const unzipAndRead = (
   response: AxiosResponse<any>,
-  findContractAddress: Verification
+  contractData: Verification
 ) => {
   return new Promise((resolve, reject) => {
-    findContractAddress.files = {};
+    let data: any = { ...contractData };
+    data.files = {};
     response.data
       .pipe(unzipper.Parse())
       .on("entry", (entry: Entry) => {
@@ -62,7 +63,7 @@ const unzipAndRead = (
             content += data.toString();
           });
           entry.on("end", () => {
-            findContractAddress.files[fileName] = content;
+            data.files[fileName] = content;
           });
         } else {
           entry.autodrain();
@@ -70,8 +71,8 @@ const unzipAndRead = (
       })
       .promise()
       .then(
-        () => resolve(findContractAddress),
-        (e) => console.log("error", e)
+        () => resolve(data),
+        (e: any) => console.log("error", e)
       );
   });
 };
