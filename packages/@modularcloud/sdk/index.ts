@@ -107,6 +107,14 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<CollectionResponse>;
+    isContractVerified: (
+      networkId: string,
+      address: string
+    ) => Promise<VerificationResponse>;
+    getVerifiedSource: (
+      networkId: string,
+      address: string
+    ) => Promise<VerificationResponse>;
   };
 }
 
@@ -422,9 +430,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const json = (await response.json()) as APIResponse;
         return CollectionResponseSchema.parse(json.result);
       },
-      fetchVerifiedContract: async (contractAddress: string, readFiles: boolean) => {
+      isContractVerified: async (networkId: string, address: string) => {
         const response = await fetch(
-          `${baseUrl}/api/contract-verification/fetch-verified?contractaddress=${contractAddress}&readfiles=${readFiles}`
+          `${baseUrl}/api/contract-verification/fetch-verified?contractaddress=${address}&readfiles=${readFiles}`
         );
 
         if (!response.ok) {
