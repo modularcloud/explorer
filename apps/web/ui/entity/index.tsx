@@ -1,7 +1,9 @@
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
 import { FetchLoadArgs } from "../../lib/utils";
-import { ClientEntity } from "./client";
+import { ContextSwitcher } from "./context-switcher";
+import Overview from "./overview";
+import { Raw } from "./raw";
 
 type Props = { resourcePath: FetchLoadArgs };
 
@@ -12,6 +14,10 @@ export async function Entity({ resourcePath }: Props) {
   });
   if (!entity) return null;
 
-  // TODO: change this pattern, here and in the associated list so that server components are children
-  return <ClientEntity entity={entity} />;
+  return (
+    <ContextSwitcher
+      overview={<Overview entity={entity} />}
+      raw={<Raw entity={entity} />}
+    />
+  );
 }
