@@ -135,7 +135,7 @@ export const CollectionResponseSchema = z.object({
 export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
 
 export const VerificationResponseSchema = z.object({
-  verified: z.boolean(),
+  sourceCode: z.string(),
 });
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 
