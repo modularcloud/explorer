@@ -40,7 +40,13 @@ Prisma is an open-source database toolkit that simplifies database management, s
 
 The npx prisma generate command is used to generate the Prisma client. Prisma generates a client library based on your database schema, which provides type-safe methods for interacting with your database. This command should be executed whenever your schema changes.
 
-  
+To initialize Prisma in your project, run the following command:
+
+```bash
+
+npx prisma init
+
+```
 
 To generate the Prisma client, run the following command:
 
@@ -106,7 +112,7 @@ POST
 
 Description:
 
-This endpoint is used to verify a smart contract. The verification is done by making an API call to a Sourcify service (or a localhost if no Sourcify URL is provided in the environment variables). Depending on the response from this service, a record is created in the database that stores the verification status of the contract.
+This API endpoint is designed to handle the verification of smart contracts. The verification is done by making an API call to a Sourcify service (or a localhost if no Sourcify URL is provided in the environment variables). Depending on the response from this service, a record is created in the database that stores the verification status of the contract.
 
   
 
@@ -120,25 +126,33 @@ Request Body:
 
 "files":  "Object",
 
-"uploadedUrl":  "string"
+"uploadedUrl":  "string",
+
+"verificationStatus":  "string",
+
+"chainId":  "string"
 
 }
 
 ```
 
-  
+The body of the request must be a JSON object with the following properties:  
 
-* contractAddress: The Ethereum address of the contract you want to verify.
+* contractAddress: The address of the smart contract that needs to be verified.
 
 * files: The contract source files.
 
-* uploadedUrl: The URL where the contract was uploaded.
+* uploadedUrl: The URL where the contract source files have been uploaded.
+
+* verificationStatus: The status of the contract's verification. It can be either 'FULL' or 'PARTIAL'.
+
+* chainId: The ID of the blockchain where the contract has been deployed.
 
   
 
 Responses:
 
-* 200 OK: The contract was verified successfully. The response body will contain data from the Sourcify service.
+* 200 OK: The contract was verified successfully. The JSON response body will contain data representing the verification record created in the database.
 
 * 500 Internal Server Error: If the chainId isn't available for verification, or if there's an error while creating a record in the database, a 500 error will be returned along with an error message.
 
