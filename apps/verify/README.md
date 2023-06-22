@@ -112,7 +112,7 @@ POST
 
 Description:
 
-This API endpoint is designed to handle the verification of smart contracts. The verification is done by making an API call to a Sourcify service (or a localhost if no Sourcify URL is provided in the environment variables). Depending on the response from this service, a record is created in the database that stores the verification status of the contract.
+After the verification is done by making an API call to a Sourcify service, (or a localhost if no Sourcify URL is provided in the environment variables), this API will create a record in the database that stores the verification status of the contract.
 
   
 
