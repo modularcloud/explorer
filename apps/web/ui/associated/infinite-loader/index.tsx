@@ -9,11 +9,16 @@ import { InfiniteLoaderContext } from "./context";
 
 type Props = {
   next?: FetchLoadArgs;
+  initialState?: FetchLoadArgs[];
   children: React.ReactNode;
 };
 
-export function InfiniteLoader({ next, children }: Props) {
-  const [entityRefs, setEntityRefs] = useState<FetchLoadArgs[]>([]);
+export default function InfiniteLoader({
+  next,
+  children,
+  initialState = [],
+}: Props) {
+  const [entityRefs, setEntityRefs] = useState<FetchLoadArgs[]>(initialState);
   const [nextPage, setNextPage] = useState(next);
 
   const loadNextPage = async () => {

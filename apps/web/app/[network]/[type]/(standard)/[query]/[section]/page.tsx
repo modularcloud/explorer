@@ -6,7 +6,6 @@ import {
   getWhitelabel,
   slugify,
 } from "../../../../../../lib/utils";
-import { InfiniteLoader } from "../../../../../../ui/associated/infinite-loader";
 import { AssociatedList } from "../../../../../../ui/associated/list";
 import { ServerAssociatedEntry } from "../../../../../../ui/associated/entry/server";
 import { InfiniteLoaderEntries } from "../../../../../../ui/associated/infinite-loader/entries";
@@ -18,6 +17,7 @@ import { notFound, redirect } from "next/navigation";
 import AssociatedNotFound from "../../../../../../ui/associated/not-found";
 import { Metadata } from "next";
 import { Tabs } from "../../../../../../ui/tabs";
+import dynamic from "next/dynamic";
 
 type Props = {
   params: FetchLoadArgs & {
@@ -66,6 +66,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: entity.components.page.data.metadata.description,
     keywords: entity.components.page.data.metadata.keywords,
   };
+}
+
+function Container({
+  paginationSettings,
+  children,
+}: {
+  children: React.ReactNode;
+  paginationSettings?: { next?: FetchLoadArgs; initialState: FetchLoadArgs[] };
+}) {
+  if (paginationSettings) {
+    const InfiniteLoader = dynamic(
+      () => import("../../../../../../ui/associated/infinite-loader"),
+      { ssr: false }
+    );
+    return (
+      <InfiniteLoader
+        next={paginationSettings.next}
+        initialState={paginationSettings.initialState}
+      >
+        {children}
+      </InfiniteLoader>
+    );
+  }
+  return <>{children}</>;
 }
 
 export default async function EntityPage({ params }: Props) {
@@ -118,7 +142,7 @@ export default async function EntityPage({ params }: Props) {
 
   return (
     <>
-      <InfiniteLoader next={next}>
+      <Container paginationSettings={{ next, initialState: values }}>
         <AssociatedList
           label={label}
           tableHeader={
@@ -128,20 +152,22 @@ export default async function EntityPage({ params }: Props) {
             </Suspense>
           }
         >
-          <>
-            {values.map((value) => (
-              <Suspense
-                key={`${value.network}/${value.type}/${value.query}`}
-                fallback={<AssociatedEntryLoadingFallback />}
-              >
-                {/* @ts-expect-error Async Server Component */}
-                <ServerAssociatedEntry resourcePath={value} />
-              </Suspense>
-            ))}
-          </>
-          <InfiniteLoaderEntries />
+          {collection.type === "static" ? (
+            <>
+              {values.map((value) => (
+                <Suspense
+                  key={`${value.network}/${value.type}/${value.query}`}
+                  fallback={<AssociatedEntryLoadingFallback />}
+                >
+                  {/* @ts-expect-error Async Server Component */}
+                  <ServerAssociatedEntry resourcePath={value} />
+                </Suspense>
+              ))}
+            </>
+          ) : null}
+          {collection.type === "paginated" ? <InfiniteLoaderEntries /> : null}
         </AssociatedList>
-      </InfiniteLoader>
+      </Container>
       <Suspense>
         {/* @ts-expect-error Async Server Component */}
         <Tabs params={params} />
