@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
 import prisma from "../../../prisma/lib/prisma";
 
-export default async function verifyContract(
+export default async function persistVerified(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
