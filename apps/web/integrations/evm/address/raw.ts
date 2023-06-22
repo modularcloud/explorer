@@ -13,7 +13,7 @@ export const RawTransform = {
     typeId: "raw",
     data: {
       eth_getCode: {
-        language: "plaintext",
+        language: "md",
         content: data.code,
       },
     },
