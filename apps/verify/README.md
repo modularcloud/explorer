@@ -94,7 +94,7 @@ This documentation provides details on the two key API endpoints included within
 
   
 
-**/api/contract-verification/**
+**/api/contract-verification/verify-contract**
 
   
 
@@ -144,7 +144,7 @@ Responses:
 
   
 
-**/api/fetch-verified**
+**/api/contract-verification/fetch-verified**
 
   
 
