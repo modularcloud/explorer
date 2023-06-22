@@ -3,7 +3,10 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { uploadFile } from "@uploadcare/upload-client";
 import Web3 from "web3";
 import { z } from "zod";
-import { convertToHttpIfIpfs } from "../../../lib/utils";
+import {
+  convertToHttpIfIpfs,
+  convertToPublicHttpIfIpfs,
+} from "../../../lib/utils";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { AbiItem } from "web3-utils";
@@ -409,29 +412,38 @@ export async function NFTExtract(_q: unknown, metadata: EngineConfigMetadata) {
     tokenType === "erc1155"
       ? tokenUri.replace("{id}", Web3.utils.padLeft(tokenId, 64))
       : tokenUri;
-  const md = await fetch(convertToHttpIfIpfs(uri))
-    .then((res) => res.json())
-    .then((res) => {
-      return MetadataSchema.parse(res);
-    })
-    .then(async (res) => {
-      if (res) {
-        const fimg = await fetch(convertToHttpIfIpfs(res.image));
-        const fimgb = Buffer.from(await fimg.arrayBuffer());
-        const result = await uploadFile(fimgb, {
-          publicKey: process.env.UPLOADCARE_API_KEY as string,
-          store: "auto",
-          metadata: {
-            original: res.image,
-          },
-        });
-        return {
-          ...res,
-          image: result.cdnUrl,
-          raw: JSON.stringify(res, null, 2),
-        };
-      }
-    });
+  const md = await Promise.any([
+    fetch(convertToHttpIfIpfs(uri))
+      .then((res) => res.json())
+      .then((res) => {
+        return MetadataSchema.parse(res);
+      }),
+    fetch(convertToPublicHttpIfIpfs(uri))
+      .then((res) => res.json())
+      .then((res) => {
+        return MetadataSchema.parse(res);
+      }),
+  ]).then(async (res) => {
+    if (res) {
+      const fimg = await Promise.any([
+        fetch(convertToHttpIfIpfs(res.image)),
+        fetch(convertToPublicHttpIfIpfs(res.image)),
+      ]);
+      const fimgb = Buffer.from(await fimg.arrayBuffer());
+      const result = await uploadFile(fimgb, {
+        publicKey: process.env.UPLOADCARE_API_KEY as string,
+        store: "auto",
+        metadata: {
+          original: res.image,
+        },
+      });
+      return {
+        ...res,
+        image: result.cdnUrl,
+        raw: JSON.stringify(res, null, 2),
+      };
+    }
+  });
 
   return {
     address: contractAddress,

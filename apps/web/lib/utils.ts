@@ -9,6 +9,14 @@ export function convertToHttpIfIpfs(url: string) {
   return url;
 }
 
+// temporarily necessary because sometimes only the ipfs.io gateway works, probably won't help much
+export function convertToPublicHttpIfIpfs(url: string) {
+  if (url.startsWith("ipfs://")) {
+    return `https://ipfs.io/ipfs/${url.replace("ipfs://", "")}`;
+  }
+  return url;
+}
+
 export function decodeEvmAddressParam(address: string) {
   if (address.indexOf("000000000000000000000000") !== -1) {
     return address.replace("000000000000000000000000", "");
