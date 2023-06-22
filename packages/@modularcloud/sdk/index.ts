@@ -439,9 +439,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
           throw new Error("Failed to fetch verified contract");
         }
 
-        const json = await response.json();
-        const result = VerificationResponseSchema.parse(json.result); // Use the schema to validate the data
-        return result; 
+        const json = (await response.json()) as APIResponse;
+        return VerificationResponseSchema.parse(json.result);
       },
       
       getVerifiedSource: async (networkId: string, address: string) => {
@@ -453,9 +452,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
           throw new Error("Failed to fetch verified contract source");
         }
 
-        const json = await response.json();
-        const result = VerificationResponseSchema.parse(json.result);
-        return result;
+        const json = (await response.json()) as APIResponse;
+        return VerificationResponseSchema.parse(json.result);
       }
     },
   };
