@@ -123,7 +123,7 @@ export default function VerifyAndUpload() {
           });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         error = error.response.data.message;
       }

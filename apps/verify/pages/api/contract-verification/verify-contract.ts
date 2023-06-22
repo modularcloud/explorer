@@ -27,7 +27,6 @@ export default async function verifyContract(
   } catch (error) {
     console.log(error);
     const axiosError = error as AxiosError;
-    console.log(AxiosError);
     if (axiosError.response) {
       console.error(
         "axiosError details:",
