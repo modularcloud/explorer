@@ -179,8 +179,22 @@ Query parameters:
 * contractaddress: The Ethereum address of the contract whose verification status you want to fetch.
 * readfiles(Optional):  True or False If you want to get the data of uploadfiles as string added along with the contract verification data
 
-  
+If ```readFiles``` is ```true```, the response schema will look like this:
 
+```
+{
+  "id": "string",
+  "createdAt": "datetime",
+  "updatedAt": "datetime",
+  "verificationStatus": "string",
+  "contractAddress": "string",
+  "chainID": "string",
+  "isVerified": "boolean",
+  "uploadedUrl": "string",
+  "files": "Object"
+}
+```
+  
 Responses:
 
 * 200 OK: The operation was successful. The response body will contain the verification data for the contract. If no contract is found with the provided address, { "isVerified": false } will be returned.
