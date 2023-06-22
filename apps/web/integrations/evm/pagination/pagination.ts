@@ -17,10 +17,10 @@ export const PaginationTransform = {
         data: {
           next: data["latest"].nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:latest:${data["latest"].nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:latest:${data["latest"].nextToken}`,
+            }
             : undefined,
           values: data.latest.txs.map((transaction) => ({
             network: metadata.network.id,
@@ -48,10 +48,10 @@ export const PaginationTransform = {
           next:
             data.latestBlockNumber > 30
               ? {
-                  network: metadata.network.id,
-                  type: "pagination",
-                  query: `${data.value}:latest:${data.latestBlockNumber - 30}`,
-                }
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:latest:${data.latestBlockNumber - 30}`,
+              }
               : undefined,
           values,
         },
@@ -63,10 +63,10 @@ export const PaginationTransform = {
         data: {
           next: data["account-transfers"].nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:account-transfers:${data["account-transfers"].nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:account-transfers:${data["account-transfers"].nextToken}`,
+            }
             : undefined,
           values: data["account-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
@@ -82,10 +82,10 @@ export const PaginationTransform = {
         data: {
           next: data["account-nft-transfers"].nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:account-transfers:${data["account-nft-transfers"].nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:account-transfers:${data["account-nft-transfers"].nextToken}`,
+            }
             : undefined,
           values: data["account-nft-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
@@ -101,10 +101,10 @@ export const PaginationTransform = {
         data: {
           next: data["token-transfers"].nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:token-transfers:${data["token-transfers"].nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:token-transfers:${data["token-transfers"].nextToken}`,
+            }
             : undefined,
           values: data["token-transfers"].events.map((transfer) => ({
             network: metadata.network.id,
@@ -120,10 +120,10 @@ export const PaginationTransform = {
         data: {
           next: data["contract-logs"].nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:contract-logs:${data["contract-logs"].nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:contract-logs:${data["contract-logs"].nextToken}`,
+            }
             : undefined,
           values: data["contract-logs"].logs.map((log) => ({
             network: metadata.network.id,
@@ -139,10 +139,10 @@ export const PaginationTransform = {
         data: {
           next: data.transactions.nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:transactions:${data.transactions.nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:transactions:${data.transactions.nextToken}`,
+            }
             : undefined,
           values: data.transactions.txs.map((transaction) => ({
             network: metadata.network.id,
@@ -158,10 +158,10 @@ export const PaginationTransform = {
         data: {
           next: data.holders.nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:holders:${data.holders.nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:holders:${data.holders.nextToken}`,
+            }
             : undefined,
           values: data.holders.accountBalances.map((holder) => ({
             network: metadata.network.id,
@@ -175,11 +175,12 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:owners:${data.owners.nextToken}`,
-          },
+          next: data.owners.nextToken
+            ? {
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:owners:${data.owners.nextToken}`,
+            } : undefined,
           values: data.owners.owners.map((owner) => ({
             network: metadata.network.id,
             type: "address",
@@ -194,10 +195,10 @@ export const PaginationTransform = {
         data: {
           next: data.collection.nextToken
             ? {
-                network: metadata.network.id,
-                type: "pagination",
-                query: `${data.value}:collection:${data.collection.nextToken}`,
-              }
+              network: metadata.network.id,
+              type: "pagination",
+              query: `${data.value}:collection:${data.collection.nextToken}`,
+            }
             : undefined,
           values: data.collection.tokens.map((token) => ({
             network: metadata.network.id,
