@@ -96,25 +96,25 @@ export default function VerifyAndUpload() {
 
   const verifyAndPost = async (zipFile: Blob) => {
     try {
-      await uploadFile(zipFile);
       const sourcifyResponse = await axios.post(
-        process.env.SOURCIFY_URL ?? "http://localhost:5554/verify",
+        "api/contract-verification/verify-contract",
         {
-          address: data.contractAddress,
+          contractAddress: data.contractAddress,
           chain: data.chainId,
           files: data.files,
         }
       );
       if (sourcifyResponse.status == 200) {
+        await uploadFile(zipFile);
         data.verificationStatus =
           sourcifyResponse.data.result[0].status == "perfect"
             ? "FULL"
             : "PARTIAL";
-        const verifyResult = await axios.post(
+        const persistVerified = await axios.post(
           "api/contract-verification/persist-verified",
           data
         );
-        if (verifyResult?.status === 200) {
+        if (persistVerified?.status === 200) {
           toast.update(toastId, {
             render: "Verified Successfully",
             type: "success",
@@ -124,6 +124,9 @@ export default function VerifyAndUpload() {
         }
       }
     } catch (error) {
+      if (error.response) {
+        error = error.response.data.message;
+      }
       console.error("File Verification or ", error);
       toast.update(toastId, {
         render: ` Verification Failed ${error}`,
