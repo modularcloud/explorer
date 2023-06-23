@@ -9,13 +9,25 @@ export const RawTransform = {
     metadata,
   }: TransformInput<typeof AddressExtract>): Promise<
     TransformOutput<typeof RawComponent>
-  > => ({
-    typeId: "raw",
-    data: {
-      eth_getCode: {
-        language: "md",
-        content: data.code,
+  > => {
+    const verifiedSource: Record<string, { language: string, content: string }> = {};
+    if (data.solidity) {
+      Object.entries(data.solidity.files).forEach(([filename, file]) => {
+        verifiedSource[filename] = {
+          language: "solidity",
+          content: file as string,
+        };
+      });
+    }
+    return {
+      typeId: "raw",
+      data: {
+        eth_getCode: {
+          language: "md",
+          content: data.code,
+        },
+        ...verifiedSource,
       },
-    },
-  }),
+    }
+  },
 };

@@ -30,6 +30,13 @@ export const SidebarTransform = {
         payload: String(data.erc20Token.decimals),
       };
     }
+    const contractMetadata: Record<string, Value> = {};
+    if (data.contract) {
+      contractMetadata.Verification = {
+        type: "standard",
+        payload: data.verified?.verificationStatus ?? "Not Verified",
+      };
+    }
     const typeMap = {
       erc20: "ERC20",
       erc721: "ERC721",
@@ -51,6 +58,7 @@ export const SidebarTransform = {
               : "Externally Owned Account",
           },
           ...erc20Metadata,
+          ...contractMetadata,
           ...nftInventoryMetadata,
         },
         asyncAttributes: [
