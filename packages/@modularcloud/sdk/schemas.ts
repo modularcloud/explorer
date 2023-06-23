@@ -135,9 +135,18 @@ export const CollectionResponseSchema = z.object({
 export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
 
 export const VerificationResponseSchema = z.object({
-  sourceCode: z.record(z.string()),
+  id: z.string(),
+  createdAt: z.string(), // Consider using z.date() if the string represents an ISO date
+  updatedAt: z.string(), // Consider using z.date() if the string represents an ISO date
+  verificationStatus: z.string(),
+  contractAddress: z.string(),
+  chainID: z.string(),
   isVerified: z.boolean(),
+  uploadedUrl: z.string(),
+  files: z.record(z.unknown()), // replace z.unknown() with more specific type if known
+  sourceCode: z.record(z.string()),
 });
+
 
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 
