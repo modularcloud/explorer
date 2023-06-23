@@ -143,10 +143,8 @@ export const VerificationResponseSchema = z.object({
   chainID: z.string(),
   isVerified: z.boolean(),
   uploadedUrl: z.string(),
-  files: z.record(z.unknown()), // replace z.unknown() with more specific type if known
-  sourceCode: z.record(z.string()),
+  files: z.record(z.unknown()), // replace z.unknown() with more specific type
 });
-
 
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 

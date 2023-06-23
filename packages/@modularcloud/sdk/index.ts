@@ -430,20 +430,18 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const json = (await response.json()) as APIResponse;
         return CollectionResponseSchema.parse(json.result);
       },
-      isContractVerified: async (networkId: string, address: string) => {
-        const response = await fetch(
+      isContractVerified: async (networkId: string, address: string): Promise<VerificationResponse> => {
+        const response = await global.fetch(
           `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
         );
-      
+  
         if (!response.ok) {
           throw new Error("Failed to fetch verified contract");
         }
-      
+  
         const json = (await response.json()) as APIResponse;
-        const verificationResponse = VerificationResponseSchema.parse(json.result);
-      
-        return verificationResponse.isVerified;
-      },      
+        return VerificationResponseSchema.parse(json.result);
+      },
       
       getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
