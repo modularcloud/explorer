@@ -21,6 +21,8 @@ import {
   OwnerResponseSchema,
   CollectionResponse,
   CollectionResponseSchema,
+  VerificationResponseSchema,
+  VerificationResponse
 } from "./schemas";
 
 declare global {
@@ -105,6 +107,14 @@ export interface ModularCloud {
       maxResults?: number,
       nextToken?: string
     ) => Promise<CollectionResponse>;
+    isContractVerified: (
+      networkId: string,
+      address: string
+    ) => Promise<VerificationResponse>;
+    getVerifiedSource: (
+      networkId: string,
+      address: string
+    ) => Promise<VerificationResponse>;
   };
 }
 
@@ -420,6 +430,31 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const json = (await response.json()) as APIResponse;
         return CollectionResponseSchema.parse(json.result);
       },
+      isContractVerified: async (networkId: string, address: string): Promise<VerificationResponse> => {
+        const response = await global.fetch(
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch verified contract");
+        }
+  
+        const json = (await response.json()) as APIResponse;
+        return VerificationResponseSchema.parse(json.result);
+      },
+      
+      getVerifiedSource: async (networkId: string, address: string) => {
+        const response = await fetch(
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}/readFiles=true`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch verified contract source");
+        }
+
+        const json = (await response.json()) as APIResponse;
+        return VerificationResponseSchema.parse(json.result);
+      }
     },
   };
 
