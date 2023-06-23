@@ -175,11 +175,10 @@ function speak() public view returns(string memory) {
 },
 }
 
-
-// Define the VerificationResponseSchema
 const VerificationResponseSchema = z.object({
-  files: z.record(z.string())
+  sourceCode: z.string()
 });
+
 
 describe('ModularCloud', () => {
   let cloud;
@@ -239,4 +238,12 @@ describe('ModularCloud', () => {
       'Failed to fetch verified contract source'
     );    
   });
+
+  it('should validate the verification response schema correctly', () => {
+    const validationResult = VerificationResponseSchema.safeParse(verificationResponse.result);
+  
+    expect(validationResult.success).toBe(true);
+    expect(validationResult.data).toEqual(verificationResponse.result);
+  });  
+  
 });
