@@ -135,7 +135,8 @@ export const CollectionResponseSchema = z.object({
 export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
 
 export const VerificationResponseSchema = z.object({
-  sourceCode: z.string(),
+  sourceCode: z.record(z.string()), // Use `z.record` to allow multiple file names and their contents
 });
+
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 
