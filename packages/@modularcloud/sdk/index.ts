@@ -445,7 +445,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       
       getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
-          `https://contract-verification.vercel.app/${normalizeNetworkId(networkId)}/contract-verification/source/${address}`
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}/readFiles=true`
         );
 
         if (!response.ok) {

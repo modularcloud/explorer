@@ -1,5 +1,6 @@
 const { createModularCloud } = require('@modularcloud/sdk');
 const { z } = require('zod');
+const { fetchMock } = require('jest-fetch-mock');
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -7,7 +8,16 @@ global.fetch = jest.fn();
 // Sample responses
 const verificationResponse = {
   result: {
-    sourceCode: `// SPDX-License-Identifier: MIT
+    id: '17',
+    createdAt: 'Thu Jun 22 2023 21:49:10 GMT-0400',
+    updatedAt: 'Thu Jun 22 2023 21:49:10 GMT-0400',
+    verificationStatus: 'verified',
+    contractAddress: '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40',
+    chainID: '91002',
+    isVerified: true,
+    uploadedUrl: 'https://verified-contracts.s3.us-west-2.amazonaws.com/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40_sourcefiles.zip',
+    files: {
+      'Caldera.sol': `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 contract HelloWorld {
@@ -22,8 +32,9 @@ function speak() public view returns(string memory) {
     return saySomething;
 }
 
-}
-{
+}`
+,
+      'metadata.json': `{
   "compiler": {
     "version": "0.8.18+commit.87f61d96"
   },
@@ -87,12 +98,22 @@ function speak() public view returns(string memory) {
   },
   "version": 1
 }`
-},
-}
+    }
+  }
+};
 
 const sourceResponse = {
   result: {
-    sourceCode: `// SPDX-License-Identifier: MIT
+    id: '17',
+    createdAt: 'Thu Jun 22 2023 21:49:10 GMT-0400',
+    updatedAt: 'Thu Jun 22 2023 21:49:10 GMT-0400',
+    verificationStatus: 'verified',
+    contractAddress: '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40',
+    chainID: '91002',
+    isVerified: true,
+    uploadedUrl: 'https://verified-contracts.s3.us-west-2.amazonaws.com/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40_sourcefiles.zip',
+    files: {
+      'Caldera.sol': `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 contract HelloWorld {
@@ -107,8 +128,9 @@ function speak() public view returns(string memory) {
     return saySomething;
 }
 
-}
-{
+}`
+,
+      'metadata.json': `{
   "compiler": {
     "version": "0.8.18+commit.87f61d96"
   },
@@ -172,38 +194,55 @@ function speak() public view returns(string memory) {
   },
   "version": 1
 }`
-},
-}
+    }
+  }
+};
 
 const VerificationResponseSchema = z.object({
-  sourceCode: z.string()
+  id: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  verificationStatus: z.string(),
+  contractAddress: z.string(),
+  chainID: z.string(),
+  isVerified: z.boolean(),
+  uploadedUrl: z.string(),
+  files: z.record(z.string())
 });
-
 
 describe('ModularCloud', () => {
   let cloud;
+  let originalFetch;
 
   beforeEach(() => {
     cloud = createModularCloud('https://contract-verification.vercel.app');
-  });
+    global.fetch = jest.fn().mockResolvedValue({
+      json: () => Promise.resolve(verificationResponse),
+      ok: true
+    });
+  });  
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
+  });  
 
   it('should verify contract correctly', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: jest.fn().mockResolvedValueOnce(verificationResponse)
-    });
-
+    jest.spyOn(global, 'fetch').mockReturnValueOnce(Promise.resolve({
+      json: () => Promise.resolve(verificationResponse),
+      ok: true
+    }));
+  
+    const { files } = verificationResponse.result;
+    const expectedResponse = { files };
+  
     const result = await cloud.evm.isContractVerified('91002', '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40');
-
-    expect(result).toEqual({ sourceCode: verificationResponse.result.sourceCode });
+  
+    expect(result.files).toEqual(expectedResponse.files);
     expect(fetch).toHaveBeenCalledWith(
       'https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40'
-    );
-  });
+      );
+    });
+  
 
   it('should fail to verify contract with error', async () => {
     fetch.mockResolvedValueOnce({
@@ -216,20 +255,23 @@ describe('ModularCloud', () => {
   });
 
   it('should fetch verified source correctly', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: jest.fn().mockResolvedValueOnce(sourceResponse)
+    jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+      json: () => Promise.resolve(sourceResponse),
+      ok: true
     });
+  
+    const { files } = sourceResponse.result;
+    const expectedResponse = { files };
   
     const result = await cloud.evm.getVerifiedSource('91002', '0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40');
   
-    expect(result).toEqual({ sourceCode: sourceResponse.result.sourceCode });
+    expect(result.files).toEqual(expectedResponse.files);
     expect(fetch).toHaveBeenCalledWith(
       'https://contract-verification.vercel.app/91002/contract-verification/source/0x90CD9B9f69d1dB3F66DD209784c90b92B0157B40'
     );
   });  
 
-  it('should fail to fetch verified source with error', async () => {
+      it('should fail to fetch verified source with error', async () => {
     fetch.mockResolvedValueOnce({
       ok: false
     });
@@ -245,5 +287,4 @@ describe('ModularCloud', () => {
     expect(validationResult.success).toBe(true);
     expect(validationResult.data).toEqual(verificationResponse.result);
   });  
-  
 });
