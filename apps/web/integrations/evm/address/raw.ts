@@ -10,7 +10,10 @@ export const RawTransform = {
   }: TransformInput<typeof AddressExtract>): Promise<
     TransformOutput<typeof RawComponent>
   > => {
-    const verifiedSource: Record<string, { language: string, content: string }> = {};
+    const verifiedSource: Record<
+      string,
+      { language: string; content: string }
+    > = {};
     if (data.solidity) {
       Object.entries(data.solidity.files).forEach(([filename, file]) => {
         verifiedSource[filename] = {
@@ -28,6 +31,6 @@ export const RawTransform = {
         },
         ...verifiedSource,
       },
-    }
+    };
   },
 };
