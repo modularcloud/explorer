@@ -3,18 +3,15 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion'
 
 import { GridPattern } from '@/components/GridPattern'
 import { Heading } from '@/components/Heading'
-import { ChatBubbleIcon } from '@/components/icons/ChatBubbleIcon'
-import { EnvelopeIcon } from '@/components/icons/EnvelopeIcon'
-import { UserIcon } from '@/components/icons/UserIcon'
-import { UsersIcon } from '@/components/icons/UsersIcon'
+import { PackageIcon } from './icons/PackageIcon'
 
 const resources = [
   {
-    href: '/contacts',
-    name: 'Contacts',
+    href: '/evm',
+    name: 'EVM',
     description:
-      'Learn about the contact model and how to create, retrieve, update, delete, and list contacts.',
-    icon: UserIcon,
+      'Learn about how to access indexed EVM data.',
+    icon: PackageIcon,
     pattern: {
       y: 16,
       squares: [
@@ -24,42 +21,17 @@ const resources = [
     },
   },
   {
-    href: '/conversations',
-    name: 'Conversations',
+    href: '/metrics',
+    name: 'Metrics',
     description:
-      'Learn about the conversation model and how to create, retrieve, update, delete, and list conversations.',
-    icon: ChatBubbleIcon,
+      'Learn about how to access chain metrics.',
+    icon: PackageIcon,
     pattern: {
       y: -6,
       squares: [
         [-1, 2],
         [1, 3],
       ],
-    },
-  },
-  {
-    href: '/messages',
-    name: 'Messages',
-    description:
-      'Learn about the message model and how to create, retrieve, update, delete, and list messages.',
-    icon: EnvelopeIcon,
-    pattern: {
-      y: 32,
-      squares: [
-        [0, 2],
-        [1, 4],
-      ],
-    },
-  },
-  {
-    href: '/groups',
-    name: 'Groups',
-    description:
-      'Learn about the group model and how to create, retrieve, update, delete, and list groups.',
-    icon: UsersIcon,
-    pattern: {
-      y: 22,
-      squares: [[0, 1]],
     },
   },
 ]
@@ -144,8 +116,8 @@ function Resource({ resource }) {
 export function Resources() {
   return (
     <div className="my-16 xl:max-w-none">
-      <Heading level={2} id="resources">
-        Resources
+      <Heading level={2} id="apis">
+        APIs
       </Heading>
       <div className="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 dark:border-white/5 sm:grid-cols-2 xl:grid-cols-4">
         {resources.map((resource) => (
