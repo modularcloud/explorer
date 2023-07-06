@@ -12,15 +12,15 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an account address, returns balance of the ERC20/ERC721/ERC1155 token this address own and the native token balance.
+    Given an account address, returns balance of the `erc20`, `erc721`, `erc1155` token this address owns and the native token balance.
 
     ### Parameters
 
     <Properties>
       <Property name="tokenType" type="string">
-        Optional. If not specified, the defautl is ERC20.
+        Optional. If not specified, the default is ERC20.
       </Property>
-      <Property name="maxResults" type="integer">
+      <Property name="maxResults" type="number">
         Optional. If not specified, the default is 30.
       </Property>
       <Property name="nextToken" type="string">
@@ -31,28 +31,28 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     ### Results
     <Properties>
           <Property name="tokenType" type="string">
-            String indicating ERC20, ERC721, or ERC1155.
+            String indicating `erc20`, `erc721`, `erc1155`.
           </Property>
-          <Property name="balance" type="string">
+          <Property name="balance" type="object">
             Balance metadata for the token query.
           </Property>
-          <Property name="token {address}" type="string">
+          <Property name="token.address" type="string">
             Confirmation of the inputted address of the token.
           </Property>
-          <Property name="token {name}" type="string">
-            The full name of the token contract type.
+          <Property name="token.name" type="string">
+            The full name of the token.
           </Property>
-          <Property name="token {symbol}" type="string">
+          <Property name="token.symbol" type="string">
             The ticker symbol for the token name.
           </Property>
-          <Property name="token {decimals}" type="int">
+          <Property name="token.decimals" type="number">
             The number of significant figures used in this token's ledger of balances.
           </Property>
-          <Property name="balance {value}" type="string">
-            Stringified representation of the address balance in WZBC.
+          <Property name="balance.balance.value" type="string">
+            The balance of the token held by the account address.
           </Property>
-           <Property name="nativeTokenBalance" type="int">
-            EXPLANATION NEEDED
+           <Property name="nativeTokenBalance" type="number">
+            The balance of the chain's native token.
           </Property>
         </Properties>
 
@@ -60,10 +60,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="/token-balances/:account-address?tokenType=<token-type>">
+    <CodeGroup title="Request Example" tag="GET" label="/token-balances/:account-address">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/token-balances/0x91affdc81adb827e47449d730df40737241972bc
+    curl -G https://{base-url}/{chainId}/token-balances/0x91affdc81adb827e47449d730df40737241972bc
     ```
 
     ```js
@@ -124,15 +124,18 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given a token address, returns a list of ERC20 token events.
+    Given a token address, returns a list of ERC20 token events. 
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
+        <Property name="nextToken" type="string">
+        Optional.
+      </Property>
     </Properties>
 
     ### Results
@@ -142,16 +145,16 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The type of transaction event that occured.
           </Property>
           <Property name="transactionHash" type="string">
-            The stringified hash of the transaction.
+            The hash of the transaction.
           </Property>
-          <Property name="logIndex" type="int">
-            Position of the transaction in the block's index.
+          <Property name="logIndex" type="number">
+            Position of the log in the block.
           </Property>
-          <Property name="blockHeight" type="int">
-            The block in which the transaction was hashed.
+          <Property name="blockHeight" type="number">
+            The block in which the transaction was included.
           </Property>
           <Property name="nextToken" type="string">
-            EXPLANATION NEEDED
+            The starting place for the next batch of results in a paginated request.
           </Property>
         </Properties>
 
@@ -162,7 +165,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /token-events/<token-address>?maxResults=<max-results>&nextToken=<next-token>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/token-events/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
+    curl -G https://{base-url}/{chainId}/token-events/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
@@ -221,12 +224,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an account address, returns a list of an account's transaction events.
+    Given an account address, returns a list of its transaction events.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
@@ -239,16 +242,16 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The type of transaction event that occured.
           </Property>
           <Property name="transactionHash" type="string">
-            The stringified hash of the transaction.
+            Hash of the transaction.
           </Property>
-          <Property name="logIndex" type="int">
+          <Property name="logIndex" type="number">
             Position of the transaction in the block's index.
           </Property>
-          <Property name="blockHeight" type="int">
+          <Property name="blockHeight" type="number">
             The block in which the transaction was hashed.
           </Property>
           <Property name="nextToken" type="string">
-            EXPLANATION NEEDED
+            The starting place for the next batch of results in a paginated request.
           </Property>
         </Properties>
 
@@ -259,7 +262,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /account-events/<account-address>?maxResults=<max-results>&nextToken=<next-token>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/account-events/0xfaf045a4d1087cc233163ef27f10e9c79803a343?maxResults=2
+    curl -G https://{base-url}/{chainId}/account-events/0xfaf045a4d1087cc233163ef27f10e9c79803a343?maxResults=2
     ```
 
     ```js
@@ -318,7 +321,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Returns a basic description of the token's high level contract properties.
+    Given a contract address, returns information about its token. Returns `null` if the address is not a contract.
 
     ### Parameters
 
@@ -328,7 +331,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="type" type="string">
-            The ERC token contract type.
+            Supported tokens are `erc20`, `erc721`, or `erc1155`. If the contract does not conform to any of these standards, it will return `na`.
           </Property>
           <Property name="name" type="string">
             The full name of the token contract type.
@@ -336,7 +339,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           <Property name="symbol" type="string">
             The ticker symbol for the token name.
           </Property>
-          <Property name="decimals" type="int">
+          <Property name="decimals" type="number">
             The number of significant figures used in this token's ledger of balances.
           </Property>
           <Property name="address" type="string">
@@ -351,7 +354,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /token/:token-address">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/token/0x027ec8e138edfb9b2548104872ff86531337b677
+    curl -G https://{base-url}/{chainId}/token/0x027ec8e138edfb9b2548104872ff86531337b677
     ```
 
     ```js
@@ -402,12 +405,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an holder address, returns a list of all account addresses and associated balances.
+    Given an token address, returns a list of all holder addresses and associated balances.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
@@ -420,7 +423,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             An address attached to an account, listed by [INSERT SORT RULE] first.
           </Property>
           <Property name="balance" type="string">
-            The balance of the preceding address.
+            The balance of the address.
           </Property>
         </Properties>
 
@@ -431,7 +434,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /holder-balances/<token-address>?maxResults=<max-results>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/holder-balances/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
+    curl -G https://{base-url}/{chainId}/holder-balances/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
@@ -486,12 +489,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an holder address, returns a list of all account addresses and associated balances.
+    Returns all transactions created by an address.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
@@ -504,7 +507,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The hash of the transaction.
           </Property>
           <Property name="blockNumber" type="string">
-            Stringified block number which contains the transaction above.
+            The hex-encoded block height of the transaction.
           </Property>
         </Properties>
 
@@ -515,7 +518,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /transactions/<account-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/transactions/0x8f19acb3a9aa25860e58aa425ceaabc485c4433a
+    curl -G https://{base-url}/{chainId}/transactions/0x8f19acb3a9aa25860e58aa425ceaabc485c4433a
     ```
 
     ```js
@@ -565,17 +568,17 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 
 ---
 
-## List Transactions {{ tag: 'GET', label: '/transactions' }}
+## List Latest Transactions {{ tag: 'GET', label: '/transactions' }}
 
 <Row>
   <Col>
 
-    Given provider and chainID, returns transactions sorted by block number.
+    Returns transactions sorted by block number in descending order.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
@@ -588,10 +591,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The hash of the transaction.
           </Property>
           <Property name="blockNumber" type="string">
-            Stringified block number which contains the transaction above.
+            Block number which contains the transaction above.
           </Property>
           <Property name="blockTime" type="string">
-            Stringified hash of when the block was confirmed.
+            The timestamp of the block in which the transaction was included.
           </Property>
         </Properties>
 
@@ -602,7 +605,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /transactions?maxResults=<max-results>&nextToken=<next-token>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/clo/1/transactions
+    curl -G https://{base-url}/{chainId}/transactions
     ```
 
     ```js
@@ -654,12 +657,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given provider, chainID and contract address, returns logs sorted by block time.
+    Given the contract address, returns logs sorted by block time.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
         </Property>
     </Properties>
@@ -673,8 +676,8 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           <Property name="logIndex" type="string">
             Position of the transaction in the block's index.
           </Property>
-          <Property name="blockHeight" type="int">
-            Stringified hash of when the block was confirmed.
+          <Property name="blockHeight" type="number">
+            Hash of when the block was confirmed.
           </Property>
         </Properties>
 
@@ -772,7 +775,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="type" type="string">
-            The token type, including ERC20, ERC721, ERC1155, or "NA" if it's another type.
+            The token type, including `erc20`, `erc721`, `erc1155`, or `na` if it's another type.
           </Property>
           <Property name="address" type="string">
             The token contract address.
@@ -789,7 +792,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /contracts/<contract-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/contracts/0xcf321c45ee5a755ee8220c3f103facc398b16f5d
+    curl -G https://{base-url}/{chainId}/contracts/0xcf321c45ee5a755ee8220c3f103facc398b16f5d
     ```
 
     ```js
@@ -838,12 +841,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given provider, chainID and NFT token address, returns a list of collections this NFT minting has. Works for ERC721 and ERC1155. Returns a 400 error if the address is not an NFT.
+    Given the NFT token address, returns a list of collections this NFT minting has. Works for ERC721 and ERC1155. Returns a 400 error if the address is not an NFT.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
         </Property>
     </Properties>
@@ -914,12 +917,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given provider, id, address and tokenId , returns a list of owners and balances. ERC721 may only have a single result in the owners array. ERC1155 may have more than one result, sorted by balance.
+    Given an address and tokenId, returns a list of owners and balances. For ERC721 it may only have a single result in the owners array. Whereas, ERC1155 may have more than one result, sorted by balance.
 
     ### Parameters
 
     <Properties>
-        <Property name="maxResults" type="integer">
+        <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
         </Property>
     </Properties>
@@ -928,10 +931,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="address" type="string">
-            The account owner address.
+            The address of the owner.
           </Property>
           <Property name="balance{tokenId}" type="string">
-            The token ticker symbol or full name.
+            The token's full name.
           </Property>
           <Property name="balance{balance}" type="string">
             The full balance of the account owner.
