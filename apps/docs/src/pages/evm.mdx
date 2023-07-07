@@ -18,13 +18,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 
     <Properties>
       <Property name="tokenType" type="string">
-        Optional. If not specified, the default is ERC20.
+        Valid values are: `erc20`, `erc721`, and `erc1155`.
       </Property>
       <Property name="maxResults" type="number">
         Optional. If not specified, the default is 30.
-      </Property>
-      <Property name="nextToken" type="string">
-        Optional.
       </Property>
     </Properties>
 
@@ -63,7 +60,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="/token-balances/:account-address">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/token-balances/0x91affdc81adb827e47449d730df40737241972bc
+    curl -G https://{baseUrl}/{chainId}/token-balances/0x91affdc81adb827e47449d730df40737241972bc
     ```
 
     ```js
@@ -105,12 +102,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 
 ---
 
-## List Token Events {{ tag: 'GET', label: '/token-events/:token-address' }}
+## List Token Transfers {{ tag: 'GET', label: '/token-transfers/:token-address' }}
 
 <Row>
   <Col>
 
-    Given a token address, returns a list of ERC20 token events. 
+    Given an ERC20 token address, return a list of token transfer events. 
 
     ### Parameters
 
@@ -120,15 +117,15 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           The returned result is sorted by blockTime from latest first.
         </Property>
         <Property name="nextToken" type="string">
-        Optional.
+          The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
       </Property>
     </Properties>
 
     ### Results
     
     <Properties>
-          <Property name="eventType" type="string">
-            The type of transaction event that occured.
+          <Property name="transferType" type="string">
+            The type of transaction transfer that occured, including `erc1155-trfr`, `erc20-trfr`, and `erc721-trfr`.
           </Property>
           <Property name="transactionHash" type="string">
             The hash of the transaction.
@@ -140,7 +137,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The block in which the transaction was included.
           </Property>
           <Property name="nextToken" type="string">
-            The starting place for the next batch of results in a paginated request.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
           </Property>
         </Properties>
 
@@ -148,10 +145,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /token-events/<token-address>?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /token-transfers/<token-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/token-events/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
+    curl -G https://{baseUrl}/{chainId}/token-transfers/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
@@ -191,12 +188,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 
 ---
 
-## List Account Events {{ tag: 'GET', label: '/account-events/:account-address' }}
+## List Account Token Transfers {{ tag: 'GET', label: '/account-transfers/:account-address' }}
 
 <Row>
   <Col>
 
-    Given an account address, returns a list of its transaction events.
+    Given an account address, returns a list of its token transfer events.
 
     ### Parameters
 
@@ -204,6 +201,9 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
+        </Property>
+        <Property name="nextToken" type="string">
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
         </Property>
     </Properties>
 
@@ -223,7 +223,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The block in which the transaction was hashed.
           </Property>
           <Property name="nextToken" type="string">
-            The starting place for the next batch of results in a paginated request.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
           </Property>
         </Properties>
 
@@ -231,10 +231,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /account-events/<account-address>?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /account-transfers/<account-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/account-events/0xfaf045a4d1087cc233163ef27f10e9c79803a343?maxResults=2
+    curl -G https://{baseUrl}/{chainId}/account-transfers/0xfaf045a4d1087cc233163ef27f10e9c79803a343?maxResults=2
     ```
 
     ```js
@@ -274,82 +274,12 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 
 ---
 
-## Describe Token {{ tag: 'GET', label: '/token/:token-address' }}
-
-<Row>
-  <Col>
-
-    Given a contract address, returns information about its token. Returns `null` if the address is not a contract.
-
-    ### Parameters
-
-    None.
-
-    ### Results
-    
-    <Properties>
-          <Property name="type" type="string">
-            Supported tokens are `erc20`, `erc721`, or `erc1155`. If the contract does not conform to any of these standards, it will return `na`.
-          </Property>
-          <Property name="name" type="string">
-            The full name of the token contract type.
-          </Property>
-          <Property name="symbol" type="string">
-            The ticker symbol for the token name.
-          </Property>
-          <Property name="decimals" type="number">
-            The number of significant figures used in this token's ledger of balances.
-          </Property>
-          <Property name="address" type="string">
-            The top level contract address of the token.
-          </Property>
-        </Properties>
-
-
-  </Col>
-  <Col sticky>
-
-    <CodeGroup title="Request Example" tag="GET" label="GET /token/:token-address">
-
-    ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/token/0x027ec8e138edfb9b2548104872ff86531337b677
-    ```
-
-    ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response Example' }}
-    {
-	  "result": {
-        "token": {
-            "type": "erc20",
-            "name": "Wrapped Ether",
-            "symbol": "WETH",
-            "decimals": 18,
-            "address": "0x027ec8e138edfb9b2548104872ff86531337b677"
-        }
-    }
-}
-    ```
-
-  </Col>
-</Row>
-
----
-
 ## List Holder Balances {{ tag: 'GET', label: '/holder-balances/:token-address' }}
 
 <Row>
   <Col>
 
-    Given an token address, returns a list of all holder addresses and associated balances.
+    Given an `erc20` token address, returns a list of all holder addresses and associated balances.
 
     ### Parameters
 
@@ -358,13 +288,16 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
         </Property>
+        <Property name="nextToken" type="string">
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
+        </Property>
     </Properties>
 
     ### Results
     
     <Properties>
           <Property name="accountAddress" type="string">
-            An address attached to an account, listed by [INSERT SORT RULE] first.
+            An address attached to an account, the returned result is sorted by balance in descending order.
           </Property>
           <Property name="balance" type="string">
             The balance of the address.
@@ -375,10 +308,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /holder-balances/<token-address>?maxResults=<max-results>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /holder-balances/<token-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/holder-balances/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
+    curl -G https://{baseUrl}/{chainId}/holder-balances/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
@@ -419,7 +352,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Returns all transactions created by an address.
+    Returns all transactions created by or otherwise engaged to/from a given address.
 
     ### Parameters
 
@@ -427,6 +360,9 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
           The returned result is sorted by blockTime from latest first.
+        </Property>
+        <Property name="nextToken" type="string">
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
         </Property>
     </Properties>
 
@@ -448,7 +384,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /transactions/<account-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/transactions/0x8f19acb3a9aa25860e58aa425ceaabc485c4433a
+    curl -G https://{baseUrl}/{chainId}/transactions/0x8f19acb3a9aa25860e58aa425ceaabc485c4433a
     ```
 
     ```js
@@ -518,10 +454,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /transactions?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /transactions">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/transactions
+    curl -G https://{baseUrl}/{chainId}/transactions?nextToken=<next-token>
     ```
 
     ```js
@@ -587,10 +523,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /contract-logs/<contract-address>?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /contract-logs/<contract-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/eclipse/91002/contract-logs/0x8e4E31C5aA6A9b00179fc7A206ef1b179e16fd2c
+    curl -G https://{baseUrl}/eclipse/91002/contract-logs/0x8e4E31C5aA6A9b00179fc7A206ef1b179e16fd2c
     ```
 
     ```js
@@ -653,7 +589,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given provider, chainID and contract address, returns contract. Return “not found” if the address is not contract.
+    Given provider, chainId and contract address, returns contract. Return “not found” if the address is not contract.
 
     ### Parameters
 
@@ -680,7 +616,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <CodeGroup title="Request Example" tag="GET" label="GET /contracts/<contract-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainId}/contracts/0xcf321c45ee5a755ee8220c3f103facc398b16f5d
+    curl -G https://{baseUrl}/{chainId}/contracts/0xcf321c45ee5a755ee8220c3f103facc398b16f5d
     ```
 
     ```js
@@ -723,6 +659,9 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
         </Property>
+        <Property name="nextToken" type="string">
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
+        </Property>
     </Properties>
 
     ### Results
@@ -737,10 +676,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /nft/collection/<contract-address>?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /nft/collection/<contract-address>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainID}/nft/collection~
+    curl -G https://{baseUrl}/{chainId}/nft/collection/0x1160982721af95351a714a483275229cca10ee54
     ```
 
     ```js
@@ -756,14 +695,16 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     ```json {{ title: 'Response Example' }}
     {
 	  "result": {
-       "tokens" : [
-				 {
-		        tokenId: "<token-id>"
-				 }
-         .
-         .
-       ]
-    }
+    "tokens": [
+      {
+        "tokenId": "0"
+      },
+      {
+        "tokenId": "1"
+      }
+    ],
+    "nextToken": ""
+  }
 }
     ```
 
@@ -793,10 +734,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           <Property name="address" type="string">
             The address of the owner.
           </Property>
-          <Property name="balance{tokenId}" type="string">
+          <Property name="balance.tokenId" type="string">
             The token's full name.
           </Property>
-          <Property name="balance{balance}" type="string">
+          <Property name="balance.balance" type="string">
             The full balance of the account owner.
           </Property>
         </Properties>
@@ -805,10 +746,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /nft/owners/<contract-address/<token-id>?maxResults=<max-results>&nextToken=<next-token>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /nft/owners/<contract-address/<token-id>">
 
     ```bash {{ title: 'cURL' }}
-    curl -G https://{base-url}/{chainID}/nft/owners~
+    curl -G https://{baseUrl}/{chainId}/nft/owners
     ```
 
     ```js
@@ -828,12 +769,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             {
                 "address": string <account-address>,
                 "balance": {
-									"tokenId": <token-id> string,
+                  "tokenId": <token-id> string,
                   "balance": <balance> string
                 }
             }
-					  .
-            .
         ],
         "nextToken": string <next-token>
     }
