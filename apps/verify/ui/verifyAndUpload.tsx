@@ -153,6 +153,8 @@ export default function VerifyAndUpload() {
           },
         });
         if (uploadFile.status === 200) {
+          // it will Get the base URL from the presigned S3 URL 
+          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned  
           return getFileUploadUrl.data.url.split("?")[0];
         }
       }
