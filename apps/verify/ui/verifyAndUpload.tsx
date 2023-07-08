@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
+import { error } from "console";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
@@ -123,6 +124,9 @@ export default function VerifyAndUpload() {
           });
         }
       }
+      else {
+           throw new Error("Error In Contract verification");
+      }
     } catch (error: any) {
       if (error.response) {
         error = error.response.data.message;
@@ -156,6 +160,9 @@ export default function VerifyAndUpload() {
           // it will Get the base URL from the presigned S3 URL 
           //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned  
           return getFileUploadUrl.data.url.split("?")[0];
+        }
+        else {
+          throw new Error("File Upload Failed");
         }
       }
     } catch (error) {
