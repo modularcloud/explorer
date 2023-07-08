@@ -64,11 +64,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -114,7 +110,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockTime from latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
           The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
@@ -145,18 +141,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /token-transfers/<token-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /token-transfers/:token-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/token-transfers/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -200,7 +192,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockTime from latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
             The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
@@ -231,18 +223,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /account-transfers/<account-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /account-transfers/:account-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/account-transfers/0xfaf045a4d1087cc233163ef27f10e9c79803a343?maxResults=2
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -286,7 +274,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockTime from latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
             The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
@@ -308,18 +296,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /holder-balances/<token-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /holder-balances/:token-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/holder-balances/0x390ac9d456c839c1796053ac903b4d0815fbd5b0?maxResults=2
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -359,7 +343,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockTime from latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
             The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
@@ -381,18 +365,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /transactions/<account-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /transactions/:account-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/transactions/0x8f19acb3a9aa25860e58aa425ceaabc485c4433a
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -432,7 +412,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockTime from latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
     </Properties>
 
@@ -445,7 +425,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           <Property name="blockNumber" type="string">
             Block number which contains the transaction above.
           </Property>
-          <Property name="blockTime" type="string">
+          <Property name="blockNumber" type="string">
             The timestamp of the block in which the transaction was included.
           </Property>
         </Properties>
@@ -461,11 +441,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -477,7 +453,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             {
                 "hash": "0x429a361bfc3c2854ab4bd7cb53d86c8038d70340a40559dd45a3e089eb5f9eb3",
                 "blockNumber": "0x44ed6",
-                "blockTime": "0x64398f44"
+                "blockNumber": "0x64398f44"
             }
         ],
         "nextToken": "0uYS4DBN2yLP8VR-g0a04QT88OOZTrlTx34Szsdl3KvaSHNgISRR3Bjt6gT370ovz_LLRdQB2QLgDf4dplYGlLXzfnQIgTw8-TTfGQ5C5_GXwtfqNSRRZllGRMhfZ-nke1VTJCav7w5c4-mvkN-HqrRlq0yXEshi8gaK3pDtsrz0p30B-jAMEzeXKbOuXL5eIHDXRTr46iIXBErz4Oug7xo-vdrhlYx_3VzZsGWkYgo8K4pNPO7hJo9gjtc7CBWFkP6UpTIs_wujg4XGUZfRm7H5xcAesty4x89oLTW56Wo5juG123JUgR4jzMAuiq9Hpqk_zf3BKZ4PC6kahlT1Xs0gvUhRixpwcvjBITD6xCDa8kWzpRhCYtGM5KnHLcLoddmu2PLWCtbhoxwT3vuMsptbLAn_9M2rql-X8BlYXgTIWnUqYfJnnowHWwPc-hBMC_3ggyr0EAuagD5EqRwCDFTvtr_Wz-7pOJbP2enbgLJFXOzQ_XbKW64yhYkPhWE1m5rxlffrt-rvEpYV5ksIH6An69u5EWHGlW5boY601d3pmyk_hQBakzAQXtpkvCmdN33y0q6GqZdMpB2jBXwD3uvusndjZJx2iNjZhOk2ZA-hR9u4OvaW3n6LLSYqxgRTFhnqYjM5TdRS-4s31CnaFoXYI-X_k6uI3__A8fwwnDLowxO8kfhn7RlIYYKvTbx90oPJDpECPXocNZvcuyettNd4uW3alPApwmLxAMTlGVoNt6q9en10TjSEUDs="
@@ -495,7 +471,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given the contract address, returns logs sorted by block time.
+    Given the contract address, returns logs sorted by block number.
 
     ### Parameters
 
@@ -523,18 +499,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /contract-logs/<contract-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /contract-logs/:contract-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/eclipse/91002/contract-logs/0x8e4E31C5aA6A9b00179fc7A206ef1b179e16fd2c
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -613,18 +585,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /contracts/<contract-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /contracts/:contract-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/contracts/0xcf321c45ee5a755ee8220c3f103facc398b16f5d
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -676,18 +644,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /nft/collection/<contract-address>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /nft/collection/:contract-address">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/nft/collection/0x1160982721af95351a714a483275229cca10ee54
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
@@ -747,18 +711,14 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request Example" tag="GET" label="GET /nft/owners/<contract-address/<token-id>">
+    <CodeGroup title="Request Example" tag="GET" label="GET /nft/owners/:contract-address/:token-id">
 
     ```bash {{ title: 'cURL' }}
     curl -G https://{baseUrl}/{chainId}/nft/owners
     ```
 
     ```js
-    import ApiClient from '@example/protocol-api'
-
-    const client = new ApiClient(token)
-
-    await client.attachments.list()
+    // Coming Soon
     ```
 
     </CodeGroup>
