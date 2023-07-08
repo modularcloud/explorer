@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
+import { error } from "console";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
@@ -95,57 +96,78 @@ export default function VerifyAndUpload() {
   };
 
   const verifyAndPost = async (zipFile: Blob) => {
-    const sourcifyResponse = await axios.post(
-      process.env.SOURCIFY_URL ?? "http://localhost:5554/verify",
-      {
-        address: data.contractAddress,
-        chain: data.chainId,
-        files: data.files,
-      }
-    );
-    if (sourcifyResponse.status == 200) {
-      await uploadFile(zipFile);
-      data.verificationStatus =
-        sourcifyResponse.data.result[0].status == "perfect"
-          ? "FULL"
-          : "PARTIAL";
-      const verifyResult = await axios.post(
+    try {
+      const sourcifyResponse = await axios.post(
         "api/contract-verification/verify-contract",
-        data
+        {
+          contractAddress: data.contractAddress,
+          chain: data.chainId,
+          files: data.files,
+        }
       );
-      if (verifyResult?.status === 200) {
-        toast.update(toastId, {
-          render: "Verified Successfully",
-          type: "success",
-          isLoading: false,
-          closeOnClick: true,
-        });
+      if (sourcifyResponse.status == 200) {
+        await uploadFile(zipFile);
+        data.verificationStatus =
+          sourcifyResponse.data.result[0].status == "perfect"
+            ? "FULL"
+            : "PARTIAL";
+        const persistVerified = await axios.post(
+          "api/contract-verification/persist-verified",
+          data
+        );
+        if (persistVerified?.status === 200) {
+          toast.update(toastId, {
+            render: "Verified Successfully",
+            type: "success",
+            isLoading: false,
+            closeOnClick: true,
+          });
+        }
       }
+      else {
+           throw new Error("Error In Contract verification");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        error = error.response.data.message;
+      }
+      console.error("File Verification or ", error);
+      toast.update(toastId, {
+        render: ` Verification Failed ${error}`,
+        type: "error",
+        isLoading: false,
+        closeOnClick: true,
+      });
     }
   };
 
   const uploadFile = async (file: File | Blob) => {
     try {
-      const getImageUploadUrl = await axios.get(
+      const getFileUploadUrl = await axios.get(
         `api/file-upload/generateurl?file=${`${
           contractAddress + "_sourcefiles.zip"
         }`}&contractaddress=${contractAddress}`
       );
 
-      if (getImageUploadUrl.status === 200) {
-        data.uploadedUrl = getImageUploadUrl.data.url.split("?")[0];
-        const uploadImage = await axios.put(getImageUploadUrl.data.url, file, {
+      if (getFileUploadUrl.status === 200) {
+        data.uploadedUrl = getFileUploadUrl.data.url.split("?")[0];
+        const uploadFile = await axios.put(getFileUploadUrl.data.url, file, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-
-        if (uploadImage.status === 200) {
-          return getImageUploadUrl.data.url.split("?")[0];
+        if (uploadFile.status === 200) {
+          // it will Get the base URL from the presigned S3 URL 
+          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned  
+          return getFileUploadUrl.data.url.split("?")[0];
+        }
+        else {
+          throw new Error("File Upload Failed");
         }
       }
     } catch (error) {
       console.error("Error uploading file:", error);
+      throw new Error("File Upload Failed");
     }
   };
 
