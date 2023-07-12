@@ -8,9 +8,10 @@ import clsx from "clsx";
 type Props = {
   value: string | number,
   link?: FetchLoadArgs | string,
+  children?: React.ReactNode,
 }
 
-export function CopyableValue({ value, link }: Props) {
+export function CopyableValue({ value, link, children }: Props) {
   // Use hooks for toast notifications and routing
   const { toast } = useToast();
   const router = useRouter();
@@ -61,7 +62,7 @@ export function CopyableValue({ value, link }: Props) {
       onClick={onClickHandler}
       className={clsx("cursor-pointer", link && "underline")}
     >
-      {value}
+      {children ?? value}
     </span>
   );
 }
