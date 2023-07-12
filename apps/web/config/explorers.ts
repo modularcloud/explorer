@@ -27,6 +27,19 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "nautilus",
     includeAllNetworks: false,
   },
+  // Nautilus
+  PROTEUS: {
+    name: ["Naut", "Scan"],
+    subtitle: "Modular Cloud",
+    homepageTitle: "NautScan by Modular Cloud",
+    homepageDescription: "A modular block explorer for the Nautilus ecosystem.",
+    homepageKeywords:
+      "nautilus, proteus, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
+    defaultSearchOptionGroup: "Nautilus",
+    env: "proteus",
+    id: "proteus",
+    includeAllNetworks: false,
+  },
   // Dymension
   DYMENSION: {
     name: ["Dym", "Scan"],

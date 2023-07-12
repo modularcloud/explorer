@@ -1,11 +1,13 @@
 import { Badge } from "../badge";
-import { truncateString } from "../../lib/utils";
+import { getWhitelabel, truncateString } from "../../lib/utils";
 import Web3 from "web3";
 import Link from "next/link";
 import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
 import SvgBlocksIcon from "../icons/BlocksIcon";
 import SvgBarChartIcon from "../icons/BarChartIcon";
+
+const defaultChain = getWhitelabel().defaultNetwork;
 
 type HeaderProps = {
   icon: React.ReactNode;
@@ -70,7 +72,7 @@ export const BlockSummaryTable = async () => {
   return (
     <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg border bg-white px-4 py-6">
       <TableHeader
-        href="/triton/latest/blocks/blocks"
+        href={`/${defaultChain}/latest/blocks/blocks`}
         icon={<SvgBlocksIcon />}
         title="Latest Blocks"
       />
@@ -157,7 +159,7 @@ export const BlockSummaryTable = async () => {
 export const TransactionsSummaryTable = async () => {
   const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  const txRefs = await mc.evm.getRecentTransactions("triton", 8);
+  const txRefs = await mc.evm.getRecentTransactions(defaultChain, 8);
   async function getTransaction(hash: string, blockNumber: number) {
     const [tx, block] = await Promise.all([
       web3.eth.getTransaction(hash),

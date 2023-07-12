@@ -43,72 +43,43 @@ export const getSearchOptions = async () => {
         ],
       },
     ];
+  } else if (Whitelabel === "proteus") {
+    return [
+      {
+        label: "Nautilus",
+        options: [
+          {
+            name: "Proteus",
+            value: "Proteus",
+          },
+        ],
+      },
+    ];
   } else {
     return [
       ...(Whitelabel === "dev"
         ? [
-            {
-              label: "Caldera",
-              options: [
-                {
-                  name: "Caldera",
-                  value: "caldera",
-                },
-              ],
-            },
-            {
-              label: "Dymension",
-              options: [
-                ...(await fetch(
-                  process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
-                )
-                  .then((res) => res.json())
-                  .then((json) =>
-                    json.result
-                      .filter(
-                        (network: any) =>
-                          network.id.toLowerCase() === "rollapp1"
-                      )
-                      .map((network: any) => {
-                        return {
-                          name: network.name,
-                          value: slugify(network.name),
-                        };
-                      })
-                  )),
-                {
-                  name: "Hub",
-                  value: DYMENSION_HUB,
-                },
-                {
-                  name: "RollApp X",
-                  value: DYMENSION_ROLLAPP_X,
-                },
-              ],
-            },
-            {
-              label: "Dev",
-              options: [
-                {
-                  name: "Ethereum",
-                  value: "Ethereum",
-                },
-                {
-                  name: "Solana",
-                  value: "Solana",
-                },
-              ],
-            },
-            {
-              label: "Eclipse",
-              options: await fetch(
+          {
+            label: "Caldera",
+            options: [
+              {
+                name: "Caldera",
+                value: "caldera",
+              },
+            ],
+          },
+          {
+            label: "Dymension",
+            options: [
+              ...(await fetch(
                 process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
               )
                 .then((res) => res.json())
                 .then((json) =>
                   json.result
                     .filter(
-                      (network: any) => network.id.toLowerCase() !== "rollapp1"
+                      (network: any) =>
+                        network.id.toLowerCase() === "rollapp1"
                     )
                     .map((network: any) => {
                       return {
@@ -116,9 +87,50 @@ export const getSearchOptions = async () => {
                         value: slugify(network.name),
                       };
                     })
-                ),
-            },
-          ]
+                )),
+              {
+                name: "Hub",
+                value: DYMENSION_HUB,
+              },
+              {
+                name: "RollApp X",
+                value: DYMENSION_ROLLAPP_X,
+              },
+            ],
+          },
+          {
+            label: "Dev",
+            options: [
+              {
+                name: "Ethereum",
+                value: "Ethereum",
+              },
+              {
+                name: "Solana",
+                value: "Solana",
+              },
+            ],
+          },
+          {
+            label: "Eclipse",
+            options: await fetch(
+              process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
+            )
+              .then((res) => res.json())
+              .then((json) =>
+                json.result
+                  .filter(
+                    (network: any) => network.id.toLowerCase() !== "rollapp1"
+                  )
+                  .map((network: any) => {
+                    return {
+                      name: network.name,
+                      value: slugify(network.name),
+                    };
+                  })
+              ),
+          },
+        ]
         : []),
       {
         label: "Celestia",

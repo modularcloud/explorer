@@ -23,7 +23,7 @@ export default function RootLayout({
         {children}
         <Analytics />
       </body>
-      {whitelabel.env === "nautilus" ? (
+      {whitelabel.env === "nautilus" || whitelabel.env === "proteus" ? (
         <>
           <Script
             src="https://www.googletagmanager.com/gtag/js?id=G-WM976PHBGC"

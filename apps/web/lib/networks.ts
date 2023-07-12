@@ -18,6 +18,18 @@ export function getEngine() {
       },
     });
     Engine.addConfig("triton", config);
+  } else if (whitelabel.env === "proteus") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.proteus.dev.eclipsenetwork.xyz/solana",
+      network: {
+        id: "proteus",
+        displayName: "Proteus",
+        nativeToken: "ZBC",
+        logoUrl: "/images/nautilus.png",
+        sourcifyChainId: "88002",
+      },
+    });
+    Engine.addConfig("proteus", config);
   } else if (whitelabel.env === "worlds") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",

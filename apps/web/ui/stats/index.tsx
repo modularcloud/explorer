@@ -11,6 +11,11 @@ import SvgContractFileIcon from "../icons/ContractFileIcon";
 import SvgCapDisplay from "../icons/CapDisplay";
 import SvgFuelTankIcon from "../icons/FuelTank";
 import SvgDollarCircle from "../icons/DollarCircled";
+import { getNetworkBySlug } from "../../config/networks";
+import { getWhitelabel } from "../../lib/utils";
+
+const defaultChain = getWhitelabel().defaultNetwork;
+const rpc = getNetworkBySlug(defaultChain)?.rpcUrl || "https://api.evm.zebec.eclipsenetwork.xyz/solana";
 
 type Props = {
   extended?: boolean;
@@ -41,13 +46,13 @@ async function getZbcPrice() {
 }
 
 async function getGasPrice() {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+  const web3 = new Web3(rpc);
   const gasPrice = await web3.eth.getGasPrice();
   return Number(Web3.utils.fromWei(gasPrice));
 }
 
 async function getBlockMetrics() {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+  const web3 = new Web3(rpc);
   const latestBlock = await web3.eth.getBlockNumber();
   const block = await web3.eth.getBlock(latestBlock);
   const latestBlockTimestamp = block.timestamp;
@@ -62,7 +67,7 @@ async function getBlockMetrics() {
 }
 
 async function getRealTimeMetrics() {
-  const metrics = await fetch("https://triton.nautscan.com/api/metrics").then(
+  const metrics = await fetch(`https://${defaultChain}.nautscan.com/api/metrics`).then(
     (res) => res.json()
   );
   return {
@@ -136,11 +141,10 @@ export async function Stats({ extended }: Props) {
                   <SummaryPresenter
                     icon={<SvgFuelTankIcon />}
                     title="Gas Price"
-                    value={`${gasPrice * 1000000000} Gwei ($${
-                      gasPrice * zbcPrice < 0.01
-                        ? (gasPrice * zbcPrice).toPrecision(3)
-                        : gasPrice * zbcPrice
-                    })`}
+                    value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
+                      ? (gasPrice * zbcPrice).toPrecision(3)
+                      : gasPrice * zbcPrice
+                      })`}
                   />
                 </div>
               </div>
@@ -213,17 +217,16 @@ export async function Stats({ extended }: Props) {
               <SummaryPresenter
                 icon={<SvgFuelTankIcon />}
                 title="Gas Price"
-                value={`${gasPrice * 1000000000} Gwei ($${
-                  gasPrice * zbcPrice < 0.01
-                    ? (gasPrice * zbcPrice).toPrecision(3)
-                    : gasPrice * zbcPrice
-                })`}
+                value={`${gasPrice * 1000000000} Gwei ($${gasPrice * zbcPrice < 0.01
+                  ? (gasPrice * zbcPrice).toPrecision(3)
+                  : gasPrice * zbcPrice
+                  })`}
               />
             </div>
           </div>
         </div>
       )}
-      {/* 
+      {/*
       <div className="w-full -mt-[30px] relative hidden md:block">
         <div className=" w-full">
           <SvgRadialBgIcon width="100%" />

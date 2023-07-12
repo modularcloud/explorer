@@ -30,7 +30,7 @@ export async function getEventSignatureName(topic: string) {
       `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
-  } catch {}
+  } catch { }
 }
 
 // wrap loading in a fetch request until we figure out how to best cache using next app routing
@@ -88,6 +88,20 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
         env: "nautilus",
+      };
+    case "proteus":
+      return {
+        searchOptions: {
+          Nautilus: [
+            {
+              displayName: "Proteus",
+              id: "proteus",
+            },
+          ],
+        },
+        defaultNetwork: "proteus",
+        name: ["Naut", "Scan"],
+        env: "proteus",
       };
     case "caldera":
       return {

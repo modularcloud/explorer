@@ -131,6 +131,8 @@ const NETWORK_ID_MAP: Record<string, string> = {
   polygon: "clo/2",
   aeg: "ep/4",
   "nautilus-triton": "eclipse/91002",
+  "nautilus-proteus": "ep/6",
+  "proteus": "ep/6",
   "saga-saga": "sg/1",
   "eclipse-worlds": "ep/3",
   "dymension-evm-rollapp": "dym/2",
@@ -165,8 +167,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/blobs-summary/${namespace}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/blobs-summary/${namespace}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -222,8 +223,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/contract-logs/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/contract-logs/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -243,8 +243,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/token-events/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/token-events/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -264,8 +263,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/account-events/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/account-events/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -285,8 +283,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/account-events/${address.toLowerCase()}?eventType=NFTTransfer&maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/account-events/${address.toLowerCase()}?eventType=NFTTransfer&maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -334,8 +331,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/holder-balances/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/holder-balances/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -355,8 +351,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/transactions/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/transactions/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -375,8 +370,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/transactions?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/transactions?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -397,8 +391,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/nft/owners/${address.toLowerCase()}/${tokenId}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/nft/owners/${address.toLowerCase()}/${tokenId}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 
@@ -418,8 +411,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
             networkId
-          )}/nft/collection/${address.toLowerCase()}?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
+          )}/nft/collection/${address.toLowerCase()}?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""
           }`
         );
 

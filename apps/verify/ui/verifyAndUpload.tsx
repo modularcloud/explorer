@@ -125,7 +125,7 @@ export default function VerifyAndUpload() {
         }
       }
       else {
-           throw new Error("Error In Contract verification");
+        throw new Error("Error In Contract verification");
       }
     } catch (error: any) {
       if (error.response) {
@@ -144,8 +144,7 @@ export default function VerifyAndUpload() {
   const uploadFile = async (file: File | Blob) => {
     try {
       const getFileUploadUrl = await axios.get(
-        `api/file-upload/generateurl?file=${`${
-          contractAddress + "_sourcefiles.zip"
+        `api/file-upload/generateurl?file=${`${contractAddress + "_sourcefiles.zip"
         }`}&contractaddress=${contractAddress}`
       );
 
@@ -157,8 +156,8 @@ export default function VerifyAndUpload() {
           },
         });
         if (uploadFile.status === 200) {
-          // it will Get the base URL from the presigned S3 URL 
-          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned  
+          // it will Get the base URL from the presigned S3 URL
+          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned
           return getFileUploadUrl.data.url.split("?")[0];
         }
         else {

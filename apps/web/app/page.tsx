@@ -32,7 +32,7 @@ export default function HomePage() {
         </div>
       </div>
       {/* @ts-expect-error Async Server Component */}
-      {explorerId === "nautilus" ? <Stats extended={true} /> : null}
+      {explorerId === "nautilus" /* || explorerId === "proteus" */ ? <Stats extended={true} /> : null}
       <Footer />
     </div>
   );
