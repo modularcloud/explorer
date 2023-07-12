@@ -24,7 +24,7 @@ const allowCors =
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.json(
-    await fetch(process.env.METRICS_API_URL + "/" + getWhitelabel().defaultNetwork === "nautilus" ? "eclipse/91002" : /* proteus */ "ep/6" + "/real-time-metrics").then(
+    await fetch(process.env.METRICS_API_URL + "/" + (getWhitelabel().defaultNetwork === "triton" ? "eclipse/91002" : /* proteus */ "ep/6") + "/real-time-metrics").then(
       (response) => response.json()
     )
   );
