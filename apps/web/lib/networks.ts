@@ -18,6 +18,17 @@ export function getEngine() {
       },
     });
     Engine.addConfig("triton", config);
+  } else if (whitelabel.env === "waev") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.waev.eclipsenetwork.xyz/solana",
+      network: {
+        id: "waev",
+        displayName: "Waev",
+        nativeToken: "ETH",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("waev", config);
   } else if (whitelabel.env === "worlds") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",

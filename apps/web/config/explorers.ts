@@ -67,6 +67,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "worlds",
     includeAllNetworks: true,
   },
+  WAEV: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Waev ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, waev",
+    defaultSearchOptionGroup: "Waev",
+    env: "waev",
+    id: "waev",
+    includeAllNetworks: true,
+  },
   AEG: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
