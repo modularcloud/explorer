@@ -80,7 +80,7 @@ async function getRealTimeMetrics() {
 async function getTransactionVolumes(): Promise<
   ExplorerLineChartProps["data"]
 > {
-  return fetch(process.env.METRICS_API_URL + "/transaction-volume-data")
+  return fetch(process.env.METRICS_API_URL + (defaultChain === "triton" ? "/eclipse/91002" : /* proteus */ "/ep/6") + "/transaction-volume-data")
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(
