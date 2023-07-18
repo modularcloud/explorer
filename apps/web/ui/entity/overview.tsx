@@ -8,6 +8,7 @@ import { AttributesArchetype } from "../../ecs/archetypes/attributes";
 import { Suspense } from "react";
 import { PageArchetype } from "../../ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
+import { CopyableValue } from "ui/copyable";
 
 type Props = {
   entity: Entity<typeof PageArchetype>;
@@ -44,7 +45,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <ol>
             {payload.map((value) => (
               <li key={value} className="truncate">
-                {value}
+                <CopyableValue value={value} />
               </li>
             ))}
           </ol>
@@ -57,7 +58,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
             "truncate"
           )}
         >
-          {payload}
+          <CopyableValue value={payload} />
         </dd>
       ) : null}
     </div>
@@ -91,7 +92,7 @@ export default function Overview({ entity }: Props) {
             {`${entityTypeName} Information`}
           </h3>
           <p className="text-temp-500 mt-1 max-w-2xl truncate text-sm leading-6">
-            {entityId}
+            <CopyableValue value={entityId} />
           </p>
         </div>
         <div className="mx-6">

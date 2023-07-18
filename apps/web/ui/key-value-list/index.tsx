@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Status } from "../status";
 import { Value } from "../../schemas/value";
 import Image from "next/image";
+import { CopyableValue } from "ui/copyable";
 
 interface Props {
   attributes: Record<string, Value>;
@@ -35,13 +36,13 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <ol>
             {payload.map((value) => (
               <li key={value} className="truncate">
-                {value}
+                <CopyableValue value={value} />
               </li>
             ))}
           </ol>
         </dd>
       ) : null}
-      {type === "standard" ? <dd className="truncate">{payload}</dd> : null}
+      {type === "standard" ? <dd className="truncate"><CopyableValue value={payload} /></dd> : null}
     </>
   );
 }
@@ -53,7 +54,7 @@ export function KeyValueList({ attributes, type: kvType, className }: Props) {
         className,
         "grid",
         kvType === "card" &&
-          "grid-cols-[minmax(128px,auto)_1fr] gap-y-2 sm:grid-cols-[minmax(200px,auto)_1fr]",
+        "grid-cols-[minmax(128px,auto)_1fr] gap-y-2 sm:grid-cols-[minmax(200px,auto)_1fr]",
         kvType === "sidebar" && "grid-cols-[auto_1fr] gap-x-6 gap-y-4"
       )}
     >
