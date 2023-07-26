@@ -5,11 +5,11 @@ import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
 import { error } from "console";
+import SelectableComponent from "./selectableComponent";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
-
   type VerificationStatus = "FULL" | "PARTIAL" | null;
 
   type ContractData = {
@@ -26,6 +26,10 @@ export default function VerifyAndUpload() {
     files: {},
     uploadedUrl: "",
     verificationStatus: null,
+  };
+
+  const handleChainSelectionChange = (chainId: string) => {
+    data.chainId=chainId
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -208,6 +212,11 @@ export default function VerifyAndUpload() {
             htmlFor="file-upload"
             className="custom-file-upload relative w-full pt-5"
           >
+               <div className="flex"><p>
+                Select Chain:
+               </p>
+               <SelectableComponent onSelectionChange={handleChainSelectionChange}/>
+               </div>
             <div className="w-full py-4">
               <input
                 type="text"
