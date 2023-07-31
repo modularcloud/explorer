@@ -10,6 +10,7 @@ import SelectableComponent from "./selectableComponent";
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
+  const [chainId, setChainId] = useState<string>("");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
 
   type ContractData = {
@@ -22,14 +23,14 @@ export default function VerifyAndUpload() {
 
   const data: ContractData = {
     contractAddress: contractAddress,
-    chainId: "91002", // hardcoded as of now
+    chainId: chainId,
     files: {},
     uploadedUrl: "",
     verificationStatus: null,
   };
 
   const handleChainSelectionChange = (chainId: string) => {
-    data.chainId=chainId
+    setChainId(chainId);
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -127,9 +128,8 @@ export default function VerifyAndUpload() {
             closeOnClick: true,
           });
         }
-      }
-      else {
-           throw new Error("Error In Contract verification");
+      } else {
+        throw new Error("Error In Contract verification");
       }
     } catch (error: any) {
       if (error.response) {
@@ -161,11 +161,10 @@ export default function VerifyAndUpload() {
           },
         });
         if (uploadFile.status === 200) {
-          // it will Get the base URL from the presigned S3 URL 
-          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned  
+          // it will Get the base URL from the presigned S3 URL
+          //then remove query parameter so that we get a clean url of where the file is uploaded and it is returned
           return getFileUploadUrl.data.url.split("?")[0];
-        }
-        else {
+        } else {
           throw new Error("File Upload Failed");
         }
       }
@@ -212,11 +211,12 @@ export default function VerifyAndUpload() {
             htmlFor="file-upload"
             className="custom-file-upload relative w-full pt-5"
           >
-               <div className="flex"><p>
-                Select Chain:
-               </p>
-               <SelectableComponent onSelectionChange={handleChainSelectionChange}/>
-               </div>
+            <div className="flex">
+              <p>Select Chain:</p>
+              <SelectableComponent
+                onSelectionChange={handleChainSelectionChange}
+              />
+            </div>
             <div className="w-full py-4">
               <input
                 type="text"

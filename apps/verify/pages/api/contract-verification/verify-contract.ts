@@ -5,20 +5,24 @@ export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { contractAddress, files, uploadedUrl } = req.body;
-  const chainId = "91002"; // this value is hard coded as of now, it might change in the future
+  const { contractAddress, files, chain } = req.body;
 
   try {
     console.log("Making API call...");
-
     const response = await axios.post(
       process.env.SOURCIFY_URL ?? "http://localhost:5555/verify",
       {
         address: contractAddress,
-        chain: chainId,
+        chain: chain,
         files: files,
       }
     );
+    if (
+      response.data.result[0].status !== "perfect" &&
+      response.data.result[0].status !== "partial"
+    ) {
+      res.status(400).json({ message: response.data.result[0].message });
+    }
     console.log("API call completed, response status:", response.status);
     console.log("Setting response status...");
     res.status(response.status).json(response.data);
