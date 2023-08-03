@@ -10,7 +10,7 @@ import SelectableComponent from "./selectableComponent";
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
-  const [chainId, setChainId] = useState<string>("");
+  const [chainId, setChainId] = useState<string>("91002");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
 
   type ContractData = {
