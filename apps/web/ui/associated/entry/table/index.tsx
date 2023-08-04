@@ -22,7 +22,7 @@ export function TableEntry({ entity }: Props) {
             "h-[3.375rem]",
             generateColumnStyle(entry.column),
             generateCellStyle(entry.cell),
-            entry.column.showOnlyIfDifferent && "hidden"
+            entry.column.showOnlyIfDifferent && "hidden",
           )}
           key={entry.column.columnLabel}
         >

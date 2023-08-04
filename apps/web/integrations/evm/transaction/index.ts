@@ -12,7 +12,7 @@ import { TopbarTransform } from "./topbar";
 
 export async function TransactionExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const web3 = new Web3(metadata.endpoint);
@@ -20,7 +20,7 @@ export async function TransactionExtract(
   const transaction = await web3.eth.getTransaction(query);
   const receipt = await web3.eth.getTransactionReceipt(query);
   const eventSignatureName = await getEventSignatureName(
-    receipt.logs[0]?.topics?.[0]
+    receipt.logs[0]?.topics?.[0],
   );
   const block = await web3.eth.getBlock(receipt.blockNumber);
 

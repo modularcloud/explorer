@@ -18,7 +18,7 @@ interface Props {
 export const Search = ({ optionGroups, defaultValue }: Props) => {
   const router = useRouter();
   const [option, setOption] = useState(
-    defaultValue ?? Object.values(optionGroups)[0][0].id
+    defaultValue ?? Object.values(optionGroups)[0][0].id,
   );
   const [isSearching, setIsSearching] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -73,7 +73,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
               ref={searchInput}
               onChange={(event: any) =>
                 router.prefetch(
-                  `/${option}/search/${event.target.value.trim()}`
+                  `/${option}/search/${event.target.value.trim()}`,
                 )
               }
               onKeyDown={(event: any) => {
@@ -97,13 +97,19 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
                 ) {
                   () => setIsSearching(true);
                   router.push(
-                    `/${option}/search/${searchInput.current.value.trim()}`
+                    `/${option}/search/${searchInput.current.value.trim()}`,
                   );
                 }
               }}
               className="flex items-center px-3"
             >
-              {isSearching ? <span className="animate-spin"><SvgLoading /></span> : <SvgSearchOff />}
+              {isSearching ? (
+                <span className="animate-spin">
+                  <SvgLoading />
+                </span>
+              ) : (
+                <SvgSearchOff />
+              )}
             </button>
           </div>
         </div>

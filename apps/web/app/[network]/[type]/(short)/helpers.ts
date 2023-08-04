@@ -10,7 +10,7 @@ const TYPE_MAP: Record<string, string> = {
 
 export function mapTypes(
   params: ShortenedResourcePath,
-  defaultNetwork: string
+  defaultNetwork: string,
 ) {
   const { network: type, type: query } = params;
   return {

@@ -11,11 +11,11 @@ const allowCors =
     // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
     res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+      "GET,OPTIONS,PATCH,DELETE,POST,PUT",
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
     );
     if (req.method === "OPTIONS") {
       res.status(200).end();
@@ -43,8 +43,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             } as any);
           })
           .map((p) =>
-            p.then((entity) => verifyArchetype(PageArchetype, entity))
-          )
+            p.then((entity) => verifyArchetype(PageArchetype, entity)),
+          ),
       );
       res.json(result);
     } else {
@@ -56,6 +56,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(e);
     res.status(404).end();
   }
-}
+};
 
 module.exports = allowCors(handler);

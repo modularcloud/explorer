@@ -9,9 +9,9 @@ function buildArchetype<Prev>(prev: Prev = {} as Prev) {
   return {
     addComponent: <
       TypeId extends string,
-      NewComponent extends ComponentSchemaType<any, TypeId>
+      NewComponent extends ComponentSchemaType<any, TypeId>,
     >(
-      newComponent: NewComponent
+      newComponent: NewComponent,
     ) => {
       const typeId = newComponent.shape.typeId
         .value as unknown as ExtractKey<NewComponent>;
@@ -32,7 +32,7 @@ export function createArchetype() {
 // TODO: Use Zod
 export function verifyArchetype<T extends AnyArchetypeSchema>(
   archetype: T,
-  entity: Entity
+  entity: Entity,
 ): Entity<T> {
   let verifiedComponents = {} as { [key in keyof T]: z.infer<T[key]> };
   const { components } = entity;

@@ -15,7 +15,9 @@ export function EntityDetails({ imageUrl, label, value, alt }: Props) {
         {/* <div className="shrink-0">{iconType}</div> */}
         <span className="shrink-0 font-semibold">{label}</span>
         <span>/</span>
-        <span className="shrink overflow-hidden text-ellipsis"><CopyableValue value={value} /></span>
+        <span className="shrink overflow-hidden text-ellipsis">
+          <CopyableValue value={value} />
+        </span>
       </div>
     </div>
   );

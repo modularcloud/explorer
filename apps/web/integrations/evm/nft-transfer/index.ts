@@ -381,7 +381,7 @@ function topicMatches(topic: string, expectedTopic: string) {
 
 export async function NFTTransferExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const [txHash, logIndex] = query.split(":");
@@ -425,11 +425,11 @@ export async function NFTTransferExtract(
         },
       ],
       log.data,
-      eventParams
+      eventParams,
     ) as unknown as { from: string; to: string; tokenId: string };
     const uri: string = await new web3.eth.Contract(
       Erc721ABI,
-      log.address
+      log.address,
     ).methods
       .tokenURI(id)
       .call();
@@ -499,7 +499,7 @@ export async function NFTTransferExtract(
         },
       ],
       log.data,
-      eventParams
+      eventParams,
     ) as unknown as {
       from: string;
       to: string;
@@ -509,7 +509,7 @@ export async function NFTTransferExtract(
 
     const baseUri: string = await new web3.eth.Contract(
       Erc1155ABI,
-      log.address
+      log.address,
     ).methods
       .uri(id)
       .call();
@@ -581,7 +581,7 @@ export async function NFTTransferExtract(
         },
       ],
       log.data,
-      eventParams
+      eventParams,
     ) as unknown as {
       from: string;
       to: string;
@@ -591,7 +591,7 @@ export async function NFTTransferExtract(
     const { from, to, ids, values } = decodedLog;
     const baseUri: string = await new web3.eth.Contract(
       Erc1155ABI,
-      log.address
+      log.address,
     ).methods
       .uri(ids[0])
       .call();

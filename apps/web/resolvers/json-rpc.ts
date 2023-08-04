@@ -15,7 +15,7 @@ export const createJSONRPCResolver = (
   resolverId: string,
   { jsonrpc = "2.0", method, id = 1 }: JSONRPCRequest,
   isPending: (response: any) => boolean = defaultIsPending,
-  cache: boolean = false
+  cache: boolean = false,
 ) =>
   createResolver(
     {
@@ -37,5 +37,5 @@ export const createJSONRPCResolver = (
       }
       return json;
     },
-    []
+    [],
   );

@@ -60,21 +60,21 @@ export const getSearchOptions = async () => {
               label: "Dymension",
               options: [
                 ...(await fetch(
-                  process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
+                  process.env.ADD_NETWORK_ENDPOINT + "/chain-config",
                 )
                   .then((res) => res.json())
                   .then((json) =>
                     json.result
                       .filter(
                         (network: any) =>
-                          network.id.toLowerCase() === "rollapp1"
+                          network.id.toLowerCase() === "rollapp1",
                       )
                       .map((network: any) => {
                         return {
                           name: network.name,
                           value: slugify(network.name),
                         };
-                      })
+                      }),
                   )),
                 {
                   name: "Hub",
@@ -102,20 +102,20 @@ export const getSearchOptions = async () => {
             {
               label: "Eclipse",
               options: await fetch(
-                process.env.ADD_NETWORK_ENDPOINT + "/chain-config"
+                process.env.ADD_NETWORK_ENDPOINT + "/chain-config",
               )
                 .then((res) => res.json())
                 .then((json) =>
                   json.result
                     .filter(
-                      (network: any) => network.id.toLowerCase() !== "rollapp1"
+                      (network: any) => network.id.toLowerCase() !== "rollapp1",
                     )
                     .map((network: any) => {
                       return {
                         name: network.name,
                         value: slugify(network.name),
                       };
-                    })
+                    }),
                 ),
             },
           ]

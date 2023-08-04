@@ -145,5 +145,5 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 
 export const EXPLORER_CONFIG =
   Object.values(EXPLORER_CONFIGS).find(
-    (config) => config.env === process.env.WHITELABEL
+    (config) => config.env === process.env.WHITELABEL,
   ) ?? EXPLORER_CONFIGS.DEFAULT;

@@ -15,6 +15,6 @@ export function useEntity<T extends AnyArchetypeSchema>({
   return useSWRImmutable(
     resourcePath,
     () => asyncUseEntity({ resourcePath, archetype }),
-    { suspense: true }
+    { suspense: true },
   );
 }

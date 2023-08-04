@@ -14,7 +14,7 @@ const Entry = React.memo(
         <ClientAssociatedEntry resourcePath={resourcePath} />
       </Suspense>
     );
-  }
+  },
 );
 
 function deepEqual(a: FetchLoadArgs[], b: FetchLoadArgs[]) {

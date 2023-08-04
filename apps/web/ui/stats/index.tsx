@@ -35,7 +35,7 @@ const subPennyCurrencyFormatter = new Intl.NumberFormat("en-US", {
 
 async function getZbcPrice() {
   const response = await fetch("https://api2.zebec.io/price").then((res) =>
-    res.json()
+    res.json(),
   );
   return Number(Web3.utils.fromWei(response.price));
 }
@@ -63,7 +63,7 @@ async function getBlockMetrics() {
 
 async function getRealTimeMetrics() {
   const metrics = await fetch("https://triton.nautscan.com/api/metrics").then(
-    (res) => res.json()
+    (res) => res.json(),
   );
   return {
     contractsDeployed: metrics.result.realTimeMetrics.CONTRACT,
@@ -79,7 +79,7 @@ async function getTransactionVolumes(): Promise<
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(
-        res.result.transactionVolumes
+        res.result.transactionVolumes,
       );
     })
     .then((res) => {
@@ -161,7 +161,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.totalTransactions.toLocaleString(
-                "en-US"
+                "en-US",
               )}`}
               title="Total Transactions"
               icon={<SvgBarChartIcon />}
@@ -177,7 +177,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.walletAddresses.toLocaleString(
-                "en-US"
+                "en-US",
               )}`}
               title="Wallet Addresses"
               icon={<SvgWalletIcon />}
@@ -186,7 +186,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.contractsDeployed.toLocaleString(
-                "en-US"
+                "en-US",
               )}`}
               title="Contracts Deployed"
               icon={<SvgContractFileIcon />}

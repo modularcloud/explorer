@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
 type Props = {
-  value: string | number,
-  link?: FetchLoadArgs | string,
-  children?: React.ReactNode,
-}
+  value: string | number;
+  link?: FetchLoadArgs | string;
+  children?: React.ReactNode;
+};
 
 export function CopyableValue({ value, link, children }: Props) {
   // Use hooks for toast notifications and routing
@@ -22,18 +22,19 @@ export function CopyableValue({ value, link, children }: Props) {
       await navigator.clipboard.writeText(value.toString());
       return true;
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
       return false;
     }
   };
 
   // Construct link from FetchLoadArgs
-  const constructLink = (link: FetchLoadArgs) => `${link.network}/${link.type}/${link.query}`;
+  const constructLink = (link: FetchLoadArgs) =>
+    `${link.network}/${link.type}/${link.query}`;
 
   // Function to navigate to the link
   const open = () => {
     if (link) {
-      const route = typeof link === 'string' ? link : constructLink(link);
+      const route = typeof link === "string" ? link : constructLink(link);
       router.push(route);
     }
   };
@@ -48,7 +49,10 @@ export function CopyableValue({ value, link, children }: Props) {
       const copied = await copy();
 
       if (copied) {
-        const val = String(value).length > 20 ? `${String(value).slice(0, 20)}...` : value;
+        const val =
+          String(value).length > 20
+            ? `${String(value).slice(0, 20)}...`
+            : value;
         toast({
           title: "Copied",
           description: `"${val}" copied to clipboard`,

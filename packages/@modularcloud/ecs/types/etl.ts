@@ -27,7 +27,7 @@ export type AnyComponentTransform<Input> = {
 
 export type Extract<T> = (
   query: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) => Promise<T>;
 
 export type TransformInput<ExtractFn extends (...args: any) => any> = {
@@ -40,7 +40,7 @@ export type TransformOutput<Schema extends AnyComponentSchema> =
 export async function load(
   metadata: EngineConfigMetadata,
   loader: Loader,
-  query: unknown
+  query: unknown,
 ): Promise<Entity> {
   const { extract, components } = loader;
 
@@ -54,7 +54,7 @@ export async function load(
     components.map(async (component) => {
       entity.components[component.schema.shape.typeId.value] =
         component.schema.parse(await component.transform({ data, metadata }));
-    })
+    }),
   );
 
   return entity;
@@ -62,11 +62,11 @@ export async function load(
 
 function _buildLoader<Input, T extends AnyComponentTransform<Input>>(
   extract: Extract<Input>,
-  componentTransforms: T[] = []
+  componentTransforms: T[] = [],
 ) {
   return {
     addTransform: <K extends AnyComponentSchema>(
-      transform: ComponentTransform<Input, K>
+      transform: ComponentTransform<Input, K>,
     ) => {
       return _buildLoader(extract, [...componentTransforms, transform]);
     },

@@ -17,8 +17,8 @@ export async function TableHeader({ rows, label }: Props) {
       asyncUseEntity({
         resourcePath: row,
         archetype: AssociatedArchetype,
-      })
-    )
+      }),
+    ),
   );
 
   if (!entity) return null;
@@ -30,7 +30,7 @@ export async function TableHeader({ rows, label }: Props) {
         <HeadBox
           classes={clsx(
             generateColumnStyle(entry.column),
-            entry.column.showOnlyIfDifferent && "hidden"
+            entry.column.showOnlyIfDifferent && "hidden",
           )}
           key={entry.column.columnLabel}
           hideText={entry.column.hideHeader}

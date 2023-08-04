@@ -9,7 +9,7 @@ import { TopbarTransform } from "./topbar";
 
 export async function LatestExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const type = z.enum(["transactions", "blocks"]).parse(_q);
   return {

@@ -172,7 +172,7 @@ export const TransactionsSummaryTable = async () => {
     };
   }
   const transactionData = await Promise.all(
-    txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber))
+    txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber)),
   );
 
   return (

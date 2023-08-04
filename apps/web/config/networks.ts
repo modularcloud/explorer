@@ -313,6 +313,6 @@ export function getNetworkBySlug(slug: string): NetworkConfig | undefined {
   return ALL_NETWORKS.find((network) =>
     network.explorerId === id
       ? network.slug === slug
-      : `${network.slugPrefix}-${network.slug}` === slug
+      : `${network.slugPrefix}-${network.slug}` === slug,
   );
 }

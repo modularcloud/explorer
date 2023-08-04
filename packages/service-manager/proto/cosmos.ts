@@ -27,7 +27,7 @@ function createBaseQueryBalanceRequest(): QueryBalanceRequest {
 export const QueryBalanceRequest = {
   encode(
     message: QueryBalanceRequest,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
@@ -74,13 +74,13 @@ export const QueryBalanceRequest = {
   },
 
   create<I extends Exact<DeepPartial<QueryBalanceRequest>, I>>(
-    base?: I
+    base?: I,
   ): QueryBalanceRequest {
     return QueryBalanceRequest.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryBalanceRequest>, I>>(
-    object: I
+    object: I,
   ): QueryBalanceRequest {
     const message = createBaseQueryBalanceRequest();
     message.address = object.address ?? "";
@@ -158,7 +158,7 @@ function createBaseQueryBalanceResponse(): QueryBalanceResponse {
 export const QueryBalanceResponse = {
   encode(
     message: QueryBalanceResponse,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.balance !== undefined) {
       Coin.encode(message.balance, writer.uint32(10).fork()).ldelim();
@@ -168,7 +168,7 @@ export const QueryBalanceResponse = {
 
   decode(
     input: _m0.Reader | Uint8Array,
-    length?: number
+    length?: number,
   ): QueryBalanceResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
@@ -205,13 +205,13 @@ export const QueryBalanceResponse = {
   },
 
   create<I extends Exact<DeepPartial<QueryBalanceResponse>, I>>(
-    base?: I
+    base?: I,
   ): QueryBalanceResponse {
     return QueryBalanceResponse.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryBalanceResponse>, I>>(
-    object: I
+    object: I,
   ): QueryBalanceResponse {
     const message = createBaseQueryBalanceResponse();
     message.balance =

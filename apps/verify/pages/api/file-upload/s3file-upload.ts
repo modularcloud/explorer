@@ -11,7 +11,7 @@ if (!accessKeyId || !secretAccessKey) {
 
 export default async function generateUploadUrl(
   file: string,
-  contractAddress: string
+  contractAddress: string,
 ) {
   const fileAddress = contractAddress + "/" + file;
   const splitedFileName = file.split(".");

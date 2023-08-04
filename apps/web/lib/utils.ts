@@ -27,7 +27,7 @@ export function decodeEvmAddressParam(address: string) {
 export async function getEventSignatureName(topic: string) {
   try {
     const results = await fetch(
-      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
+      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`,
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
   } catch {}
@@ -45,7 +45,7 @@ export async function fetchLoad(props: FetchLoadArgs) {
       baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
     const response = await fetch(
-      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`
+      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
     );
     if (!response.ok) {
       console.log("Error loading entity", response);
@@ -303,7 +303,7 @@ export function slugify(str: string): string {
 export function truncateString(
   address: string,
   numCharsBefore = 6,
-  numCharsAfter = 4
+  numCharsAfter = 4,
 ) {
   if (!address) return "";
 

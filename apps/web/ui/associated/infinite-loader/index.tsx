@@ -37,7 +37,7 @@ export default function InfiniteLoader({
       }
       return Promise.resolve(initialState);
     },
-    { refreshInterval: 1000, fallbackData: initialState }
+    { refreshInterval: 1000, fallbackData: initialState },
   );
   const data = useMemo<FetchLoadArgs[]>(() => {
     if (entityRefs) {

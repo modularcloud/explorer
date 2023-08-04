@@ -6,7 +6,7 @@ const AttributesSchema = z.record(ValueSchema);
 
 export const AttributesComponent = createComponentSchema(
   AttributesSchema,
-  "attributes"
+  "attributes",
 );
 
 export type Pagination = z.infer<typeof AttributesSchema>;

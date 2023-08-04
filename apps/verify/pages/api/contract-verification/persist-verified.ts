@@ -4,7 +4,7 @@ import prisma from "../../../prisma/lib/prisma";
 
 export default async function persistVerified(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { contractAddress, files, uploadedUrl, verificationStatus, chainId } =
     req.body;
@@ -39,7 +39,7 @@ export default async function persistVerified(
         "axiosError details:",
         axiosError.response.data,
         axiosError.response.status,
-        axiosError.response.headers
+        axiosError.response.headers,
       );
 
       res.status(axiosError.response.status).json(axiosError.response.data);

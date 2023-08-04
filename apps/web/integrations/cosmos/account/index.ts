@@ -10,7 +10,7 @@ import { TopbarTransform } from "./topbar";
 
 export async function AccountExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const address = z.string().parse(_q);
   let queryInput, denom;

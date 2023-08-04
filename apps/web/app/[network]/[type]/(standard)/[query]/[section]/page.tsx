@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       resourcePath.query.toLowerCase() === "address")
   ) {
     redirect(
-      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`
+      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`,
     );
   }
 
@@ -82,7 +82,7 @@ function Container({
   if (paginationSettings && paginationSettings.original) {
     const InfiniteLoader = dynamic(
       () => import("../../../../../../ui/associated/infinite-loader"),
-      { ssr: false }
+      { ssr: false },
     );
     return (
       <InfiniteLoader

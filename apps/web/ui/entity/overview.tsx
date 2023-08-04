@@ -39,7 +39,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
         <dd
           className={clsx(
             "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate"
+            "truncate",
           )}
         >
           <ol>
@@ -55,7 +55,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
         <dd
           className={clsx(
             "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate"
+            "truncate",
           )}
         >
           <CopyableValue value={payload} />

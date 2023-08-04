@@ -9,7 +9,7 @@ import { TopbarTransform } from "./topbar";
 
 export async function TokenExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const address = z.string().parse(_q);
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);

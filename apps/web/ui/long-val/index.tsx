@@ -1,7 +1,7 @@
 export function forceLength(
   str: string,
   len: number,
-  strategy: "middle" | "end" = "middle"
+  strategy: "middle" | "end" = "middle",
 ) {
   const MIN = 4;
   const diff = str.length - len;

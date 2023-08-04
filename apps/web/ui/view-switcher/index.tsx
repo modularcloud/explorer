@@ -74,7 +74,7 @@ export function ViewSwitcher() {
               );
             }
             return toggleGroup;
-          }
+          },
         )}
       </ToggleGroup.Root>
     </div>
