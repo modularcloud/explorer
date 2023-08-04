@@ -108,25 +108,15 @@ export function getEngine() {
     Engine.addConfig("rollappx", config);
   } else if (whitelabel.env === "celestia") {
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
       network: {
-        id: "mocha",
-        displayName: "Mocha",
+        id: "arabica",
+        displayName: "Arabica",
         nativeToken: "TIA",
         logoUrl: "/images/celestia.png",
       },
     });
-    Engine.addConfig("mocha", config);
-    config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
-      network: {
-        id: "blockspace-race",
-        displayName: "Blockspace Race",
-        nativeToken: "TIA",
-        logoUrl: "/images/celestia.png",
-      },
-    });
-    Engine.addConfig("blockspace-race", config);
+    Engine.addConfig("arabica", config);
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
@@ -171,6 +161,18 @@ export function getEngine() {
       },
     });
     Engine.addConfig("polygon", config);
+  } else if (whitelabel.env === "proteus") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.proteus.dev.eclipsenetwork.xyz/solana",
+      network: {
+        id: "proteus",
+        displayName: "Proteus",
+        nativeToken: "ZBC",
+        logoUrl: "/images/nautilus.png",
+        sourcifyChainId: "88002",
+      },
+    });
+    Engine.addConfig("proteus", config);
   } else {
     config = CreateCosmosConfig({
       endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
@@ -182,16 +184,6 @@ export function getEngine() {
       },
     });
     Engine.addConfig("celestia-blockspace-race", config);
-    config = CreateEVMConfig({
-      endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-      network: {
-        id: "eclipse-nautilus",
-        displayName: "Triton",
-        nativeToken: "ZBC",
-        logoUrl: "/images/nautilus.png",
-      },
-    });
-    Engine.addConfig("eclipse-nautilus", config);
     config = CreateEVMConfig({
       endpoint: "https://eth-goerli-testnet.calderachain.xyz/replica-http",
       network: {
@@ -213,15 +205,15 @@ export function getEngine() {
     });
     Engine.addConfig("caldera-polygon", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
       network: {
-        id: "celestia-mocha",
-        displayName: "Mocha",
+        id: "celestia-arabica",
+        displayName: "Arabica",
         nativeToken: "TIA",
         logoUrl: "/images/celestia.png",
       },
     });
-    Engine.addConfig("celestia-mocha", config);
+    Engine.addConfig("celestia-arabica", config);
     let primary = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
       network: {

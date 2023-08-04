@@ -37,7 +37,8 @@
         "UPLOADCARE_API_KEY",
         "IPFS_GATEWAY",
         "CELESTIA_BLOCKSPACE_RACE_RPC",
-        "NAMESPACE_ENDPOINT"
+        "NAMESPACE_ENDPOINT",
+        "CELESTIA_ARABICA_RPC"
       ]
     },
     "verify#build": {

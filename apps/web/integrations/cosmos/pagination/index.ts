@@ -32,10 +32,10 @@ export async function PaginationExtract(
       );
     } else if (value.match(/^celestia\w{39}$/)) {
       sendResponse = await fetch(
-        `https://rpc-mocha.pops.one/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`
+        `http://consensus-full-arabica-9.celestia-arabica.com:26657/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`
       );
       receiveResponse = await fetch(
-        `https://rpc-mocha.pops.one/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`
+        `http://consensus-full-arabica-9.celestia-arabica.com:26657/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`
       );
     } else {
       throw new Error("Unsupported address");

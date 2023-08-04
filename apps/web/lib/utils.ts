@@ -30,7 +30,7 @@ export async function getEventSignatureName(topic: string) {
       `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
-  } catch { }
+  } catch {}
 }
 
 // wrap loading in a fetch request until we figure out how to best cache using next app routing
@@ -167,18 +167,32 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "apricot",
       };
+    case "proteus":
+      return {
+        searchOptions: {
+          Nautilus: [
+            {
+              displayName: "Proteus",
+              id: "proteus",
+            },
+          ],
+        },
+        defaultNetwork: "proteus",
+        name: ["Naut", "Scan"],
+        env: "proteus",
+      };
     case "celestia":
       return {
         searchOptions: {
           Celestia: [
             {
-              displayName: "Blockspace Race",
-              id: "blockspace-race",
+              displayName: "Arabica",
+              id: "arabica",
             },
-            {
-              displayName: "Mocha",
-              id: "mocha",
-            },
+            // {
+            //   displayName: "Mocha",
+            //   id: "mocha",
+            // },
           ],
         },
         defaultNetwork: "mocha",
@@ -231,13 +245,13 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Celestia: [
             {
-              displayName: "Blockspace Race",
-              id: "celestia-blockspace-race",
+              displayName: "Arabica",
+              id: "celestia-arabica",
             },
-            {
-              displayName: "Mocha",
-              id: "celestia-mocha",
-            },
+            // {
+            //   displayName: "Mocha",
+            //   id: "celestia-mocha",
+            // },
           ],
           Dymension: [
             {

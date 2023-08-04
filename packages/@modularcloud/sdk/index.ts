@@ -143,8 +143,12 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "saga-another-world": "sg/2",
   "blockspace-race": "2",
   "celestia-blockspace-race": "2",
+  "arabica": "3",
+  "celestia-arabica": "3",
   "weav": "ep/7",
   "ecipse-weav": "ep/7",
+  "nautilus-proteus": "ep/6",
+  "proteus": "ep/6",
 };
 
 function normalizeNetworkId(networkId: string) {

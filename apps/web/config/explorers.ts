@@ -115,6 +115,19 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "saga",
     includeAllNetworks: true,
   },
+  // Nautilus
+  PROTEUS: {
+    name: ["Naut", "Scan"],
+    subtitle: "Modular Cloud",
+    homepageTitle: "NautScan by Modular Cloud",
+    homepageDescription: "A modular block explorer for the Nautilus ecosystem.",
+    homepageKeywords:
+      "nautilus, proteus, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
+    defaultSearchOptionGroup: "Nautilus",
+    env: "proteus",
+    id: "proteus",
+    includeAllNetworks: false,
+  },
   // No whitelabel
   DEFAULT: {
     name: ["Modular", "Cloud"],
