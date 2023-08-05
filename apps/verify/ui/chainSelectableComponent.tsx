@@ -26,12 +26,12 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
         const chainList = [
           {
             // This is temporary we will retrieve the data from api later
-            name: "Nautilus Triton Testnet",
-            chainId: 91002,
-          },
-          {
             name: "Proteus Chain",
             chainId: 88002,
+          },
+          {
+            name: "Nautilus Triton Testnet",
+            chainId: 91002,
           },
         ];
         setData(chainList);

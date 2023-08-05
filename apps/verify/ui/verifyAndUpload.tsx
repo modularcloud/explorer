@@ -4,13 +4,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
-import { error } from "console";
-import SelectableComponent from "./selectableComponent";
+
+import ChainSelectableComponent from "./chainSelectableComponent";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
   const [contractAddress, setContractAddress] = useState<string>("");
-  const [chainId, setChainId] = useState<string>("91002");
+  const [chainId, setChainId] = useState<string>("88002");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
 
   type ContractData = {
@@ -79,14 +79,14 @@ export default function VerifyAndUpload() {
   const checkContractVerified = async () => {
     const response = await axios
       .get(
-        `api/contract-verification/fetch-verified?contractaddress=${contractAddress}`,
+        `api/contract-verification/fetch-verified?contractaddress=${contractAddress}&chainid=${chainId}`,
         {
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
             Expires: "0",
           },
-        },
+        }
       )
       .catch((error) => {
         console.error("Error calling API:", error);
@@ -108,7 +108,7 @@ export default function VerifyAndUpload() {
           contractAddress: data.contractAddress,
           chain: data.chainId,
           files: data.files,
-        },
+        }
       );
       if (sourcifyResponse.status == 200) {
         await uploadFile(zipFile);
@@ -118,7 +118,7 @@ export default function VerifyAndUpload() {
             : "PARTIAL";
         const persistVerified = await axios.post(
           "api/contract-verification/persist-verified",
-          data,
+          data
         );
         if (persistVerified?.status === 200) {
           toast.update(toastId, {
@@ -150,7 +150,7 @@ export default function VerifyAndUpload() {
       const getFileUploadUrl = await axios.get(
         `api/file-upload/generateurl?file=${`${
           contractAddress + "_sourcefiles.zip"
-        }`}&contractaddress=${contractAddress}`,
+        }`}&contractaddress=${contractAddress}`
       );
 
       if (getFileUploadUrl.status === 200) {
@@ -213,7 +213,7 @@ export default function VerifyAndUpload() {
           >
             <div className="flex">
               <p>Select Chain:</p>
-              <SelectableComponent
+              <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
