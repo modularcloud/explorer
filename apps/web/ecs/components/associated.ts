@@ -29,6 +29,7 @@ export const AssociatedComponent = createComponentSchema(
   "associated",
 );
 
+export type EntityRef = z.infer<typeof EntityRefSchema>;
 export type AssociatedKey = z.infer<typeof AssociatedKeySchema>;
 export type AssociatedValue = z.infer<typeof AssociatedValueSchema>;
 export type Associated = z.infer<typeof AssociatedSchema>;

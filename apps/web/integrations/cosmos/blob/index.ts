@@ -3,32 +3,46 @@ import { RowTransform } from "./row";
 import { CardTransform } from "./card";
 import { z } from "zod";
 import { isHash } from "../../../lib/search";
-import { Block, JSONRPCResponse } from "../../../lib/service-manager";
+import {
+  Transaction,
+  Block,
+  JSONRPCResponse,
+} from "../../../lib/service-manager";
+import { getDataFromBlockTx } from "service-manager";
 
 export async function BlobExtract(_q: unknown, metadata: EngineConfigMetadata) {
   const query = z.string().parse(_q);
-  const [id, index] = query.split(":");
-  const queryType = isHash(id) ? "hash" : "height";
-  const baseUrl =
-    queryType === "height"
-      ? `${metadata.endpoint}/block?height=`
-      : `${metadata.endpoint}/block_by_hash?hash=`;
+  const [txHash, blobIndex] = query.split(":");
 
-  const response = await fetch(baseUrl + id.toUpperCase());
-
-  if (!response.ok) {
-    throw Error(`Response code ${response.status}: ${response.statusText}`);
+  const txResponse = await fetch(
+    `${metadata.endpoint}/tx?hash=0x${txHash.toUpperCase()}`,
+  );
+  if (!txResponse.ok) {
+    throw Error(`Response code ${txResponse.status}: ${txResponse.statusText}`);
   }
 
-  const block = (await response.json()) as JSONRPCResponse<Block>;
-  const blob = block.result.block.data.blobs?.[parseInt(index)];
-  if (!blob) {
-    throw Error(`Blob not found at index ${index}`);
+  const tx = (await txResponse.json()) as JSONRPCResponse<Transaction>;
+  const height = tx.result.height;
+
+  const blockResponse = await fetch(
+    `${metadata.endpoint}/block?height=${height}`,
+  );
+  const block = (await blockResponse.json()) as JSONRPCResponse<Block>;
+  if (!blockResponse.ok) {
+    throw Error(
+      `Response code ${blockResponse.status}: ${blockResponse.statusText}`,
+    );
   }
+
+  const txs = block.result.block.data.txs;
+  // TODO: match hash instead of index
+  const blobs = getDataFromBlockTx(txs[tx.result.index]);
+  const blob = blobs[Number(blobIndex)];
   return {
     blob,
     block,
-    index,
+    tx,
+    index: blobIndex,
   };
 }
 

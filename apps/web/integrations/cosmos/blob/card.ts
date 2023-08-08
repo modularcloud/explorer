@@ -13,7 +13,7 @@ export const CardTransform = {
     typeId: "card",
     data: {
       titleBar: "Blob",
-      badge: data.blob.NamespaceID,
+      badge: Buffer.from(data.blob.namespaceId).toString("hex"),
       attributes: {
         Network: {
           type: "standard",
@@ -23,17 +23,25 @@ export const CardTransform = {
           type: "standard",
           payload: data.block.result.block.header.height,
         },
-        Index: {
+        Transaction: {
+          type: "standard",
+          payload: data.tx.result.hash,
+        },
+        "Blob Index": {
           type: "standard",
           payload: data.index,
         },
         "Share Version": {
           type: "standard",
-          payload: data.blob.ShareVersion,
+          payload: data.blob.shareVersion,
+        },
+        "Namespace Version": {
+          type: "standard",
+          payload: data.blob.namespaceVersion,
         },
         Data: {
           type: "standard",
-          payload: data.blob.Data,
+          payload: Buffer.from(data.blob.data).toString("base64"),
         },
       },
     },

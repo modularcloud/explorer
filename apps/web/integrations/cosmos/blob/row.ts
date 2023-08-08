@@ -19,9 +19,9 @@ export const RowTransform = {
           },
           cell: {
             type: "standard",
-            payload: Buffer.from(data.blob.NamespaceID, "base64").toString(
-              "hex",
-            ),
+            payload: Buffer.from(data.blob.namespaceId)
+              .toString("hex")
+              .replace(/^0+/, ""),
           },
         },
 
@@ -46,7 +46,7 @@ export const RowTransform = {
           cell: {
             type: "longval",
             payload: {
-              value: data.blob.Data,
+              value: Buffer.from(data.blob.data).toString("base64"),
               strategy: "end",
               maxLength: 75,
               stepDown: 20,

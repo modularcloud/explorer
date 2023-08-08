@@ -3,9 +3,14 @@ import {
   AssociatedComponent,
   AssociatedKey,
   AssociatedValue,
+  EntityRef,
 } from "../../../ecs/components/associated";
 import { BlockExtract } from ".";
-import { txStringToHash } from "service-manager";
+import {
+  getDataFromBlockTx,
+  getTxHashFromBlockTx,
+  txStringToHash,
+} from "service-manager";
 
 export const AssociatedTransform = {
   schema: AssociatedComponent,
@@ -15,30 +20,52 @@ export const AssociatedTransform = {
   }: TransformInput<typeof BlockExtract>): Promise<
     TransformOutput<typeof AssociatedComponent>
   > => {
-    const Celestia: Record<AssociatedKey, AssociatedValue> = {};
-    if (data.result.block.data.blobs) {
-      Celestia.Blobs = {
-        type: "static",
-        values: data.result.block.data.blobs.map((blob, index) => ({
-          network: metadata.network.id,
-          type: "blob",
-          query: `${data.result.block.header.height}:${index}`,
-        })),
-      };
-    }
-    return {
-      typeId: "associated",
-      data: {
-        Transactions: {
-          type: "static",
-          values: data.result.block.data.txs.map((transaction) => ({
+    const associatedBlobs: EntityRef[] = [];
+    for (let i = 0; i < data.result.block.data.txs.length; i++) {
+      try {
+        const tx = data.result.block.data.txs[i];
+        const hash = await getTxHashFromBlockTx(tx);
+        const blobs = getDataFromBlockTx(tx);
+        blobs.forEach((_, index) => {
+          associatedBlobs.push({
             network: metadata.network.id,
-            type: "transaction",
-            query: txStringToHash(transaction),
-          })),
-        },
-        ...Celestia,
-      },
-    };
+            type: "blob",
+            query: `${hash}:${index}`,
+          });
+        });
+      } catch {}
+    }
+
+    return associatedBlobs.length === 0
+      ? {
+          typeId: "associated",
+          data: {
+            Transactions: {
+              type: "static",
+              values: data.result.block.data.txs.map((transaction) => ({
+                network: metadata.network.id,
+                type: "transaction",
+                query: txStringToHash(transaction),
+              })),
+            },
+          },
+        }
+      : {
+          typeId: "associated",
+          data: {
+            Transactions: {
+              type: "static",
+              values: data.result.block.data.txs.map((transaction) => ({
+                network: metadata.network.id,
+                type: "transaction",
+                query: txStringToHash(transaction),
+              })),
+            },
+            Blobs: {
+              type: "static",
+              values: associatedBlobs,
+            },
+          },
+        };
   },
 };
