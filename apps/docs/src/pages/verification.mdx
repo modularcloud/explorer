@@ -1,0 +1,211 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+export const description =
+  'Learn the features provided by Modular Cloud and its API.'
+
+<HeroPattern />
+
+# Verification
+
+Modular Cloud enables rollups and their users to verify contracts across the modular ecosystem with both a simple web UI or a suite of API endpoints. 
+
+## Using Web UI
+
+In lieu of accessing the API directly, you can quickly [verify contracts from this web page](https://contract-verification.vercel.app/).
+
+___INSERT EMBEDDED VIDEO DEMO WITH EMBED MDX___
+
+https://youtu.be/MaIdF0ooLnU
+
+You must have the .sol contract file, the .json metadata file for the contract in question, and the contract address.
+
+Make sure you select the correct chain from the dropdown menu in the UI before pressing the Verify button.
+
+---
+
+## Setup API Environment
+
+__Preparation__
+
+To run the development server from the command line, input:
+```bash
+yarn  dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+
+__Initializing Prisma__
+
+Prisma is an open-source database toolkit that simplifies database management, schema definition, and migrations. It allows you to interact with your database through a type-safe and auto-generated query builder.
+
+The npx prisma generate command is used to generate the Prisma client. Prisma generates a client library based on your database schema, which provides type-safe methods for interacting with your database. This command should be executed whenever your schema changes.
+
+To initialize Prisma in your project, run:
+
+```npx prisma init```
+
+To generate the Prisma client, run:
+
+```npx prisma generate```
+
+The npx prisma migrate command is used to manage database migrations. Migrations allow you to evolve your database schema over time without losing data. With Prisma, you can create new migrations, apply them, and revert them if necessary.
+
+To create a new migration, run:
+
+```npx prisma migrate dev --name <migration_name>```
+
+To apply pending migrations to the database, run:
+
+```npx prisma migrate deploy```
+
+---
+
+## Using the API
+There are three API endpoints within the contract verification system. They allow you to verify and retrieve smart contracts for the purposes of validating their contents.
+
+There are two POST methods and one GET method.
+
+### Verify Contract
+
+```/api/contract-verification/verify-contract```
+
+_Request method: POST_
+
+This endpoint verifies the provided smart contract code against the deployed contract address. This endpoint is used to ensure that the deployed contract matches the submitted source code.
+
+__Request Body__
+
+```json
+{
+  "contractAddress": "string",
+
+  "files": "Object",
+
+  "chain": "string"
+}
+```
+
+The body of the request must be a JSON object with the following properties:
+
+- address: The smart contract address that needs to be verified.
+
+- files: The contract source files inside a string.
+
+- chain: The ID of the blockchain where the contract has been deployed.
+
+__Responses__
+
+1. 200 OK: The contract was verified successfully. The JSON response body will contain information about the contract address and if the contract was verified fully or partially.
+	Example:
+
+	```
+	 { "result": [ { "address": "0x123f681646d4a755815f9cb19e1acc8565a0c2ac", "chainId": "1", "status": "perfect", "libraryMap": { "lib1": "0x3f681646d4a755815f9cb19e1acc8565a0c2ac", "lib2": "0x4f681646d4a755815f9cb19e1acc8565a0c2ac" } } ] }  
+
+2. 400 Bad Request: It can be returned due to errors mentioned below 
+	a. Unexpected token in JSON. Example: 
+		```
+		 {  "error":  "Unexpected token ' in JSON at position 107"  }
+		 ```
+	b. Metadata file not found. Example:
+		```
+		{  "error":  "Metadata file not found. Did you include \"metadata.json\"?"  }
+		 ```
+	c. Validation Error  address. Example: 	 
+		 ```
+		{"message":  "Validation Error: address", "errors":  [{"field":"address" "message":  "Invalid addresses: Contract Address"}]}
+	
+3. 404 Not found:  
+	a. Couldn't extract files from the request. Example: 
+		```
+		{  "error":  "Couldn't extract files from the request. Please make sure you have added files"  }
+		 ```
+4. 500 Internal Server Error:  
+	a.	All the other errors including compilation mismatch and resource missing 
+
+
+### Persist Verified
+
+```/api/contract-verification/persist-verified```
+
+_Request method: POST_
+
+This endpoint is used to persist the verified contracts in the database. 
+
+__Request Body__
+ ``` 
+ {
+  "verificationStatus": "string",
+  "contractAddress": "string",
+  "chainID": "string",
+  "isVerified": "boolean",
+  "uploadedUrl": "string",
+  }
+ ```
+The body of the request must be a JSON object with the following properties:
+- verificationStatus: Indicates  whether the contract is fully verified or partially verified 
+- contractAddress:The smart contract address Which has been verified.
+- chainId:The ID of the blockchain where the contract has been deployed.
+- isVerified:  Indicates whether the contract has been verified or not, with `true` representing a successful verification and `false` indicating a failed or incomplete verification.
+- uploadedUrl: Contains the URL where the files associated with the contract have been stored
+	
+__Responses__
+1. 200 OK: The operation was successful. The response body will contain the verification data for the contract. Example:
+
+```json
+{
+  "Id": 17,
+  "ContractAddress": "0x90cd9b9f69d1db3f66dd209784c90b92b0157b40",
+  "ChainID": 91002,
+  "IsVerified": true,
+  "CreatedAt": "2023-06-22 21:49:10+05:30",
+  "UpdatedAt": "2023-06-22 21:49:10+05:30"
+  "VerificationStatus": "FULL",
+  "UploadedUrl": "https://verified-contracts.s3.us-west-2.amazonaws.com/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40/0x90cd9b9f69d1db3f66dd209784c90b92b0157b40_sourcefiles.zip"
+  }
+```
+
+2. 500 Internal Server Error: If there's an error while querying the database, a 500 error will be returned along with an error message.
+
+### Fetch Contract
+
+```/api/contract-verification/fetch-verified```
+
+_Request method: GET_
+
+This endpoint is used to check if a contract has been previously verified.
+
+__Query Parameters__
+- contractaddress: The Ethereum address of the contract whose verification status you want to fetch.
+- readfiles (Optional): True or False If you want to get the data of uploadfiles as string added along with the contract verification data
+
+If `readFiles` is `true`, the response schema will look like this:
+
+```json
+{
+  "id": "string",
+  "createdAt": "datetime",
+  "updatedAt": "datetime",
+  "verificationStatus": "string",
+  "contractAddress": "string",
+  "chainID": "string",
+  "isVerified": "boolean",
+  "uploadedUrl": "string",
+  "files": "Object"
+}
+```
+
+__Responses__
+
+1. 200 OK: The operation was successful. The response body will contain the verification data for the contract. If no contract is found with the provided address, ```{ "isVerified": false }``` will be returned.
+
+2. 500 Internal Server Error: If there's an error while querying the database, a 500 error will be returned along with an error message.
+
+{/*<Guides />*/}

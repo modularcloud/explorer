@@ -188,6 +188,7 @@ export const navigation = [
     title: 'Guides',
     links: [
       { title: 'Introduction', href: '/' },
+      { title: 'Verification', href: '/verification' },
     ],
   },
   {
