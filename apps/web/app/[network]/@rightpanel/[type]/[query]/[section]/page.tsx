@@ -25,3 +25,5 @@ export default async function RightPanelPage({ params }: Props) {
     />
   );
 }
+
+export const runtime = "edge";

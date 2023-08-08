@@ -25,10 +25,10 @@ export async function getEntity(
   network: Network,
   typeName: string,
   field: string,
-  fieldValue: string
+  fieldValue: string,
 ): Promise<Entity | null> {
   const entityType = network.entityTypes.find(
-    (entityType) => slugify(entityType.name) === slugify(typeName)
+    (entityType) => slugify(entityType.name) === slugify(typeName),
   );
   if (!entityType) {
     return null;
@@ -49,10 +49,10 @@ export async function getEntities(
   network: Network,
   typeName: string,
   field: string,
-  fieldValue: string
+  fieldValue: string,
 ): Promise<Entity[]> {
   const entityType = network.entityTypes.find(
-    (entityType) => slugify(entityType.name) === slugify(typeName)
+    (entityType) => slugify(entityType.name) === slugify(typeName),
   );
   if (!entityType) {
     return [];
@@ -70,11 +70,11 @@ export async function getEntities(
 
 export async function getAssociated(
   network: Network,
-  entity: Entity
+  entity: Entity,
 ): Promise<Entity[] | Record<string, Entity[]>> {
   const entityType = network.entityTypes.find(
     (entityType) =>
-      slugify(entityType.name) === slugify(entity.context.entityTypeName)
+      slugify(entityType.name) === slugify(entity.context.entityTypeName),
   );
   if (!entityType) {
     return [];

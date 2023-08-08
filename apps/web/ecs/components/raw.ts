@@ -5,7 +5,7 @@ const RawSchema = z.record(
   z.object({
     language: z.string(),
     content: z.string(),
-  })
+  }),
 );
 
 export const RawComponent = createComponentSchema(RawSchema, "raw");

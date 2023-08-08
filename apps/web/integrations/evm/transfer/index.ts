@@ -7,7 +7,7 @@ import { RowTransform } from "./row";
 
 export async function TransferExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const [txHash, logIndex] = query.split(":");

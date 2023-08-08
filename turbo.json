@@ -3,7 +3,12 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**"],
+      "env": [
+        "SOURCIFY_URL",
+        "AWS_S3_ACCESSKEY_ID",
+        "AWS_S3_ACCESSKEY_SECRET"
+      ]
     },
     "lint": {
       "outputs": []
@@ -32,7 +37,17 @@
         "UPLOADCARE_API_KEY",
         "IPFS_GATEWAY",
         "CELESTIA_BLOCKSPACE_RACE_RPC",
-        "NAMESPACE_ENDPOINT"
+        "NAMESPACE_ENDPOINT",
+        "CELESTIA_ARABICA_RPC"
+      ]
+    },
+    "verify#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"],
+      "env": [
+        "SOURCIFY_URL",
+        "AWS_S3_ACCESSKEY_ID",
+        "AWS_S3_ACCESSKEY_SECRET"
       ]
     }
   }

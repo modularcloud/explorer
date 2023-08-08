@@ -17,7 +17,7 @@ export function CompactDate({ datetime, classes }: Props) {
     // if it's less than 1 minutes ago, show "Xs ago"
     if (currentDate.getTime() - date.getTime() < 1000 * 60) {
       setCompactTime(
-        `${Math.floor((currentDate.getTime() - date.getTime()) / 1000)}s ago`
+        `${Math.floor((currentDate.getTime() - date.getTime()) / 1000)}s ago`,
       );
       // if the time difference is less than 1 minute, re-render after another minute
       const timeout = setTimeout(() => {
@@ -25,7 +25,7 @@ export function CompactDate({ datetime, classes }: Props) {
           date.toLocaleTimeString(undefined, {
             hour: "numeric",
             minute: "numeric",
-          })
+          }),
         );
       }, 1000 * 60);
       return () => clearTimeout(timeout);
@@ -37,7 +37,7 @@ export function CompactDate({ datetime, classes }: Props) {
         date.toLocaleTimeString(undefined, {
           hour: "numeric",
           minute: "numeric",
-        })
+        }),
       );
     }
 
@@ -47,7 +47,7 @@ export function CompactDate({ datetime, classes }: Props) {
         date.toLocaleDateString(undefined, {
           month: "short",
           day: "numeric",
-        })
+        }),
       );
     }
 
@@ -56,7 +56,7 @@ export function CompactDate({ datetime, classes }: Props) {
       setCompactTime(
         date.toLocaleDateString(undefined, {
           year: "numeric",
-        })
+        }),
       );
     }
   }, []);

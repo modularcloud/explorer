@@ -6,7 +6,7 @@ import { PaginationTransform } from "./pagination";
 
 export async function PaginationExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const [value, collection, nextToken] = query.split(":");
@@ -15,7 +15,7 @@ export async function PaginationExtract(
   if (collection === "balances") {
     const balances = await mc.evm.getTokenBalancesByAddress(
       metadata.network.id,
-      value
+      value,
     );
     return {
       value,
@@ -27,7 +27,7 @@ export async function PaginationExtract(
       const latest = await mc.evm.getRecentTransactions(
         metadata.network.id,
         30,
-        nextToken
+        nextToken,
       );
       return {
         value,
@@ -54,7 +54,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -66,7 +66,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -78,7 +78,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -90,7 +90,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -102,7 +102,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -114,7 +114,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -128,7 +128,7 @@ export async function PaginationExtract(
       address,
       id,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,
@@ -140,7 +140,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,

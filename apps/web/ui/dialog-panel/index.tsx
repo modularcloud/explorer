@@ -31,7 +31,7 @@ export function DialogPanel({
         <Dialog.Overlay
           className={clsx(
             "bg-night/50 fixed inset-0 backdrop-blur-sm",
-            overlayClass
+            overlayClass,
           )}
         />
         <Dialog.Content className={contentClass}>

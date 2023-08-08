@@ -9,7 +9,7 @@ const PaginationSchema = z.object({
 
 export const PaginationComponent = createComponentSchema(
   PaginationSchema,
-  "pagination"
+  "pagination",
 );
 
 export type Pagination = z.infer<typeof PaginationSchema>;

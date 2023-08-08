@@ -6,7 +6,7 @@ import { Verification } from ".prisma/client";
 
 export default async function FetchVerifiedContract(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   let contractAddress = Array.isArray(req.query.contractaddress)
     ? req.query.contractaddress[0]
@@ -46,7 +46,7 @@ export default async function FetchVerifiedContract(
 
 const unzipAndRead = (
   response: AxiosResponse<any>,
-  contractData: Verification
+  contractData: Verification,
 ) => {
   return new Promise((resolve, reject) => {
     let data: any = { ...contractData };
@@ -72,7 +72,7 @@ const unzipAndRead = (
       .promise()
       .then(
         () => resolve(data),
-        (e: any) => console.log("error", e)
+        (e: any) => console.log("error", e),
       );
   });
 };

@@ -10,7 +10,7 @@ import { PaginationTransform } from "./pagination";
 
 export async function PaginationExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const [value, collection, page = "1"] = query.split(":");
@@ -18,24 +18,24 @@ export async function PaginationExtract(
     let sendResponse, receiveResponse;
     if (value.match(/^dym\w{39}$/)) {
       sendResponse = await fetch(
-        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`,
       );
       receiveResponse = await fetch(
-        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`,
       );
     } else if (value.match(/^rol\w{39}$/)) {
       sendResponse = await fetch(
-        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${value}'&prove=false&page=${page}&per_page=15&order_by=asc`
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${value}'&prove=false&page=${page}&per_page=15&order_by=asc`,
       );
       receiveResponse = await fetch(
-        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${value}'&prove=false&page=${page}&per_page=15&order_by=asc`
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${value}'&prove=false&page=${page}&per_page=15&order_by=asc`,
       );
     } else if (value.match(/^celestia\w{39}$/)) {
       sendResponse = await fetch(
-        `https://rpc-mocha.pops.one/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`
+        `http://consensus-full-arabica-9.celestia-arabica.com:26657/tx_search?query="message.sender = '${value}'"&prove=false&page=${page}&per_page=15`,
       );
       receiveResponse = await fetch(
-        `https://rpc-mocha.pops.one/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`
+        `http://consensus-full-arabica-9.celestia-arabica.com:26657/tx_search?query="transfer.recipient = '${value}'"&prove=false&page=${page}&per_page=15`,
       );
     } else {
       throw new Error("Unsupported address");
@@ -73,7 +73,7 @@ export async function PaginationExtract(
       metadata.network.id,
       value,
       30,
-      nextToken
+      nextToken,
     );
     return {
       value,

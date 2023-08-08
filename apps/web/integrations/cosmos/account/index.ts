@@ -10,7 +10,7 @@ import { TopbarTransform } from "./topbar";
 
 export async function AccountExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const address = z.string().parse(_q);
   let queryInput, denom;
@@ -24,7 +24,7 @@ export async function AccountExtract(
     const celestiaBase =
       metadata.network.id.indexOf("mocha") !== -1
         ? "https://rpc-mocha.pops.one"
-        : "https://rpc-blockspacerace.pops.one";
+        : "http://consensus-full-arabica-9.celestia-arabica.com:26657";
     const data = getBalanceQueryData(address, "utia");
     queryInput = `${celestiaBase}/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "TIA";

@@ -64,6 +64,26 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Platform: "Eclipse",
     },
   },
+  NAUTILUS_PROTEUS: {
+    mcId: "ep/6",
+    displayName: "Proteus",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "proteus",
+    slug: "proteus",
+    slugPrefix: "nautilus",
+    vm: "evm",
+    nativeToken: "ZBC",
+    logoUrl: "/images/nautilus.png",
+    searchOptionGroup: "Nautilus",
+    rpcUrl: "https://api.evm.proteus.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
   ECLIPSE_WORLDS: {
     mcId: "ep/3",
     displayName: "Worlds",
@@ -77,6 +97,26 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
     rpcUrl: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
+  ECLIPSE_WAEV: {
+    mcId: "ep/7",
+    displayName: "Waev",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "waev",
+    slug: "waev",
+    slugPrefix: "eclipse",
+    vm: "evm",
+    nativeToken: "ETH",
+    logoUrl: "/images/eclipse.png",
+    searchOptionGroup: "Waev",
+    rpcUrl: "https://api.evm.waev.eclipsenetwork.xyz/solana",
     stack: {
       Type: "Rollup",
       Execution: "EVM",
@@ -187,37 +227,37 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     },
   },
   // Celestia
-  CELESTIA_BLOCKSPACE_RACE: {
-    mcId: "N/A",
-    displayName: "Blockspace Race",
+  // CELESTIA_MOCHA: {
+  //   mcId: "N/A",
+  //   displayName: "Mocha",
+  //   isTestnet: true,
+  //   isVerified: false,
+  //   explorerId: "celestia",
+  //   slug: "mocha",
+  //   slugPrefix: "celestia",
+  //   vm: "cosmos",
+  //   nativeToken: "TIA",
+  //   logoUrl: "/images/celestia.png",
+  //   searchOptionGroup: "Celestia",
+  //   rpcUrl: process.env.CELESTIA_MOCHA_RPC ?? "",
+  //   stack: {
+  //     Type: "Data Availability",
+  //     Execution: "Cosmos SDK",
+  //   },
+  // },
+  CELESTIA_ARABICA: {
+    mcId: "3",
+    displayName: "Arabica",
     isTestnet: true,
     isVerified: false,
     explorerId: "celestia",
-    slug: "blockspace-race",
+    slug: "arabica",
     slugPrefix: "celestia",
     vm: "cosmos",
     nativeToken: "TIA",
     logoUrl: "/images/celestia.png",
     searchOptionGroup: "Celestia",
-    rpcUrl: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
-    stack: {
-      Type: "Data Availability",
-      Execution: "Cosmos SDK",
-    },
-  },
-  CELESTIA_MOCHA: {
-    mcId: "N/A",
-    displayName: "Mocha",
-    isTestnet: true,
-    isVerified: false,
-    explorerId: "celestia",
-    slug: "mocha",
-    slugPrefix: "celestia",
-    vm: "cosmos",
-    nativeToken: "TIA",
-    logoUrl: "/images/celestia.png",
-    searchOptionGroup: "Celestia",
-    rpcUrl: process.env.CELESTIA_MOCHA_RPC ?? "",
+    rpcUrl: process.env.CELESTIA_ARABICA_RPC ?? "",
     stack: {
       Type: "Data Availability",
       Execution: "Cosmos SDK",
@@ -273,6 +313,6 @@ export function getNetworkBySlug(slug: string): NetworkConfig | undefined {
   return ALL_NETWORKS.find((network) =>
     network.explorerId === id
       ? network.slug === slug
-      : `${network.slugPrefix}-${network.slug}` === slug
+      : `${network.slugPrefix}-${network.slug}` === slug,
   );
 }

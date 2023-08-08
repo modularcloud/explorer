@@ -15,7 +15,7 @@ function fixCapsAndSpacing(camel: string): string {
 
   // Add a space before capital latters (new words)
   const characters = letters.map((letter) =>
-    letter === letter.toUpperCase() ? ` ${letter}` : letter
+    letter === letter.toUpperCase() ? ` ${letter}` : letter,
   );
 
   return characters.join("").trim();
@@ -49,7 +49,7 @@ function convertToKeyValue(obj: { [key: string]: any }): {
       KV[fixCapsAndSpacing(entry[0])] = {
         type: "list",
         payload: entry[1].map((val) =>
-          isAmount ? getAmountString(val) : String(val)
+          isAmount ? getAmountString(val) : String(val),
         ),
       };
     } else if (typeof entry[1] === "object") {
@@ -62,7 +62,7 @@ function convertToKeyValue(obj: { [key: string]: any }): {
         let properties = { type: "list" as "list", payload: [] as string[] };
         Object.entries(entry[1]).forEach((subentry) => {
           properties.payload.push(
-            `${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`
+            `${fixCapsAndSpacing(subentry[0])}: ${subentry[1]}`,
           );
         });
         KV[fixCapsAndSpacing(entry[0])] = properties;

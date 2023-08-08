@@ -21,12 +21,12 @@ const AssociatedValueSchema = z.discriminatedUnion("type", [
 
 const AssociatedSchema = z.record(
   AssociatedKeySchema, // Collection name
-  AssociatedValueSchema
+  AssociatedValueSchema,
 );
 
 export const AssociatedComponent = createComponentSchema(
   AssociatedSchema,
-  "associated"
+  "associated",
 );
 
 export type AssociatedKey = z.infer<typeof AssociatedKeySchema>;

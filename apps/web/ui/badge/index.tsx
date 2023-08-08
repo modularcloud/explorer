@@ -18,7 +18,7 @@ export function Badge({ text, extra = 0, long, icon, toggled }: Props) {
         toggled ? "border-ocean-700" : "border-mid-dark-100",
         "flex items-center gap-2 whitespace-nowrap rounded-[2.5rem] border bg-white py-[.1875rem] pl-3",
         long ? "max-w-min" : "w-max",
-        hasExtra ? "pr-[.1875rem]" : "pr-3"
+        hasExtra ? "pr-[.1875rem]" : "pr-3",
       )}
     >
       {icon ? (

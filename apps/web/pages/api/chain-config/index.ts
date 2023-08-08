@@ -10,7 +10,7 @@ const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (!ADD_NETWORK_PASS || !ADD_NETWORK_ENDPOINT) {
     return res.status(500).end();

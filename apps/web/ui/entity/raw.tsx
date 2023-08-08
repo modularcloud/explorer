@@ -11,7 +11,7 @@ export function Raw({ entity }: Props) {
       code: value.content,
       lang: value.language,
       title: key,
-    })
+    }),
   );
   if (data.length === 0) {
     data.push({

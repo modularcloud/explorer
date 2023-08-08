@@ -11,7 +11,7 @@ import { RawTransform } from "./raw";
 
 export async function BlockExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const web3 = new Web3(metadata.endpoint);

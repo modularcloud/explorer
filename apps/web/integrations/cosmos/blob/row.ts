@@ -20,7 +20,7 @@ export const RowTransform = {
           cell: {
             type: "standard",
             payload: Buffer.from(data.blob.NamespaceID, "base64").toString(
-              "hex"
+              "hex",
             ),
           },
         },
@@ -34,7 +34,7 @@ export const RowTransform = {
             payload: {
               number: Number(data.block.result.block.header.height),
               timestamp: new Date(
-                data.block.result.block.header.time
+                data.block.result.block.header.time,
               ).getTime(),
             },
           },
