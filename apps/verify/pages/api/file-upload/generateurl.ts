@@ -3,7 +3,7 @@ import generateUploadUrl from "./s3file-upload";
 
 export default async function generateS3Url(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const file = req.query.file as string | undefined;
   const contractaddress = req.query.contractaddress as string | undefined;

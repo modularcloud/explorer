@@ -12,7 +12,7 @@ import { RawTransform } from "./raw";
 
 export async function BlockExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const queryType = isHash(query) ? "hash" : "height";

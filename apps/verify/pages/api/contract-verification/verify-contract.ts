@@ -1,35 +1,32 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosError } from "axios";
-import prisma from "../../../prisma/lib/prisma";
 
 export default async function verifyContract(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const { contractAddress, files, uploadedUrl, verificationStatus, chainId } =
-    req.body;
+  const { contractAddress, files, chain } = req.body;
 
   try {
     console.log("Making API call...");
-    console.log("Creating record in database...");
-    try {
-      const record = await prisma.verification.create({
-        data: {
-          verificationStatus,
-          contractAddress,
-          chainID: chainId,
-          isVerified: true,
-          uploadedUrl: uploadedUrl,
-        },
-      });
-      console.log("Setting response status...");
-      res.status(200).json(record);
-      console.log("Response status set.");
-    } catch (error) {
-      res.status(500).json(error);
-      console.error(error);
+    const response = await axios.post(
+      process.env.SOURCIFY_URL ?? "http://localhost:5555/verify",
+      {
+        address: contractAddress,
+        chain: chain,
+        files: files,
+      },
+    );
+    if (
+      response.data.result[0].status !== "perfect" &&
+      response.data.result[0].status !== "partial"
+    ) {
+      res.status(400).json({ message: response.data.result[0].message });
     }
-
+    console.log("API call completed, response status:", response.status);
+    console.log("Setting response status...");
+    res.status(response.status).json(response.data);
+    console.log("Response status set.");
     return;
   } catch (error) {
     console.log(error);
@@ -39,10 +36,11 @@ export default async function verifyContract(
         "axiosError details:",
         axiosError.response.data,
         axiosError.response.status,
-        axiosError.response.headers
+        axiosError.response.headers,
       );
 
       res.status(axiosError.response.status).json(axiosError.response.data);
+      console.error("An error occurred:", error);
       return;
     }
   }

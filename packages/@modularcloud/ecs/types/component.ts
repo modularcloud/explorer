@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export function createComponentSchema<T extends z.ZodTypeAny, K extends string>(
   schema: T,
-  typeId: K
+  typeId: K,
 ) {
   return z.object({
     typeId: z.literal(typeId),
@@ -12,7 +12,7 @@ export function createComponentSchema<T extends z.ZodTypeAny, K extends string>(
 
 export type ComponentSchemaType<
   T extends z.ZodTypeAny,
-  K extends string
+  K extends string,
 > = ReturnType<typeof createComponentSchema<T, K>>;
 
 export type AnyComponentSchema = ComponentSchemaType<any, any>;

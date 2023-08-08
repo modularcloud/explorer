@@ -23,3 +23,5 @@ export default async function ShortEntityPage(props: Props) {
     <EntityPage params={mapTypes(props.params, whitelabel.defaultNetwork)} />
   );
 }
+
+export const runtime = "edge";

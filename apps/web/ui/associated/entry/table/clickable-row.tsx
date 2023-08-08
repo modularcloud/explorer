@@ -32,7 +32,7 @@ export function ClickableRow({ resourcePath, children }: Props) {
       onClick={onClick}
       className={clsx(
         "border-b border-b-[#F0F0F1] hover:bg-[#08061505]",
-        resourcePath && "cursor-pointer"
+        resourcePath && "cursor-pointer",
       )}
     >
       {children}

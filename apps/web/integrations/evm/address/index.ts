@@ -20,7 +20,7 @@ async function safePromise<T>(p: Promise<T>) {
 
 export async function AddressExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   // instead of passing the balance directly, in the future we should load the context which will pull the balance

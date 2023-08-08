@@ -42,13 +42,13 @@ export const Engine = {
         const backup = load(
           config.secondary.metadata,
           config.secondary.loaders[type],
-          query
+          query,
         );
         try {
           const preferred = await load(
             config.primary.metadata,
             config.primary.loaders[type],
-            query
+            query,
           );
           if (preferred) {
             return preferred;
@@ -61,12 +61,16 @@ export const Engine = {
       const loads = [];
       if (config.primary.loaders[type]) {
         loads.push(
-          load(config.primary.metadata, config.primary.loaders[type], query)
+          load(config.primary.metadata, config.primary.loaders[type], query),
         );
       }
       if (config.secondary.loaders[type]) {
         loads.push(
-          load(config.secondary.metadata, config.secondary.loaders[type], query)
+          load(
+            config.secondary.metadata,
+            config.secondary.loaders[type],
+            query,
+          ),
         );
       }
       return await Promise.any(loads);

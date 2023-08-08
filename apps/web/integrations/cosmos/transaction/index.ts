@@ -12,11 +12,11 @@ import { TopbarTransform } from "./topbar";
 
 export async function TransactionExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const hash = z.string().parse(_q);
   const response = await fetch(
-    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`
+    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`,
   );
 
   if (!response.ok) {

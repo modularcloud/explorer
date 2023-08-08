@@ -17,7 +17,7 @@ export async function RightPanel({ data, alt, className }: Props) {
     <div
       className={clsx(
         "scrollbar-thin scrollbar-thumb-mid-dark-500 scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar-track-rounded-full flex h-full flex-col space-y-10 overflow-auto bg-gray-100 px-6 py-7 shadow-inner sm:px-9 lg:h-screen lg:px-5",
-        className
+        className,
       )}
     >
       <EntityDetails

@@ -23,19 +23,16 @@ export function generateMetadata(): Metadata {
 }
 export default function HomePage() {
   return (
-    <div className="bg-specialty-gray flex min-h-screen flex-col items-center bg-[url('/images/home-bg.svg')] bg-top  bg-no-repeat">
-      <div className="md:pt-18 tab:pt-28 flex w-full flex-1 flex-col items-center justify-start space-y-10 pt-6 sm:pt-14">
+    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-center bg-no-repeat min-h-screen">
+      <div className="flex flex-col items-center justify-center w-full space-y-10 xs:pt-40 pt-[12.5rem]">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
         <div className="w-full px-2 sm:max-w-[27.875rem]">
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>
-      {/* @ts-expect-error Async Server Component */}
-      {explorerId === "nautilus" ? <Stats extended={true} /> : null}
-      <Footer />
     </div>
   );
 }
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";

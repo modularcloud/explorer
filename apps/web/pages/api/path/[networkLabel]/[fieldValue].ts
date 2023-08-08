@@ -15,7 +15,7 @@ import {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { networkLabel, fieldValue } = req.query;
   if (typeof networkLabel !== "string") {
@@ -42,7 +42,7 @@ export default async function handler(
       network,
       "transaction",
       "signature",
-      fieldValue
+      fieldValue,
     );
     if (transaction) {
       res.json({
@@ -56,7 +56,7 @@ export default async function handler(
       network,
       "svm-transaction",
       "signature",
-      fieldValue
+      fieldValue,
     );
     if (svmTransaction) {
       res.json({
@@ -139,7 +139,7 @@ export default async function handler(
       network,
       "transaction",
       "hash",
-      fieldValue
+      fieldValue,
     );
     if (transaction) {
       res.json({

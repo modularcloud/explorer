@@ -48,7 +48,7 @@ function createBaseMsgPayForBlobs(): MsgPayForBlobs {
 export const MsgPayForBlobs = {
   encode(
     message: MsgPayForBlobs,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.signer !== "") {
       writer.uint32(10).string(message.signer);
@@ -139,7 +139,7 @@ export const MsgPayForBlobs = {
     message.signer !== undefined && (obj.signer = message.signer);
     if (message.namespaces) {
       obj.namespaces = message.namespaces.map((e) =>
-        base64FromBytes(e !== undefined ? e : new Uint8Array())
+        base64FromBytes(e !== undefined ? e : new Uint8Array()),
       );
     } else {
       obj.namespaces = [];
@@ -151,7 +151,7 @@ export const MsgPayForBlobs = {
     }
     if (message.shareCommitments) {
       obj.shareCommitments = message.shareCommitments.map((e) =>
-        base64FromBytes(e !== undefined ? e : new Uint8Array())
+        base64FromBytes(e !== undefined ? e : new Uint8Array()),
       );
     } else {
       obj.shareCommitments = [];
@@ -165,13 +165,13 @@ export const MsgPayForBlobs = {
   },
 
   create<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(
-    base?: I
+    base?: I,
   ): MsgPayForBlobs {
     return MsgPayForBlobs.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgPayForBlobs>, I>>(
-    object: I
+    object: I,
   ): MsgPayForBlobs {
     const message = createBaseMsgPayForBlobs();
     message.signer = object.signer ?? "";
@@ -190,7 +190,7 @@ function createBaseIndexWrapper(): IndexWrapper {
 export const IndexWrapper = {
   encode(
     message: IndexWrapper,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.tx.length !== 0) {
       writer.uint32(10).bytes(message.tx);
@@ -251,7 +251,7 @@ export const IndexWrapper = {
     const obj: any = {};
     message.tx !== undefined &&
       (obj.tx = base64FromBytes(
-        message.tx !== undefined ? message.tx : new Uint8Array()
+        message.tx !== undefined ? message.tx : new Uint8Array(),
       ));
     if (message.shareIndexes) {
       obj.shareIndexes = message.shareIndexes.map((e) => Math.round(e));
@@ -263,13 +263,13 @@ export const IndexWrapper = {
   },
 
   create<I extends Exact<DeepPartial<IndexWrapper>, I>>(
-    base?: I
+    base?: I,
   ): IndexWrapper {
     return IndexWrapper.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<IndexWrapper>, I>>(
-    object: I
+    object: I,
   ): IndexWrapper {
     const message = createBaseIndexWrapper();
     message.tx = object.tx ?? new Uint8Array();
@@ -286,7 +286,7 @@ function createBaseMalleatedTx(): MalleatedTx {
 export const MalleatedTx = {
   encode(
     message: MalleatedTx,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.originalTxHash.length !== 0) {
       writer.uint32(10).bytes(message.originalTxHash);
@@ -333,11 +333,11 @@ export const MalleatedTx = {
       (obj.originalTxHash = base64FromBytes(
         message.originalTxHash !== undefined
           ? message.originalTxHash
-          : new Uint8Array()
+          : new Uint8Array(),
       ));
     message.tx !== undefined &&
       (obj.tx = base64FromBytes(
-        message.tx !== undefined ? message.tx : new Uint8Array()
+        message.tx !== undefined ? message.tx : new Uint8Array(),
       ));
     return obj;
   },
@@ -347,7 +347,7 @@ export const MalleatedTx = {
   },
 
   fromPartial<I extends Exact<DeepPartial<MalleatedTx>, I>>(
-    object: I
+    object: I,
   ): MalleatedTx {
     const message = createBaseMalleatedTx();
     message.originalTxHash = object.originalTxHash ?? new Uint8Array();

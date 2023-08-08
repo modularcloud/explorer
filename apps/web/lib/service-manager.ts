@@ -119,7 +119,7 @@ export type Block = {
           validator_address: string;
           timestamp: string;
           signature: string;
-        }[]
+        }[],
       ];
     };
   };
@@ -158,7 +158,7 @@ async function getBlockBy(
   queryType: "hash" | "height",
   queryValue: string,
   networkBase: string,
-  networkName: string
+  networkName: string,
 ) {
   const baseUrl =
     queryType === "height"
@@ -189,7 +189,7 @@ async function getBlockBy(
               Height: blockResponse.result.block.header.height,
               Time: blockResponse.result.block.header.time,
               Proposer: blockResponse.result.block.header.proposer_address,
-            }
+            },
       ),
       computed: {},
       context: {
@@ -208,11 +208,11 @@ async function getBlockBy(
 async function getTransactionByHash(
   hash: string,
   networkBase: string,
-  networkName: string
+  networkName: string,
 ) {
   try {
     const response = await fetch(
-      `${networkBase}/tx?hash=${hash.toUpperCase()}`
+      `${networkBase}/tx?hash=${hash.toUpperCase()}`,
     );
 
     if (!response.ok) {
@@ -251,11 +251,11 @@ async function getTransactionByHash(
 async function getTransactionsByHeight(
   height: string,
   networkBase: string,
-  networkName: string
+  networkName: string,
 ) {
   try {
     const response = await fetch(
-      `${networkBase}/tx_search?query="tx.height=${height}"`
+      `${networkBase}/tx_search?query="tx.height=${height}"`,
     );
     if (!response.ok) {
       throw Error(`Response code ${response.status}: ${response.statusText}`);
@@ -295,28 +295,28 @@ async function getTransactionsByAddress(address: string, networkName: string) {
     let sendResponse, receiveResponse;
     if (DYMENSION_HUB == networkName) {
       sendResponse = await fetch(
-        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="message.sender = '${address}'"`,
       );
       receiveResponse = await fetch(
-        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`
+        `https://rpc-hub-35c.dymension.xyz/tx_search?query="transfer.recipient = '${address}'"`,
       );
       if (!sendResponse.ok) {
         throw Error(
-          `Response code ${sendResponse.status}: ${sendResponse.statusText}`
+          `Response code ${sendResponse.status}: ${sendResponse.statusText}`,
         );
       }
     } else if (DYMENSION_ROLLAPP_X == networkName) {
       sendResponse = await fetch(
         // make api return all results in single response for now
-        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=message.sender='${address}'&prove=false&page=1&per_page=10000&order_by=asc`,
       );
       receiveResponse = await fetch(
         // make api return all results in single response for now
-        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`
+        `https://rpc-rollappx-35c.dymension.xyz/tx_search?query=transfer.recipient='${address}'&prove=false&page=1&per_page=10000&order_by=asc`,
       );
       if (!sendResponse.ok) {
         throw Error(
-          `Response code ${sendResponse.status}: ${sendResponse.statusText}`
+          `Response code ${sendResponse.status}: ${sendResponse.statusText}`,
         );
       }
     } else {
@@ -326,7 +326,7 @@ async function getTransactionsByAddress(address: string, networkName: string) {
     const receiveTxs =
       (await receiveResponse.json()) as JSONRPCResponse<TxSearch>;
     const allTxs = [...sendTxs.result.txs, ...receiveTxs.result.txs].sort(
-      (a, b) => Number(b.height) - Number(a.height)
+      (a, b) => Number(b.height) - Number(a.height),
     );
     return allTxs.map((tx) => {
       const Messages = getMessages(tx.tx);
@@ -359,7 +359,7 @@ async function getTransactionsByAddress(address: string, networkName: string) {
 async function getAccountByAddress(
   address: string,
   networkBase: string,
-  networkName: string
+  networkName: string,
 ) {
   let queryInput, denom;
   if (address.match(/^dym\w{39}$/)) {
@@ -422,9 +422,9 @@ if (CELESTIA_MOCHA_RPC) {
                   await getTransactionByHash(
                     txStringToHash(tx).toUpperCase(),
                     CELESTIA_MOCHA_RPC,
-                    CELESTIA_MOCHA
-                  )
-              )
+                    CELESTIA_MOCHA,
+                  ),
+              ),
             )
           ).filter((notnull) => notnull);
         },
@@ -443,7 +443,7 @@ if (CELESTIA_MOCHA_RPC) {
               getTransactionsByHeight(
                 height,
                 CELESTIA_MOCHA_RPC,
-                CELESTIA_MOCHA
+                CELESTIA_MOCHA,
               ),
           },
         ],
@@ -481,9 +481,9 @@ if (DYMENSION_HUB_RPC) {
                   await getTransactionByHash(
                     txStringToHash(tx).toUpperCase(),
                     DYMENSION_HUB_RPC,
-                    DYMENSION_HUB
-                  )
-              )
+                    DYMENSION_HUB,
+                  ),
+              ),
             )
           ).filter((notnull) => notnull) as Entity[];
         },
@@ -517,7 +517,7 @@ if (DYMENSION_HUB_RPC) {
           return (
             (await getTransactionsByAddress(
               entity.uniqueIdentifier,
-              DYMENSION_HUB
+              DYMENSION_HUB,
             )) ?? []
           );
         },
@@ -540,7 +540,7 @@ if (DYMENSION_ROLLAPP_X_RPC) {
                 "height",
                 height,
                 DYMENSION_ROLLAPP_X_RPC,
-                DYMENSION_ROLLAPP_X
+                DYMENSION_ROLLAPP_X,
               ),
           },
           {
@@ -550,7 +550,7 @@ if (DYMENSION_ROLLAPP_X_RPC) {
                 "hash",
                 hash,
                 DYMENSION_ROLLAPP_X_RPC,
-                DYMENSION_ROLLAPP_X
+                DYMENSION_ROLLAPP_X,
               ),
           },
         ],
@@ -563,9 +563,9 @@ if (DYMENSION_ROLLAPP_X_RPC) {
                   await getTransactionByHash(
                     txStringToHash(tx).toUpperCase(),
                     DYMENSION_ROLLAPP_X_RPC,
-                    DYMENSION_ROLLAPP_X
-                  )
-              )
+                    DYMENSION_ROLLAPP_X,
+                  ),
+              ),
             )
           ).filter((notnull) => notnull);
         },
@@ -579,7 +579,7 @@ if (DYMENSION_ROLLAPP_X_RPC) {
               getTransactionByHash(
                 hash,
                 DYMENSION_ROLLAPP_X_RPC,
-                DYMENSION_ROLLAPP_X
+                DYMENSION_ROLLAPP_X,
               ),
           },
           {
@@ -588,7 +588,7 @@ if (DYMENSION_ROLLAPP_X_RPC) {
               getTransactionsByHeight(
                 height,
                 DYMENSION_ROLLAPP_X_RPC,
-                DYMENSION_ROLLAPP_X
+                DYMENSION_ROLLAPP_X,
               ),
           },
         ],
@@ -603,14 +603,14 @@ if (DYMENSION_ROLLAPP_X_RPC) {
               getAccountByAddress(
                 address,
                 DYMENSION_ROLLAPP_X_RPC,
-                DYMENSION_ROLLAPP_X
+                DYMENSION_ROLLAPP_X,
               ),
           },
         ],
         getAssociated: async (entity: Entity) => {
           return getTransactionsByAddress(
             entity.uniqueIdentifier,
-            DYMENSION_ROLLAPP_X
+            DYMENSION_ROLLAPP_X,
           );
         },
       },
@@ -789,7 +789,7 @@ async function getEVMBlockBy(
   key: "hash" | "height",
   value: string,
   endpoint: string,
-  networkName: string
+  networkName: string,
 ): Promise<Entity | null> {
   try {
     const hexHeight = Number(value).toString(16);
@@ -819,7 +819,7 @@ async function getEVMBlockBy(
     };
 
     const data = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
 
     const block = EthBlockSchema.parse(data.result);
@@ -872,7 +872,7 @@ function buildMetadata(obj: { [key: string]: any }): {
 export async function getEventSignatureName(topic: string) {
   try {
     const results = await fetch(
-      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
+      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`,
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
   } catch {}
@@ -882,7 +882,7 @@ async function getEVMTransactionByHash(
   hash: string,
   endpoint: string,
   networkName: string,
-  timestamp?: number
+  timestamp?: number,
 ): Promise<Entity | null> {
   try {
     const prefixedHash = hash.length === 66 ? hash : `0x${hash}`;
@@ -904,7 +904,7 @@ async function getEVMTransactionByHash(
     };
 
     const data = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const tx = EthTransactionSchema.parse(data.result);
 
@@ -922,11 +922,11 @@ async function getEVMTransactionByHash(
     };
 
     const receiptData = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
     const eventSignatureName = await getEventSignatureName(
-      receipt.logs[0]?.topics?.[0]
+      receipt.logs[0]?.topics?.[0],
     );
     let type = "Unknown";
     if (!tx.to) {
@@ -955,7 +955,7 @@ async function getEVMTransactionByHash(
       };
 
       const blockData = await fetch(endpoint, requestOptions).then((response) =>
-        response.json()
+        response.json(),
       );
       const block = EthBlockSchema.parse(blockData.result);
       timestamp = Number(block.timestamp) * 1000;
@@ -1002,7 +1002,7 @@ async function getEVMTransactionByHash(
 async function getEVMLogByPath(
   path: string[],
   endpoint: string,
-  networkName: string
+  networkName: string,
 ): Promise<Entity | null> {
   try {
     const [hash, index] = path;
@@ -1024,7 +1024,7 @@ async function getEVMLogByPath(
     };
 
     const receiptData = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const receipt = EthTransactionReceiptSchema.parse(receiptData.result);
     const log = receipt.logs.find((log) => log.logIndex === Number(index));
@@ -1045,7 +1045,7 @@ async function getEVMLogByPath(
     };
 
     const blockData = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const block = EthBlockSchema.parse(blockData.result);
     const timestamp = Number(block.timestamp) * 1000;
@@ -1080,7 +1080,7 @@ async function getEVMLogByPath(
 async function getSVMBlockBySlot(
   slot: string,
   endpoint: string,
-  networkName: string
+  networkName: string,
 ): Promise<Entity | null> {
   try {
     var myHeaders = new Headers();
@@ -1100,7 +1100,7 @@ async function getSVMBlockBySlot(
     };
 
     const data = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const block = SolBlockSchema.parse(data.result);
     return {
@@ -1127,7 +1127,7 @@ async function getSVMBlockBySlot(
 async function getSVMTransactionBySignature(
   signature: string,
   endpoint: string,
-  networkName: string
+  networkName: string,
 ): Promise<Entity | null> {
   try {
     var myHeaders = new Headers();
@@ -1147,7 +1147,7 @@ async function getSVMTransactionBySignature(
     };
 
     const data = await fetch(endpoint, requestOptions).then((response) =>
-      response.json()
+      response.json(),
     );
     const tx = SolTransactionSchema.parse(data.result);
     return {
@@ -1209,9 +1209,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                         tx,
                         EVM,
                         network.name,
-                        Number(block.timestamp) * 1000
-                      )
-                  )
+                        Number(block.timestamp) * 1000,
+                      ),
+                  ),
                 )
               ).filter((notnull) => notnull) as Entity[];
             } catch {
@@ -1232,7 +1232,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 let nativeTokenBalance = "0";
                 try {
                   const balanceResponse = await fetch(
-                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-balances/${address}` //ListTokenBalances
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-balances/${address}`, //ListTokenBalances
                   ).then((res) => res.json());
                   if (balanceResponse.result.balances) {
                     balanceResponse.result.balances.forEach((val: any) => {
@@ -1269,7 +1269,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             const getTransfers = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/account-events/${entity.uniqueIdentifier}` // ListAccountEvents
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/account-events/${entity.uniqueIdentifier}`, // ListAccountEvents
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
@@ -1279,9 +1279,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                         return getEVMLogByPath(
                           [event.transactionHash, event.logIndex],
                           EVM,
-                          network.name
+                          network.name,
                         );
-                      })
+                      }),
                   )
                 ).filter((notnull) => notnull) as Entity[];
               } catch (e) {
@@ -1294,7 +1294,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                 const txIds = await fetch(
                   `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${
                     network.id
-                  }/transactions/${entity.uniqueIdentifier.toLowerCase()}` // ListTransactions
+                  }/transactions/${entity.uniqueIdentifier.toLowerCase()}`, // ListTransactions
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
@@ -1303,9 +1303,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                         await getEVMTransactionByHash(
                           tx.hash,
                           EVM,
-                          network.name
-                        )
-                    )
+                          network.name,
+                        ),
+                    ),
                   )
                 ).filter((notnull) => notnull) as Entity[];
               } catch {
@@ -1327,7 +1327,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
               getOne: async (address: string) => {
                 try {
                   const response = await fetch(
-                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token/${address}` // DescribeToken
+                    `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token/${address}`, // DescribeToken
                   );
                   const tokenData = await response.json();
                   return {
@@ -1354,12 +1354,12 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             },
           ],
           getAssociated: async (
-            entity: Entity
+            entity: Entity,
           ): Promise<Record<string, Entity[]>> => {
             const getTransfers = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-events/${entity.uniqueIdentifier}` //ListTokenEvents
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/token-events/${entity.uniqueIdentifier}`, //ListTokenEvents
                 ).then((res) => res.json());
                 return (
                   await Promise.all(
@@ -1369,9 +1369,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                         return getEVMLogByPath(
                           [event.transactionHash, event.logIndex],
                           EVM,
-                          network.name
+                          network.name,
                         );
-                      })
+                      }),
                   )
                 ).filter((notnull) => notnull) as Entity[];
               } catch {
@@ -1381,7 +1381,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             const getHolders = async () => {
               try {
                 const txIds = await fetch(
-                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/holder-balances/${entity.uniqueIdentifier}` //ListHolderBalances
+                  `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/holder-balances/${entity.uniqueIdentifier}`, //ListHolderBalances
                 ).then((res) => res.json());
                 return txIds.result.accountBalances
                   .slice(0, 30)
@@ -1393,8 +1393,8 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                         Balance: new Decimal(account.balance)
                           .dividedBy(
                             new Decimal(10).pow(
-                              String(entity.metadata["Decimals"].payload)
-                            )
+                              String(entity.metadata["Decimals"].payload),
+                            ),
                           )
                           .toString(),
                       }),
@@ -1446,14 +1446,14 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const txIds = await fetch(
-                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/transactions/${entity.uniqueIdentifier}` // ListTransactions
+                `${process.env.EVM_CHAIN_DATA_SERVICE}/${network.provider}/${network.id}/transactions/${entity.uniqueIdentifier}`, // ListTransactions
               ).then((res) => res.json());
               return (
                 await Promise.all(
                   txIds.result.txs.map(
                     async (tx: any) =>
-                      await getEVMTransactionByHash(tx.hash, EVM, network.name)
-                  )
+                      await getEVMTransactionByHash(tx.hash, EVM, network.name),
+                  ),
                 )
               ).filter((notnull) => notnull) as Entity[];
             } catch {
@@ -1473,7 +1473,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           getAssociated: async (entity: Entity) => {
             try {
               const receipt = EthTransactionReceiptSchema.parse(
-                entity.computed.Receipt
+                entity.computed.Receipt,
               );
               if (!EthTransactionSchema.parse(JSON.parse(entity.raw)).to) {
                 return [
@@ -1495,7 +1495,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
               return Promise.all(
                 receipt.logs.map(async (log) => {
                   const results = await fetch(
-                    `https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`
+                    `https://api.openchain.xyz/signature-database/v1/lookup?event=${log.topics[0]}&filter=true`,
                   ).then((res) => res.json());
                   const name =
                     results?.result?.event?.[log.topics[0]]?.[0]?.name ??
@@ -1515,7 +1515,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                     },
                     raw: JSON.stringify(log),
                   };
-                })
+                }),
               );
             } catch (e) {
               console.log(e);
@@ -1523,7 +1523,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
             }
           },
         },
-      ]
+      ],
     );
   }
 
@@ -1549,9 +1549,9 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                       await getSVMTransactionBySignature(
                         signature,
                         SVM,
-                        network.name
-                      )
-                  )
+                        network.name,
+                      ),
+                  ),
                 )
               ).filter((notnull) => notnull) as Entity[];
             } catch {
@@ -1570,7 +1570,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
           ],
           getAssociated: async (entity: Entity) => [],
         },
-      ]
+      ],
     );
   }
   ServiceManager.addNetwork({
@@ -1610,7 +1610,7 @@ export async function loadDynamicNetworks() {
     await fetch(ADD_NETWORK_ENDPOINT + "/chain-config")
       .then((res) => res.json())
       .then((configs) =>
-        configs.result.forEach((config: any) => addRemote(config))
+        configs.result.forEach((config: any) => addRemote(config)),
       );
   }
 }

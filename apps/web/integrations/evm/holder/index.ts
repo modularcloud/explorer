@@ -7,7 +7,7 @@ import { RowTransform } from "./row";
 
 export async function HolderExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   // including the balance is a bit of an anti-pattern, but doing this the right way would have bad perf
@@ -18,7 +18,7 @@ export async function HolderExtract(
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const token = await mc.evm.getTokenByAddress(
     metadata.network.id,
-    tokenAddress
+    tokenAddress,
   );
   return {
     address: holderAddress,

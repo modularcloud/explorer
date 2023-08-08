@@ -67,6 +67,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "worlds",
     includeAllNetworks: true,
   },
+  WAEV: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Waev ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, waev",
+    defaultSearchOptionGroup: "Waev",
+    env: "waev",
+    id: "waev",
+    includeAllNetworks: true,
+  },
   AEG: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
@@ -103,6 +115,19 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "saga",
     includeAllNetworks: true,
   },
+  // Nautilus
+  PROTEUS: {
+    name: ["Naut", "Scan"],
+    subtitle: "Modular Cloud",
+    homepageTitle: "NautScan by Modular Cloud",
+    homepageDescription: "A modular block explorer for the Nautilus ecosystem.",
+    homepageKeywords:
+      "nautilus, proteus, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
+    defaultSearchOptionGroup: "Nautilus",
+    env: "proteus",
+    id: "proteus",
+    includeAllNetworks: false,
+  },
   // No whitelabel
   DEFAULT: {
     name: ["Modular", "Cloud"],
@@ -120,5 +145,5 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 
 export const EXPLORER_CONFIG =
   Object.values(EXPLORER_CONFIGS).find(
-    (config) => config.env === process.env.WHITELABEL
+    (config) => config.env === process.env.WHITELABEL,
   ) ?? EXPLORER_CONFIGS.DEFAULT;

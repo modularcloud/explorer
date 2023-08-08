@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       resourcePath.query.toLowerCase() === "address")
   ) {
     redirect(
-      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`
+      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`,
     );
   }
 
@@ -73,17 +73,22 @@ function Container({
   children,
 }: {
   children: React.ReactNode;
-  paginationSettings?: { next?: FetchLoadArgs; initialState: FetchLoadArgs[] };
+  paginationSettings?: {
+    next?: FetchLoadArgs;
+    original?: FetchLoadArgs;
+    initialState: FetchLoadArgs[];
+  };
 }) {
-  if (paginationSettings) {
+  if (paginationSettings && paginationSettings.original) {
     const InfiniteLoader = dynamic(
       () => import("../../../../../../ui/associated/infinite-loader"),
-      { ssr: false }
+      { ssr: false },
     );
     return (
       <InfiniteLoader
         next={paginationSettings.next}
         initialState={paginationSettings.initialState}
+        refreshQuery={paginationSettings.original}
       >
         {children}
       </InfiniteLoader>
@@ -142,7 +147,13 @@ export default async function EntityPage({ params }: Props) {
 
   return (
     <>
-      <Container paginationSettings={{ next, initialState: values }}>
+      <Container
+        paginationSettings={{
+          next,
+          initialState: values,
+          original: "value" in collection ? collection.value : undefined,
+        }}
+      >
         <AssociatedList
           label={label}
           tableHeader={

@@ -8,7 +8,7 @@ import { PaginationLoader } from "./pagination";
 import { TransactionLoader } from "./transaction";
 
 export function CreateCosmosConfig(
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ): EngineConfig {
   return {
     metadata,

@@ -27,7 +27,7 @@ export function decodeEvmAddressParam(address: string) {
 export async function getEventSignatureName(topic: string) {
   try {
     const results = await fetch(
-      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`
+      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`,
     ).then((res) => res.json());
     return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
   } catch {}
@@ -45,7 +45,7 @@ export async function fetchLoad(props: FetchLoadArgs) {
       baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
     const response = await fetch(
-      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`
+      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
     );
     if (!response.ok) {
       console.log("Error loading entity", response);
@@ -88,6 +88,21 @@ export function getWhitelabel(): Whitelabel {
         defaultNetwork: "triton",
         name: ["Naut", "Scan"],
         env: "nautilus",
+      };
+    case "waev":
+      return {
+        searchOptions: {
+          Waev: [
+            {
+              displayName: "Waev",
+              id: "waev",
+            },
+          ],
+        },
+        defaultNetwork: "waev",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "waev",
       };
     case "caldera":
       return {
@@ -152,18 +167,32 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "apricot",
       };
+    case "proteus":
+      return {
+        searchOptions: {
+          Nautilus: [
+            {
+              displayName: "Proteus",
+              id: "proteus",
+            },
+          ],
+        },
+        defaultNetwork: "proteus",
+        name: ["Naut", "Scan"],
+        env: "proteus",
+      };
     case "celestia":
       return {
         searchOptions: {
           Celestia: [
             {
-              displayName: "Blockspace Race",
-              id: "blockspace-race",
+              displayName: "Arabica",
+              id: "arabica",
             },
-            {
-              displayName: "Mocha",
-              id: "mocha",
-            },
+            // {
+            //   displayName: "Mocha",
+            //   id: "mocha",
+            // },
           ],
         },
         defaultNetwork: "mocha",
@@ -216,13 +245,13 @@ export function getWhitelabel(): Whitelabel {
         searchOptions: {
           Celestia: [
             {
-              displayName: "Blockspace Race",
-              id: "celestia-blockspace-race",
+              displayName: "Arabica",
+              id: "celestia-arabica",
             },
-            {
-              displayName: "Mocha",
-              id: "celestia-mocha",
-            },
+            // {
+            //   displayName: "Mocha",
+            //   id: "celestia-mocha",
+            // },
           ],
           Dymension: [
             {
@@ -274,7 +303,7 @@ export function slugify(str: string): string {
 export function truncateString(
   address: string,
   numCharsBefore = 6,
-  numCharsAfter = 4
+  numCharsAfter = 4,
 ) {
   if (!address) return "";
 

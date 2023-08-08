@@ -12,7 +12,7 @@ const namespaceHexRegex = /^[a-zA-Z0-9]{16}$/;
 
 export async function NamespaceExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   if (query.match(namespaceHexRegex)) {

@@ -40,3 +40,5 @@ export default async function RightPanelPage() {
     />
   );
 }
+
+export const runtime = "edge";

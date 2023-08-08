@@ -5,7 +5,7 @@ const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { provider, id } = req.query;
   const { authorization } = req.headers;
@@ -25,7 +25,7 @@ export default async function handler(
     `${ADD_NETWORK_ENDPOINT}/chain-config/${provider}/${id}`,
     {
       method: "DELETE",
-    }
+    },
   );
 
   if (response.ok) {
