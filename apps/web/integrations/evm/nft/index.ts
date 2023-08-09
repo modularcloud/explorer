@@ -405,7 +405,7 @@ export async function NFTExtract(_q: unknown, metadata: EngineConfigMetadata) {
           Promise.resolve(undefined),
           Promise.resolve(undefined),
         ])
-      : Promise.reject(new Error("Invalid token type"))
+      : await Promise.reject(new Error("Invalid token type"))
   ) as [string, string | undefined, string | undefined];
 
   const uri =
