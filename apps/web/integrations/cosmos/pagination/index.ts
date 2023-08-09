@@ -77,7 +77,7 @@ export async function PaginationExtract(
     );
     return {
       value,
-      blobs: blobs.blobs,
+      blobs: blobs.blobsV2,
       nextToken: blobs.nextToken,
     };
   }

@@ -99,11 +99,12 @@ export const BlobSchema = z.object({
   height: z.string(),
   blobIndex: z.number(),
   txHash: z.string(),
+  txIndex: z.number(),
 });
 export type Blob = z.infer<typeof BlobSchema>;
 
 export const BlobResponseSchema = z.object({
-  blobs: BlobSchema.array(),
+  blobsV2: BlobSchema.array(),
   nextToken: z.string().optional(),
 });
 export type BlobResponse = z.infer<typeof BlobResponseSchema>;

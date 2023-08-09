@@ -22,7 +22,7 @@ export const PaginationTransform = {
           values: data.blobs.map((blob) => ({
             network: metadata.network.id,
             type: "blob",
-            query: `${blob.height}:${blob.blobIndex}`,
+            query: `${blob.txHash}:${blob.blobIndex}`,
           })),
         },
       };
