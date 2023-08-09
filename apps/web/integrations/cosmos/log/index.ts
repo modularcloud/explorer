@@ -7,12 +7,12 @@ import { RowTransform } from "./row";
 
 export async function MessageExtract(
   _q: unknown,
-  metadata: EngineConfigMetadata
+  metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
   const [hash, index] = query.split(":");
   const FetchPath = async (path: string) => {
-    console.log(path)
+    console.log(path);
     const res = await fetch(path);
 
     if (!res.ok) {
@@ -22,7 +22,7 @@ export async function MessageExtract(
   };
   const txResponse: JSONRPCResponse<Transaction> = await Promise.any([
     FetchPath(
-      `${metadata.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`
+      `${metadata.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`,
     ),
     FetchPath(`${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`),
   ]);

@@ -16,7 +16,7 @@ export async function TransactionExtract(
 ) {
   const hash = z.string().parse(_q);
   const FetchPath = async (path: string) => {
-    console.log(path)
+    console.log(path);
     const res = await fetch(path);
 
     if (!res.ok) {
@@ -26,7 +26,7 @@ export async function TransactionExtract(
   };
   const txResponse: JSONRPCResponse<Transaction> = await Promise.any([
     FetchPath(
-      `${metadata.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`
+      `${metadata.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`,
     ),
     FetchPath(`${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`),
   ]);

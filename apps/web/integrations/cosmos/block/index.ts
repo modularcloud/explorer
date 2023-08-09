@@ -33,8 +33,8 @@ export async function BlockExtract(
 
   return Promise.any([
     FetchResponse(baseUrl + query.toUpperCase()),
-    FetchResponse(baseUrl + "0x" + query.toUpperCase())
-  ])
+    FetchResponse(baseUrl + "0x" + query.toUpperCase()),
+  ]);
 }
 
 export const BlockLoader = createLoader()
