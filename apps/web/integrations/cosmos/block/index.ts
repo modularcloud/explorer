@@ -21,13 +21,20 @@ export async function BlockExtract(
       ? `${metadata.endpoint}/block?height=`
       : `${metadata.endpoint}/block_by_hash?hash=`;
 
-  const response = await fetch(baseUrl + query.toUpperCase());
+  const FetchResponse = async (url: string) => {
+    const response = await fetch(url);
 
-  if (!response.ok) {
-    throw Error(`Response code ${response.status}: ${response.statusText}`);
-  }
+    if (!response.ok) {
+      throw Error(`Response code ${response.status}: ${response.statusText}`);
+    }
 
-  return (await response.json()) as JSONRPCResponse<Block>;
+    return (await response.json()) as JSONRPCResponse<Block>;
+  };
+
+  return Promise.any([
+    FetchResponse(baseUrl + query.toUpperCase()),
+    FetchResponse(baseUrl + "0x" + query.toUpperCase())
+  ])
 }
 
 export const BlockLoader = createLoader()
