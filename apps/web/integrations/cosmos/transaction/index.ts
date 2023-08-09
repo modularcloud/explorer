@@ -15,17 +15,22 @@ export async function TransactionExtract(
   metadata: EngineConfigMetadata,
 ) {
   const hash = z.string().parse(_q);
-  const response = await fetch(
-    `${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`,
-  );
+  const FetchPath = async (path: string) => {
+    console.log(path)
+    const res = await fetch(path);
 
-  if (!response.ok) {
-    throw Error(`Response code ${response.status}: ${response.statusText}`);
-  }
-
-  const txResponse = (await response.json()) as JSONRPCResponse<Transaction>;
+    if (!res.ok) {
+      throw Error(`Response code ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+  };
+  const txResponse: JSONRPCResponse<Transaction> = await Promise.any([
+    FetchPath(
+      `${metadata.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`
+    ),
+    FetchPath(`${metadata.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`),
+  ]);
   const messages = getMessages(txResponse.result.tx);
-
   return {
     ...txResponse,
     messages,

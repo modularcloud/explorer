@@ -16,20 +16,21 @@ export async function NamespaceExtract(
   metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
-  if (Web3.utils.padLeft(query, 56).match(namespaceHexRegex)) {
+  const namespaceHexRegex = /^([a-zA-Z0-9]{56}|[a-zA-Z0-9]{20})$/;
+  if (query.match(namespaceHexRegex)) {
     return {
-      namespace: query,
+      namespace: Web3.utils.padLeft(query, 56),
     };
   }
-  const base64 = Web3.utils.padLeft(
-    Buffer.from(query, "base64").toString("hex"),
-    56,
-  );
-  if (base64.match(namespaceHexRegex)) {
-    return {
-      namespace: base64,
-    };
-  }
+  // const base64 = Web3.utils.padLeft(
+  //   Buffer.from(query, "base64").toString("hex"),
+  //   56,
+  // );
+  // if (base64.match(namespaceHexRegex)) {
+  //   return {
+  //     namespace: base64,
+  //   };
+  // }
   throw new Error("Invalid namespace");
 }
 
