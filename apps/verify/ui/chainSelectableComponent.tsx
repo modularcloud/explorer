@@ -26,7 +26,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
         const chainList = [
           {
             // This is temporary we will retrieve the data from api later
-            name: "Proteus Chain",
+            name: "Nautilus Proteus Testnet",
             chainId: 88002,
           },
           {
