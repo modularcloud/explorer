@@ -16,7 +16,6 @@ export async function TransactionExtract(
 ) {
   const hash = z.string().parse(_q);
   const FetchPath = async (path: string) => {
-    console.log(path);
     const res = await fetch(path);
 
     if (!res.ok) {
