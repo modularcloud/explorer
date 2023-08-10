@@ -28,7 +28,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     ### Results
     <Properties>
           <Property name="tokenType" type="string">
-            String indicating `erc20`, `erc721`, or `erc1155`.
+            String indicating `erc20`, `erc721`, `erc1155`.
           </Property>
           <Property name="balance" type="object">
             Balance metadata for the token query.
@@ -121,19 +121,19 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="transferType" type="string">
-            The type of token transfer that occurred, including `erc1155-trfr`, `erc20-trfr`, and `erc721-trfr`.
+            The type of transaction transfer that occured, including `erc1155-trfr`, `erc20-trfr`, and `erc721-trfr`.
           </Property>
           <Property name="transactionHash" type="string">
-            The cryptographic hash of the transaction.
+            The hash of the transaction.
           </Property>
           <Property name="logIndex" type="number">
-            Position of the log entry in the block.
+            Position of the log in the block.
           </Property>
           <Property name="blockHeight" type="number">
             The block in which the transaction was included.
           </Property>
           <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
           </Property>
         </Properties>
 
@@ -192,10 +192,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     <Properties>
         <Property name="maxResults" type="number">
           Optional. If not specified, the default is 30.
-          The returned result is sorted by blockNumber from the latest first.
+          The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
         </Property>
     </Properties>
 
@@ -203,10 +203,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="eventType" type="string">
-            The type of transaction event that occurred.
+            The type of transaction event that occured.
           </Property>
           <Property name="transactionHash" type="string">
-            Cryptographic hash of the transaction.
+            Hash of the transaction.
           </Property>
           <Property name="logIndex" type="number">
             Position of the transaction in the block's index.
@@ -215,7 +215,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
             The block in which the transaction was hashed.
           </Property>
           <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
           </Property>
         </Properties>
 
@@ -267,7 +267,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an `erc20` token address, returns a list of all token holder addresses and associated token balances.
+    Given an `erc20` token address, returns a list of all holder addresses and associated balances.
 
     ### Parameters
 
@@ -277,7 +277,8 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
+        </Property>
     </Properties>
 
     ### Results
@@ -345,7 +346,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           The returned result is sorted by blockNumber from latest first.
         </Property>
         <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
         </Property>
     </Properties>
 
@@ -353,10 +354,10 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="hash" type="string">
-            The cryptographic hash of the transaction.
+            The hash of the transaction.
           </Property>
           <Property name="blockNumber" type="string">
-            The hex-encoded number indicating the position of the block within the blockchain. This block contains the specified transaction.
+            The hex-encoded block height of the transaction.
           </Property>
         </Properties>
 
@@ -419,7 +420,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
     
     <Properties>
           <Property name="hash" type="string">
-            The cryptographic hash of the transaction.
+            The hash of the transaction.
           </Property>
           <Property name="blockNumber" type="string">
             Block number which contains the transaction above.
@@ -470,7 +471,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given the contract address, returns logs sorted by the block number.
+    Given the contract address, returns logs sorted by block number.
 
     ### Parameters
 
@@ -560,7 +561,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given the provider, chainId and contract address, returns contract. Returns “not found” if the address is not an existing contract.
+    Given provider, chainId and contract address, returns contract. Return “not found” if the address is not contract.
 
     ### Parameters
 
@@ -618,7 +619,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an NFT token address, this function returns a list of collections associated with the NFT minting. It is compatible with both ERC721 and ERC1155 standards. If the provided address is not recognized as an NFT, 400 error will be returned.
+    Given the NFT token address, returns a list of collections this NFT minting has. Works for ERC721 and ERC1155. Returns a 400 error if the address is not an NFT.
 
     ### Parameters
 
@@ -627,7 +628,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
           Optional. If not specified, the default is 30.
         </Property>
         <Property name="nextToken" type="string">
-            The token queued for the next request. Inputs the previous response value for the subsequent query.
+            The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.
         </Property>
     </Properties>
 
@@ -682,11 +683,7 @@ Some data is not accessible via direct RPC calls to protocol nodes. That is why 
 <Row>
   <Col>
 
-    Given an address and a tokenId, this function returns a list of owners along with their respective balances.
-    
-    For the ERC721 standard, the owners array may contain only a single entry since each token ID represents a unique asset.
-    
-    For the ERC1155 standard, the owners array can have multiple entries, which are sorted by balance.
+    Given an address and tokenId, returns a list of owners and balances. For ERC721 it may only have a single result in the owners array. Whereas, ERC1155 may have more than one result, sorted by balance.
 
     ### Parameters
 
