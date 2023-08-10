@@ -8,16 +8,20 @@ export default async function FetchVerifiedContract(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  let contractAddress = Array.isArray(req.query.contractaddress)
-    ? req.query.contractaddress[0]
-    : req.query.contractaddress;
-  let chainID = Array.isArray(req.query.chainid)
-    ? req.query.chainid[0]
-    : req.query.chainid;
-  contractAddress = contractAddress?.toLowerCase();
-  const readFiles = req.query.readfiles ?? null;
-  if (contractAddress && chainID) {
-    try {
+  try {
+    let contractAddress = Array.isArray(req.query.contractaddress)
+      ? req.query.contractaddress[0]
+      : req.query.contractaddress;
+    let chainID = Array.isArray(req.query.chainid)
+      ? req.query.chainid[0]
+      : req.query.chainid;
+
+    if (typeof chainID === "undefined") {
+      chainID = "88002";
+    }
+    contractAddress = contractAddress?.toLowerCase();
+    const readFiles = req.query.readfiles ?? null;
+    if (contractAddress && chainID) {
       const contractData = await prisma.verification.findUnique({
         where: {
           contractAddress_chainID: {
@@ -43,10 +47,10 @@ export default async function FetchVerifiedContract(
       } else {
         res.status(200).json({ isVerified: false });
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
   }
 }
 
