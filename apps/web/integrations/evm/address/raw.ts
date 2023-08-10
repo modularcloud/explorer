@@ -15,7 +15,7 @@ export const RawTransform = {
       { language: string; content: string }
     > = {};
     if (data.solidity) {
-      Object.entries(data.solidity.files).forEach(([filename, file]) => {
+      Object.entries(data.solidity).forEach(([filename, file]) => {
         verifiedSource[filename] = {
           language: "solidity",
           content: file as string,
