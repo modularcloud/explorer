@@ -16,11 +16,13 @@ datasource db {
 
 model Verification {
   id                  Int      @id @default(autoincrement())
-  contractAddress     String   @unique @db.VarChar(255)
+  contractAddress     String   @db.VarChar(255)
   chainID             String
   isVerified          Boolean
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   verificationStatus  VerificationStatus
-  uploadedUrl        String   
+  uploadedUrl         String
+
+  @@unique([contractAddress, chainID])
 }

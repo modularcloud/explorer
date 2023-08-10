@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 
 export default async function verifyContract(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   const { contractAddress, files, chain } = req.body;
 
@@ -15,13 +15,14 @@ export default async function verifyContract(
         address: contractAddress,
         chain: chain,
         files: files,
-      },
+      }
     );
     if (
       response.data.result[0].status !== "perfect" &&
       response.data.result[0].status !== "partial"
     ) {
       res.status(400).json({ message: response.data.result[0].message });
+      return;
     }
     console.log("API call completed, response status:", response.status);
     console.log("Setting response status...");
@@ -36,7 +37,7 @@ export default async function verifyContract(
         "axiosError details:",
         axiosError.response.data,
         axiosError.response.status,
-        axiosError.response.headers,
+        axiosError.response.headers
       );
 
       res.status(axiosError.response.status).json(axiosError.response.data);

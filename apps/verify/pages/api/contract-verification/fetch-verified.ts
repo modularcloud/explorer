@@ -6,18 +6,24 @@ import { Verification } from ".prisma/client";
 
 export default async function FetchVerifiedContract(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
   let contractAddress = Array.isArray(req.query.contractaddress)
     ? req.query.contractaddress[0]
     : req.query.contractaddress;
+  let chainID = Array.isArray(req.query.chainid)
+    ? req.query.chainid[0]
+    : req.query.chainid;
   contractAddress = contractAddress?.toLowerCase();
   const readFiles = req.query.readfiles ?? null;
-  if (contractAddress) {
+  if (contractAddress && chainID) {
     try {
       const contractData = await prisma.verification.findUnique({
         where: {
-          contractAddress: contractAddress,
+          contractAddress_chainID: {
+            contractAddress: contractAddress,
+            chainID: chainID,
+          },
         },
       });
       if (contractData && readFiles === "true") {
@@ -46,7 +52,7 @@ export default async function FetchVerifiedContract(
 
 const unzipAndRead = (
   response: AxiosResponse<any>,
-  contractData: Verification,
+  contractData: Verification
 ) => {
   return new Promise((resolve, reject) => {
     let data: any = { ...contractData };
@@ -72,7 +78,7 @@ const unzipAndRead = (
       .promise()
       .then(
         () => resolve(data),
-        (e: any) => console.log("error", e),
+        (e: any) => console.log("error", e)
       );
   });
 };
