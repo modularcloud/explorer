@@ -4,6 +4,7 @@ import { getWhitelabel } from "../lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import "../styles/globals.css";
 import { Toaster } from "ui/shadcn/components/ui/toaster";
+import { ReduxProvider } from "redux/provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} text-sleek text-night font-sans`}>
-        {children}
+        <ReduxProvider>{children}</ReduxProvider>
         <Toaster />
         <Analytics />
       </body>
