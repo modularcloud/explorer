@@ -9,13 +9,11 @@ export const description =
 
 # Contract Verification 
 
-Modular Cloud enables NautScan users to verify contracts on the Proteus network with a simple web UI.
-
-There are also full service API endpoints for developers who want to make use of multiple types of Verification calls.
+Modular Cloud enables [NautScan](https://proteus.nautscan.com) users to verify contracts on the [Proteus network](https://docs.nautchain.xyz/nautilus-testnet#goerli), powered by Sourcify. This feature will be released generally to all chains at a later date.
 
 ---
 
-## Using Web UI
+## Verifying your contract
 
 You can quickly [verify contracts from this web page](https://contract-verification.vercel.app/).
 
@@ -23,24 +21,14 @@ Watch [this video tutorial](https://youtu.be/RA-z7K21dmk) and follow the instruc
 
 1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload.
 2. Paste the corresponding contract address you'd like to verify.
-3. Select the chain on which the contract is located.
+3. Ensure **Nautilus Proteus Testnet** is selected in the dropdown.
 4. Click the Verify button.
 5. Wait for the interface to present a pop-up response with feedback.
 
-Make sure you select the correct chain from the dropdown menu in the UI before pressing the Verify button.
+## Interacting with verified contracts
 
-The default chain is Proteus.
+NautScan will display the verification status to users when they view the contract page. It is possible for your contract to be fully or partially verified. Partial verification refers to cases when the deployed bytecode of the onchain contract matches the bytecode resulting from the recompilation with the metadata and the source files _but does not match the metadata hash_.
 
----
-
-## FAQ
-
-__My contract was verified. Why does NautScan display it as "Partial" instead of "Verified"?__
-
-"Partial" refers to cases when the deployed bytecode of the onchain contract match the bytecode resulting from the recompilation with the metadata and the source files _but does not match the metadata hash_.
-
-The deployed contract and its given source code + metadata function as the same, but there are differences in source code comments, variable names, or other metadata fields.
-
-"Verified" implies a full match of all of these elements has been confirmed.
+The explorer will also show the source code for verified contracts in the explorer. In future updates, users will be able to create transactions based on the contract's ABI.
 
 {/*<Guides />*/}
