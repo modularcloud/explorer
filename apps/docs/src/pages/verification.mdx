@@ -7,15 +7,19 @@ export const description =
 
 <HeroPattern />
 
-# Verification
+# Contract Verification 
 
-Modular Cloud enables rollups and their users to verify contracts across the modular ecosystem with both a simple web UI or a suite of API endpoints. 
+Modular Cloud enables NautScan users to verify contracts on the Proteus network with a simple web UI.
+
+There are also full service API endpoints for developers who want to make use of multiple types of Verification calls.
 
 ---
 
 ## Using Web UI
 
-In lieu of accessing the API directly, you can quickly [verify contracts from this web page](https://contract-verification.vercel.app/).
+You can quickly [verify contracts from this web page](https://contract-verification.vercel.app/).
+
+Watch [this video tutorial](https://youtu.be/jI8rMUqDTZs) and follow the instructions below.
 
 1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload.
 2. Paste the contract address you'd like to verify.
@@ -23,13 +27,18 @@ In lieu of accessing the API directly, you can quickly [verify contracts from th
 4. Click the Verify button.
 5. Wait for the interface to present a pop-up response with feedback.
 
-___INSERT EMBEDDED VIDEO DEMO WITH EMBED MDX___
-
-https://youtu.be/MaIdF0ooLnU
-
 Make sure you select the correct chain from the dropdown menu in the UI before pressing the Verify button.
 
 ---
 
+## FAQ
+
+__My contract was verified. Why does NautScan display it as "Partial" instead of "Verified"?__
+
+"Partial" refers to cases when the deployed bytecode of the onchain contract match the bytecode resulting from the recompilation with the metadata and the source files _but does not match the metadata hash_.
+
+The deployed contract and its given source code + metadata function as the same, but there are differences in source code comments, variable names, or other metadata fields.
+
+"Verified" implies a full match of all of these elements has been confirmed.
 
 {/*<Guides />*/}
