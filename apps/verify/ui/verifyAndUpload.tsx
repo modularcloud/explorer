@@ -12,7 +12,6 @@ export default function VerifyAndUpload() {
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("88002");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
-
   type ContractData = {
     contractAddress: typeof contractAddress;
     chainId: string;
@@ -36,6 +35,12 @@ export default function VerifyAndUpload() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFiles(event.target.files);
+    }
+  };
+  const dragNdrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (event.dataTransfer.files) {
+      setFiles(event.dataTransfer.files);
     }
   };
 
@@ -225,7 +230,14 @@ export default function VerifyAndUpload() {
                 placeholder="Contract Address"
               />
             </div>
-            <div className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#234594] p-20 font-light">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onDrop={dragNdrop}
+              className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#234594] p-20 font-light"
+            >
               <p>Drag and drop here or</p>
               <p>Browse files</p>
               <input
@@ -233,6 +245,7 @@ export default function VerifyAndUpload() {
                 type="file"
                 className="hidden"
                 onChange={handleFileChange}
+                required
                 multiple
               />
             </div>
