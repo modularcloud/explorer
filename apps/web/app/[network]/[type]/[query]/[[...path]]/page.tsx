@@ -18,19 +18,21 @@ import AssociatedNotFound from "../../../../../ui/associated/not-found";
 import { Metadata } from "next";
 import { Tabs } from "../../../../../ui/tabs";
 import dynamic from "next/dynamic";
+import { Entity } from "ui/entity";
 
 type Props = {
   params: FetchLoadArgs & {
-    section: string;
+    path: string[];
   };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const whitelabel = getWhitelabel();
-  const { section, ...resourcePath } = params;
+  const { path, ...resourcePath } = params;
 
   // Redirect legacy url structure
   if (
+    path && path.length === 1 &&
     (resourcePath.type.toLowerCase() === "block" ||
       resourcePath.type.toLowerCase() === "transaction" ||
       resourcePath.type.toLowerCase() === "account") &&
@@ -39,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       resourcePath.query.toLowerCase() === "address")
   ) {
     redirect(
-      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${section}`,
+      `/${resourcePath.network.toLowerCase()}/${resourcePath.type.toLowerCase()}/${path[0]}`,
     );
   }
 
@@ -52,11 +54,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `Not Found - ${whitelabel.name.join("")}`,
     };
 
+  if(!path || path.length === 0) {
+    return {
+      title: `${
+        entity.components.page.data.metadata.title
+      } - ${whitelabel.name.join("")}`,
+      description: entity.components.page.data.metadata.description,
+      keywords: entity.components.page.data.metadata.keywords,
+    };
+  }
+
   const associated = entity.components.associated.data;
   const labels = Object.keys(associated);
 
   const label =
-    labels.find((label) => slugify(label) === slugify(section ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(path[0] ?? "")) ??
     labels[0];
 
   return {
@@ -98,18 +110,29 @@ function Container({
 }
 
 export default async function EntityPage({ params }: Props) {
-  const { section, ...resourcePath } = params;
+  const { path, ...resourcePath } = params;
   const entity = await asyncUseEntity({
     resourcePath,
     archetype: PageArchetype,
   });
   if (!entity) notFound();
 
+  if(!path || path.length === 0) {
+    return (
+      <>
+        {/* @ts-expect-error Async Server Component */}
+        <Entity resourcePath={resourcePath} />
+        {/* @ts-expect-error Async Server Component */}
+        <Tabs params={resourcePath} />
+      </>
+    );
+  }
+
   const associated = entity.components.associated.data;
   const labels = Object.keys(associated);
 
   const label =
-    labels.find((label) => slugify(label) === slugify(section ?? "")) ??
+    labels.find((label) => slugify(label) === slugify(path[0] ?? "")) ??
     labels[0];
 
   let values: FetchLoadArgs[] = [];
