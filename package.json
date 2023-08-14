@@ -5,12 +5,13 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "packages/@modularcloud/*"
+    "packages/@modularcloud/*",
+    "resolver/*"
   ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "web": "turbo run dev --parallel --filter=!docs --filter=!verify",
+    "web": "turbo run dev --parallel --filter=!docs --filter=!verify --filter=!resolver-playground",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
