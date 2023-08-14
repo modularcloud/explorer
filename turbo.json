@@ -7,17 +7,7 @@
       "env": [
         "SOURCIFY_URL",
         "AWS_S3_ACCESSKEY_ID",
-        "AWS_S3_ACCESSKEY_SECRET"
-      ]
-    },
-    "lint": {
-      "outputs": []
-    },
-    "dev": {
-      "cache": false
-    },
-    "web#build": {
-      "env": [
+        "AWS_S3_ACCESSKEY_SECRET",
         "WHITELABEL",
         "CELESTIA_MOCHA_RPC",
         "DYMENSION_HUB_RPC",
@@ -30,9 +20,6 @@
         "METRICS_API_URL",
         "ETHEREUM_RPC",
         "NEXT_PUBLIC_VERCEL_URL",
-        "SOURCIFY_URL",
-        "AWS_S3_ACCESSKEY_SECRET",
-        "AWS_S3_ACCESSKEY_ID",
         "NODE_ENV",
         "UPLOADCARE_API_KEY",
         "IPFS_GATEWAY",
@@ -41,14 +28,11 @@
         "CELESTIA_ARABICA_RPC"
       ]
     },
-    "verify#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"],
-      "env": [
-        "SOURCIFY_URL",
-        "AWS_S3_ACCESSKEY_ID",
-        "AWS_S3_ACCESSKEY_SECRET"
-      ]
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false
     }
   }
 }
