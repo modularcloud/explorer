@@ -63,6 +63,7 @@ export type ResolverConfig = {
           return async (input: any) => {
             const result = await dependency(input);
             traces.push(result.trace);
+            
             return result;
           };
         }) as T;

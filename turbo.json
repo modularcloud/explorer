@@ -10,6 +10,7 @@
         "AWS_S3_ACCESSKEY_SECRET"
       ]
     },
+    "test": {},
     "lint": {
       "outputs": []
     },

@@ -1,6 +1,7 @@
 import { createResolver, Trace } from "@modularcloud-resolver/core";
 
-function Resolution({ trace }: { trace: Trace; level?: number }) {
+function Resolution({ trace, raw }: { trace: Trace; raw?: string }) {
+  console.log(raw);
   return (
     <div>
       <h1>Resolver ID: {trace.resolverId}</h1>
@@ -74,5 +75,5 @@ export default async function Home() {
 
   const example = await test2("TESTing");
   // visualizing resolver responses
-  return <Resolution trace={example.trace} />;
+  return <Resolution trace={example.trace} raw={JSON.stringify(example)}/>;
 }
