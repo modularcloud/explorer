@@ -85,7 +85,7 @@ export function createResolver<T extends Resolver<any>[]>(
       } else {
         resolution = {
           type: "error",
-          error: `${config.id}(${JSON.stringify(input)}): ${e}}`,
+          error: `${config.id}(${JSON.stringify(input)}): ${e}`,
         };
       }
     } finally {

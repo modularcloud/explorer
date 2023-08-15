@@ -42,29 +42,30 @@ function Resolution({ trace, raw }: { trace: Trace; raw?: string }) {
 }
 
 export default async function Home() {
-  const test0 = createResolver(
+  const test7 = createResolver(
     { id: "test0", cache: false },
     async (input) => {
-      NotFound();
+      const x: any = {};
+      x.y.z;
     },
     []
   );
-  const test1 = createResolver(
+  const test8 = createResolver(
     { id: "test1", cache: false },
     async (input, test0) => {
       const test0Response = await test0(input.toUpperCase());
       return test0Response.type === "success" ? test0Response.result : null;
     },
-    [test0]
+    [test7]
   );
-  const test1point5 = createResolver(
+  const test9 = createResolver(
     { id: "test1.5", cache: false },
     async (input) => {
       return input.toLowerCase();
     },
     []
   );
-  const test2 = createResolver(
+  const test10 = createResolver(
     { id: "test2", cache: false },
     async (input, test1, test1point5) => {
       const result1Response = await test1(input);
@@ -80,10 +81,10 @@ export default async function Home() {
       return result1 && result1point5 ? result1 + " " + result1point5 : null;
     },
 
-    [test1, test1point5]
+    [test8, test9]
   ); // This is a test to see if the resolver works
 
-  const example = await test2("TESTing");
+  const example = await test10("TESTing");
   // visualizing resolver responses
   return <Resolution trace={example.trace} raw={JSON.stringify(example)} />;
 }
