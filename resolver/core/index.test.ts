@@ -309,11 +309,7 @@ const test10 = createResolver(
   },
 
   [test8, test9]
-); // This is a test to see if the resolver works
-
-// if I do this:
-// await test10("TESTing");
-// I should get {"trace":{"resolverId":"test2","input":"TESTing","resolution":{"type":"error","error":"test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')"},"createdAt":1692078579138,"dependencies":[{"resolverId":"test1","input":"TESTing","resolution":{"type":"error","error":"test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')"},"createdAt":1692078579137,"dependencies":[{"resolverId":"test0","input":"TESTING","resolution":{"type":"error","error":"test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')"},"createdAt":1692078579137,"dependencies":[]}]},{"resolverId":"test1.5","input":"TESTing","resolution":{"type":"success","result":"testing"},"createdAt":1692078579138,"dependencies":[]}]},"type":"error","error":"test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')"}
+); 
 
 describe('Deeply nested error resolution', () => {
   let result: any;
@@ -357,3 +353,4 @@ describe('Deeply nested error resolution', () => {
     });
   });
 });
+
