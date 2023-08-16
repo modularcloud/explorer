@@ -37,21 +37,21 @@ export type ResolutionResponse = {
   trace: Trace;
 } & Resolution;
 
-type ResolverFn<T extends Resolver<any>[]> = {
-  (input: any, ...dependencies: T): Promise<any>;
+type ResolverFn<K, T extends Resolver<K>[]> = {
+  (input: K, ...dependencies: T): Promise<any>;
 };
 
-type Resolver<T extends ResolverFn<any>> = {
-  (input: Parameters<T>[0]): Promise<ResolutionResponse>;
+export type Resolver<K> = {
+  (input: K): Promise<ResolutionResponse>;
 };
 
-export type AnyResolver = Resolver<ResolverFn<any>>;
+export type AnyResolver = Resolver<any>;
 
-export function createResolver<T extends Resolver<any>[]>(
+export function createResolver<K, T extends Resolver<any>[]>(
   config: ResolverConfig,
-  fn: ResolverFn<T>,
+  fn: ResolverFn<K, T>,
   dependencies: T
-): Resolver<ResolverFn<T>> {
+): Resolver<K> {
   return async (input: any) => {
     const traces: Trace[] = [];
     let resolution: null | Resolution = null;

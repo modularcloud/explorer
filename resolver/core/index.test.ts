@@ -1,7 +1,7 @@
-import { createResolver, NotFound, PendingException, ResolutionResponse } from './index';
+import { createResolver, NotFound, PendingException, ResolutionResponse, Resolver } from './index';
 
 describe('createResolver', () => {
-  let resolver: ReturnType<typeof createResolver>;
+  let resolver: Resolver<string>
   let result: any;
 
   const resolverOptions = { id: 'test', cache: false };
@@ -75,7 +75,7 @@ describe('createResolver', () => {
   describe('when there are dependencies', () => {
     beforeEach(async () => {
       const dependency = createResolver({ id: 'dep', cache: false }, async () => 'dep', []);
-      resolver = createResolver(resolverOptions, async (input, dep) => `${input}-${await dep('dep')}`, [dependency]);
+      resolver = createResolver(resolverOptions, async (input: string, dep) => `${input}-${await dep('dep')}`, [dependency]);
       result = await resolver(resolverInput);
     });
 
@@ -102,14 +102,14 @@ describe('createResolver', () => {
 
 const test0 = createResolver(
   { id: "test0", cache: false },
-  async (input) => {
+  async (input: string) => {
     return input + "!"
   },
   []
 );
 const test1 = createResolver(
   { id: "test1", cache: false },
-  async (input, test0) => {
+  async (input: string, test0) => {
     const test0Response = await test0(input.toUpperCase());
     return test0Response.type === "success" ? test0Response.result : null;
   },
@@ -117,14 +117,14 @@ const test1 = createResolver(
 );
 const test1point5 = createResolver(
   { id: "test1.5", cache: false },
-  async (input) => {
+  async (input: string) => {
     return input.toLowerCase();
   },
   []
 );
 const test2 = createResolver(
   { id: "test2", cache: false },
-  async (input, test1, test1point5) => {
+  async (input: string, test1, test1point5) => {
     const result1Response = await test1(input);
     const result1 =
       result1Response.type === "success" ? result1Response.result : null;
@@ -186,14 +186,14 @@ describe('Deeply nested successful resolution', () => {
 
 const test3 = createResolver(
   { id: "test0", cache: false },
-  async (input) => {
+  async (input: string) => {
     NotFound();
   },
   []
 );
 const test4 = createResolver(
   { id: "test1", cache: false },
-  async (input, test0) => {
+  async (input: string, test0) => {
     const test0Response = await test0(input.toUpperCase());
     return test0Response.type === "success" ? test0Response.result : null;
   },
@@ -201,14 +201,14 @@ const test4 = createResolver(
 );
 const test4point5 = createResolver(
   { id: "test1.5", cache: false },
-  async (input) => {
+  async (input: string) => {
     return input.toLowerCase();
   },
   []
 );
 const test6 = createResolver(
   { id: "test2", cache: false },
-  async (input, test1, test1point5) => {
+  async (input: string, test1, test1point5) => {
     const result1Response = await test1(input);
     const result1 =
       result1Response.type === "success" ? result1Response.result : null;
@@ -271,7 +271,7 @@ describe('Deeply nested pending resolution', () => {
 
 const test7 = createResolver(
   { id: "test0", cache: false },
-  async (input) => {
+  async (input: string) => {
     const x: any = {};
     return x.y.z;
   },
@@ -279,7 +279,7 @@ const test7 = createResolver(
 );
 const test8 = createResolver(
   { id: "test1", cache: false },
-  async (input, test0) => {
+  async (input: string, test0) => {
     const test0Response = await test0(input.toUpperCase());
     return test0Response.type === "success" ? test0Response.result : null;
   },
@@ -287,14 +287,14 @@ const test8 = createResolver(
 );
 const test9 = createResolver(
   { id: "test1.5", cache: false },
-  async (input) => {
+  async (input: string) => {
     return input.toLowerCase();
   },
   []
 );
 const test10 = createResolver(
   { id: "test2", cache: false },
-  async (input, test1, test1point5) => {
+  async (input: string, test1, test1point5) => {
     const result1Response = await test1(input);
     const result1 =
       result1Response.type === "success" ? result1Response.result : null;
