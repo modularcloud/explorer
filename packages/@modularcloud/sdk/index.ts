@@ -382,8 +382,13 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         maxResults: number = 30,
         nextToken?: string
       ) => {
+        let url = baseUrl;
+        if(networkId === "1" && process.env.ALT_BASE_URL) {
+          console.log("Using alt base url");
+          url = process.env.ALT_BASE_URL;
+        }
         const response = await fetch(
-          `${baseUrl}/${normalizeNetworkId(
+          `${url}/${normalizeNetworkId(
             networkId
           )}/transactions?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
