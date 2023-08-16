@@ -12,6 +12,7 @@
     "@modularcloud/design-system": "*",
     "@modularcloud/ecs": "*",
     "@modularcloud/sdk": "*",
+    "@modularcloud-resolver/core": "*",
     "@monaco-editor/react": "^4.5.1",
     "@next/font": "^13.1.6",
     "@radix-ui/react-dialog": "^1.0.3",

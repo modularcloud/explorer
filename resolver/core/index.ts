@@ -45,6 +45,8 @@ type Resolver<T extends ResolverFn<any>> = {
   (input: Parameters<T>[0]): Promise<ResolutionResponse>;
 };
 
+export type AnyResolver = Resolver<ResolverFn<any>>;
+
 export function createResolver<T extends Resolver<any>[]>(
   config: ResolverConfig,
   fn: ResolverFn<T>,
