@@ -2,7 +2,7 @@
 
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Separator from "@radix-ui/react-separator";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { ViewContext, ViewDispatchContext } from "../view-context/client";
 import SvgListViewOn from "../icons/ListViewOn";
 import SvgListViewOff from "../icons/ListViewOff";
@@ -54,6 +54,7 @@ export function ViewSwitcher() {
           (option, index) => {
             const toggleGroup = (
               <ToggleGroup.Item
+                key={index}
                 value={option}
                 className="h-[34px] w-[34px] p-[7px]"
               >
@@ -62,15 +63,14 @@ export function ViewSwitcher() {
             );
             if (index !== 0) {
               return (
-                <>
+                <React.Fragment key={index}>
                   <Separator.Root
-                    key={index}
                     className="mx-1 h-5 w-px bg-slate-200"
                     decorative
                     orientation="vertical"
                   />
                   {toggleGroup}
-                </>
+                </React.Fragment>
               );
             }
             return toggleGroup;
