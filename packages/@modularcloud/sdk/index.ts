@@ -152,6 +152,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "ecipse-weav": "ep/7",
   "nautilus-proteus": "ep/6",
   proteus: "ep/6",
+  "mainnet": "1",
 };
 
 function normalizeNetworkId(networkId: string) {
