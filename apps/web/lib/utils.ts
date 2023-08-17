@@ -203,10 +203,10 @@ export function getWhitelabel(): Whitelabel {
               displayName: "Arabica",
               id: "arabica",
             },
-            // {
-            //   displayName: "Mocha",
-            //   id: "mocha",
-            // },
+            {
+              displayName: "Mocha",
+              id: "mocha",
+            },
           ],
         },
         defaultNetwork: "mocha",
@@ -262,10 +262,10 @@ export function getWhitelabel(): Whitelabel {
               displayName: "Arabica",
               id: "celestia-arabica",
             },
-            // {
-            //   displayName: "Mocha",
-            //   id: "celestia-mocha",
-            // },
+            {
+              displayName: "Mocha",
+              id: "celestia-mocha",
+            },
           ],
           Dymension: [
             {

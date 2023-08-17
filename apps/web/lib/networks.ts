@@ -128,6 +128,16 @@ export function getEngine() {
       },
     });
     Engine.addConfig("arabica", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("mocha", config);
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
@@ -225,6 +235,16 @@ export function getEngine() {
       },
     });
     Engine.addConfig("celestia-arabica", config);
+    config = CreateCosmosConfig({
+      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("celestia-mocha", config);
     let primary = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
       network: {
