@@ -14,11 +14,11 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: {
+          next: data.nextToken ? {
             network: metadata.network.id,
             type: "pagination",
             query: `${data.value}:blobs:${data.nextToken}`,
-          },
+          } : undefined,
           values: data.blobs.map((blob) => ({
             network: metadata.network.id,
             type: "blob",
