@@ -33,7 +33,7 @@ export async function Tabs({ params }: Props) {
   return labels.length > 1 ? (
     <div className="fixed bottom-0 flex w-screen items-center gap-3 overflow-x-scroll bg-gradient-to-t from-white to-transparent p-6 font-semibold">
       {labels.map((label) => (
-        <Link
+        <a
           key={label}
           href={`/${params.network}/${params.type}/${params.query}/${
             label === INDEX_TAB_NAME ? "" : slugify(label)
@@ -44,7 +44,7 @@ export async function Tabs({ params }: Props) {
             long={true}
             toggled={slugify(label) === slugify(activeTab)}
           />
-        </Link>
+        </a>
       ))}
     </div>
   ) : null;
