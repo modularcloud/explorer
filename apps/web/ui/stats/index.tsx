@@ -75,7 +75,7 @@ async function getRealTimeMetrics() {
 async function getTransactionVolumes(): Promise<
   ExplorerLineChartProps["data"]
 > {
-  return fetch(process.env.METRICS_API_URL + "v2/1/transaction-volume-data")
+  return fetch(process.env.METRICS_API_URL + "/v2/1/transaction-volume-data")
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(
