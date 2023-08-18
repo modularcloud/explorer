@@ -41,13 +41,13 @@ async function getZbcPrice() {
 }
 
 async function getGasPrice() {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+  const web3 = new Web3("https://api.evm.nautilus.prod.eclipsenetwork.xyz");
   const gasPrice = await web3.eth.getGasPrice();
   return Number(Web3.utils.fromWei(gasPrice));
 }
 
 async function getBlockMetrics() {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+  const web3 = new Web3("https://api.evm.nautilus.prod.eclipsenetwork.xyz");
   const latestBlock = await web3.eth.getBlockNumber();
   const block = await web3.eth.getBlock(latestBlock);
   const latestBlockTimestamp = block.timestamp;
@@ -62,20 +62,20 @@ async function getBlockMetrics() {
 }
 
 async function getRealTimeMetrics() {
-  const metrics = await fetch("https://triton.nautscan.com/api/metrics").then(
+  const metrics = await fetch("https://nautscan.com/api/metrics").then(
     (res) => res.json(),
   );
   return {
-    contractsDeployed: metrics.result.realTimeMetrics.CONTRACT,
-    totalTransactions: metrics.result.realTimeMetrics.TRANSACTION,
-    walletAddresses: metrics.result.realTimeMetrics.UNIQUE_ADDRESS,
+    contractsDeployed: metrics.result.metrics.CONTRACT,
+    totalTransactions: metrics.result.metrics.TRANSACTION,
+    walletAddresses: metrics.result.metrics.UNIQUE_ADDRESS,
   };
 }
 
 async function getTransactionVolumes(): Promise<
   ExplorerLineChartProps["data"]
 > {
-  return fetch(process.env.METRICS_API_URL + "/transaction-volume-data")
+  return fetch(process.env.METRICS_API_URL + "/v2/1/transaction-volume-data")
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(
