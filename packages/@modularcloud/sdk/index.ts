@@ -385,7 +385,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string
       ) => {
         let url = baseUrl;
-        if(networkId === "1" && process.env.ALT_BASE_URL) {
+        if(networkId === "mainnet" && process.env.ALT_BASE_URL) {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }
