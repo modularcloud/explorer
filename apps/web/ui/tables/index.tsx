@@ -157,7 +157,7 @@ export const BlockSummaryTable = async () => {
 export const TransactionsSummaryTable = async () => {
   const web3 = new Web3("https://api.evm.nautilus.prod.eclipsenetwork.xyz");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  const txRefs = await mc.evm.getRecentTransactions("triton", 8);
+  const txRefs = await mc.evm.getRecentTransactions("mainnet", 8);
   async function getTransaction(hash: string, blockNumber: number) {
     const [tx, block] = await Promise.all([
       web3.eth.getTransaction(hash),
