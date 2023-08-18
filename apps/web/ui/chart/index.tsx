@@ -67,7 +67,6 @@ export const ExplorerLineChart = ({ data }: ExplorerLineChartProps) => {
           padding={{ bottom: 15 }}
           tickFormatter={(value) => `$${(value / 1000).toFixed(1)}`}
           domain={['auto', 'auto']}
-          unit="k"
         />
         <Tooltip />
         <Legend
