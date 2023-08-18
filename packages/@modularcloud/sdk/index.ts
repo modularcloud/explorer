@@ -389,15 +389,12 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }
-        const response = await fetch(
-          `${url}/${normalizeNetworkId(
-            networkId
-          )}/transactions?maxResults=${maxResults}${
-            nextToken ? `&nextToken=${nextToken}` : ""
-          }`
-        );
+        
+        const endpoint = `${url}/${normalizeNetworkId(networkId)}/transactions?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""}`
+        const response = await fetch(endpoint);
 
         if (!response.ok) {
+          console.log("Failed to fetch transactions from endpoint " + endpoint);
           throw new Error("Failed to fetch transactions");
         }
 
