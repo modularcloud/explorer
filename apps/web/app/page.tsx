@@ -23,7 +23,7 @@ export function generateMetadata(): Metadata {
 }
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-center bg-no-repeat min-h-screen">
+    <div className="flex flex-col items-center bg-specialty-gray bg-[url('/images/home-bg.svg')] bg-center bg-top bg-no-repeat min-h-screen">
       <div className="flex flex-col items-center justify-center w-full space-y-10 xs:pt-40 pt-[12.5rem]">
         {/* @ts-expect-error Async Server Component */}
         <BigLogo />
