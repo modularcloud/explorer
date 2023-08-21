@@ -19,16 +19,16 @@ export function getEngine() {
     });
     Engine.addConfig("triton", config);
   } else if (whitelabel.env === "nautscan") {
-      config = CreateEVMConfig({
-        endpoint: "https://api.evm.nautilus.prod.eclipsenetwork.xyz",
-        network: {
-          id: "mainnet",
-          displayName: "Mainnet",
-          nativeToken: "ETH",
-          logoUrl: "/images/nautilus.png",
-        },
-      });
-      Engine.addConfig("mainnet", config);
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.nautilus.prod.eclipsenetwork.xyz",
+      network: {
+        id: "mainnet",
+        displayName: "Mainnet",
+        nativeToken: "ETH",
+        logoUrl: "/images/nautilus.png",
+      },
+    });
+    Engine.addConfig("mainnet", config);
   } else if (whitelabel.env === "waev") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.waev.eclipsenetwork.xyz/solana",
