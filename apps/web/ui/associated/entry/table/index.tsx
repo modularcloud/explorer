@@ -5,6 +5,7 @@ import { CellBox } from "./cell-box";
 import { generateColumnStyle } from "../../list/table/column-styles";
 import { generateCellStyle } from "./cell-style";
 import { ClickableRow } from "./clickable-row";
+import { ContextMenu } from "./context-menu";
 
 export interface Props {
   entity: Entity<typeof AssociatedArchetype>;
@@ -29,7 +30,9 @@ export function TableEntry({ entity }: Props) {
           <CellBox value={entry.cell} />
         </td>
       ))}
-      <td className="h-[3.375rem]">...</td>
+      <td className="h-[3.375rem] inline-flex items-center">
+        <ContextMenu />
+      </td>
       <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
       </td>
