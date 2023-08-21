@@ -23,10 +23,9 @@ const allowCors =
   };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-
   let path: string;
-    
-  switch(getWhitelabel().defaultNetwork) {
+
+  switch (getWhitelabel().defaultNetwork) {
     case "mainnet": // nautilus mainnet
       path = "v2/1";
       break;
@@ -38,9 +37,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     default:
       path = "ep/6";
-      break
+      break;
   }
-  
+
   return res.json(
     await fetch(
       process.env.METRICS_API_URL + "/" + path + "/real-time-metrics",

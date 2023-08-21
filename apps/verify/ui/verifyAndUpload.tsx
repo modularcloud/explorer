@@ -91,7 +91,7 @@ export default function VerifyAndUpload() {
             Pragma: "no-cache",
             Expires: "0",
           },
-        }
+        },
       )
       .catch((error) => {
         console.error("Error calling API:", error);
@@ -113,7 +113,7 @@ export default function VerifyAndUpload() {
           contractAddress: data.contractAddress,
           chain: data.chainId,
           files: data.files,
-        }
+        },
       );
       if (sourcifyResponse.status == 200) {
         await uploadFile(zipFile);
@@ -123,7 +123,7 @@ export default function VerifyAndUpload() {
             : "PARTIAL";
         const persistVerified = await axios.post(
           "api/contract-verification/persist-verified",
-          data
+          data,
         );
         if (persistVerified?.status === 200) {
           toast.update(toastId, {
@@ -155,7 +155,7 @@ export default function VerifyAndUpload() {
       const getFileUploadUrl = await axios.get(
         `api/file-upload/generateurl?file=${`${
           contractAddress + "_sourcefiles.zip"
-        }`}&contractaddress=${contractAddress}`
+        }`}&contractaddress=${contractAddress}`,
       );
 
       if (getFileUploadUrl.status === 200) {
