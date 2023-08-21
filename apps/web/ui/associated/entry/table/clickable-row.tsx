@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FetchLoadArgs } from "../../../../lib/utils";
+import type { FetchLoadArgs } from "../../../../lib/utils";
 
 type Props = {
   resourcePath?: FetchLoadArgs;
