@@ -37,7 +37,6 @@ export const BlocksAndTransactionsSummaryDisplay = () => {
   // const isMobile = true;
   return (
     <div className="space-between flex w-full max-w-[76rem] flex-col items-stretch gap-6 lg:flex-row lg:gap-8">
-      {/* @ts-expect-error Async Server Component */}
       <BlockSummaryTable /> <TransactionsSummaryTable />
     </div>
   );

@@ -10,7 +10,6 @@ type Props = {
 export default async function ShortEntityLayout({ params, children }: Props) {
   const whitelabel = getWhitelabel();
   return (
-    // @ts-expect-error Async Server Component
     <EntityLayout params={mapTypes(params, whitelabel.defaultNetwork)}>
       {children}
     </EntityLayout>

@@ -39,7 +39,6 @@ export function Header({ resourcePath }: Props) {
             />
           }
         >
-          {/* @ts-expect-error Async Server Component */}
           <HeaderMenu resourcePath={resourcePath} />
         </Suspense>
       </div>

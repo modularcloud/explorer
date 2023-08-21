@@ -39,7 +39,6 @@ export async function RightPanel({ data, alt, className }: Props) {
               />
             }
           >
-            {/* @ts-expect-error Async Server Component */}
             <AsyncKeyValueList
               resourcePath={set.src}
               type="sidebar"

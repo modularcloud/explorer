@@ -19,7 +19,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function ShortEntityPage(props: Props) {
   const whitelabel = getWhitelabel();
   return (
-    // @ts-expect-error Async Server Component
     <EntityPage params={mapTypes(props.params, whitelabel.defaultNetwork)} />
   );
 }

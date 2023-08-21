@@ -111,7 +111,6 @@ export default function Overview({ entity }: Props) {
                   </>
                 }
               >
-                {/* @ts-expect-error Async Server Component */}
                 <AsyncEntries resourcePath={set.src} />
               </Suspense>
             ))}

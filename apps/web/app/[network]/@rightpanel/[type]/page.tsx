@@ -32,7 +32,6 @@ export default async function RightPanelPage() {
   };
 
   return (
-    // @ts-expect-error Async Server Component
     <RightPanel
       data={data}
       alt={alt}

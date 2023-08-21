@@ -138,7 +138,6 @@ export default async function EntityPage({ params }: Props) {
           secondaryTypePlural={label}
         />
         <Suspense>
-          {/* @ts-expect-error Async Server Component */}
           <Tabs params={params} />
         </Suspense>
       </>
@@ -158,7 +157,6 @@ export default async function EntityPage({ params }: Props) {
           label={label}
           tableHeader={
             <Suspense fallback={<TableHeaderLoadingFallback />}>
-              {/* @ts-expect-error Async Server Component */}
               <TableHeader rows={values} label={label} />
             </Suspense>
           }
@@ -170,7 +168,6 @@ export default async function EntityPage({ params }: Props) {
                   key={`${value.network}/${value.type}/${value.query}`}
                   fallback={<AssociatedEntryLoadingFallback />}
                 >
-                  {/* @ts-expect-error Async Server Component */}
                   <ServerAssociatedEntry resourcePath={value} />
                 </Suspense>
               ))}
@@ -180,7 +177,6 @@ export default async function EntityPage({ params }: Props) {
         </AssociatedList>
       </Container>
       <Suspense>
-        {/* @ts-expect-error Async Server Component */}
         <Tabs params={params} />
       </Suspense>
     </>

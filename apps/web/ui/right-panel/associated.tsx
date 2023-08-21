@@ -15,7 +15,6 @@ export async function AssociatedRightPanel({ resourcePath, className }: Props) {
   });
   if (!entity) return null;
   return (
-    // @ts-expect-error Async Server Component
     <RightPanel
       data={entity.components.sidebar.data}
       alt={resourcePath.network}

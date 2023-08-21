@@ -23,7 +23,6 @@ export function Raw({ entity }: Props) {
   return (
     <div className="flex w-full justify-center p-6">
       <div className="bg-translucent backdrop-blur-xs border-mid-dark-100 w-full max-w-7xl overflow-hidden rounded-xl border shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
-        {/* @ts-expect-error Async Server Component */}
         <Code
           style={{ margin: 0 }}
           lineNumbers={true}
