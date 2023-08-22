@@ -11,7 +11,6 @@
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
   },
   "dependencies": {
-    "@modularcloud/design-system": "*",
     "@modularcloud/ecs": "*",
     "@modularcloud/sdk": "*",
     "@monaco-editor/react": "^4.5.1",
