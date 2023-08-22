@@ -6,7 +6,7 @@ import { RowTransform } from "./row";
 import { CardTransform } from "./card";
 import { z } from "zod";
 import { isHash } from "~/lib/search";
-import { Block, JSONRPCResponse } from "~/lib/service-manager";
+import { Block, JSONRPCResponse } from "service-manager/types/rpc.type";
 import { PageTransform } from "./page";
 import { RawTransform } from "./raw";
 

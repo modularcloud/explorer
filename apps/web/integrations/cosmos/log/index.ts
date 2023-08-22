@@ -1,7 +1,7 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { getMessages } from "service-manager";
 import { z } from "zod";
-import { JSONRPCResponse, Transaction } from "~/lib/service-manager";
+import { JSONRPCResponse, Transaction } from "service-manager/types/rpc.type";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 

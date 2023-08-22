@@ -3,7 +3,11 @@ import { RowTransform } from "./row";
 import { CardTransform } from "./card";
 import { z } from "zod";
 import { isHash } from "~/lib/search";
-import { Transaction, Block, JSONRPCResponse } from "~/lib/service-manager";
+import {
+  Transaction,
+  Block,
+  JSONRPCResponse,
+} from "service-manager/types/rpc.type";
 import { getDataFromBlockTx } from "service-manager";
 
 export async function BlobExtract(_q: unknown, metadata: EngineConfigMetadata) {
