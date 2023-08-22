@@ -19,7 +19,7 @@ export function ClickableRow({ resourcePath, children }: Props) {
     if (resourcePath) {
       router.prefetch(destination);
     }
-  }, []);
+  }, [resourcePath, destination, router]);
 
   const onClick = () => {
     if (resourcePath) {
