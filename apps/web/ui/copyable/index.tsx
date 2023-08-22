@@ -1,6 +1,6 @@
 "use client";
 
-import { FetchLoadArgs } from "lib/utils";
+import { FetchLoadArgs, copyTextToClipboard } from "lib/utils";
 import { useToast } from "ui/shadcn/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
@@ -15,17 +15,6 @@ export function CopyableValue({ value, link, children }: Props) {
   // Use hooks for toast notifications and routing
   const { toast } = useToast();
   const router = useRouter();
-
-  // Function to copy the value to the clipboard
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(value.toString());
-      return true;
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      return false;
-    }
-  };
 
   // Construct link from FetchLoadArgs
   const constructLink = (link: FetchLoadArgs) =>
@@ -46,16 +35,10 @@ export function CopyableValue({ value, link, children }: Props) {
     if (e.ctrlKey || e.metaKey) {
       open();
     } else {
-      const copied = await copy();
-
-      if (copied) {
-        const val =
-          String(value).length > 20
-            ? `${String(value).slice(0, 20)}...`
-            : value;
+      if (await copyTextToClipboard(value.toString())) {
         toast({
           title: "Copied",
-          description: `"${val}" copied to clipboard`,
+          description: `"${value}" copied to clipboard`,
         });
       }
     }

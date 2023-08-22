@@ -329,3 +329,18 @@ export function truncateString(
   const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
   return `${start}....${end}`;
 }
+
+/**
+ * Function to copy a text value to the browser clipboard
+ * @param text the text to copy
+ * @returns
+ */
+export async function copyTextToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.error("Failed to copy text: ", err);
+    return false;
+  }
+}
