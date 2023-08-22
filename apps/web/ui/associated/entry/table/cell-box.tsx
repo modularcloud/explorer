@@ -1,12 +1,12 @@
-import { Badge } from "../../../badge";
-import { Status } from "../../../status";
-import { Cell } from "../../../../ecs/components/row";
-import { CompactDate } from "../../../compact-date";
-import { LongVal } from "../../../long-val";
+import { Badge } from "~/ui/badge";
+import { Status } from "~/ui/status";
+import { Cell } from "~/ecs/components/row";
+import { CompactDate } from "~/ui/compact-date";
+import { LongVal } from "~/ui/long-val";
 import Image from "next/image";
-import SvgGreenTick from "../../../icons/GreenTick";
-import SvgRedCross from "../../../icons/RedCross";
-import { CopyableValue } from "ui/copyable";
+import SvgGreenTick from "~/ui/icons/GreenTick";
+import SvgRedCross from "~/ui/icons/RedCross";
+import { CopyableValue } from "~/ui/copyable";
 
 export function CellBox({ value }: { value: Cell }) {
   if (value.type === "badge") {

@@ -5,7 +5,7 @@ import {
   JSONRPCResponse,
   Transaction,
   TxSearch,
-} from "../../../lib/service-manager";
+} from "service-manager/types/rpc.type";
 import { PaginationTransform } from "./pagination";
 
 export async function PaginationExtract(

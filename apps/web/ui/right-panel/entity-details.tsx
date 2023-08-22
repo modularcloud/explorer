@@ -1,4 +1,4 @@
-import { CopyableValue } from "ui/copyable";
+import { CopyableValue } from "~/ui/copyable";
 
 interface Props {
   imageUrl: string;

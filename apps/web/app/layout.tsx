@@ -1,9 +1,9 @@
 import { Inter } from "@next/font/google";
 import Script from "next/script";
-import { getWhitelabel } from "../lib/utils";
+import { getWhitelabel } from "~/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import "../styles/globals.css";
-import { Toaster } from "ui/shadcn/components/ui/toaster";
+import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],

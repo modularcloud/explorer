@@ -1,8 +1,8 @@
-import { PageArchetype } from "../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs, getWhitelabel } from "~/lib/utils";
 import Image from "next/image";
-import SvgCardOff from "../icons/CardOff";
+import SvgCardOff from "~/ui/icons/CardOff";
 
 type Props = {
   resourcePath: FetchLoadArgs;

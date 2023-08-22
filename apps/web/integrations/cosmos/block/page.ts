@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { BlockExtract } from ".";
-import { PageComponent } from "../../../ecs/components/page";
+import { PageComponent } from "~/ecs/components/page";
 
 export const PageTransform = {
   schema: PageComponent,

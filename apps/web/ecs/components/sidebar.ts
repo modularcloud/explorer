@@ -1,6 +1,6 @@
 import { createComponentSchema } from "@modularcloud/ecs";
 import { z } from "zod";
-import { ValueSchema } from "../../schemas/value";
+import { ValueSchema } from "~/schemas/value";
 
 const SidebarSchema = z.object({
   // Entity details at the top

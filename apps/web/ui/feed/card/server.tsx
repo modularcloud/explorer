@@ -1,6 +1,6 @@
-import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
-import { asyncUseEntity } from "../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "../../../lib/utils";
+import { AssociatedArchetype } from "~/ecs/archetypes/associated";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs } from "~/lib/utils";
 import { FeedCard } from "./component";
 
 interface Props {

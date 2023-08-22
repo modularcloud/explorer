@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { LogExtract } from ".";
-import { CardComponent } from "../../../ecs/components/card";
+import { CardComponent } from "~/ecs/components/card";
 
 export const CardTransform = {
   schema: CardComponent,

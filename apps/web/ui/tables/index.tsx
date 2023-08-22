@@ -1,11 +1,11 @@
-import { Badge } from "../badge";
-import { truncateString } from "../../lib/utils";
+import { Badge } from "~/ui/badge";
+import { truncateString } from "~/lib/utils";
 import Web3 from "web3";
 import Link from "next/link";
 import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
-import SvgBlocksIcon from "../icons/BlocksIcon";
-import SvgBarChartIcon from "../icons/BarChartIcon";
+import SvgBlocksIcon from "~/ui/icons/BlocksIcon";
+import SvgBarChartIcon from "~/ui/icons/BarChartIcon";
 
 type HeaderProps = {
   icon: React.ReactNode;
@@ -37,8 +37,8 @@ export const BlocksAndTransactionsSummaryDisplay = () => {
   // const isMobile = true;
   return (
     <div className="space-between flex w-full max-w-[76rem] flex-col items-stretch gap-6 lg:flex-row lg:gap-8">
-      {/* @ts-expect-error Async Server Component */}
-      <BlockSummaryTable /> <TransactionsSummaryTable />
+      <BlockSummaryTable />
+      <TransactionsSummaryTable />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { PaginationExtract } from ".";
-import { PaginationComponent } from "../../../ecs/components/pagination";
-import { FetchLoadArgs } from "../../../lib/utils";
+import { PaginationComponent } from "~/ecs/components/pagination";
+import { FetchLoadArgs } from "~/lib/utils";
 
 export const PaginationTransform = {
   schema: PaginationComponent,

@@ -1,14 +1,13 @@
-import Link from "next/link";
-import { PageArchetype } from "../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, slugify } from "../../lib/utils";
-import { Badge } from "../badge";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs, slugify } from "~/lib/utils";
+import { Badge } from "~/ui/badge";
 
 const INDEX_TAB_NAME = "Overview";
 
 type Props = {
   params: FetchLoadArgs & {
-    section: string;
+    section?: string;
   };
 };
 

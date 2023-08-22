@@ -1,7 +1,7 @@
 "use client";
 
-import { FetchLoadArgs } from "lib/utils";
-import { useToast } from "ui/shadcn/components/ui/use-toast";
+import { FetchLoadArgs } from "~/lib/utils";
+import { useToast } from "~/ui/shadcn/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 

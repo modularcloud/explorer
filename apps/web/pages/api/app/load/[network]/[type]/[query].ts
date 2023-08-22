@@ -1,7 +1,7 @@
 import { Engine, verifyArchetype } from "@modularcloud/ecs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { getEngine } from "../../../../../../lib/networks";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { getEngine } from "~/lib/networks";
 
 const allowCors =
   (fn: any) => async (req: NextApiRequest, res: NextApiResponse) => {
