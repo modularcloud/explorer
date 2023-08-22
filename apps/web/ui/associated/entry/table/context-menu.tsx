@@ -20,9 +20,8 @@ export function ContextMenu({}: Props) {
           align="end"
           className="w-32 bg-white rounded-xl dropdown-shadow border-muted-foreground/20 border"
         >
-          <ContextMenuItem functionLabel="Open" shortcutLabel="enter" />
-          <ContextMenuItem functionLabel="Preview" shortcutLabel="space" />
-          <ContextMenuItem functionLabel="Copy" shortcutLabel="⌘+C" />
+          <ContextMenuItem label="Open" />
+          <ContextMenuItem label="Copy" />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
@@ -30,12 +29,10 @@ export function ContextMenu({}: Props) {
 }
 
 function ContextMenuItem({
-  functionLabel,
-  shortcutLabel,
+  label,
   onClick,
 }: {
-  functionLabel: string;
-  shortcutLabel: string;
+  label: string;
   onClick?: () => void;
 }) {
   return (
@@ -48,15 +45,12 @@ function ContextMenuItem({
         "first:rounded-t-xl",
         "last:rounded-b-xl",
         "[&:not(:last-child)]:border-b border-muted-foreground/10",
-        "flex items-center justify-between p-2",
+        "flex items-center justify-between p-2 px-3",
         "group select-none outline-none",
         "data-[disabled]:pointer-events-none data-[highlighted]:bg-muted-foreground/5",
       )}
     >
-      <span className="text-[13px]">{functionLabel}</span>&nbsp;
-      <span className="text-muted-foreground/80 text-[12px]">
-        {shortcutLabel}
-      </span>
+      <span className="text-[13px]">{label}</span>&nbsp;
     </DropdownMenu.Item>
   );
 }
