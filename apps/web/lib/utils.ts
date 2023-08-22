@@ -76,19 +76,19 @@ export type Whitelabel = {
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
     case "nautscan":
-  return {
-    searchOptions: {
-      Nautilus: [
-        {
-          displayName: "Mainnet",
-          id: "mainnet",
+      return {
+        searchOptions: {
+          Nautilus: [
+            {
+              displayName: "Mainnet",
+              id: "mainnet",
+            },
+          ],
         },
-      ],
-    },
-    defaultNetwork: "mainnet",
-    name: ["Naut", "Scan"],
-    env: "nautscan",
-  };
+        defaultNetwork: "mainnet",
+        name: ["Naut", "Scan"],
+        env: "nautscan",
+      };
     case "nautilus":
       return {
         searchOptions: {
