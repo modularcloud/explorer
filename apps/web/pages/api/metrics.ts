@@ -1,5 +1,5 @@
-import { getWhitelabel } from "lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getWhitelabel } from "~/lib/utils";
 
 const allowCors =
   (fn: any) => async (req: NextApiRequest, res: NextApiResponse) => {

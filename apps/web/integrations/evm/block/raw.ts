@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { BlockExtract } from ".";
-import { RawComponent } from "../../../ecs/components/raw";
+import { RawComponent } from "~/ecs/components/raw";
 
 export const RawTransform = {
   schema: RawComponent,

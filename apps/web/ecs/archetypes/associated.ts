@@ -1,6 +1,6 @@
 import { createArchetype } from "@modularcloud/ecs";
-import { CardComponent } from "../components/card";
-import { RowComponent } from "../components/row";
+import { CardComponent } from "~/ecs/components/card";
+import { RowComponent } from "~/ecs/components/row";
 
 export const AssociatedArchetype = createArchetype()
   .addComponent(CardComponent)

@@ -1,8 +1,8 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import { LatestExtract } from ".";
-import { SidebarComponent } from "../../../ecs/components/sidebar";
-import { Value } from "../../../schemas/value";
+import { SidebarComponent } from "~/ecs/components/sidebar";
+import { Value } from "~/schemas/value";
 
 export const SidebarTransform = {
   schema: SidebarComponent,

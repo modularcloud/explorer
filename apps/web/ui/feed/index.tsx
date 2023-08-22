@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ServerFeedCard } from "./card/server";
 import { CardList } from "./card-list";
-import { FetchLoadArgs } from "../../lib/utils";
+import { FetchLoadArgs } from "~/lib/utils";
 
 type Props = {
   data: FetchLoadArgs[];

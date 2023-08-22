@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { loadDynamicNetworks, ServiceManager } from "../../lib/service-manager";
+import { loadDynamicNetworks, ServiceManager } from "~/lib/service-manager";
 import { getAssociated } from "service-manager/types/network.type";
 
 export default async function handler(

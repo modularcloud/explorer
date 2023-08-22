@@ -1,6 +1,6 @@
 import { Engine, EngineConfig } from "@modularcloud/ecs";
-import { CreateCosmosConfig } from "../integrations/cosmos";
-import { CreateEVMConfig } from "../integrations/evm";
+import { CreateCosmosConfig } from "~/integrations/cosmos";
+import { CreateEVMConfig } from "~/integrations/evm";
 import { getWhitelabel } from "./utils";
 
 export function getEngine() {

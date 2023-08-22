@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { Entity } from "@modularcloud/ecs";
-import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
+import { AssociatedArchetype } from "~/ecs/archetypes/associated";
 import { CellBox } from "./cell-box";
-import { generateColumnStyle } from "../../list/table/column-styles";
+import { generateColumnStyle } from "~/ui/associated/list/table/column-styles";
 import { generateCellStyle } from "./cell-style";
 import { ClickableRow } from "./clickable-row";
 

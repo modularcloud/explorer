@@ -1,8 +1,8 @@
-import { getNetworkBySlug } from "../../../../config/networks";
-import { Sidebar } from "../../../../ecs/components/sidebar";
-import { getWhitelabel } from "../../../../lib/utils";
-import { Value } from "../../../../schemas/value";
-import { RightPanel } from "../../../../ui/right-panel/component";
+import { getNetworkBySlug } from "~/config/networks";
+import { Sidebar } from "~/ecs/components/sidebar";
+import { getWhitelabel } from "~/lib/utils";
+import { Value } from "~/schemas/value";
+import { RightPanel } from "~/ui/right-panel/component";
 
 const VMDisplayNames = {
   evm: "Ethereum Virtual Machine",

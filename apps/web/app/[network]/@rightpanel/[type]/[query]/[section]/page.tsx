@@ -1,6 +1,6 @@
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { RightPanel } from "../../../../../../ui/right-panel/component";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { RightPanel } from "~/ui/right-panel/component";
 
 interface Props {
   params: {

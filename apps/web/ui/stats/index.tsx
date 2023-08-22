@@ -1,16 +1,16 @@
-import { SummaryPresenter } from "../presenters/summary-presenter";
-import { ExplorerLineChart, ExplorerLineChartProps } from "../chart";
-import { BlocksAndTransactionsSummaryDisplay } from "../tables";
+import { SummaryPresenter } from "~/ui/presenters/summary-presenter";
+import { ExplorerLineChart, ExplorerLineChartProps } from "~/ui/chart";
+import { BlocksAndTransactionsSummaryDisplay } from "~/ui/tables";
 import Web3 from "web3";
 import { z } from "zod";
-import SvgClockCount from "../icons/ClockCount";
-import SvgBarChartIcon from "../icons/BarChartIcon";
-import SvgBlocksIcon from "../icons/BlocksIcon";
-import SvgWalletIcon from "../icons/WalletIcon";
-import SvgContractFileIcon from "../icons/ContractFileIcon";
-import SvgCapDisplay from "../icons/CapDisplay";
-import SvgFuelTankIcon from "../icons/FuelTank";
-import SvgDollarCircle from "../icons/DollarCircled";
+import SvgClockCount from "~/ui/icons/ClockCount";
+import SvgBarChartIcon from "~/ui/icons/BarChartIcon";
+import SvgBlocksIcon from "~/ui/icons/BlocksIcon";
+import SvgWalletIcon from "~/ui/icons/WalletIcon";
+import SvgContractFileIcon from "~/ui/icons/ContractFileIcon";
+import SvgCapDisplay from "~/ui/icons/CapDisplay";
+import SvgFuelTankIcon from "~/ui/icons/FuelTank";
+import SvgDollarCircle from "~/ui/icons/DollarCircled";
 
 type Props = {
   extended?: boolean;

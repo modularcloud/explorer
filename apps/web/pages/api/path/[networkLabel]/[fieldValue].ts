@@ -1,17 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { slugify } from "service-manager";
 import { getEntity } from "service-manager/types/network.type";
-import {
-  isAddress,
-  isHash,
-  isHeight,
-  isSignature,
-} from "../../../../lib/search";
-import { getSearchOptions } from "../../../../lib/search-options";
-import {
-  loadDynamicNetworks,
-  ServiceManager,
-} from "../../../../lib/service-manager";
+import { isAddress, isHash, isHeight, isSignature } from "~/lib/search";
+import { getSearchOptions } from "~/lib/search-options";
+import { loadDynamicNetworks, ServiceManager } from "~/lib/service-manager";
 
 export default async function handler(
   req: NextApiRequest,

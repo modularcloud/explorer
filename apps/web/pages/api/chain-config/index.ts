@@ -1,9 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { slugify } from "service-manager/utils/slugify";
-import {
-  addRemote,
-  RemoteServiceRequestSchema,
-} from "../../../lib/service-manager";
+import { addRemote, RemoteServiceRequestSchema } from "~/lib/service-manager";
 
 const ADD_NETWORK_PASS = process.env.ADD_NETWORK_PASS;
 const ADD_NETWORK_ENDPOINT = process.env.ADD_NETWORK_ENDPOINT;

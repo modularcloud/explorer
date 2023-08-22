@@ -1,7 +1,7 @@
-import { getNetworkBySlug } from "../../../../../config/networks";
-import { Sidebar } from "../../../../../ecs/components/sidebar";
-import { Value } from "../../../../../schemas/value";
-import { RightPanel } from "../../../../../ui/right-panel/component";
+import { getNetworkBySlug } from "~/config/networks";
+import { Sidebar } from "~/ecs/components/sidebar";
+import { Value } from "~/schemas/value";
+import { RightPanel } from "~/ui/right-panel/component";
 
 interface Props {
   params: { network: string };

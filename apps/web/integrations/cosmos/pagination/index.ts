@@ -1,11 +1,7 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { createModularCloud } from "@modularcloud/sdk";
 import { z } from "zod";
-import {
-  JSONRPCResponse,
-  Transaction,
-  TxSearch,
-} from "../../../lib/service-manager";
+import { JSONRPCResponse, Transaction, TxSearch } from "~/lib/service-manager";
 import { PaginationTransform } from "./pagination";
 
 export async function PaginationExtract(

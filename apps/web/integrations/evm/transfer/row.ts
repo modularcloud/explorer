@@ -2,8 +2,8 @@ import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import Web3 from "web3";
 import { TransferExtract } from ".";
-import { RowComponent } from "../../../ecs/components/row";
-import { decodeEvmAddressParam } from "../../../lib/utils";
+import { RowComponent } from "~/ecs/components/row";
+import { decodeEvmAddressParam } from "~/lib/utils";
 
 export const RowTransform = {
   schema: RowComponent,

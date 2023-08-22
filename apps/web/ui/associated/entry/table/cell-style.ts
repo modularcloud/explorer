@@ -1,4 +1,4 @@
-import { Cell } from "../../../../ecs/components/row";
+import { Cell } from "~/ecs/components/row";
 
 export const generateCellStyle = (cell: Cell) => {
   switch (cell.type) {

@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { LatestExtract } from ".";
-import { TopbarComponent } from "../../../ecs/components/topbar";
+import { TopbarComponent } from "~/ecs/components/topbar";
 
 export const TopbarTransform = {
   schema: TopbarComponent,

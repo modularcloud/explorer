@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import EntityPage, {
   generateMetadata as _generateMetadata,
-} from "../(standard)/[query]/page";
-import { getWhitelabel } from "../../../../lib/utils";
+} from "~/app/[network]/[type]/(standard)/[query]/page";
+import { getWhitelabel } from "~/lib/utils";
 import { ShortenedResourcePath, mapTypes } from "./helpers";
 
 type Props = {

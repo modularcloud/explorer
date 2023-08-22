@@ -1,6 +1,6 @@
-import { FetchLoadArgs } from "../../lib/utils";
-import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
-import { PageArchetype } from "../../ecs/archetypes/page";
+import { FetchLoadArgs } from "~/lib/utils";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { PageArchetype } from "~/ecs/archetypes/page";
 import { RightPanel } from "./component";
 
 interface Props {

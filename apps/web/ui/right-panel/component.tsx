@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import { EntityDetails } from "./entity-details";
-import { KeyValueList } from "../key-value-list";
-import { AsyncKeyValueList } from "../key-value-list/async";
+import { KeyValueList } from "~/ui/key-value-list";
+import { AsyncKeyValueList } from "~/ui/key-value-list/async";
 import { Suspense } from "react";
-import { Sidebar } from "../../ecs/components/sidebar";
+import { Sidebar } from "~/ecs/components/sidebar";
 
 interface Props {
   className?: string;
