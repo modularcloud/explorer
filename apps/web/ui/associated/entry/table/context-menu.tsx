@@ -1,12 +1,23 @@
 "use client";
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import ElipsHorizOff from "../../../icons/ElipsHorizOff";
+import ElipsHorizOff from "ui/icons/ElipsHorizOff";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
+import { useToast } from "ui/shadcn/components/ui/use-toast";
+import { copyTextToClipboard, type FetchLoadArgs } from "lib/utils";
 
-export type Props = {};
+export type Props = {
+  resourcePath: FetchLoadArgs;
+};
 
-export function ContextMenu({}: Props) {
+export function ContextMenu({ resourcePath }: Props) {
+  const { toast } = useToast();
+  const router = useRouter();
+  const destination = resourcePath
+    ? `/${resourcePath.network}/${resourcePath.type}/${resourcePath.query}`
+    : "";
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -20,8 +31,23 @@ export function ContextMenu({}: Props) {
           align="end"
           className="w-32 bg-white rounded-xl dropdown-shadow border-muted-foreground/20 border"
         >
-          <ContextMenuItem label="Open" />
-          <ContextMenuItem label="Copy" />
+          <ContextMenuItem
+            label="Open"
+            onClick={() => {
+              router.push(destination);
+            }}
+          />
+          <ContextMenuItem
+            label="Copy"
+            onClick={async () => {
+              if (await copyTextToClipboard(resourcePath.query)) {
+                toast({
+                  title: "Copied",
+                  description: `"${resourcePath.query}" copied to clipboard`,
+                });
+              }
+            }}
+          />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

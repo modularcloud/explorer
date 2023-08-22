@@ -12,8 +12,9 @@ export interface Props {
 }
 
 export function TableEntry({ entity }: Props) {
+  const resourcePath = entity.components.row.data.link;
   return (
-    <ClickableRow resourcePath={entity.components.row.data.link}>
+    <ClickableRow resourcePath={resourcePath}>
       <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
       </td>
@@ -31,7 +32,7 @@ export function TableEntry({ entity }: Props) {
         </td>
       ))}
       <td className="h-[3.375rem] inline-flex items-center">
-        <ContextMenu />
+        {resourcePath && <ContextMenu resourcePath={resourcePath} />}
       </td>
       <td aria-hidden={true} className="p-2 sm:p-3 lg:p-4">
         {/** For spacing purposes */}
