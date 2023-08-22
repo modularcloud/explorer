@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ts-check": "tsc --noEmit"
+    "ts-check": "tsc --noEmit",
+    "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
   },
   "dependencies": {
     "@modularcloud/design-system": "*",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
+    "@svgr/cli": "^8.1.0",
     "@types/node": "^17.0.12",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
