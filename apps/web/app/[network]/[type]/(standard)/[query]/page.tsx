@@ -7,7 +7,9 @@ import { Entity } from "~/ui/entity";
 import { Tabs } from "~/ui/tabs";
 
 type Props = {
-  params: FetchLoadArgs;
+  params: FetchLoadArgs & {
+    section?: string;
+  };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

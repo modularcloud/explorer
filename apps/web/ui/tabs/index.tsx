@@ -8,7 +8,7 @@ const INDEX_TAB_NAME = "Overview";
 
 type Props = {
   params: FetchLoadArgs & {
-    section: string;
+    section?: string;
   };
 };
 
