@@ -116,7 +116,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "ETH",
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
-    rpcUrl: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    rpcUrl: "https://api.evm.worlds.dev.eclipsenetwork.xyz",
     stack: {
       Type: "Rollup",
       Execution: "EVM",

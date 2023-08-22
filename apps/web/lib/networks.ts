@@ -42,7 +42,7 @@ export function getEngine() {
     Engine.addConfig("waev", config);
   } else if (whitelabel.env === "worlds") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+      endpoint: "https://api.evm.worlds.dev.eclipsenetwork.xyz",
       network: {
         id: "worlds",
         displayName: "Worlds",
