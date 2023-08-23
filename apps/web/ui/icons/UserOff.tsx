@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgListViewOff = (props: SVGProps<SVGSVGElement>) => (
+const SvgUserOff = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={20}
@@ -8,11 +8,23 @@ const SvgListViewOff = (props: SVGProps<SVGSVGElement>) => (
     fill="none"
     {...props}
   >
-    <path
+    <circle
+      cx={10}
+      cy={10}
+      r={7.5}
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M10 16.5h5.5a1 1 0 1 0 0-2h-11a1 1 0 1 0 0 2H10Z"
+    />
+    <circle
+      cx={10}
+      cy={8}
+      r={1.5}
+      fill="#888A90"
+      fillOpacity={0.1}
+      stroke="#888A90"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       fill="#888A90"
@@ -20,14 +32,8 @@ const SvgListViewOff = (props: SVGProps<SVGSVGElement>) => (
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M10 11.5h5.5a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1h-11a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H10Z"
-    />
-    <path
-      stroke="#888A90"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M10 5.5h5.5a1 1 0 1 0 0-2h-11a1 1 0 0 0 0 2H10Z"
+      d="m5.5 16 .618-1.743C6.784 12.585 8.311 11.5 10 11.5c1.69 0 3.216 1.085 3.882 2.757L14.5 16c-1.236 1.057-2.8 1.5-4.5 1.5-1.7 0-3.264-.443-4.5-1.5Z"
     />
   </svg>
 );
-export default SvgListViewOff;
+export default SvgUserOff;

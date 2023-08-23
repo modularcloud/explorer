@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgCodeOff = (props: SVGProps<SVGSVGElement>) => (
+const SvgBellOn = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={20}
@@ -9,11 +9,11 @@ const SvgCodeOff = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#AEB0B7"
+      stroke="#2A2B2E"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="m7.5 7.5-3 2.5 3 2.5M12.5 7.5l3 2.5-3 2.5"
+      d="M7.5 13.5h-3l1-3V9A4.5 4.5 0 0 1 10 4.5v0A4.5 4.5 0 0 1 14.5 9v1.5l1 3h-3m-5 0v0a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v0m-5 0h5"
     />
   </svg>
 );
-export default SvgCodeOff;
+export default SvgBellOn;

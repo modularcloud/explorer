@@ -1,4 +1,4 @@
-import { Inter } from "@next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import { getWhitelabel } from "~/lib/utils";
 import { Analytics } from "@vercel/analytics/react";

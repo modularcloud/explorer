@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgCubesOff = (props: SVGProps<SVGSVGElement>) => (
+const SvgSunOn = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={20}
@@ -9,19 +9,21 @@ const SvgCubesOff = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#888A90"
+      stroke="#2A2B2E"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M10 3.5H5.5a2 2 0 0 0-2 2V10M10 3.5h4.5a2 2 0 0 1 2 2V10M10 3.5v13m0 0h4.5a2 2 0 0 0 2-2V10M10 16.5H5.5a2 2 0 0 1-2-2V10m0 0h13"
+      d="M3.5 10h3m3.494-6.5v3M13.5 10h3m-6.494 3.5v3M5.404 5.404l2.121 2.121M14.592 5.4 12.471 7.52m.004 4.954 2.121 2.121M7.53 12.48 5.408 14.6"
     />
-    <path
+    <circle
+      cx={10}
+      cy={10}
+      r={3.5}
       fill="#888A90"
-      fillOpacity={0.1}
-      stroke="#888A90"
+      fillOpacity={0.2}
+      stroke="#2A2B2E"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M14.5 3.5H10V10h6.5V5.5a2 2 0 0 0-2-2Z"
     />
   </svg>
 );
-export default SvgCubesOff;
+export default SvgSunOn;
