@@ -13,6 +13,7 @@ type Props = {
 };
 
 export async function Tabs({ params }: Props) {
+  
   const { section, ...resourcePath } = params;
 
   const entity = await asyncUseEntity({
@@ -31,6 +32,8 @@ export async function Tabs({ params }: Props) {
     labels[0];
 
   return labels.length > 1 ? (
+    <>
+    <div aria-hidden="true" className="h-16" />
     <div className="fixed bottom-0 flex w-screen items-center gap-3 overflow-x-scroll bg-gradient-to-t from-white to-transparent p-6 font-semibold">
       {labels.map((label) => (
         <a
@@ -47,5 +50,6 @@ export async function Tabs({ params }: Props) {
         </a>
       ))}
     </div>
+    </>
   ) : null;
 }
