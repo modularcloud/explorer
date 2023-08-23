@@ -69,6 +69,7 @@ async function getRealTimeMetrics() {
     contractsDeployed: metrics.result.metrics.CONTRACT,
     totalTransactions: metrics.result.metrics.TRANSACTION,
     walletAddresses: metrics.result.metrics.UNIQUE_ADDRESS,
+    totalGasUsed: metrics.result.metrics.GAS_USED,
   };
 }
 
@@ -189,6 +190,15 @@ export async function Stats({ extended }: Props) {
               )}`}
               title="Contracts Deployed"
               icon={<SvgContractFileIcon />}
+            />
+          </div>
+          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
+            <SummaryPresenter
+              value={`${realTimeMetrics.totalGasUsed.toLocaleString(
+                "en-US"
+              )}`}
+              title="Total Gas Used"
+              icon={<SvgFuelTankIcon />}
             />
           </div>
         </div>
