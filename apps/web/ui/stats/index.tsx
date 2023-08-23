@@ -11,6 +11,7 @@ import SvgContractFileIcon from "../icons/ContractFileIcon";
 import SvgCapDisplay from "../icons/CapDisplay";
 import SvgFuelTankIcon from "../icons/FuelTank";
 import SvgDollarCircle from "../icons/DollarCircled";
+import { convertWeiToBestUnit, convertWeiToUSD } from "lib/evm";
 
 type Props = {
   extended?: boolean;
@@ -35,15 +36,14 @@ const subPennyCurrencyFormatter = new Intl.NumberFormat("en-US", {
 
 async function getZbcPrice() {
   const response = await fetch("https://api2.zebec.io/price").then((res) =>
-    res.json(),
+    res.json()
   );
   return Number(Web3.utils.fromWei(response.price));
 }
 
 async function getGasPrice() {
   const web3 = new Web3("https://api.evm.nautilus.prod.eclipsenetwork.xyz");
-  const gasPrice = await web3.eth.getGasPrice();
-  return Number(Web3.utils.fromWei(gasPrice));
+  return await web3.eth.getGasPrice();
 }
 
 async function getBlockMetrics() {
@@ -62,8 +62,8 @@ async function getBlockMetrics() {
 }
 
 async function getRealTimeMetrics() {
-  const metrics = await fetch("https://nautscan.com/api/metrics").then(
-    (res) => res.json(),
+  const metrics = await fetch("https://nautscan.com/api/metrics").then((res) =>
+    res.json()
   );
   return {
     contractsDeployed: metrics.result.metrics.CONTRACT,
@@ -79,7 +79,7 @@ async function getTransactionVolumes(): Promise<
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(
-        res.result.transactionVolumes,
+        res.result.transactionVolumes
       );
     })
     .then((res) => {
@@ -136,11 +136,10 @@ export async function Stats({ extended }: Props) {
                   <SummaryPresenter
                     icon={<SvgFuelTankIcon />}
                     title="Gas Price"
-                    value={`${gasPrice * 1000000000} Gwei ($${
-                      gasPrice * zbcPrice < 0.01
-                        ? (gasPrice * zbcPrice).toPrecision(3)
-                        : gasPrice * zbcPrice
-                    })`}
+                    value={`${convertWeiToBestUnit(
+                      gasPrice,
+                      "ZBC"
+                    )} (${convertWeiToUSD(gasPrice, zbcPrice, true)})`}
                   />
                 </div>
               </div>
@@ -161,7 +160,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.totalTransactions.toLocaleString(
-                "en-US",
+                "en-US"
               )}`}
               title="Total Transactions"
               icon={<SvgBarChartIcon />}
@@ -177,7 +176,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.walletAddresses.toLocaleString(
-                "en-US",
+                "en-US"
               )}`}
               title="Wallet Addresses"
               icon={<SvgWalletIcon />}
@@ -186,7 +185,7 @@ export async function Stats({ extended }: Props) {
           <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
             <SummaryPresenter
               value={`${realTimeMetrics.contractsDeployed.toLocaleString(
-                "en-US",
+                "en-US"
               )}`}
               title="Contracts Deployed"
               icon={<SvgContractFileIcon />}
@@ -213,11 +212,10 @@ export async function Stats({ extended }: Props) {
               <SummaryPresenter
                 icon={<SvgFuelTankIcon />}
                 title="Gas Price"
-                value={`${gasPrice * 1000000000} Gwei ($${
-                  gasPrice * zbcPrice < 0.01
-                    ? (gasPrice * zbcPrice).toPrecision(3)
-                    : gasPrice * zbcPrice
-                })`}
+                value={`${convertWeiToBestUnit(
+                  gasPrice,
+                  "ZBC"
+                )} (${convertWeiToUSD(gasPrice, zbcPrice, true)})`}
               />
             </div>
           </div>
