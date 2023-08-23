@@ -39,7 +39,6 @@ export default async function verifyContract(
         axiosError.response.status,
         axiosError.response.headers,
       );
-
       res.status(axiosError.response.status).json(axiosError.response.data);
       console.error("An error occurred:", error);
       return;
