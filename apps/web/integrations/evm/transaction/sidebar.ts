@@ -1,4 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
+import { convertWeiToBestUnit, convertWeiToNativeToken, convertWeiToUSD } from "lib/evm";
 import { TransactionExtract } from ".";
 import { SidebarComponent } from "../../../ecs/components/sidebar";
 
@@ -41,14 +42,25 @@ export const SidebarTransform = {
           type: "standard",
           payload: data.receipt.contractAddress,
         },
-        "Gas Limit": {
+        "Transaction Value": {
           type: "standard",
-
-          payload: data.gas,
+          payload: `${convertWeiToNativeToken(data.value, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(data.value, data.nativeTokenValue)})` : ""}`,
+        },
+        "Transaction Cost": {
+          type: "standard",
+          payload: `${convertWeiToNativeToken(data.gasPrice, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(data.gasPrice, data.nativeTokenValue)})` : ""}`,
         },
         "Gas Price": {
           type: "standard",
-          payload: data.gasPrice,
+          payload: convertWeiToBestUnit(data.gasPrice, metadata.network.nativeToken),
+        },
+        "Gas Used": {
+          type: "standard",
+          payload: data.receipt.gasUsed,
+        },
+        "Gas Limit": {
+          type: "standard",
+          payload: data.gas,
         },
         "Block Number": {
           type: "standard",
@@ -58,10 +70,6 @@ export const SidebarTransform = {
           type: "standard",
           payload: data.blockHash,
         },
-        "Gas Used": {
-          type: "standard",
-          payload: data.receipt.gasUsed,
-        },
         "Cumulative Gas Used": {
           type: "standard",
           payload: data.receipt.cumulativeGasUsed,
@@ -69,10 +77,6 @@ export const SidebarTransform = {
         "Effective Gas Price": {
           type: "standard",
           payload: data.receipt.effectiveGasPrice,
-        },
-        "Transaction Value": {
-          type: "standard",
-          payload: data.value,
         },
         Nonce: {
           type: "standard",
@@ -110,3 +114,4 @@ export const SidebarTransform = {
     },
   }),
 };
+

@@ -24,7 +24,7 @@ export function getEngine() {
         network: {
           id: "mainnet",
           displayName: "Mainnet",
-          nativeToken: "ETH",
+          nativeToken: "ZBC",
           logoUrl: "/images/nautilus.png",
         },
       });
