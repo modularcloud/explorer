@@ -48,7 +48,7 @@ export const SidebarTransform = {
         },
         "Transaction Cost": {
           type: "standard",
-          payload: `${convertWeiToNativeToken(data.gasPrice, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(data.gasPrice, data.nativeTokenValue)})` : ""}`,
+          payload: `${convertWeiToNativeToken(Number(data.gasPrice) * data.receipt.gasUsed, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(Number(data.gasPrice) * data.receipt.gasUsed, data.nativeTokenValue)})` : ""}`,
         },
         "Gas Price": {
           type: "standard",
