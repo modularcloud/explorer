@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { corsHeaders } from "~/app/api/app/load/[network]/[type]/[query]/route";
 import { getWhitelabel } from "~/lib/utils";
+import { env } from "~/env.mjs";
 
 export async function GET(request: Request) {
   let path: string;
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
   }
 
   const metrics = await fetch(
-    process.env.METRICS_API_URL + "/" + path + "/real-time-metrics",
+    env.METRICS_API_URL + "/" + path + "/real-time-metrics",
   ).then((response) => response.json());
   return NextResponse.json(metrics, {
     headers: {
@@ -36,4 +37,4 @@ export async function OPTIONS(request: Request) {
   });
 }
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";
