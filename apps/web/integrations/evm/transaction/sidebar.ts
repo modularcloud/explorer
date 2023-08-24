@@ -66,6 +66,10 @@ export const SidebarTransform = {
           type: "standard",
           payload: data.blockNumber,
         },
+        Timestamp: {
+          type: "standard",
+          payload: new Date(Number(data.timestamp) * 1000).toUTCString(),
+        },
         "Block Hash": {
           type: "standard",
           payload: data.blockHash,

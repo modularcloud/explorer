@@ -26,7 +26,7 @@ export const CardTransform = {
         },
         Timestamp: {
           type: "standard",
-          payload: data.timestamp,
+          payload: new Date(Number(data.timestamp) * 1000).toUTCString(),
         },
         Transactions: {
           type: "standard",
