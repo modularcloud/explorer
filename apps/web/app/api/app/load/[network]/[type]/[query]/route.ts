@@ -3,7 +3,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { getEngine } from "~/lib/networks";
 import { NextResponse } from "next/server";
 
-export const corsHeaders = {
+const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
   "Access-Control-Allow-Credentials": "true",
@@ -63,4 +63,4 @@ export async function OPTIONS(request: Request) {
   });
 }
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";

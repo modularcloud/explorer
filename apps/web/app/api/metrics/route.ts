@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
-import { corsHeaders } from "~/app/api/app/load/[network]/[type]/[query]/route";
 import { getWhitelabel } from "~/lib/utils";
 import { env } from "~/env.mjs";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Headers":
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+} as const;
 
 export async function GET(request: Request) {
   let path: string;
