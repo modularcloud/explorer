@@ -20,7 +20,6 @@ export const env = createEnv({
     NAMESPACE_ENDPOINT: z.string().url(),
     EVM_CHAIN_DATA_SERVICE: z.string().url(),
     ALT_BASE_URL: z.string().url().optional(),
-    INTEGRATION_API_URL: z.string().url(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
@@ -51,7 +50,6 @@ export const env = createEnv({
     EVM_CHAIN_DATA_SERVICE: process.env.EVM_CHAIN_DATA_SERVICE,
     // eslint-disable-next-line turbo/no-undeclared-env-vars
     ALT_BASE_URL: process.env.ALT_BASE_URL,
-    INTEGRATION_API_URL: process.env.INTEGRATION_API_URL,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     VERCEL_URL: process.env.VERCEL_URL,
   },
