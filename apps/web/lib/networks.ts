@@ -2,6 +2,7 @@ import { Engine, EngineConfig } from "@modularcloud/ecs";
 import { CreateCosmosConfig } from "~/integrations/cosmos";
 import { CreateEVMConfig } from "~/integrations/evm";
 import { getWhitelabel } from "./utils";
+import { env } from "~/env.mjs";
 
 export function getEngine() {
   const whitelabel = getWhitelabel();
@@ -98,7 +99,7 @@ export function getEngine() {
       conflicts: ["block"],
     });
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      endpoint: env.DYMENSION_HUB_RPC ?? "",
       network: {
         id: "hub",
         displayName: "Hub",
@@ -108,7 +109,7 @@ export function getEngine() {
     });
     Engine.addConfig("hub", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      endpoint: env.DYMENSION_ROLLAPP_X_RPC ?? "",
       network: {
         id: "rollappx",
         displayName: "RollApp X",
@@ -119,7 +120,7 @@ export function getEngine() {
     Engine.addConfig("rollappx", config);
   } else if (whitelabel.env === "celestia") {
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
+      endpoint: env.CELESTIA_ARABICA_RPC ?? "",
       network: {
         id: "arabica",
         displayName: "Arabica",
@@ -129,7 +130,7 @@ export function getEngine() {
     });
     Engine.addConfig("arabica", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      endpoint: env.CELESTIA_MOCHA_RPC ?? "",
       network: {
         id: "mocha",
         displayName: "Mocha",
@@ -196,7 +197,7 @@ export function getEngine() {
     Engine.addConfig("proteus", config);
   } else {
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
+      endpoint: env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
       network: {
         id: "celestia-blockspace-race",
         displayName: "Blockspace Race",
@@ -226,7 +227,7 @@ export function getEngine() {
     });
     Engine.addConfig("caldera-polygon", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
+      endpoint: env.CELESTIA_ARABICA_RPC ?? "",
       network: {
         id: "celestia-arabica",
         displayName: "Arabica",
@@ -236,7 +237,7 @@ export function getEngine() {
     });
     Engine.addConfig("celestia-arabica", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_MOCHA_RPC ?? "",
+      endpoint: env.CELESTIA_MOCHA_RPC ?? "",
       network: {
         id: "mocha",
         displayName: "Mocha",
@@ -269,7 +270,7 @@ export function getEngine() {
       conflicts: ["block"],
     });
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      endpoint: env.DYMENSION_HUB_RPC ?? "",
       network: {
         id: "dymension-hub",
         displayName: "Hub",
@@ -279,7 +280,7 @@ export function getEngine() {
     });
     Engine.addConfig("dymension-hub", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      endpoint: env.DYMENSION_ROLLAPP_X_RPC ?? "",
       network: {
         id: "dymension-rollappx",
         displayName: "RollApp X",
