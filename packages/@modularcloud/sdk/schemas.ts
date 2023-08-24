@@ -36,27 +36,7 @@ export const TokenBalanceResponseSchema = z.object({
   nativeTokenBalance: z.number().optional(),
 });
 export type TokenBalanceResponse = z.infer<typeof TokenBalanceResponseSchema>;
-const v2 = {
-  result: {
-    balancesV2: [
-      {
-        tokenType: "ERC20",
-        balance: {
-          token: {
-            address: "0x3c8a42376fad8df0c2f6193cb3e9da70d14e1e96",
-            name: "ModularCloud",
-            symbol: "MC",
-            decimals: 18,
-          },
-          balance: {
-            value: "999999900",
-          },
-        },
-      },
-    ],
-    nativeTokenBalance: 499948538440000000000,
-  },
-};
+
 export const NFTBalanceSchema = z.object({
   tokenType: z.enum(["ERC721", "ERC1155"]),
   balance: z.object({
