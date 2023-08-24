@@ -14,7 +14,7 @@ export const env = createEnv({
     CELESTIA_ARABICA_RPC: z.string().url().optional(),
     ETHEREUM_RPC: z.string().url().optional(),
     ADD_NETWORK_ENDPOINT: z.string().url(),
-    METRICS_API_URL: z.string().url().optional(),
+    METRICS_API_URL: z.string().url(),
     SOLANA_RPC: z.string().url(),
     IPFS_GATEWAY: z.string().url(),
     NAMESPACE_ENDPOINT: z.string().url(),
