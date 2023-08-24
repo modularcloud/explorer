@@ -13,11 +13,11 @@ export const env = createEnv({
     CELESTIA_BLOCKSPACE_RACE_RPC: z.string().url().optional(),
     CELESTIA_ARABICA_RPC: z.string().url().optional(),
     ETHEREUM_RPC: z.string().url().optional(),
+    NAMESPACE_ENDPOINT: z.string().url().optional(),
+    METRICS_API_URL: z.string().url().optional(),
     ADD_NETWORK_ENDPOINT: z.string().url(),
-    METRICS_API_URL: z.string().url(),
     SOLANA_RPC: z.string().url(),
     IPFS_GATEWAY: z.string().url(),
-    NAMESPACE_ENDPOINT: z.string().url(),
     EVM_CHAIN_DATA_SERVICE: z.string().url(),
     ALT_BASE_URL: z.string().url().optional(),
     VERCEL_URL: preprocess((arg) => {
