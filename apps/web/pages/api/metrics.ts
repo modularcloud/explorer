@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getWhitelabel } from "~/lib/utils";
-import { env } from "~/env.mjs";
 
 const allowCors =
   (fn: any) => async (req: NextApiRequest, res: NextApiResponse) => {
@@ -42,9 +41,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   return res.json(
-    await fetch(env.METRICS_API_URL + "/" + path + "/real-time-metrics").then(
-      (response) => response.json(),
-    ),
+    await fetch(
+      process.env.METRICS_API_URL + "/" + path + "/real-time-metrics",
+    ).then((response) => response.json()),
   );
 };
 
