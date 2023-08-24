@@ -192,15 +192,6 @@ export async function Stats({ extended }: Props) {
               icon={<SvgContractFileIcon />}
             />
           </div>
-          <div className="flex w-full justify-center max-lg:py-4 lg:px-4">
-            <SummaryPresenter
-              value={`${realTimeMetrics.totalGasUsed.toLocaleString(
-                "en-US"
-              )}`}
-              title="Total Gas Used"
-              icon={<SvgFuelTankIcon />}
-            />
-          </div>
         </div>
       </div>
 
