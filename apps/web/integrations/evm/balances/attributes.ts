@@ -22,11 +22,11 @@ export const AttributesTransform = {
           .toString(),
       };
     }
-    for (const balance of data.balances ?? []) {
-      balances[balance.token.name] = {
+    for (const item of data.balancesV2 ?? []) {
+      balances[item.balance.token.name] = {
         type: "standard",
-        payload: new Decimal(balance.balance)
-          .dividedBy(new Decimal(10).pow(String(balance.token.decimals)))
+        payload: new Decimal(item.balance.balance.value)
+          .dividedBy(new Decimal(10).pow(String(item.balance.token.decimals)))
           .toString(),
       };
     }

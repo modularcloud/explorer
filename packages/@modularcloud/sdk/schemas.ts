@@ -13,7 +13,7 @@ export const TxResponseSchema = z.object({
 export type TxResponse = z.infer<typeof TxResponseSchema>;
 
 export const TokenSchema = z.object({
-  type: z.string(),
+  address: z.string(),
   name: z.string(),
   symbol: z.string(),
   decimals: z.number(),
@@ -21,17 +21,42 @@ export const TokenSchema = z.object({
 export type Token = z.infer<typeof TokenSchema>;
 
 export const TokenBalanceSchema = z.object({
-  token: TokenSchema,
-  balance: z.number(),
+  tokenType: z.enum(["ERC20", "ERC721", "ERC1155"]),
+  balance: z.object({
+    token: TokenSchema,
+    balance: z.object({
+      value: z.string(),
+    }),
+  }),
 });
 export type TokenBalance = z.infer<typeof TokenBalanceSchema>;
 
 export const TokenBalanceResponseSchema = z.object({
-  balances: TokenBalanceSchema.array().nullish(),
+  balancesV2: TokenBalanceSchema.array().nullish(),
   nativeTokenBalance: z.number().optional(),
 });
 export type TokenBalanceResponse = z.infer<typeof TokenBalanceResponseSchema>;
-
+const v2 = {
+  result: {
+    balancesV2: [
+      {
+        tokenType: "ERC20",
+        balance: {
+          token: {
+            address: "0x3c8a42376fad8df0c2f6193cb3e9da70d14e1e96",
+            name: "ModularCloud",
+            symbol: "MC",
+            decimals: 18,
+          },
+          balance: {
+            value: "999999900",
+          },
+        },
+      },
+    ],
+    nativeTokenBalance: 499948538440000000000,
+  },
+};
 export const NFTBalanceSchema = z.object({
   tokenType: z.enum(["ERC721", "ERC1155"]),
   balance: z.object({
@@ -147,7 +172,6 @@ export const VerificationResponseSchema = z.object({
 });
 
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
-
 
 export const VerifiedSourceSchema = z.record(z.string());
 export type VerifiedSource = z.infer<typeof VerifiedSourceSchema>;
