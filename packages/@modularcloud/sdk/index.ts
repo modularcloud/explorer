@@ -387,7 +387,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       ) => {
         let url = baseUrl;
         const isNumbericId = !isNaN(Number(normalizeNetworkId(networkId)));
-        if(isNumbericId && process.env.ALT_BASE_URL) {
+        if (isNumbericId && process.env.ALT_BASE_URL) {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }
