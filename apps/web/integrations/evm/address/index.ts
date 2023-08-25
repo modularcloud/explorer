@@ -9,7 +9,6 @@ import { RawTransform } from "./raw";
 import { RowTransform } from "./row";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
-import { env } from "~/env.mjs";
 
 async function safePromise<T>(p: Promise<T>) {
   try {
@@ -30,7 +29,7 @@ export async function AddressExtract(
     throw new Error("Invalid address");
   }
   const web3 = new Web3(metadata.endpoint);
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const [code, verified, solidity, contract, nftBalances, erc20Token] =
     await Promise.all([
       web3.eth.getCode(address),

@@ -1,10 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import {
-  AssociatedComponent,
-  AssociatedKey,
-  AssociatedValue,
-  EntityRef,
-} from "~/ecs/components/associated";
+import { AssociatedComponent, AssociatedKey, AssociatedValue, EntityRef } from "~/ecs/components/associated";
 import { BlockExtract } from ".";
 import {
   getDataFromBlockTx,

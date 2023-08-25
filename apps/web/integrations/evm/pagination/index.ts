@@ -3,7 +3,6 @@ import { createModularCloud } from "@modularcloud/sdk";
 import Web3 from "web3";
 import { z } from "zod";
 import { PaginationTransform } from "./pagination";
-import { env } from "~/env.mjs";
 
 export async function PaginationExtract(
   _q: unknown,
@@ -11,7 +10,7 @@ export async function PaginationExtract(
 ) {
   const query = z.string().parse(_q);
   const [value, collection, nextToken] = query.split(":");
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
 
   if (collection === "balances") {
     const balances = await mc.evm.getTokenBalancesByAddress(
