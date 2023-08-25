@@ -6,7 +6,6 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
 import SvgBlocksIcon from "~/ui/icons/BlocksIcon";
 import SvgBarChartIcon from "~/ui/icons/BarChartIcon";
-import { env } from "~/env.mjs";
 
 type HeaderProps = {
   icon: React.ReactNode;
@@ -157,7 +156,7 @@ export const BlockSummaryTable = async () => {
 
 export const TransactionsSummaryTable = async () => {
   const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const txRefs = await mc.evm.getRecentTransactions("triton", 8);
   async function getTransaction(hash: string, blockNumber: number) {
     const [tx, block] = await Promise.all([

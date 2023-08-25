@@ -1,5 +1,4 @@
 import { ExplorerConfig } from "./types/explorer";
-import { env } from "~/env.mjs";
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   // Caldera
@@ -66,6 +65,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     defaultSearchOptionGroup: "Worlds",
     env: "worlds",
     id: "worlds",
+    includeAllNetworks: true,
+  },
+  DEGEN: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Degen ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, degen",
+    defaultSearchOptionGroup: "Eclipse",
+    env: "degen",
+    id: "degen",
     includeAllNetworks: true,
   },
   WAEV: {
@@ -159,5 +170,5 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 
 export const EXPLORER_CONFIG =
   Object.values(EXPLORER_CONFIGS).find(
-    (config) => config.env === env.WHITELABEL,
+    (config) => config.env === process.env.WHITELABEL,
   ) ?? EXPLORER_CONFIGS.DEFAULT;

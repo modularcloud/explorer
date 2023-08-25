@@ -4,7 +4,6 @@ import Web3 from "web3";
 import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
-import { env } from "~/env.mjs";
 
 export async function TransferExtract(
   _q: unknown,
@@ -25,7 +24,7 @@ export async function TransferExtract(
     throw new Error("Transfer not found");
   }
   const blockNumber = receipt.blockNumber;
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const [token, block] = await Promise.all([
     mc.evm.getTokenByAddress(metadata.network.id, log.address),
     web3.eth.getBlock(blockNumber),

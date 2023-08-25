@@ -11,7 +11,6 @@ import SvgContractFileIcon from "~/ui/icons/ContractFileIcon";
 import SvgCapDisplay from "~/ui/icons/CapDisplay";
 import SvgFuelTankIcon from "~/ui/icons/FuelTank";
 import SvgDollarCircle from "~/ui/icons/DollarCircled";
-import { env } from "~/env.mjs";
 
 type Props = {
   extended?: boolean;
@@ -76,7 +75,7 @@ async function getRealTimeMetrics() {
 async function getTransactionVolumes(): Promise<
   ExplorerLineChartProps["data"]
 > {
-  return fetch(env.METRICS_API_URL + "/transaction-volume-data")
+  return fetch(process.env.METRICS_API_URL + "/transaction-volume-data")
     .then((res) => res.json())
     .then((res) => {
       return TransactionVolumeSchema.array().parse(

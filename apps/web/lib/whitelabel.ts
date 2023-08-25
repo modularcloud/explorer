@@ -1,2 +1,1 @@
-import { env } from "~/env.mjs";
-export const Whitelabel = env.WHITELABEL ?? null;
+export const Whitelabel = process.env.WHITELABEL ?? null;

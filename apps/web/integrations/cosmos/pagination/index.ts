@@ -7,7 +7,6 @@ import {
   TxSearch,
 } from "service-manager/types/rpc.type";
 import { PaginationTransform } from "./pagination";
-import { env } from "~/env.mjs";
 
 export async function PaginationExtract(
   _q: unknown,
@@ -68,7 +67,7 @@ export async function PaginationExtract(
   }
   if (collection === "blobs") {
     // temporarily pass in the namespace endpoint
-    const mc = createModularCloud(env.NAMESPACE_ENDPOINT);
+    const mc = createModularCloud(process.env.NAMESPACE_ENDPOINT);
     const nextToken = page === "1" ? undefined : page;
     const blobs = await mc.celestia.listBlobsByNamespace(
       metadata.network.id,

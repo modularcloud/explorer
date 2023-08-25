@@ -1,11 +1,10 @@
 import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
-import { env } from "~/env.mjs";
 
 export function convertToHttpIfIpfs(url: string) {
   if (url.startsWith("ipfs://")) {
-    return `${env.IPFS_GATEWAY}/${url.replace("ipfs://", "")}`;
+    return `${process.env.IPFS_GATEWAY}/${url.replace("ipfs://", "")}`;
   }
   return url;
 }
@@ -39,11 +38,11 @@ export type FetchLoadArgs = { network: string; type: string; query: string };
 export async function fetchLoad(props: FetchLoadArgs) {
   try {
     let baseUrl = "http://localhost:3000";
-    if (env.VERCEL_URL) {
-      baseUrl = env.VERCEL_URL;
+    if (process.env.VERCEL_URL) {
+      baseUrl = `https://${process.env.VERCEL_URL}`;
     }
-    if (env.NEXT_PUBLIC_VERCEL_URL) {
-      baseUrl = env.NEXT_PUBLIC_VERCEL_URL;
+    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+      baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
     const response = await fetch(
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
@@ -75,7 +74,7 @@ export type Whitelabel = {
   env: string;
 };
 export function getWhitelabel(): Whitelabel {
-  switch (env.WHITELABEL) {
+  switch (process.env.WHITELABEL) {
     case "nautscan":
       return {
         searchOptions: {
@@ -151,6 +150,21 @@ export function getWhitelabel(): Whitelabel {
         subText: "Explorer",
         name: ["Modular", "Cloud"],
         env: "worlds",
+      };
+    case "degen":
+      return {
+        searchOptions: {
+          Eclipse: [
+            {
+              displayName: "Degen",
+              id: "degen",
+            },
+          ],
+        },
+        defaultNetwork: "degen",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "degen",
       };
     case "aeg":
       return {

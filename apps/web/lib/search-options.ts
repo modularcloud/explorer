@@ -5,7 +5,6 @@ import {
   DYMENSION_ROLLAPP_X,
 } from "./network-names";
 import { Whitelabel } from "./whitelabel";
-import { env } from "~/env.mjs";
 export const getSearchOptions = async () => {
   if (Whitelabel === "dymension") {
     return [
@@ -60,7 +59,9 @@ export const getSearchOptions = async () => {
             {
               label: "Dymension",
               options: [
-                ...(await fetch(env.ADD_NETWORK_ENDPOINT + "/chain-config")
+                ...(await fetch(
+                  process.env.ADD_NETWORK_ENDPOINT + "/chain-config",
+                )
                   .then((res) => res.json())
                   .then((json) =>
                     json.result
@@ -100,7 +101,9 @@ export const getSearchOptions = async () => {
             },
             {
               label: "Eclipse",
-              options: await fetch(env.ADD_NETWORK_ENDPOINT + "/chain-config")
+              options: await fetch(
+                process.env.ADD_NETWORK_ENDPOINT + "/chain-config",
+              )
                 .then((res) => res.json())
                 .then((json) =>
                   json.result
