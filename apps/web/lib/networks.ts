@@ -9,13 +9,13 @@ export function getEngine() {
   let config: EngineConfig;
   if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-      network: {
-        id: "triton",
-        displayName: "Triton",
-        nativeToken: "ZBC",
-        logoUrl: "/images/nautilus.png",
-        sourcifyChainId: "91002",
+      endpoint: "https://api.nautilus.nautchain.xyz",
+         network: {
+           id: "mainnet",
+           displayName: "Mainnet",
+           nativeToken: "ETH",
+           logoUrl: "/images/nautilus.png",
+           sourcifyChainId: "22222"
       },
     });
     Engine.addConfig("triton", config);

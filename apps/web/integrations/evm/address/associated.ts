@@ -1,9 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import {
-  AssociatedComponent,
-  AssociatedKey,
-  AssociatedValue,
-} from "~/ecs/components/associated";
+import { AssociatedComponent, AssociatedKey, AssociatedValue } from "~/ecs/components/associated";
 import { AddressExtract } from ".";
 
 export const AssociatedTransform = {
