@@ -400,7 +400,6 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         );
 
         if (!response.ok) {
-          console.log("Failed to fetch transactions from endpoint " + endpoint);
           throw new Error("Failed to fetch transactions");
         }
 

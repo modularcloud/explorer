@@ -30,7 +30,6 @@ export default function HomePage() {
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>
-      {/* @ts-expect-error Async Server Component */}
       {explorerId === "nautscan" ? <Stats extended={true} /> : null}
     </div>
   );
