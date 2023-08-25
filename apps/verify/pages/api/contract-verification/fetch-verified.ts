@@ -17,7 +17,7 @@ export default async function FetchVerifiedContract(
       : req.query.chainid;
 
     if (typeof chainID === "undefined") {
-      chainID = "88002";
+      chainID = "22222";
     }
     contractAddress = contractAddress?.toLowerCase();
     const readFiles = req.query.readfiles ?? null;

@@ -125,6 +125,13 @@ type APIResponse = {
   result: any;
 };
 
+const VERIFICATION_CHAINID: Record<string, string> = {
+  proteus: "88002",
+  mainnet: "22222",
+};
+function normalizeVerificationChainID(networkId: string) {
+  return VERIFICATION_CHAINID[networkId] || networkId;
+}
 const NETWORK_ID_MAP: Record<string, string> = {
   triton: "eclipse/91002",
   saga: "sg/1",
@@ -449,7 +456,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         address: string
       ): Promise<VerificationResponse> => {
         const response = await global.fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}&chainid=${normalizeVerificationChainID(
+            networkId,
+          )}`,
         );
 
         if (!response.ok) {
@@ -461,7 +470,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
       getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}&chainid=${normalizeVerificationChainID(
+            networkId,
+          )}`,
         );
 
         if (!response.ok) {
