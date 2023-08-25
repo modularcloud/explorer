@@ -151,6 +151,21 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "worlds",
       };
+    case "degen":
+      return {
+        searchOptions: {
+          Eclipse: [
+            {
+              displayName: "Degen",
+              id: "degen",
+            },
+          ],
+        },
+        defaultNetwork: "degen",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "degen",
+      };    
     case "aeg":
       return {
         searchOptions: {
