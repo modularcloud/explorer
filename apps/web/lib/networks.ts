@@ -8,7 +8,7 @@ export function getEngine() {
   let config: EngineConfig;
   if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
-      endpoint: "https://api.nautilus.nautchain.xyz/",
+      endpoint: "https://api.nautilus.nautchain.xyz",
          network: {
            id: "mainnet",
            displayName: "Mainnet",
