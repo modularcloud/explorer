@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import "highlight.js/styles/github.css";
 import { AppProps } from "next/app";
 import VerifyAndUpload from "../ui/verifyAndUpload";
 

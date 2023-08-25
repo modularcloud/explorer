@@ -1,11 +1,13 @@
 import VerifyAndUpload from "../../ui/verifyAndUpload";
 
-export default function Contract() {
+export default function ContractVerifier() {
   return (
-    <div className=" bg-gray-100 ">
+    <div className="">
       <div>
-        <p className="pt-20 text-center  text-4xl font-bold">Verifier</p>
-        <p className="text-center">
+        <p className="pt-20 text-center text-[#1D2939]  text-4xl  font-bold">
+          Verifier
+        </p>
+        <p className="text-center  text-[#344054]">
           Verify smart contracts by recompiling with the Solidity source code
           and metadata
         </p>

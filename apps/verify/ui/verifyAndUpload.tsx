@@ -4,8 +4,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
-
+import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
+import UploadedFileSection from "./uploadedFileSection";
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<FileList>();
@@ -201,55 +202,77 @@ export default function VerifyAndUpload() {
   return (
     <div className="flex flex-col items-center justify-center">
       <ToastContainer />
-      <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl border-t-4 border-solid border-[#234594]">
-        <div className="w-[80vw] rounded-lg bg-white px-14 py-10">
-          <div>
-            <p className="text-center text-2xl font-bold">Upload files</p>
-          </div>
-          <div>
-            <p className="pb-5 text-center">
-              Add the Solidity source files and metadata of the contract you
-              want to verify.
-            </p>
-          </div>
-          <label
-            htmlFor="file-upload"
-            className="custom-file-upload relative w-full pt-5"
-          >
-            <div className="flex">
-              <p>Select Chain:</p>
+      <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
+        <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
+          <div className="flex  justify-between mb-3">
+            <div className="flex flex-col w-full">
+              <p className="pl-1">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="w-full py-4">
+            <div className="flex flex-col w-3/4 ">
+              <p className="pl-1">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="h-10 w-full rounded-lg border-2 border-[#2753bb] indent-2  font-light placeholder:text-gray-800"
+                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900"
                 placeholder="Contract Address"
               />
             </div>
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onDrop={dragNdrop}
-              className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#234594] p-20 font-light"
+          </div>
+          <ExternalFileImporter />
+          <div className="flex w-full gap-x-5">
+            <label
+              htmlFor="file-upload"
+              className="custom-file-upload pt-5 w-[65%]"
             >
-              <p>Drag and drop here or</p>
-              <p>Browse files</p>
-              <input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-                required
-                multiple
-              />
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onDrop={dragNdrop}
+                className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-solid p-20  font-light"
+              >
+                <div className="bg-[#F2F4F7] h-[40px] w-[40px] rounded-full relative flex-col flex justify-center items-center">
+                  <div className="relative  rounded-full bg-[#F9FAFB] flex justify-center items-center  ">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M14 2.26953V6.40007C14 6.96012 14 7.24015 14.109 7.45406C14.2049 7.64222 14.3578 7.7952 14.546 7.89108C14.7599 8.00007 15.0399 8.00007 15.6 8.00007H19.7305M12 18V12M9 15H15M14 2H8.8C7.11984 2 6.27976 2 5.63803 2.32698C5.07354 2.6146 4.6146 3.07354 4.32698 3.63803C4 4.27976 4 5.11984 4 6.8V17.2C4 18.8802 4 19.7202 4.32698 20.362C4.6146 20.9265 5.07354 21.3854 5.63803 21.673C6.27976 22 7.11984 22 8.8 22H15.2C16.8802 22 17.7202 22 18.362 21.673C18.9265 21.3854 19.3854 20.9265 19.673 20.362C20 19.7202 20 18.8802 20 17.2V8L14 2Z"
+                        stroke="#7B6FE7"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-[#6941C6]">Click to Upload</p>
+                <p className="text-sm  text-[#667085]">
+                  Drag and drop here or Browse files
+                </p>
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  required
+                  multiple
+                />
+              </div>
+            </label>
+            <div className="pt-4 flex flex-col relative w-[40%] ">
+              <UploadedFileSection files={files} />
             </div>
-          </label>
+          </div>
+
           <div className="text-md flex gap-x-3 pt-5">
             <p>Added Files:</p>
             {files &&
@@ -263,7 +286,7 @@ export default function VerifyAndUpload() {
             className="flex cursor-pointer items-center justify-center"
             onClick={onSubmit}
           >
-            <div className="rounded-lg bg-[#254ba5] px-4 py-2 text-white">
+            <div className="rounded-lg bg-[#7B6FE7] px-4 py-2 text-white w-1/5 text-center">
               Verify
             </div>
           </div>
