@@ -77,7 +77,7 @@ function Container({
 }) {
   if (paginationSettings && paginationSettings.original) {
     const InfiniteLoader = dynamic(
-      () => import("../../../../../../ui/associated/infinite-loader"),
+      () => import("~/ui/associated/infinite-loader"),
       { ssr: false },
     );
     return (
