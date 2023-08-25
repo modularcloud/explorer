@@ -147,7 +147,6 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "blockspace-race": "2",
   "celestia-blockspace-race": "2",
   arabica: "3",
-  degen: "3",
   mocha: "4",
   "celestia-mocha": "4",
   "celestia-arabica": "3",
