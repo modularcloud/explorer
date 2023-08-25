@@ -147,7 +147,6 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "blockspace-race": "2",
   "celestia-blockspace-race": "2",
   arabica: "3",
-  degen: "3",
   mocha: "4",
   "celestia-mocha": "4",
   "celestia-arabica": "3",
@@ -387,7 +386,7 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       ) => {
         let url = baseUrl;
         const isNumbericId = !isNaN(Number(normalizeNetworkId(networkId)));
-        if (isNumbericId && process.env.ALT_BASE_URL) {
+        if(isNumbericId && process.env.ALT_BASE_URL) {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }

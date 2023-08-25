@@ -12,7 +12,6 @@ import { PageTransform } from "./page";
 import { RawTransform } from "./raw";
 import { SidebarTransform } from "./sidebar";
 import { TopbarTransform } from "./topbar";
-import { env } from "~/env.mjs";
 
 const MetadataSchema = z.object({
   name: z.string().optional(),
@@ -377,7 +376,7 @@ const Erc1155ABI: AbiItem[] = [
 export async function NFTExtract(_q: unknown, metadata: EngineConfigMetadata) {
   const query = z.string().parse(_q);
   const [contractAddress, tokenId, balance] = query.split(":");
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
   const web3 = new Web3(metadata.endpoint);
   const tokenType = await mc.evm
     .describeContract(metadata.network.id, contractAddress)
@@ -429,7 +428,7 @@ export async function NFTExtract(_q: unknown, metadata: EngineConfigMetadata) {
       ]);
       const fimgb = Buffer.from(await fimg.arrayBuffer());
       const result = await uploadFile(fimgb, {
-        publicKey: env.UPLOADCARE_API_KEY as string,
+        publicKey: process.env.UPLOADCARE_API_KEY as string,
         store: "auto",
         metadata: {
           original: res.image,
