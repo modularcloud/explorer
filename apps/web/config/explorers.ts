@@ -68,6 +68,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "worlds",
     includeAllNetworks: true,
   },
+  DEGEN: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Degen ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, degen",
+    defaultSearchOptionGroup: "Eclipse",
+    env: "degen",
+    id: "degen",
+    includeAllNetworks: true,
+  },
   WAEV: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",

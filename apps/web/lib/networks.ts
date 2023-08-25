@@ -9,13 +9,13 @@ export function getEngine() {
   let config: EngineConfig;
   if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-      network: {
-        id: "triton",
-        displayName: "Triton",
-        nativeToken: "ZBC",
-        logoUrl: "/images/nautilus.png",
-        sourcifyChainId: "91002",
+      endpoint: "https://api.nautilus.nautchain.xyz",
+         network: {
+           id: "mainnet",
+           displayName: "Mainnet",
+           nativeToken: "ETH",
+           logoUrl: "/images/nautilus.png",
+           sourcifyChainId: "22222"
       },
     });
     Engine.addConfig("triton", config);
@@ -52,6 +52,17 @@ export function getEngine() {
       },
     });
     Engine.addConfig("worlds", config);
+  } else if (whitelabel.env === "degen") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.degen.dev.eclipsenetwork.xyz",
+      network: {
+        id: "degen",
+        displayName: "Degen",
+        nativeToken: "ETH",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("degen", config);
   } else if (whitelabel.env === "aeg") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
