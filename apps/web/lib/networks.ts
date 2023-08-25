@@ -52,6 +52,17 @@ export function getEngine() {
       },
     });
     Engine.addConfig("worlds", config);
+  } else if (whitelabel.env === "degen") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.degen.dev.eclipsenetwork.xyz",
+      network: {
+        id: "degen",
+        displayName: "Degen",
+        nativeToken: "ETH",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("degen", config);
   } else if (whitelabel.env === "aeg") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
