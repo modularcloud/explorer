@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 
 export default async function verifyContract(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { contractAddress, files, chain } = req.body;
 
@@ -15,7 +15,7 @@ export default async function verifyContract(
         address: contractAddress,
         chain: chain,
         files: files,
-      }
+      },
     );
     if (
       response.data.result[0].status !== "perfect" &&
@@ -37,9 +37,8 @@ export default async function verifyContract(
         "axiosError details:",
         axiosError.response.data,
         axiosError.response.status,
-        axiosError.response.headers
+        axiosError.response.headers,
       );
-
       res.status(axiosError.response.status).json(axiosError.response.data);
       console.error("An error occurred:", error);
       return;

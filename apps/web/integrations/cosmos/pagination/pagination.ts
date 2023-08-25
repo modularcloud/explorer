@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { PaginationExtract } from ".";
-import { PaginationComponent } from "../../../ecs/components/pagination";
+import { PaginationComponent } from "~/ecs/components/pagination";
 
 export const PaginationTransform = {
   schema: PaginationComponent,
@@ -14,11 +14,13 @@ export const PaginationTransform = {
       return {
         typeId: "pagination",
         data: {
-          next: data.nextToken ? {
-            network: metadata.network.id,
-            type: "pagination",
-            query: `${data.value}:blobs:${data.nextToken}`,
-          } : undefined,
+          next: data.nextToken
+            ? {
+                network: metadata.network.id,
+                type: "pagination",
+                query: `${data.value}:blobs:${data.nextToken}`,
+              }
+            : undefined,
           values: data.blobs.map((blob) => ({
             network: metadata.network.id,
             type: "blob",

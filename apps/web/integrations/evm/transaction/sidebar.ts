@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { convertWeiToBestUnit, convertWeiToNativeToken, convertWeiToUSD } from "lib/evm";
 import { TransactionExtract } from ".";
-import { SidebarComponent } from "../../../ecs/components/sidebar";
+import { SidebarComponent } from "~/ecs/components/sidebar";
 
 export const SidebarTransform = {
   schema: SidebarComponent,

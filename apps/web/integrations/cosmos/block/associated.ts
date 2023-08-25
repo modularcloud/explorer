@@ -4,7 +4,7 @@ import {
   AssociatedKey,
   AssociatedValue,
   EntityRef,
-} from "../../../ecs/components/associated";
+} from "~/ecs/components/associated";
 import { BlockExtract } from ".";
 import {
   getDataFromBlockTx,

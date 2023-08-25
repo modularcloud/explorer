@@ -1,5 +1,6 @@
 import { EXPLORER_CONFIG } from "./explorers";
 import { NetworkConfig } from "./types/network";
+import { env } from "~/env.mjs";
 
 const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
   // Caldera
@@ -116,7 +117,27 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "ETH",
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
-    rpcUrl: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    rpcUrl: "https://api.evm.worlds.dev.eclipsenetwork.xyz",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
+  ECLIPSE_DEGEN: {
+    mcId: "3",
+    displayName: "Degen",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "degen",
+    slug: "degen",
+    slugPrefix: "eclipse",
+    vm: "evm",
+    nativeToken: "ETH",
+    logoUrl: "/images/eclipse.png",
+    searchOptionGroup: "Eclipse",
+    rpcUrl: "https://api.evm.degen.dev.eclipsenetwork.xyz",
     stack: {
       Type: "Rollup",
       Execution: "EVM",
@@ -197,7 +218,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "DYM",
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
-    rpcUrl: process.env.DYMENSION_HUB_RPC ?? "",
+    rpcUrl: env.DYMENSION_HUB_RPC ?? "",
     stack: {
       Type: "Settlement",
       Execution: "Cosmos SDK",
@@ -237,7 +258,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "RAX",
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
-    rpcUrl: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+    rpcUrl: env.DYMENSION_ROLLAPP_X_RPC ?? "",
     stack: {
       Type: "RollApp",
       Execution: "Cosmos SDK",
@@ -259,7 +280,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "TIA",
     logoUrl: "/images/celestia.png",
     searchOptionGroup: "Celestia",
-    rpcUrl: process.env.CELESTIA_MOCHA_RPC ?? "",
+    rpcUrl: env.CELESTIA_MOCHA_RPC ?? "",
     stack: {
       Type: "Data Availability",
       Execution: "Cosmos SDK",
@@ -277,7 +298,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "TIA",
     logoUrl: "/images/celestia.png",
     searchOptionGroup: "Celestia",
-    rpcUrl: process.env.CELESTIA_ARABICA_RPC ?? "",
+    rpcUrl: env.CELESTIA_ARABICA_RPC ?? "",
     stack: {
       Type: "Data Availability",
       Execution: "Cosmos SDK",

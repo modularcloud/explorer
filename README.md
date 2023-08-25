@@ -5,7 +5,6 @@
 This is a monorepo built with [Turborepo](https://turbo.build/repo). These are the workspaces inside:
 
 - `web`: the main app built with [Next.js](https://nextjs.org/)
-- `@modularcloud/design-system`: the UI component library
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 - `tailwind-confg`: the [TailwindCSS](https://tailwindcss.com) configuration

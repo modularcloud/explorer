@@ -1,5 +1,5 @@
-import EntityLayout from "../(standard)/[query]/layout";
-import { getWhitelabel } from "../../../../lib/utils";
+import EntityLayout from "~/app/[network]/[type]/(standard)/[query]/layout";
+import { getWhitelabel } from "~/lib/utils";
 import { mapTypes, ShortenedResourcePath } from "./helpers";
 
 type Props = {
@@ -10,7 +10,6 @@ type Props = {
 export default async function ShortEntityLayout({ params, children }: Props) {
   const whitelabel = getWhitelabel();
   return (
-    // @ts-expect-error Async Server Component
     <EntityLayout params={mapTypes(params, whitelabel.defaultNetwork)}>
       {children}
     </EntityLayout>

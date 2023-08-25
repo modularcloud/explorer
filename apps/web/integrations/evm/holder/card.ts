@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import { HolderExtract } from ".";
-import { CardComponent } from "../../../ecs/components/card";
+import { CardComponent } from "~/ecs/components/card";
 
 export const CardTransform = {
   schema: CardComponent,

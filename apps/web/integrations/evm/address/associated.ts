@@ -3,7 +3,7 @@ import {
   AssociatedComponent,
   AssociatedKey,
   AssociatedValue,
-} from "../../../ecs/components/associated";
+} from "~/ecs/components/associated";
 import { AddressExtract } from ".";
 
 export const AssociatedTransform = {

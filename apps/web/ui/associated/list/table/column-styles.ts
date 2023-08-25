@@ -1,4 +1,4 @@
-import { Column } from "../../../../ecs/components/row";
+import { Column } from "~/ecs/components/row";
 
 export const generateColumnStyle = (column: Column) => {
   switch (column.breakpoint) {

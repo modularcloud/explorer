@@ -1,9 +1,9 @@
-import { MobileActions } from "../mobile-actions";
-import { PageArchetype } from "../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
-import { AssociatedRightPanel } from "../right-panel/associated";
-import { ViewSwitcher } from "../view-switcher";
+import { MobileActions } from "~/ui/mobile-actions";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs, getWhitelabel } from "~/lib/utils";
+import { AssociatedRightPanel } from "~/ui/right-panel/associated";
+import { ViewSwitcher } from "~/ui/view-switcher";
 
 type Props = {
   resourcePath: FetchLoadArgs;
@@ -28,7 +28,6 @@ export async function HeaderMenu({ resourcePath }: Props) {
     <div className="flex items-center gap-6">
       <ViewSwitcher />
       <MobileActions searchOptions={whitelabel.searchOptions}>
-        {/* @ts-expect-error Async Server Component */}
         <AssociatedRightPanel
           resourcePath={resourcePath}
           className="flex lg:hidden"

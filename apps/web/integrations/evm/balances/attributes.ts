@@ -1,8 +1,8 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import { BalancesExtract } from ".";
-import { AttributesComponent } from "../../../ecs/components/attributes";
-import { Value } from "../../../schemas/value";
+import { AttributesComponent } from "~/ecs/components/attributes";
+import { Value } from "~/schemas/value";
 
 export const AttributesTransform = {
   schema: AttributesComponent,

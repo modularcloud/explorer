@@ -38,85 +38,85 @@ export interface ModularCloud {
       networkId: string,
       namespace: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<BlobResponse>;
   };
   evm: {
     getTokenBalancesByAddress: (
       networkId: string,
-      address: string
+      address: string,
     ) => Promise<TokenBalanceResponse>;
     // TODO: combine this with the above
     getNFTBalancesByAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<NFTBalance[]>;
     getEventsByTokenAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<EventResponse>;
     getEventsByAccountAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<EventResponse>;
     // TODO: combine this with the above
     getNFTEventsByAccountAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<EventResponse>;
     getTokenByAddress: (networkId: string, address: string) => Promise<Token>;
     getAccountBalancesByTokenAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<HolderResponse>;
     getTransactionsByAddress: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<TxResponse>;
     getRecentTransactions: (
       networkId: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<TxResponse>;
     describeContract: (networkId: string, address: string) => Promise<Contract>;
     listContractLogs: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<LogResponse>;
     listNFTOwners: (
       networkId: string,
       address: string,
       tokenId: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<OwnerResponse>;
     listNFTCollection: (
       networkId: string,
       address: string,
       maxResults?: number,
-      nextToken?: string
+      nextToken?: string,
     ) => Promise<CollectionResponse>;
     isContractVerified: (
       networkId: string,
-      address: string
+      address: string,
     ) => Promise<VerificationResponse>;
     getVerifiedSource: (
       networkId: string,
-      address: string
+      address: string,
     ) => Promise<VerifiedSource>;
   };
 }
@@ -128,14 +128,14 @@ type APIResponse = {
 const NETWORK_ID_MAP: Record<string, string> = {
   triton: "eclipse/91002",
   saga: "sg/1",
-  worlds: "ep/3",
+  worlds: "2",
   "evm-rollapp": "dym/2",
   goerli: "clo/1",
   polygon: "clo/2",
   aeg: "ep/4",
   "nautilus-triton": "eclipse/91002",
   "saga-saga": "sg/1",
-  "eclipse-worlds": "ep/3",
+  "eclipse-worlds": "2",
   "dymension-evm-rollapp": "dym/2",
   "caldera-goerli": "clo/1",
   "caldera-polygon": "clo/2",
@@ -147,6 +147,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "blockspace-race": "2",
   "celestia-blockspace-race": "2",
   arabica: "3",
+  degen: "3",
   mocha: "4",
   "celestia-mocha": "4",
   "celestia-arabica": "3",
@@ -154,7 +155,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "ecipse-weav": "ep/7",
   "nautilus-proteus": "ep/6",
   proteus: "ep/6",
-  "mainnet": "1",
+  mainnet: "1",
 };
 
 function normalizeNetworkId(networkId: string) {
@@ -172,14 +173,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         namespace: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/blobs-summary/${namespace}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -194,8 +195,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       getTokenBalancesByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
-          )}/token-balances/${address.toLowerCase()}`
+            networkId,
+          )}/token-balances/${address.toLowerCase()}`,
         );
 
         if (!response.ok) {
@@ -208,8 +209,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       getNFTBalancesByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
-          )}/token-balances/${address.toLowerCase()}?tokenType=NFT`
+            networkId,
+          )}/token-balances/${address.toLowerCase()}?tokenType=NFT`,
         );
 
         if (!response.ok) {
@@ -229,14 +230,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/contract-logs/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -250,14 +251,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/token-events/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -271,14 +272,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/account-events/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -292,14 +293,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/account-events/${address.toLowerCase()}?eventType=NFTTransfer&maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -312,8 +313,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       getTokenByAddress: async (networkId: string, address: string) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
-          )}/token/${address.toLowerCase()}`
+            networkId,
+          )}/token/${address.toLowerCase()}`,
         );
 
         if (!response.ok) {
@@ -326,8 +327,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       describeContract: async (networkId: string, address: string) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
-          )}/contracts/${address.toLowerCase()}`
+            networkId,
+          )}/contracts/${address.toLowerCase()}`,
         );
 
         if (!response.ok) {
@@ -341,14 +342,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/holder-balances/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -362,14 +363,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/transactions/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -382,16 +383,21 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       getRecentTransactions: async (
         networkId: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         let url = baseUrl;
-        if(networkId === "mainnet" && process.env.ALT_BASE_URL) {
+        const isNumbericId = !isNaN(Number(normalizeNetworkId(networkId)));
+        if (isNumbericId && process.env.ALT_BASE_URL) {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }
-        
-        const endpoint = `${url}/${normalizeNetworkId(networkId)}/transactions?maxResults=${maxResults}${nextToken ? `&nextToken=${nextToken}` : ""}`
-        const response = await fetch(endpoint);
+        const response = await fetch(
+          `${url}/${normalizeNetworkId(
+            networkId,
+          )}/transactions?maxResults=${maxResults}${
+            nextToken ? `&nextToken=${nextToken}` : ""
+          }`,
+        );
 
         if (!response.ok) {
           console.log("Failed to fetch transactions from endpoint " + endpoint);
@@ -406,14 +412,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         address: string,
         tokenId: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/nft/owners/${address.toLowerCase()}/${tokenId}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -427,14 +433,14 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         networkId: string,
         address: string,
         maxResults: number = 30,
-        nextToken?: string
+        nextToken?: string,
       ) => {
         const response = await fetch(
           `${baseUrl}/${normalizeNetworkId(
-            networkId
+            networkId,
           )}/nft/collection/${address.toLowerCase()}?maxResults=${maxResults}${
             nextToken ? `&nextToken=${nextToken}` : ""
-          }`
+          }`,
         );
 
         if (!response.ok) {
@@ -446,10 +452,10 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
       },
       isContractVerified: async (
         networkId: string,
-        address: string
+        address: string,
       ): Promise<VerificationResponse> => {
         const response = await global.fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`,
         );
 
         if (!response.ok) {
@@ -461,43 +467,45 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
       getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`,
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch verified contract source');
+          throw new Error("Failed to fetch verified contract source");
         }
-      
-        const uploadedUrl = VerificationResponseSchema.parse(await response.json()).uploadedUrl;
-      
+
+        const uploadedUrl = VerificationResponseSchema.parse(
+          await response.json(),
+        ).uploadedUrl;
+
         // Fetch the ZIP file
         const zipResponse = await fetch(uploadedUrl);
-      
+
         if (!zipResponse.ok) {
-          throw new Error('Failed to fetch ZIP file');
+          throw new Error("Failed to fetch ZIP file");
         }
-      
+
         const zipBuffer = await zipResponse.arrayBuffer();
-      
+
         // Using the 'jszip' library to handle ZIP data
         const zip = new JSZip();
         await zip.loadAsync(zipBuffer);
-      
+
         const files: Record<string, string> = {};
-      
+
         // Extracting the file contents
         const filePromises = Object.keys(zip.files).map((filename) => {
           if (!zip.file(filename)) return; // Ignore directories
           return zip
             .file(filename)
-            ?.async('string')
+            ?.async("string")
             .then((content) => {
               files[filename] = content;
             });
         });
-      
+
         await Promise.all(filePromises);
-      
+
         // Validate and return the result as a VerifiedSource
         return VerifiedSourceSchema.parse(files);
       },

@@ -1,4 +1,4 @@
-import { FetchLoadArgs } from "../../../lib/utils";
+import { FetchLoadArgs } from "~/lib/utils";
 
 export interface FeedCardProps {
   resourcePath: FetchLoadArgs;
