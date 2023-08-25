@@ -44,11 +44,12 @@ export async function fetchLoad(props: FetchLoadArgs) {
     if (process.env.NEXT_PUBLIC_VERCEL_URL) {
       baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
+
     const response = await fetch(
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
     );
     if (!response.ok) {
-      console.log("Error loading entity", response);
+      console.log("Error loading entity", { response });
       return null;
     }
 
@@ -150,6 +151,21 @@ export function getWhitelabel(): Whitelabel {
         subText: "Explorer",
         name: ["Modular", "Cloud"],
         env: "worlds",
+      };
+    case "degen":
+      return {
+        searchOptions: {
+          Eclipse: [
+            {
+              displayName: "Degen",
+              id: "degen",
+            },
+          ],
+        },
+        defaultNetwork: "degen",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "degen",
       };
     case "aeg":
       return {
