@@ -1,8 +1,12 @@
-module.exports = {
+// @ts-check
+import "./env.mjs";
+
+/** @type {import('next').NextConfig} */
+const config = {
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
   experimental: {
-    appDir: true,
+    logging: "verbose",
   },
   images: {
     domains: [
@@ -12,3 +16,5 @@ module.exports = {
     ],
   },
 };
+
+export default config;

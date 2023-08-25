@@ -1,4 +1,5 @@
 import { ExplorerConfig } from "./types/explorer";
+import { env } from "~/env.mjs";
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   // Caldera
@@ -170,5 +171,5 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 
 export const EXPLORER_CONFIG =
   Object.values(EXPLORER_CONFIGS).find(
-    (config) => config.env === process.env.WHITELABEL,
+    (config) => config.env === env.WHITELABEL,
   ) ?? EXPLORER_CONFIGS.DEFAULT;
