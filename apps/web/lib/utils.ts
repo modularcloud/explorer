@@ -40,10 +40,10 @@ export async function fetchLoad(props: FetchLoadArgs) {
   try {
     let baseUrl = "http://localhost:3000";
     if (env.VERCEL_URL) {
-      baseUrl = `https://${env.VERCEL_URL}`;
+      baseUrl = env.VERCEL_URL;
     }
     if (env.NEXT_PUBLIC_VERCEL_URL) {
-      baseUrl = `https://${env.NEXT_PUBLIC_VERCEL_URL}`;
+      baseUrl = env.NEXT_PUBLIC_VERCEL_URL;
     }
     const response = await fetch(
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
