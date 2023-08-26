@@ -17,7 +17,7 @@ export async function GET(
   request: Request,
   { params }: { params: { network: string; type: string; query: string } },
 ) {
-  const { config, Engine } = getEngine();
+  const { config, Engine } = await getEngine();
 
   let data: EngineLoadResponse | null = null;
 
@@ -28,6 +28,8 @@ export async function GET(
       params.type === "account" ||
       params.type === "token"
     ) {
+      // @ts-expect-error the return type of config is `EngineConfig`, but TypeScript
+      // coercices thee return type to `{}`
       const types = Object.keys(config.loaders);
       data = await Promise.any(
         types
