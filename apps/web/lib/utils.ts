@@ -49,7 +49,8 @@ export async function fetchLoad(props: FetchLoadArgs) {
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
     );
     if (!response.ok) {
-      console.log("Error loading entity", { response });
+      const json = await response.json().catch((_) => {});
+      console.log("Error loading entity", { json });
       return null;
     }
 

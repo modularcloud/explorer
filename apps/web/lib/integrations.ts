@@ -5,7 +5,7 @@ import { env } from "~/env.mjs";
 
 import type { OptionGroups } from "./utils";
 
-const singleIntegrationSchema = z.object({
+export const singleIntegrationSchema = z.object({
   config: z.object({
     rpcUrls: z.record(z.enum(["evm", "cosmos"]), z.string().url()),
     token: z.object({
@@ -23,6 +23,13 @@ const singleIntegrationSchema = z.object({
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
 });
 
+export async function getSingleIntegration(slug: string) {
+  // `getAllIntegrations` already returns all the data needed, we just have to filter it by slug
+  return await getAllIntegrations().then(
+    (all) => all.find((integration) => integration.slug === slug) ?? null,
+  );
+}
+
 export async function getAllIntegrations() {
   const getAllIntegrationsFn = nextCache(
     async () => {
@@ -33,7 +40,7 @@ export async function getAllIntegrations() {
 
         do {
           const response = await fetch(
-            `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?next-token=${nextToken}`,
+            `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?nextToken=${nextToken}`,
           );
 
           const integrationSummaryAPISchema = z.object({
