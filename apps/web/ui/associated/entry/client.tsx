@@ -1,7 +1,7 @@
 "use client";
 
-import { AssociatedArchetype } from "../../../ecs/archetypes/associated";
-import { useEntity } from "../../../ecs/hooks/use-entity";
+import { AssociatedArchetype } from "~/ecs/archetypes/associated";
+import { useEntity } from "~/ecs/hooks/use-entity";
 import { AssociatedEntry } from "./component";
 import AssociatedEntryProps from "./interface";
 

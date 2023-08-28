@@ -1,7 +1,8 @@
 import { Engine, EngineConfig } from "@modularcloud/ecs";
-import { CreateCosmosConfig } from "../integrations/cosmos";
-import { CreateEVMConfig } from "../integrations/evm";
+import { CreateCosmosConfig } from "~/integrations/cosmos";
+import { CreateEVMConfig } from "~/integrations/evm";
 import { getWhitelabel } from "./utils";
+import { env } from "~/env.mjs";
 
 export function getEngine() {
   const whitelabel = getWhitelabel();
@@ -9,12 +10,12 @@ export function getEngine() {
   if (whitelabel.env === "nautscan") {
     config = CreateEVMConfig({
       endpoint: "https://api.nautilus.nautchain.xyz",
-      network: {
-        id: "mainnet",
-        displayName: "Mainnet",
-        nativeToken: "ETH",
-        logoUrl: "/images/nautilus.png",
-        sourcifyChainId: "22222",
+         network: {
+           id: "mainnet",
+           displayName: "Mainnet",
+           nativeToken: "ETH",
+           logoUrl: "/images/nautilus.png",
+           sourcifyChainId: "22222"
       },
     });
     Engine.addConfig("nautscan", config);
@@ -31,7 +32,7 @@ export function getEngine() {
     Engine.addConfig("waev", config);
   } else if (whitelabel.env === "worlds") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+      endpoint: "https://api.evm.worlds.dev.eclipsenetwork.xyz",
       network: {
         id: "worlds",
         displayName: "Worlds",
@@ -40,6 +41,17 @@ export function getEngine() {
       },
     });
     Engine.addConfig("worlds", config);
+  } else if (whitelabel.env === "degen") {
+    config = CreateEVMConfig({
+      endpoint: "https://api.evm.degen.dev.eclipsenetwork.xyz",
+      network: {
+        id: "degen",
+        displayName: "Degen",
+        nativeToken: "ETH",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("degen", config);
   } else if (whitelabel.env === "aeg") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.aeg.eclipsenetwork.xyz/solana",
@@ -87,7 +99,7 @@ export function getEngine() {
       conflicts: ["block"],
     });
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      endpoint: env.DYMENSION_HUB_RPC ?? "",
       network: {
         id: "hub",
         displayName: "Hub",
@@ -97,7 +109,7 @@ export function getEngine() {
     });
     Engine.addConfig("hub", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      endpoint: env.DYMENSION_ROLLAPP_X_RPC ?? "",
       network: {
         id: "rollappx",
         displayName: "RollApp X",
@@ -108,7 +120,7 @@ export function getEngine() {
     Engine.addConfig("rollappx", config);
   } else if (whitelabel.env === "celestia") {
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
+      endpoint: env.CELESTIA_ARABICA_RPC ?? "",
       network: {
         id: "arabica",
         displayName: "Arabica",
@@ -117,6 +129,16 @@ export function getEngine() {
       },
     });
     Engine.addConfig("arabica", config);
+    config = CreateCosmosConfig({
+      endpoint: env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("mocha", config);
   } else if (whitelabel.env === "saga") {
     config = CreateEVMConfig({
       endpoint:
@@ -175,7 +197,7 @@ export function getEngine() {
     Engine.addConfig("proteus", config);
   } else {
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
+      endpoint: env.CELESTIA_BLOCKSPACE_RACE_RPC ?? "",
       network: {
         id: "celestia-blockspace-race",
         displayName: "Blockspace Race",
@@ -205,7 +227,7 @@ export function getEngine() {
     });
     Engine.addConfig("caldera-polygon", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.CELESTIA_ARABICA_RPC ?? "",
+      endpoint: env.CELESTIA_ARABICA_RPC ?? "",
       network: {
         id: "celestia-arabica",
         displayName: "Arabica",
@@ -214,6 +236,16 @@ export function getEngine() {
       },
     });
     Engine.addConfig("celestia-arabica", config);
+    config = CreateCosmosConfig({
+      endpoint: env.CELESTIA_MOCHA_RPC ?? "",
+      network: {
+        id: "mocha",
+        displayName: "Mocha",
+        nativeToken: "TIA",
+        logoUrl: "/images/celestia.png",
+      },
+    });
+    Engine.addConfig("celestia-mocha", config);
     let primary = CreateEVMConfig({
       endpoint: "https://evmrpc-rollappevm-35c.dymension.xyz",
       network: {
@@ -238,7 +270,7 @@ export function getEngine() {
       conflicts: ["block"],
     });
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_HUB_RPC ?? "",
+      endpoint: env.DYMENSION_HUB_RPC ?? "",
       network: {
         id: "dymension-hub",
         displayName: "Hub",
@@ -248,7 +280,7 @@ export function getEngine() {
     });
     Engine.addConfig("dymension-hub", config);
     config = CreateCosmosConfig({
-      endpoint: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+      endpoint: env.DYMENSION_ROLLAPP_X_RPC ?? "",
       network: {
         id: "dymension-rollappx",
         displayName: "RollApp X",

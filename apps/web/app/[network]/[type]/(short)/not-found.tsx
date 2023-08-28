@@ -1,3 +1,3 @@
-import NotFound from "../(standard)/[query]/[section]/not-found";
+import NotFound from "~/app/[network]/[type]/(standard)/[query]/[section]/not-found";
 
 export default NotFound;

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ServerFeedCard } from "./card/server";
 import { CardList } from "./card-list";
-import { FetchLoadArgs } from "../../lib/utils";
+import { FetchLoadArgs } from "~/lib/utils";
 
 type Props = {
   data: FetchLoadArgs[];
@@ -29,7 +29,6 @@ export default async function Feed({ data }: Props) {
               </div>
             }
           >
-            {/* @ts-expect-error Async Server Component */}
             <ServerFeedCard key={card.query} resourcePath={card} />
           </Suspense>
         );

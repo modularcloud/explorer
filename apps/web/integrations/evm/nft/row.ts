@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { NFTExtract } from ".";
-import { RowComponent, Row } from "../../../ecs/components/row";
+import { RowComponent, Row } from "~/ecs/components/row";
 
 export const RowTransform = {
   schema: RowComponent,

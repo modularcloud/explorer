@@ -4,7 +4,7 @@ import prisma from "../../../prisma/lib/prisma";
 
 export default async function persistVerified(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { contractAddress, uploadedUrl, verificationStatus, chainId } =
     req.body;

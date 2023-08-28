@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { NFTExtract } from ".";
-import { CardComponent } from "../../../ecs/components/card";
-import { Value } from "../../../schemas/value";
+import { CardComponent } from "~/ecs/components/card";
+import { Value } from "~/schemas/value";
 
 export const CardTransform = {
   schema: CardComponent,

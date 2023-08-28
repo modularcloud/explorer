@@ -1,8 +1,8 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import { TransferExtract } from ".";
-import { CardComponent } from "../../../ecs/components/card";
-import { decodeEvmAddressParam } from "../../../lib/utils";
+import { CardComponent } from "~/ecs/components/card";
+import { decodeEvmAddressParam } from "~/lib/utils";
 
 export const CardTransform = {
   schema: CardComponent,

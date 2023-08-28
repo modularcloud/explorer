@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import Decimal from "decimal.js";
 import { HolderExtract } from ".";
-import { RowComponent } from "../../../ecs/components/row";
+import { RowComponent } from "~/ecs/components/row";
 
 export const RowTransform = {
   schema: RowComponent,

@@ -6,7 +6,7 @@ import { Verification } from ".prisma/client";
 
 export default async function FetchVerifiedContract(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     let contractAddress = Array.isArray(req.query.contractaddress)
@@ -17,7 +17,7 @@ export default async function FetchVerifiedContract(
       : req.query.chainid;
 
     if (typeof chainID === "undefined") {
-      chainID = "88002";
+      chainID = "22222";
     }
     contractAddress = contractAddress?.toLowerCase();
     const readFiles = req.query.readfiles ?? null;
@@ -56,7 +56,7 @@ export default async function FetchVerifiedContract(
 
 const unzipAndRead = (
   response: AxiosResponse<any>,
-  contractData: Verification
+  contractData: Verification,
 ) => {
   return new Promise((resolve, reject) => {
     let data: any = { ...contractData };
@@ -82,7 +82,7 @@ const unzipAndRead = (
       .promise()
       .then(
         () => resolve(data),
-        (e: any) => console.log("error", e)
+        (e: any) => console.log("error", e),
       );
   });
 };
