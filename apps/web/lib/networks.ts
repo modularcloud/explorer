@@ -6,18 +6,18 @@ import { getWhitelabel } from "./utils";
 export function getEngine() {
   const whitelabel = getWhitelabel();
   let config: EngineConfig;
-  if (whitelabel.env === "nautilus") {
+  if (whitelabel.env === "nautscan") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
+      endpoint: "https://api.nautilus.nautchain.xyz",
       network: {
-        id: "triton",
-        displayName: "Triton",
-        nativeToken: "ZBC",
+        id: "mainnet",
+        displayName: "Mainnet",
+        nativeToken: "ETH",
         logoUrl: "/images/nautilus.png",
-        sourcifyChainId: "91002",
+        sourcifyChainId: "22222",
       },
     });
-    Engine.addConfig("triton", config);
+    Engine.addConfig("nautscan", config);
   } else if (whitelabel.env === "waev") {
     config = CreateEVMConfig({
       endpoint: "https://api.evm.waev.eclipsenetwork.xyz/solana",
