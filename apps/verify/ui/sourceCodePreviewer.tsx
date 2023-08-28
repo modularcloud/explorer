@@ -2,7 +2,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/base16/ia-light.css";
 import javascript from "highlight.js/lib/languages/javascript";
 hljs.registerLanguage("javascript", javascript);
-import { useEffect } from "react";
+import { useEffect, FC } from "react";
 interface props {
   sourceCode: string;
   setIsExpandedFileContent: React.Dispatch<React.SetStateAction<string>>;
