@@ -1,10 +1,10 @@
 "use client";
 
-import { OptionGroups } from "../../lib/utils";
-import { DialogPanel } from "../dialog-panel";
-import SvgRightSidebarOff from "../icons/RightSidebarOff";
-import SvgSearchOff from "../icons/SearchOff";
-import { Search } from "../search";
+import { OptionGroups } from "~/lib/utils";
+import { DialogPanel } from "~/ui/dialog-panel";
+import SvgRightSidebarOff from "~/ui/icons/RightSidebarOff";
+import SvgSearchOff from "~/ui/icons/SearchOff";
+import { Search } from "~/ui/search";
 
 type Props = {
   searchOptions: OptionGroups;

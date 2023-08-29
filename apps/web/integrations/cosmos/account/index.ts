@@ -1,7 +1,7 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import { getBalanceQueryData, parseBalance } from "service-manager";
 import { z } from "zod";
-import { ABCIResponse, JSONRPCResponse } from "../../../lib/service-manager";
+import { ABCIResponse, JSONRPCResponse } from "service-manager/types/rpc.type";
 import { AssociatedTransform } from "./associated";
 import { PageTransform } from "./page";
 import { RawTransform } from "./raw";

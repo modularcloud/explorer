@@ -11,7 +11,7 @@ import UploadedFileSection from "./uploadedFileSection";
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<File[]>();
   const [contractAddress, setContractAddress] = useState<string>("");
-  const [chainId, setChainId] = useState<string>("88002");
+  const [chainId, setChainId] = useState<string>("22222");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
   type ContractData = {
     contractAddress: typeof contractAddress;
@@ -148,7 +148,13 @@ export default function VerifyAndUpload() {
       }
     } catch (error: any) {
       if (error.response) {
-        error = error.response.data.message;
+        if (error.response.data.errors) {
+          error = error.response.data.errors[0].message;
+        } else if (error.response.data.message) {
+          error = error.response.data.message;
+        } else {
+          error = error.response.data.error;
+        }
       }
       console.error("File Verification or ", error);
       toast.update(toastId, {

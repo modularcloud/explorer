@@ -1,5 +1,5 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import { AssociatedComponent } from "../../../ecs/components/associated";
+import { AssociatedComponent } from "~/ecs/components/associated";
 import { AccountExtract } from ".";
 
 export const AssociatedTransform = {

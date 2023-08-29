@@ -1,13 +1,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PageArchetype } from "../../../../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../../../../ecs/hooks/use-entity/server";
-import { FetchLoadArgs, getWhitelabel } from "../../../../../lib/utils";
-import { Entity } from "../../../../../ui/entity";
-import { Tabs } from "../../../../../ui/tabs";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs, getWhitelabel } from "~/lib/utils";
+import { Entity } from "~/ui/entity";
+import { Tabs } from "~/ui/tabs";
 
 type Props = {
-  params: FetchLoadArgs;
+  params: FetchLoadArgs & {
+    section?: string;
+  };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -40,9 +42,8 @@ export default async function EntityPage({ params }: Props) {
 
   return (
     <>
-      {/* @ts-expect-error Async Server Component */}
       <Entity resourcePath={params} />
-      {/* @ts-expect-error Async Server Component */}
+
       <Tabs params={params} />
     </>
   );

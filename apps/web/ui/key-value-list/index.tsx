@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { Status } from "../status";
-import { Value } from "../../schemas/value";
+import { Status } from "~/ui/status";
+import { Value } from "~/schemas/value";
 import Image from "next/image";
-import { CopyableValue } from "ui/copyable";
+import { CopyableValue } from "~/ui/copyable";
 
 interface Props {
   attributes: Record<string, Value>;

@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { AddressExtract } from ".";
-import { Row, RowComponent } from "../../../ecs/components/row";
+import { Row, RowComponent } from "~/ecs/components/row";
 
 export const RowTransform = {
   schema: RowComponent,

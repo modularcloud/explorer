@@ -125,17 +125,24 @@ type APIResponse = {
   result: any;
 };
 
+const VERIFICATION_CHAINID: Record<string, string> = {
+  proteus: "88002",
+  mainnet: "22222",
+};
+function normalizeVerificationChainID(networkId: string) {
+  return VERIFICATION_CHAINID[networkId] || networkId;
+}
 const NETWORK_ID_MAP: Record<string, string> = {
   triton: "eclipse/91002",
   saga: "sg/1",
-  worlds: "ep/3",
+  worlds: "2",
   "evm-rollapp": "dym/2",
   goerli: "clo/1",
   polygon: "clo/2",
   aeg: "ep/4",
   "nautilus-triton": "eclipse/91002",
   "saga-saga": "sg/1",
-  "eclipse-worlds": "ep/3",
+  "eclipse-worlds": "2",
   "dymension-evm-rollapp": "dym/2",
   "caldera-goerli": "clo/1",
   "caldera-polygon": "clo/2",
@@ -147,6 +154,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "blockspace-race": "2",
   "celestia-blockspace-race": "2",
   arabica: "3",
+  degen: "3",
   mocha: "4",
   "celestia-mocha": "4",
   "celestia-arabica": "3",
@@ -385,7 +393,8 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         nextToken?: string,
       ) => {
         let url = baseUrl;
-        if (networkId === "1" && process.env.ALT_BASE_URL) {
+        const isNumbericId = !isNaN(Number(normalizeNetworkId(networkId)));
+        if (isNumbericId && process.env.ALT_BASE_URL) {
           console.log("Using alt base url");
           url = process.env.ALT_BASE_URL;
         }
@@ -452,7 +461,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
         address: string,
       ): Promise<VerificationResponse> => {
         const response = await global.fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`,
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}&chainid=${normalizeVerificationChainID(
+            networkId,
+          )}`,
         );
 
         if (!response.ok) {
@@ -464,7 +475,9 @@ export function createModularCloud(baseUrl?: string): ModularCloud {
 
       getVerifiedSource: async (networkId: string, address: string) => {
         const response = await fetch(
-          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}`,
+          `https://contract-verification.vercel.app/api/contract-verification/fetch-verified?contractaddress=${address}&chainid=${normalizeVerificationChainID(
+            networkId,
+          )}`,
         );
 
         if (!response.ok) {
