@@ -22,8 +22,5 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "npm@8.19.2",
-  "dependencies": {
-    "server-only": "^0.0.1"
-  }
+  "packageManager": "npm@8.19.2"
 }
