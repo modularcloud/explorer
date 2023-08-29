@@ -38,7 +38,8 @@
         "IPFS_GATEWAY",
         "CELESTIA_BLOCKSPACE_RACE_RPC",
         "NAMESPACE_ENDPOINT",
-        "CELESTIA_ARABICA_RPC"
+        "CELESTIA_ARABICA_RPC",
+        "GITHUB_API_KEY"
       ]
     },
     "verify#build": {

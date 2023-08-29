@@ -2,14 +2,14 @@ import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import JSZip from "jszip";
+import JSZip, { file } from "jszip";
 import { readFileData } from "../utils/readFileData";
 import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
 import UploadedFileSection from "./uploadedFileSection";
 
 export default function VerifyAndUpload() {
-  const [files, setFiles] = useState<FileList>();
+  const [files, setFiles] = useState<File[]>();
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("88002");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
@@ -34,14 +34,23 @@ export default function VerifyAndUpload() {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log("hhe");
     if (event.target.files) {
-      setFiles(event.target.files);
+      const fileArray = Array.from(event.target.files);
+      setFiles(fileArray);
+    }
+  };
+  const deleteFile = (fileIndex: number) => {
+    if (files) {
+      const newFiles = [...files];
+      newFiles.splice(fileIndex, 1);
+      setFiles(newFiles);
     }
   };
   const dragNdrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (event.dataTransfer.files) {
-      setFiles(event.dataTransfer.files);
+      setFiles(Array.from(event.dataTransfer.files));
     }
   };
 
@@ -221,7 +230,7 @@ export default function VerifyAndUpload() {
               />
             </div>
           </div>
-          <ExternalFileImporter />
+          {/* <ExternalFileImporter /> */}
           <div className="flex w-full gap-x-5">
             <label
               htmlFor="file-upload"
@@ -269,7 +278,7 @@ export default function VerifyAndUpload() {
               </div>
             </label>
             <div className="pt-4 flex flex-col relative w-[40%] ">
-              <UploadedFileSection files={files} />
+              <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>
 
@@ -282,11 +291,11 @@ export default function VerifyAndUpload() {
                 </p>
               ))}
           </div>
-          <div
-            className="flex cursor-pointer items-center justify-center"
-            onClick={onSubmit}
-          >
-            <div className="rounded-lg bg-[#7B6FE7] px-4 py-2 text-white w-1/5 text-center">
+          <div className="flex  items-center justify-center">
+            <div
+              className="rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
+              onClick={onSubmit}
+            >
               Verify
             </div>
           </div>

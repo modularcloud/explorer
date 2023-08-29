@@ -1,17 +1,21 @@
 import React, { FC, useEffect, useState } from "react";
 interface Props {
-  files: FileList | null;
+  files: File[] | undefined;
+  deleteFile: (fileIndex: number) => void;
 }
 import SourceCodePreviewer from "./sourceCodePreviewer";
 import { readFileData } from "../utils/readFileData";
 
-const UploadedFileSection: FC<Props> = ({ files }) => {
+const UploadedFileSection: FC<Props> = ({ files, deleteFile }) => {
   const [fileData, setFileData] = useState<string>("");
   const [isExpandedFileContent, setIsExpandedFileContent] =
     useState<boolean>(false);
-  const onViewClick = async (file) => {
+  const onViewClick = async (file: File) => {
     setFileData(await readFileData(file));
     setIsExpandedFileContent(!isExpandedFileContent);
+  };
+  const onDelete = (index: number) => {
+    deleteFile(index);
   };
   return (
     <div>
@@ -27,7 +31,6 @@ const UploadedFileSection: FC<Props> = ({ files }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
-                  s
                   height="20"
                   viewBox="0 0 20 20"
                   fill="none"
@@ -55,12 +58,20 @@ const UploadedFileSection: FC<Props> = ({ files }) => {
               {isExpandedFileContent ? (
                 <SourceCodePreviewer
                   sourceCode={fileData}
+                  fileName={file.name}
                   setIsExpandedFileContent={setIsExpandedFileContent}
                 />
               ) : (
                 ""
               )}
-              <div className="text-[#B42318] cursor-pointer">Delete</div>
+              <div
+                className="text-[#B42318] cursor-pointer"
+                onClick={() => {
+                  onDelete(index);
+                }}
+              >
+                Delete
+              </div>
             </div>
           </div>
         ))}
