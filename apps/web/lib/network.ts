@@ -39,12 +39,10 @@ export async function getSingleNetwork(slug: string) {
         }/integrations/slug/${encodeURIComponent(slug)}`,
       );
 
-      const json = await response.json();
       try {
-        console.log({ json });
         const {
           result: { integration },
-        } = describeIntegrationBySlugAPISchema.parse(json);
+        } = describeIntegrationBySlugAPISchema.parse(await response.json());
 
         return integration;
       } catch (error) {
