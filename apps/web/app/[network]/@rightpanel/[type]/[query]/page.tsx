@@ -23,6 +23,7 @@ export default async function RightPanelPage({ params }: Props) {
     vmd = VMDisplayNames["cosmos"];
   }
 
+  // if EVM is defined, EVM will take priority
   if (network.config.rpcUrls.evm) {
     vmd = VMDisplayNames["evm"];
   }

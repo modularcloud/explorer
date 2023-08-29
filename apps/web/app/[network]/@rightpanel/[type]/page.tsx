@@ -7,10 +7,10 @@ const VMDisplayNames = {
   cosmos: "Cosmos SDK",
 } as const;
 
-import type { FetchLoadArgs } from "~/lib/utils";
 import type { Value } from "~/schemas/value";
+import type { ShortenedResourcePath } from "~/app/[network]/[type]/(short)/helpers";
 type Props = {
-  params: Omit<FetchLoadArgs, "query">;
+  params: ShortenedResourcePath;
 };
 
 export default async function RightPanelPage({ params }: Props) {
@@ -21,6 +21,7 @@ export default async function RightPanelPage({ params }: Props) {
     vm = VMDisplayNames["cosmos"];
   }
 
+  // if EVM is defined, EVM will take priority
   if (network.config.rpcUrls.evm) {
     vm = VMDisplayNames["evm"];
   }

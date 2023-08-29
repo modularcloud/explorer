@@ -2,12 +2,9 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { RightPanel } from "~/ui/right-panel/component";
 
+import type { FetchLoadArgs } from "~/lib/utils";
 interface Props {
-  params: {
-    network: string;
-    type: string;
-    query: string;
-  };
+  params: FetchLoadArgs & { section: string };
 }
 
 export default async function RightPanelPage({ params }: Props) {
