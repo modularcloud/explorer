@@ -25,10 +25,37 @@ export const singleNetworkSchema = z.object({
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
 export async function getSingleNetwork(slug: string) {
-  // `getSingleNetwork` already returns all the data needed, we just have to filter it by slug
-  return await getAllNetworks().then(
-    (all) => all.find((integration) => integration.slug === slug) ?? null,
+  const getSingleIntegrationFn = nextCache(
+    async (slug: string) => {
+      const describeIntegrationBySlugAPISchema = z.object({
+        result: z.object({
+          integration: singleNetworkSchema,
+        }),
+      });
+
+      const response = await fetch(
+        `${
+          env.INTERNAL_INTEGRATION_API_URL
+        }/integrations/slug/${encodeURIComponent(slug)}`,
+      );
+
+      const json = await response.json();
+      try {
+        console.log({ json });
+        const {
+          result: { integration },
+        } = describeIntegrationBySlugAPISchema.parse(json);
+
+        return integration;
+      } catch (error) {
+        return null;
+      }
+    },
+    {
+      tags: ["INTEGRATIONS", slug],
+    },
   );
+  return await getSingleIntegrationFn(slug);
 }
 
 export async function getAllNetworks() {

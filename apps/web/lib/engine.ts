@@ -1,56 +1,58 @@
 import { Engine, EngineConfig } from "@modularcloud/ecs";
 import { CreateCosmosConfig } from "~/integrations/cosmos";
 import { CreateEVMConfig } from "~/integrations/evm";
-import { getAllNetworks } from "./network";
+import { getSingleNetwork } from "./network";
 
-export async function getEngine() {
+export async function getEngine(networkSlug: string) {
   let config: EngineConfig | null = null;
-  const integrations = await getAllNetworks();
+  const integration = await getSingleNetwork(networkSlug);
+  if (!integration) return null;
 
-  for (const integration of integrations) {
-    let primary: EngineConfig | null = null;
-    let secondary: EngineConfig | null = null;
-    if (integration.config.rpcUrls.evm) {
-      // this affects both `config` & `primary` to `CreateEVMConfig`
-      config = primary = CreateEVMConfig({
-        endpoint: integration.config.rpcUrls.evm,
-        network: {
-          id: integration.internalId,
-          displayName: integration.chainName,
-          nativeToken: integration.config.token.name,
-          logoUrl: integration.config.logoUrl,
-        },
-      });
-    }
-    if (integration.config.rpcUrls.cosmos) {
-      // this affects both `config` & `secondary` to `CreateCosmosConfig`
-      config = secondary = CreateCosmosConfig({
-        endpoint: integration.config.rpcUrls.cosmos,
-        network: {
-          id: integration.internalId,
-          displayName: integration.chainName,
-          nativeToken: integration.config.token.name,
-          logoUrl: integration.config.logoUrl,
-        },
-      });
-    }
+  let primary: EngineConfig | null = null;
+  let secondary: EngineConfig | null = null;
+  if (integration.config.rpcUrls.evm) {
+    // this affects both `config` & `primary` to `CreateEVMConfig`
+    config = primary = CreateEVMConfig({
+      endpoint: integration.config.rpcUrls.evm,
+      network: {
+        id: integration.internalId,
+        displayName: integration.chainName,
+        nativeToken: integration.config.token.name,
+        logoUrl: integration.config.logoUrl,
+      },
+    });
+  }
+  if (integration.config.rpcUrls.cosmos) {
+    // this affects both `config` & `secondary` to `CreateCosmosConfig`
+    config = secondary = CreateCosmosConfig({
+      endpoint: integration.config.rpcUrls.cosmos,
+      network: {
+        id: integration.internalId,
+        displayName: integration.chainName,
+        nativeToken: integration.config.token.name,
+        logoUrl: integration.config.logoUrl,
+      },
+    });
+  }
 
-    if (primary && secondary) {
-      Engine.addConfig(integration.slug, {
-        primary,
-        secondary,
-        conflicts: ["block"],
-      });
-    } else if (primary) {
-      Engine.addConfig(integration.slug, primary);
-    } else if (secondary) {
-      Engine.addConfig(integration.slug, secondary);
-    }
+  if (primary && secondary) {
+    Engine.addConfig(integration.slug, {
+      primary,
+      secondary,
+      conflicts: ["block"],
+    });
+  } else if (primary) {
+    Engine.addConfig(integration.slug, primary);
+  } else if (secondary) {
+    Engine.addConfig(integration.slug, secondary);
+  } else {
+    return null;
   }
 
   return {
     Engine,
     // Normally This will be always defined when used
+    // this is just to silence typescript
     config: config ?? {},
   };
 }
