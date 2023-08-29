@@ -67,3 +67,4 @@ export async function OPTIONS(_: Request) {
 }
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "default-no-store";
