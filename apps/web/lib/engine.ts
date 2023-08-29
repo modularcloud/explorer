@@ -10,20 +10,9 @@ export async function getEngine() {
   for (const integration of integrations) {
     let primary: EngineConfig | null = null;
     let secondary: EngineConfig | null = null;
-    if (integration.config.rpcUrls.cosmos) {
-      primary = CreateCosmosConfig({
-        endpoint: integration.config.rpcUrls.cosmos,
-        network: {
-          id: integration.internalId,
-          displayName: integration.chainName,
-          nativeToken: integration.config.token.name,
-          logoUrl: integration.config.logoUrl,
-        },
-      });
-      config = primary;
-    }
     if (integration.config.rpcUrls.evm) {
-      secondary = CreateEVMConfig({
+      // this affects both `config` & `primary` to `CreateEVMConfig`
+      config = primary = CreateEVMConfig({
         endpoint: integration.config.rpcUrls.evm,
         network: {
           id: integration.internalId,
@@ -32,8 +21,20 @@ export async function getEngine() {
           logoUrl: integration.config.logoUrl,
         },
       });
-      config = secondary;
     }
+    if (integration.config.rpcUrls.cosmos) {
+      // this affects both `config` & `secondary` to `CreateCosmosConfig`
+      config = secondary = CreateCosmosConfig({
+        endpoint: integration.config.rpcUrls.cosmos,
+        network: {
+          id: integration.internalId,
+          displayName: integration.chainName,
+          nativeToken: integration.config.token.name,
+          logoUrl: integration.config.logoUrl,
+        },
+      });
+    }
+
     if (primary && secondary) {
       Engine.addConfig(integration.slug, {
         primary,
