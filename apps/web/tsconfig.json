@@ -2,6 +2,7 @@
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "noErrorTruncation": true,
     "plugins": [
       {
         "name": "next"
