@@ -1,21 +1,15 @@
 import { BigLogo } from "~/ui/big-logo";
 import { Search } from "~/ui/search";
 import { EXPLORER_CONFIG } from "~/config/explorers";
-import { Metadata } from "next";
-import { getSearchOptionGroups } from "~/lib/integrations";
+import { getSearchOptionGroups } from "~/lib/search-options";
 
-const {
-  homepageTitle,
-  homepageDescription,
-  homepageKeywords,
-  id: explorerId,
-} = EXPLORER_CONFIG;
+import type { Metadata } from "next";
 
 export function generateMetadata(): Metadata {
   return {
-    title: homepageTitle,
-    description: homepageDescription,
-    keywords: homepageKeywords,
+    title: EXPLORER_CONFIG.homepageTitle,
+    description: EXPLORER_CONFIG.homepageDescription,
+    keywords: EXPLORER_CONFIG.homepageKeywords,
   };
 }
 

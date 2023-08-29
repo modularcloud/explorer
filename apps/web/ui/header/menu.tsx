@@ -3,9 +3,9 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { AssociatedRightPanel } from "~/ui/right-panel/associated";
 import { ViewSwitcher } from "~/ui/view-switcher";
-import { getSearchOptionGroups } from "~/lib/integrations";
-import type { FetchLoadArgs } from "~/lib/utils";
+import { getSearchOptionGroups } from "~/lib/search-options";
 
+import type { FetchLoadArgs } from "~/lib/utils";
 type Props = {
   resourcePath: FetchLoadArgs;
 };

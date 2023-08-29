@@ -2,25 +2,23 @@ import { Metadata } from "next";
 import EntityPage, {
   generateMetadata as _generateMetadata,
 } from "~/app/[network]/[type]/(standard)/[query]/page";
-import { getWhitelabel } from "~/lib/utils";
 import { ShortenedResourcePath, mapTypes } from "./helpers";
+import { getAllNetworks } from "~/lib/network";
 
 type Props = {
   params: ShortenedResourcePath;
 };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const whitelabel = getWhitelabel();
+  const allNetWorks = await getAllNetworks();
   return _generateMetadata({
-    params: mapTypes(props.params, whitelabel.defaultNetwork),
+    params: mapTypes(props.params, allNetWorks[0].slug),
   });
 }
 
 export default async function ShortEntityPage(props: Props) {
-  const whitelabel = getWhitelabel();
-  return (
-    <EntityPage params={mapTypes(props.params, whitelabel.defaultNetwork)} />
-  );
+  const allNetWorks = await getAllNetworks();
+  return <EntityPage params={mapTypes(props.params, allNetWorks[0].slug)} />;
 }
 
 export const runtime = "edge";

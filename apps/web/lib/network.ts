@@ -3,10 +3,9 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 
-import type { OptionGroups } from "./utils";
-
-export const singleIntegrationSchema = z.object({
+export const singleNetworkSchema = z.object({
   config: z.object({
+    logoUrl: z.string().url(),
     rpcUrls: z.record(z.enum(["evm", "cosmos"]), z.string().url()),
     token: z.object({
       name: z.string().max(128),
@@ -23,19 +22,20 @@ export const singleIntegrationSchema = z.object({
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
 });
 
-export async function getSingleIntegration(slug: string) {
-  // `getAllIntegrations` already returns all the data needed, we just have to filter it by slug
-  return await getAllIntegrations().then(
+export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
+
+export async function getSingleNetwork(slug: string) {
+  // `getSingleNetwork` already returns all the data needed, we just have to filter it by slug
+  return await getAllNetworks().then(
     (all) => all.find((integration) => integration.slug === slug) ?? null,
   );
 }
 
-export async function getAllIntegrations() {
+export async function getAllNetworks() {
   const getAllIntegrationsFn = nextCache(
     async () => {
       try {
-        let allIntegrations: Array<z.infer<typeof singleIntegrationSchema>> =
-          [];
+        let allIntegrations: Array<z.infer<typeof singleNetworkSchema>> = [];
         let nextToken = "";
 
         do {
@@ -45,7 +45,7 @@ export async function getAllIntegrations() {
 
           const integrationSummaryAPISchema = z.object({
             result: z.object({
-              integrations: z.array(singleIntegrationSchema),
+              integrations: z.array(singleNetworkSchema),
               nextToken: z.string(),
             }),
           });
@@ -68,26 +68,4 @@ export async function getAllIntegrations() {
   );
 
   return await getAllIntegrationsFn();
-}
-
-export async function getSearchOptionGroups(): Promise<OptionGroups> {
-  const integrations = await getAllIntegrations();
-
-  const optionGroups = integrations.reduce((acc, currentValue) => {
-    const brand = currentValue.chainBrand;
-    if (acc[brand]) {
-      acc[brand].push({
-        displayName: currentValue.chainName,
-        id: currentValue.slug,
-      });
-    } else {
-      acc[brand] = [
-        { displayName: currentValue.chainName, id: currentValue.slug },
-      ];
-    }
-
-    return acc;
-  }, {} as OptionGroups);
-
-  return optionGroups;
 }

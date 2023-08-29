@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Status } from "~/ui/status";
 import { Value } from "~/schemas/value";
 import clsx from "clsx";
-import { FetchLoadArgs } from "~/lib/utils";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { Suspense } from "react";
@@ -10,6 +9,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
 import { CopyableValue } from "~/ui/copyable";
 
+import type { FetchLoadArgs } from "~/lib/utils";
 type Props = {
   entity: Entity<typeof PageArchetype>;
 };

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { getWhitelabel } from "~/lib/utils";
 import { env } from "~/env.mjs";
 
 const corsHeaders = {
@@ -11,25 +10,9 @@ const corsHeaders = {
 } as const;
 
 export async function GET(request: Request) {
-  let path: string;
-
-  switch (getWhitelabel().defaultNetwork) {
-    case "mainnet": // nautilus mainnet
-      path = "v2/1";
-      break;
-    case "triton":
-      path = "eclipse/91002";
-      break;
-    case "proteus":
-      path = "ep/6";
-      break;
-    default:
-      path = "ep/6";
-      break;
-  }
-
+  // we use `ep/6` because this is the default value for when there is not whitelabel
   const metrics = await fetch(
-    env.METRICS_API_URL + "/" + path + "/real-time-metrics",
+    env.METRICS_API_URL + "/ep/6/real-time-metrics",
   ).then((response) => response.json());
   return NextResponse.json(metrics, {
     headers: {

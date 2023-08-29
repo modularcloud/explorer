@@ -1,7 +1,9 @@
 import { Engine, verifyArchetype } from "@modularcloud/ecs";
 import { PageArchetype } from "~/ecs/archetypes/page";
-import { getEngine } from "~/lib/networks";
+import { getEngine } from "~/lib/engine";
 import { NextResponse } from "next/server";
+
+import type { FetchLoadArgs } from "~/lib/utils";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,10 +15,7 @@ const corsHeaders = {
 
 type EngineLoadResponse = Awaited<ReturnType<typeof Engine.load>>;
 
-export async function GET(
-  request: Request,
-  { params }: { params: { network: string; type: string; query: string } },
-) {
+export async function GET(_: Request, { params }: { params: FetchLoadArgs }) {
   const { config, Engine } = await getEngine();
 
   let data: EngineLoadResponse | null = null;
@@ -59,7 +58,7 @@ export async function GET(
   });
 }
 
-export async function OPTIONS(request: Request) {
+export async function OPTIONS(_: Request) {
   return new Response(null, {
     headers: corsHeaders,
   });

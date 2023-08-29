@@ -1,11 +1,11 @@
 import { Engine, EngineConfig } from "@modularcloud/ecs";
 import { CreateCosmosConfig } from "~/integrations/cosmos";
 import { CreateEVMConfig } from "~/integrations/evm";
-import { getAllIntegrations } from "./integrations";
+import { getAllNetworks } from "./network";
 
 export async function getEngine() {
   let config: EngineConfig | null = null;
-  const integrations = await getAllIntegrations();
+  const integrations = await getAllNetworks();
 
   for (const integration of integrations) {
     let primary: EngineConfig | null = null;
@@ -15,10 +15,9 @@ export async function getEngine() {
         endpoint: integration.config.rpcUrls.cosmos,
         network: {
           id: integration.internalId,
-          displayName: `${integration.chainBrand} ${integration.chainName}`,
+          displayName: integration.chainName,
           nativeToken: integration.config.token.name,
-          // this seems to not be used ?
-          logoUrl: "/images/celestia.png",
+          logoUrl: integration.config.logoUrl,
         },
       });
       config = primary;
@@ -28,10 +27,9 @@ export async function getEngine() {
         endpoint: integration.config.rpcUrls.evm,
         network: {
           id: integration.internalId,
-          displayName: `${integration.chainBrand} ${integration.chainName}`,
+          displayName: integration.chainName,
           nativeToken: integration.config.token.name,
-          // this seems to not be used ?
-          logoUrl: "/images/celestia.png",
+          logoUrl: integration.config.logoUrl,
         },
       });
       config = secondary;
