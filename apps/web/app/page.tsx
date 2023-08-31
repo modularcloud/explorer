@@ -35,5 +35,4 @@ export default function HomePage() {
   );
 }
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
