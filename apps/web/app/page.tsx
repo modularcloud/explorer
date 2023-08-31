@@ -5,6 +5,7 @@ import { Stats } from "~/ui/stats";
 import { Search } from "~/ui/search";
 import { EXPLORER_CONFIG } from "~/config/explorers";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 const whitelabel = getWhitelabel(); // TODO: deprecate
 const {
@@ -30,9 +31,14 @@ export default function HomePage() {
           <Search optionGroups={whitelabel.searchOptions} />
         </div>
       </div>
-      {explorerId === "nautscan" ? <Stats extended={true} /> : null}
+      {explorerId === "nautscan" ? (
+        <Suspense>
+          <Stats extended={true} />
+        </Suspense>
+      ) : null}
     </div>
   );
 }
 
+export const runtime = "edge";
 export const dynamic = "force-dynamic";

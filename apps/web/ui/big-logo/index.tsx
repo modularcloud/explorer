@@ -1,7 +1,7 @@
 import { getWhitelabel } from "~/lib/utils";
 
-export async function BigLogo() {
-  const whitelabel = await getWhitelabel();
+export function BigLogo() {
+  const whitelabel = getWhitelabel();
   return (
     <div className="text-night text-center">
       <span>{whitelabel.subText ?? "Modular Cloud"}</span>
