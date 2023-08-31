@@ -35,7 +35,9 @@
         "CELESTIA_BLOCKSPACE_RACE_RPC",
         "NAMESPACE_ENDPOINT",
         "CELESTIA_ARABICA_RPC",
-        "INTEGRATION_API_URL"
+        "INTERNAL_INTEGRATION_API_URL",
+        "REVALIDATE_TOKEN",
+        "ALT_BASE_URL"
       ]
     },
     "verify#build": {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { OptionGroups } from "~/lib/utils";
 import { DialogPanel } from "~/ui/dialog-panel";
 import SvgRightSidebarOff from "~/ui/icons/RightSidebarOff";
@@ -17,6 +18,8 @@ export function MobileActions({
   children,
   rightPanelDisabled,
 }: Props) {
+  // the return type here is the same as `FetchLoadArgs`
+  const params = useParams();
   return (
     <div className="flex items-center gap-4 lg:hidden">
       <DialogPanel
@@ -28,7 +31,10 @@ export function MobileActions({
       >
         <span className="flex w-full justify-center">
           <span className="max-w-[21.4375rem] sm:w-[32rem] md:w-[36rem]">
-            <Search optionGroups={searchOptions} />
+            <Search
+              optionGroups={searchOptions}
+              defaultValue={params.network as string}
+            />
           </span>
         </span>
       </DialogPanel>

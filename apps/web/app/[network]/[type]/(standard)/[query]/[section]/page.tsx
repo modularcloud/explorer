@@ -1,7 +1,7 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { PaginationArchetype } from "~/ecs/archetypes/pagination";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs, getWhitelabel, slugify } from "~/lib/utils";
+import { slugify } from "~/lib/utils";
 import { AssociatedList } from "~/ui/associated/list";
 import { ServerAssociatedEntry } from "~/ui/associated/entry/server";
 import { InfiniteLoaderEntries } from "~/ui/associated/infinite-loader/entries";
@@ -11,10 +11,11 @@ import { TableHeader } from "~/ui/associated/list/table/header";
 import { TableHeaderLoadingFallback } from "~/ui/associated/list/table/header/loading";
 import { notFound, redirect } from "next/navigation";
 import AssociatedNotFound from "~/ui/associated/not-found";
-import { Metadata } from "next";
 import { Tabs } from "~/ui/tabs";
 import dynamic from "next/dynamic";
 
+import type { Metadata } from "next";
+import type { FetchLoadArgs } from "~/lib/utils";
 type Props = {
   params: FetchLoadArgs & {
     section: string;
@@ -22,7 +23,6 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const whitelabel = getWhitelabel();
   const { section, ...resourcePath } = params;
 
   // Redirect legacy url structure
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   if (!entity)
     return {
-      title: `Not Found - ${whitelabel.name.join("")}`,
+      title: `Not Found - ModularCloud`,
     };
 
   const associated = entity.components.associated.data;
@@ -56,9 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     labels[0];
 
   return {
-    title: `${label} - ${
-      entity.components.page.data.metadata.title
-    } - ${whitelabel.name.join("")}`,
+    title: `${label} - ${entity.components.page.data.metadata.title} - ModularCloud`,
     description: entity.components.page.data.metadata.description,
     keywords: entity.components.page.data.metadata.keywords,
   };

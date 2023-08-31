@@ -23,7 +23,6 @@ export const PageTransform = {
         },
       };
     }
-    // if (data.type === "blocks") {
     return {
       typeId: "page",
       data: {

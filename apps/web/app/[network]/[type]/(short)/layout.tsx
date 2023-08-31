@@ -1,6 +1,6 @@
 import EntityLayout from "~/app/[network]/[type]/(standard)/[query]/layout";
-import { getWhitelabel } from "~/lib/utils";
 import { mapTypes, ShortenedResourcePath } from "./helpers";
+import { getAllNetworks } from "~/lib/network";
 
 type Props = {
   params: ShortenedResourcePath;
@@ -8,9 +8,9 @@ type Props = {
 };
 
 export default async function ShortEntityLayout({ params, children }: Props) {
-  const whitelabel = getWhitelabel();
+  const allNetWorks = await getAllNetworks();
   return (
-    <EntityLayout params={mapTypes(params, whitelabel.defaultNetwork)}>
+    <EntityLayout params={mapTypes(params, allNetWorks[0].slug)}>
       {children}
     </EntityLayout>
   );

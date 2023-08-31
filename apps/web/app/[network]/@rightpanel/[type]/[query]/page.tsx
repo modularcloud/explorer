@@ -1,34 +1,48 @@
-import { getNetworkBySlug } from "~/config/networks";
 import { Sidebar } from "~/ecs/components/sidebar";
-import { Value } from "~/schemas/value";
 import { RightPanel } from "~/ui/right-panel/component";
+import { getSingleNetwork } from "~/lib/network";
 
+import type { Value } from "~/schemas/value";
+import type { FetchLoadArgs } from "~/lib/utils";
 interface Props {
-  params: { network: string };
+  params: FetchLoadArgs;
 }
 
 const VMDisplayNames = {
   evm: "Ethereum Virtual Machine",
   cosmos: "Cosmos SDK",
-};
+} as const;
 
 export default async function RightPanelPage({ params }: Props) {
-  const network = getNetworkBySlug(params.network);
+  const network = await getSingleNetwork(params.network);
+
   if (!network) return null;
-  const alt = network.searchOptionGroup; // TODO: add logo alt text to config schema
-  const attributes: Record<string, Value> = {};
-  for (const [key, value] of Object.entries(network.stack)) {
-    attributes[key] = {
-      type: "standard",
-      payload: value,
-    };
+
+  let vmd: (typeof VMDisplayNames)[keyof typeof VMDisplayNames] | null = null;
+  if (network.config.rpcUrls.cosmos) {
+    vmd = VMDisplayNames["cosmos"];
   }
+
+  // if EVM is defined, EVM will take priority
+  if (network.config.rpcUrls.evm) {
+    vmd = VMDisplayNames["evm"];
+  }
+
+  const attributes: Record<string, Value> = {
+    Plaftorm: {
+      type: "standard",
+      payload: network.config.platform,
+    },
+    Execution: {
+      type: "standard",
+      payload: vmd,
+    },
+  };
+
   const data: Sidebar = {
-    logo: network.logoUrl,
+    logo: network.config.logoUrl,
     entityTypeName: "Network",
-    entityId: network.isTestnet
-      ? `${network.displayName} Testnet`
-      : network.displayName,
+    entityId: network.chainName,
     attributesHeader: "Network Information",
     attributes,
   };
@@ -36,7 +50,6 @@ export default async function RightPanelPage({ params }: Props) {
   return (
     <RightPanel
       data={data}
-      alt={alt}
       className="sticky top-0 hidden w-80 shrink-0 lg:flex xl:w-[27.875rem]"
     />
   );

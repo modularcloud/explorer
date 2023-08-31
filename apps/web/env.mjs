@@ -16,10 +16,12 @@ export const env = createEnv({
     NAMESPACE_ENDPOINT: z.string().url().optional(),
     METRICS_API_URL: z.string().url().optional(),
     SOLANA_RPC: z.string().url().optional(),
+    ALT_BASE_URL: z.string().url().optional(),
     ADD_NETWORK_ENDPOINT: z.string().url(),
     IPFS_GATEWAY: z.string().url(),
     EVM_CHAIN_DATA_SERVICE: z.string().url(),
-    ALT_BASE_URL: z.string().url().optional(),
+    INTERNAL_INTEGRATION_API_URL: z.string().url(),
+    REVALIDATE_TOKEN: z.string().min(32).optional(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
@@ -34,6 +36,8 @@ export const env = createEnv({
   },
   runtimeEnv: {
     WHITELABEL: process.env.WHITELABEL,
+    REVALIDATE_TOKEN: process.env.REVALIDATE_TOKEN,
+    INTERNAL_INTEGRATION_API_URL: process.env.INTERNAL_INTEGRATION_API_URL,
     UPLOADCARE_API_KEY: process.env.UPLOADCARE_API_KEY,
     CELESTIA_MOCHA_RPC: process.env.CELESTIA_MOCHA_RPC,
     DYMENSION_HUB_RPC: process.env.DYMENSION_HUB_RPC,

@@ -6,9 +6,9 @@ import { Suspense } from "react";
 import { Sidebar } from "~/ecs/components/sidebar";
 
 interface Props {
-  className?: string;
-  alt: string;
   data: Sidebar;
+  className?: string;
+  alt?: string;
 }
 
 export async function RightPanel({ data, alt, className }: Props) {
