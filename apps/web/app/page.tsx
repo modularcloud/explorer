@@ -32,7 +32,7 @@ export default function HomePage() {
         </div>
       </div>
       {explorerId === "nautscan" ? (
-        <Suspense>
+        <Suspense fallback={<div className="pt-16">Loading Statistics...</div>}>
           <Stats extended={true} />
         </Suspense>
       ) : null}
