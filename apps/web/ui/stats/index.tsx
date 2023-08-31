@@ -62,7 +62,7 @@ async function getBlockMetrics() {
 }
 
 async function getRealTimeMetrics() {
-  const metrics = await fetch("https://triton.nautscan.com/api/metrics").then(
+  const metrics = await fetch("https://proteus.nautscan.com/api/metrics").then(
     (res) => res.json(),
   );
   return {

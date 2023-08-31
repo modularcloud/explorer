@@ -21,7 +21,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     homepageTitle: "NautScan by Modular Cloud",
     homepageDescription: "A modular block explorer for the Nautilus ecosystem.",
     homepageKeywords:
-      "nautilus, triton, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
+      "nautilus, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
     defaultSearchOptionGroup: "Nautilus",
     env: "nautilus",
     id: "nautilus",

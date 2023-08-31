@@ -1171,9 +1171,6 @@ async function getSVMTransactionBySignature(
 }
 
 export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
-  if (network.id === "triton") {
-    network.id = "91002";
-  }
   if (network.id === "caldera") {
     network.id = "1";
   }
@@ -1248,7 +1245,7 @@ export function addRemote(network: z.infer<typeof RemoteServiceRequestSchema>) {
                   uniqueIdentifier: address,
                   uniqueIdentifierLabel: "address",
                   metadata: buildMetadata({
-                    [network.name.toLowerCase() === "triton"
+                    [network.name.toLowerCase() === "proteus"
                       ? "ZBC"
                       : "Native"]: new Decimal(nativeTokenBalance)
                       .dividedBy(new Decimal(10).pow(18))

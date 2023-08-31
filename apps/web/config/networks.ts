@@ -43,27 +43,6 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Platform: "Caldera",
     },
   },
-  // Eclipse
-  NAUTILUS_TRITON: {
-    mcId: "eclipse/91002",
-    displayName: "Triton",
-    isTestnet: true,
-    isVerified: false,
-    explorerId: "nautilus",
-    slug: "triton",
-    slugPrefix: "nautilus",
-    vm: "evm",
-    nativeToken: "ZBC",
-    logoUrl: "/images/nautilus.png",
-    searchOptionGroup: "Nautilus",
-    rpcUrl: "https://api.evm.zebec.eclipsenetwork.xyz/solana",
-    stack: {
-      Type: "Rollup",
-      Execution: "EVM",
-      "Data Availability": "Celestia",
-      Platform: "Eclipse",
-    },
-  },
   NAUTILUS_PROTEUS: {
     mcId: "ep/6",
     displayName: "Proteus",

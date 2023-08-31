@@ -70,7 +70,7 @@ export const BlockSummaryTable = async () => {
   return (
     <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg border bg-white px-4 py-6">
       <TableHeader
-        href="/triton/latest/blocks/blocks"
+        href="/proteus/latest/blocks/blocks"
         icon={<SvgBlocksIcon />}
         title="Latest Blocks"
       />
@@ -157,7 +157,7 @@ export const BlockSummaryTable = async () => {
 export const TransactionsSummaryTable = async () => {
   const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
   const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
-  const txRefs = await mc.evm.getRecentTransactions("triton", 8);
+  const txRefs = await mc.evm.getRecentTransactions("proteus", 8);
   async function getTransaction(hash: string, blockNumber: number) {
     const [tx, block] = await Promise.all([
       web3.eth.getTransaction(hash),
@@ -178,7 +178,7 @@ export const TransactionsSummaryTable = async () => {
   return (
     <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg  border bg-white px-4 py-6">
       <TableHeader
-        href="/triton/latest/transactions/transactions"
+        href="/proteus/latest/transactions/transactions"
         icon={<SvgBarChartIcon />}
         title="Latest Transactions"
       />

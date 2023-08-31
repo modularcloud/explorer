@@ -31,18 +31,6 @@ export const getSearchOptions = async () => {
         ],
       },
     ];
-  } else if (Whitelabel === "nautilus") {
-    return [
-      {
-        label: "Eclipse",
-        options: [
-          {
-            name: "Triton",
-            value: "Triton",
-          },
-        ],
-      },
-    ];
   } else {
     return [
       ...(Whitelabel === "dev"
