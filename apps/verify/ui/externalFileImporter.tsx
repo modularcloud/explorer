@@ -1,49 +1,77 @@
 import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-import { decode } from "base64-arraybuffer";
+import convertBase64ToFile from "../utils/convertBase64ToFile";
+import PuffLoader from "react-spinners/ClipLoader";
+import ImportFileComponent from "./importFileComponent";
+import readRemoteFile from "../utils/readRemoteFiles";
 type props = {
   setFiles: React.Dispatch<React.SetStateAction<File[] | undefined>>;
 };
+
 const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
-  const [showImportFrom, setShowImportFrom] = useState<boolean>(false);
-  const [githubUrl, setGithubUrl] = useState<string>("");
+  const [showImportFromGithub, setshowImportFromGithub] =
+    useState<boolean>(false);
+  const [showImportFromRemote, setshowImportFromRemote] =
+    useState<boolean>(false);
+  const [url, setUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleGithubImport = async () => {
-    let files: File[] = [];
-    await axios
-      .post("api/data-retrieval/github", { githubUrl: githubUrl })
-      .then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          let decodedRawFile = decode(res.data[i].rawFile);
-          let file = new File(
-            [new Blob([decodedRawFile])],
-            res.data[i].fileName,
-          );
-          files.push(file);
-        }
-        setFiles(files);
-      })
-      .catch((error) => {
-        toast.error(
-          `Failed to fetch Files from github Try manual Uploading Error: ${error} `,
-        );
-      });
-  };
-  const handleGithubUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setGithubUrl(event.target.value);
+  const handleImport = async (importFrom: string) => {
+    setIsLoading(true);
+    if (importFrom === "Github") {
+      let files: File[] = [];
+      await axios
+        .post("api/data-retrieval/github", { githubUrl: url })
+        .then((res) => {
+          for (let i = 0; i < res.data.length; i++) {
+            let file = convertBase64ToFile(
+              res.data[i].rawFile,
+              res.data[i].fileName,
+            );
+            files.push(file);
+          }
+          setFiles(files);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(`Failed to fetch Files from github: ${error} `);
+        });
+    } else {
+      const files = await readRemoteFile(url);
+      console.log(files);
+      setFiles(files);
+    }
+    setIsLoading(false);
   };
 
+  const handleUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUrl(event.target.value);
+  };
+  const toggleImport = (importFrom) => {
+    if (importFrom === "Github") {
+      setshowImportFromGithub(!showImportFromGithub);
+    } else {
+      setshowImportFromRemote(!setshowImportFromRemote);
+    }
+  };
   return (
     <div>
       <div className="flex gap-x-6 my-2 text-[#7B6FE7]">
         <div
           className=" bg-[#FCFAFF]  flex  gap-x-2  mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] cursor-pointer"
           onClick={() => {
-            setShowImportFrom(!showImportFrom);
+            setshowImportFromGithub(!showImportFromGithub);
+            setshowImportFromRemote(false);
           }}
         >
+          {isLoading && (
+            <div className="absolute top-0 left-0 h-full  min-w-[100%] overflow-hidden backdrop-blur-md  z-40  m-0 ">
+              <div className="absolute top-[40%]  left-1/2 w-full m-0   ">
+                <PuffLoader color="#7B6FE7" size={200} />
+              </div>
+            </div>
+          )}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -68,7 +96,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           <p className="pr-2">Import from GitHub</p>
         </div>
 
-        <div className=" bg-[#FCFAFF] cursor-pointer flex gap-x-2 mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7]">
+        <div
+          className=" bg-[#FCFAFF] cursor-pointer flex gap-x-2 mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7]"
+          onClick={() => {
+            setshowImportFromRemote(!showImportFromRemote);
+            setshowImportFromGithub(false);
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -87,54 +121,23 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           <p className="pr-2">Import from remote</p>
         </div>
       </div>
-
-      {showImportFrom && (
-        <div>
-          <div className="flex flex-col ">
-            <div className="py-2">
-              <p>Import from Github</p>
-            </div>
-            <div className="flex relative w-full">
-              <div className="w-full">
-                <input
-                  className="rounded-md border-[1px] border-[#D0D5DD] p-1.5  w-[98%]"
-                  type="text"
-                  placeholder="Repository name or Repository URL"
-                  value={githubUrl}
-                  onChange={handleGithubUrlChange}
-                />
-              </div>
-              <div
-                className="bg-[#7B6FE7] rounded-md py-1.5 px-4 cursor-pointer"
-                onClick={handleGithubImport}
-              >
-                <p className="text-center text-white ">Import</p>
-              </div>
-              <div
-                className="flex justify-center items-center px-3 cursor-pointer"
-                onClick={() => {
-                  setShowImportFrom(!showImportFrom);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M18 6L6 18M6 6L18 18"
-                    stroke="black"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
+      {showImportFromGithub && (
+        <ImportFileComponent
+          importFrom="Github"
+          handleUrlChange={handleUrlChange}
+          importUrl={url}
+          handleImport={handleImport}
+          toggleImport={toggleImport}
+        />
+      )}
+      {showImportFromRemote && (
+        <ImportFileComponent
+          importFrom="Remote"
+          handleUrlChange={handleUrlChange}
+          importUrl={url}
+          handleImport={handleImport}
+          toggleImport={toggleImport}
+        />
       )}
     </div>
   );

@@ -25,14 +25,15 @@ const readRemoteFile = async (url: string): Promise<fileInfo[] | null> => {
           rawFile: Buffer.from(uint8Array).toString("base64"),
         });
       });
+      return filesInfo;
     } else {
       const fileName = url.split("/")[url.split("/").length - 1];
       filesInfo.push({
         fileName: fileName,
         rawFile: Buffer.from(buffer).toString("base64"),
       });
+      return filesInfo;
     }
-    return filesInfo;
   } catch (err: any) {
     console.error(`Failed to read remote file from ${url}`, err.message);
     return null;
