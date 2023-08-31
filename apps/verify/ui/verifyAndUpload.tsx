@@ -34,7 +34,6 @@ export default function VerifyAndUpload() {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("hhe");
     if (event.target.files) {
       const fileArray = Array.from(event.target.files);
       setFiles(fileArray);
@@ -236,7 +235,7 @@ export default function VerifyAndUpload() {
               />
             </div>
           </div>
-          {/* <ExternalFileImporter /> */}
+          <ExternalFileImporter setFiles={setFiles} />
           <div className="flex w-full gap-x-5">
             <label
               htmlFor="file-upload"

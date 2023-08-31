@@ -1,23 +1,35 @@
 import { ChangeEvent, useState } from "react";
-import { githubUtils } from "../utils/readGithubFiles";
+import axios from "axios";
 import { toast } from "react-toastify";
 
-export default function ExternalFileImporter() {
+import { decode } from "base64-arraybuffer";
+type props = {
+  setFiles: React.Dispatch<React.SetStateAction<File[] | undefined>>;
+};
+const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
   const [showImportFrom, setShowImportFrom] = useState<boolean>(false);
   const [githubUrl, setGithubUrl] = useState<string>("");
 
-  const handleGithubImport = () => {
-    const extractedUrl = githubUtils.extractGitHubUrl(githubUrl);
-
-    if (extractedUrl) {
-      githubUtils.readGitHubFiles(
-        extractedUrl?.owner,
-        extractedUrl?.repo,
-        extractedUrl?.path,
-      );
-    } else {
-      toast.error("Github Url Incorrect");
-    }
+  const handleGithubImport = async () => {
+    let files: File[] = [];
+    await axios
+      .post("api/data-retrieval/github", { githubUrl: githubUrl })
+      .then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+          let decodedRawFile = decode(res.data[i].rawFile);
+          let file = new File(
+            [new Blob([decodedRawFile])],
+            res.data[i].fileName,
+          );
+          files.push(file);
+        }
+        setFiles(files);
+      })
+      .catch((error) => {
+        toast.error(
+          `Failed to fetch Files from github Try manual Uploading Error: ${error} `,
+        );
+      });
   };
   const handleGithubUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
     setGithubUrl(event.target.value);
@@ -126,4 +138,6 @@ export default function ExternalFileImporter() {
       )}
     </div>
   );
-}
+};
+
+export default ExternalFileImporter;

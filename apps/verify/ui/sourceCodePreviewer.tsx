@@ -1,5 +1,5 @@
 import hljs from "highlight.js";
-import "highlight.js/styles/base16/ia-light.css";
+import "highlight.js/styles/googlecode.css";
 import javascript from "highlight.js/lib/languages/javascript";
 hljs.registerLanguage("javascript", javascript);
 import React, { useEffect } from "react";
@@ -46,7 +46,7 @@ const SourceCodePreviewer: React.FC<props> = ({
           </div>
           <div className="border-2 border-[#EAECF0] border-solid rounded-lg">
             <pre>
-              <code className="h-96 language-json">{sourceCode}</code>
+              <code className="h-96 language-js ">{sourceCode}</code>
             </pre>
           </div>
         </div>
