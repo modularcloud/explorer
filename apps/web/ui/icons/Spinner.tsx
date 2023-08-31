@@ -1,6 +1,7 @@
-import { SVGProps } from "react";
+import * as React from "react";
+import type { SVGProps } from "react";
 const SvgSpinner = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} {...props}>
     <style>{"@keyframes spinner_AtaB{to{transform:rotate(360deg)}}"}</style>
     <path
       d="M12 1a11 11 0 1 0 11 11A11 11 0 0 0 12 1Zm0 19a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"

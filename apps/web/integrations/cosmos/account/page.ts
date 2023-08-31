@@ -1,7 +1,7 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { AccountExtract } from ".";
-import { PageComponent } from "../../../ecs/components/page";
-import { forceLength } from "../../../ui/long-val";
+import { PageComponent } from "~/ecs/components/page";
+import { forceLength } from "~/ui/long-val";
 
 export const PageTransform = {
   schema: PageComponent,

@@ -1,9 +1,9 @@
-import { Search } from "../search";
-import { FetchLoadArgs, getWhitelabel } from "../../lib/utils";
+import { Search } from "~/ui/search";
+import { FetchLoadArgs, getWhitelabel } from "~/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HeaderMenu } from "./menu";
-import { MobileActions } from "../mobile-actions";
+import { MobileActions } from "~/ui/mobile-actions";
 
 type Props = {
   resourcePath: FetchLoadArgs;
@@ -39,7 +39,6 @@ export function Header({ resourcePath }: Props) {
             />
           }
         >
-          {/* @ts-expect-error Async Server Component */}
           <HeaderMenu resourcePath={resourcePath} />
         </Suspense>
       </div>

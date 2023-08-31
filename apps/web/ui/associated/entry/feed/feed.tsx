@@ -1,8 +1,8 @@
-import { AssociatedArchetype } from "../../../../ecs/archetypes/associated";
-import { Badge } from "../../../badge";
-import Link from "next/link";
-import { KeyValueList } from "../../../key-value-list";
 import { Entity } from "@modularcloud/ecs";
+import { AssociatedArchetype } from "~/ecs/archetypes/associated";
+import { Badge } from "~/ui/badge";
+import { KeyValueList } from "~/ui/key-value-list";
+import Link from "next/link";
 
 export interface Props {
   entity: Entity<typeof AssociatedArchetype>;

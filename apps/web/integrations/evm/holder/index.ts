@@ -4,6 +4,7 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
+import { env } from "~/env.mjs";
 
 export async function HolderExtract(
   _q: unknown,
@@ -15,7 +16,7 @@ export async function HolderExtract(
   if (!holderAddress || !holderAddress.match(/^\w{42}$/)) {
     throw new Error("Invalid address");
   }
-  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
   const token = await mc.evm.getTokenByAddress(
     metadata.network.id,
     tokenAddress,

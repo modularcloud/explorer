@@ -2,18 +2,18 @@
 
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Separator from "@radix-ui/react-separator";
-import { useContext } from "react";
-import { ViewContext, ViewDispatchContext } from "../view-context/client";
-import SvgListViewOn from "../icons/ListViewOn";
-import SvgListViewOff from "../icons/ListViewOff";
-import SvgCardOn from "../icons/CardOn";
-import SvgCardOff from "../icons/CardOff";
-import { AssociatedViewType, EntityViewType } from "../view-context/types";
+import React, { useContext } from "react";
+import { ViewContext, ViewDispatchContext } from "~/ui/view-context/client";
+import SvgListViewOn from "~/ui/icons/ListViewOn";
+import SvgListViewOff from "~/ui/icons/ListViewOff";
+import SvgCardOn from "~/ui/icons/CardOn";
+import SvgCardOff from "~/ui/icons/CardOff";
+import { AssociatedViewType, EntityViewType } from "~/ui/view-context/types";
 import { useParams } from "next/navigation";
-import SvgCubesOff from "../icons/CubesOff";
-import SvgCodeOff from "../icons/CodeOff";
-import SvgCodeOn from "../icons/CodeOn";
-import SvgCubesOn from "../icons/CubesOn";
+import SvgCubesOff from "~/ui/icons/CubesOff";
+import SvgCodeOff from "~/ui/icons/CodeOff";
+import SvgCodeOn from "~/ui/icons/CodeOn";
+import SvgCubesOn from "~/ui/icons/CubesOn";
 
 const OnMap: Record<AssociatedViewType | EntityViewType, React.ReactNode> = {
   table: <SvgListViewOn />,
@@ -54,6 +54,7 @@ export function ViewSwitcher() {
           (option, index) => {
             const toggleGroup = (
               <ToggleGroup.Item
+                key={index}
                 value={option}
                 className="h-[34px] w-[34px] p-[7px]"
               >
@@ -62,15 +63,14 @@ export function ViewSwitcher() {
             );
             if (index !== 0) {
               return (
-                <>
+                <React.Fragment key={index}>
                   <Separator.Root
-                    key={index}
                     className="mx-1 h-5 w-px bg-slate-200"
                     decorative
                     orientation="vertical"
                   />
                   {toggleGroup}
-                </>
+                </React.Fragment>
               );
             }
             return toggleGroup;

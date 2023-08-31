@@ -1,7 +1,7 @@
 import { Engine, verifyArchetype } from "@modularcloud/ecs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { getEngine } from "../../../../../../lib/networks";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { getEngine } from "~/lib/networks";
 
 const allowCors =
   (fn: any) => async (req: NextApiRequest, res: NextApiResponse) => {
@@ -52,7 +52,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.json(result);
     }
   } catch (e) {
-    console.error("Error loading entity", req.query);
+    console.error("Error loading entity", {
+      query: req.query,
+    });
     console.error(e);
     res.status(404).end();
   }

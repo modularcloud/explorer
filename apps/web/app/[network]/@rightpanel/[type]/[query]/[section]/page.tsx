@@ -1,6 +1,6 @@
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import { RightPanel } from "../../../../../../ui/right-panel/component";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { RightPanel } from "~/ui/right-panel/component";
 
 interface Props {
   params: {
@@ -17,7 +17,6 @@ export default async function RightPanelPage({ params }: Props) {
   });
   if (!entity) return null;
   return (
-    // @ts-expect-error Async Server Component
     <RightPanel
       data={entity.components.sidebar.data}
       alt={params.network}

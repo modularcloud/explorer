@@ -44,11 +44,27 @@ export async function fetchLoad(props: FetchLoadArgs) {
     if (process.env.NEXT_PUBLIC_VERCEL_URL) {
       baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
+
+    let cache: RequestCache = "force-cache";
+
+    if (
+      props.type === "account" ||
+      props.type === "pagination" ||
+      props.type === "address" ||
+      props.type === "balances"
+    ) {
+      cache = "no-store";
+    }
+    // Since this fetch call is not called with `cache: no-store` it will always be cached
+    // However, i suppose blockchain data are immutable ? so this will normally not be a problem
     const response = await fetch(
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
+      {
+        cache,
+      },
     );
     if (!response.ok) {
-      console.log("Error loading entity", response);
+      console.log("Error loading entity", { response });
       return null;
     }
 
@@ -75,6 +91,20 @@ export type Whitelabel = {
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
+    case "nautscan":
+      return {
+        searchOptions: {
+          Nautilus: [
+            {
+              displayName: "Mainnet",
+              id: "mainnet",
+            },
+          ],
+        },
+        defaultNetwork: "mainnet",
+        name: ["Naut", "Scan"],
+        env: "nautscan",
+      };
     case "nautilus":
       return {
         searchOptions: {
@@ -137,6 +167,21 @@ export function getWhitelabel(): Whitelabel {
         name: ["Modular", "Cloud"],
         env: "worlds",
       };
+    case "degen":
+      return {
+        searchOptions: {
+          Eclipse: [
+            {
+              displayName: "Degen",
+              id: "degen",
+            },
+          ],
+        },
+        defaultNetwork: "degen",
+        subText: "Explorer",
+        name: ["Modular", "Cloud"],
+        env: "degen",
+      };
     case "aeg":
       return {
         searchOptions: {
@@ -189,10 +234,10 @@ export function getWhitelabel(): Whitelabel {
               displayName: "Arabica",
               id: "arabica",
             },
-            // {
-            //   displayName: "Mocha",
-            //   id: "mocha",
-            // },
+            {
+              displayName: "Mocha",
+              id: "mocha",
+            },
           ],
         },
         defaultNetwork: "mocha",
@@ -248,10 +293,10 @@ export function getWhitelabel(): Whitelabel {
               displayName: "Arabica",
               id: "celestia-arabica",
             },
-            // {
-            //   displayName: "Mocha",
-            //   id: "celestia-mocha",
-            // },
+            {
+              displayName: "Mocha",
+              id: "celestia-mocha",
+            },
           ],
           Dymension: [
             {

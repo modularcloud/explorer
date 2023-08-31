@@ -1,5 +1,5 @@
-import { getWhitelabel } from "lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getWhitelabel } from "~/lib/utils";
 
 const allowCors =
   (fn: any) => async (req: NextApiRequest, res: NextApiResponse) => {
@@ -23,8 +23,23 @@ const allowCors =
   };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  var path =
-    getWhitelabel().defaultNetwork === "triton" ? "eclipse/91002" : "ep/6";
+  let path: string;
+
+  switch (getWhitelabel().defaultNetwork) {
+    case "mainnet": // nautilus mainnet
+      path = "v2/1";
+      break;
+    case "triton":
+      path = "eclipse/91002";
+      break;
+    case "proteus":
+      path = "ep/6";
+      break;
+    default:
+      path = "ep/6";
+      break;
+  }
+
   return res.json(
     await fetch(
       process.env.METRICS_API_URL + "/" + path + "/real-time-metrics",

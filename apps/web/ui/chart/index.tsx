@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TransactionVolume } from "../stats";
+import { TransactionVolume } from "~/ui/stats";
 
 const data = [
   {

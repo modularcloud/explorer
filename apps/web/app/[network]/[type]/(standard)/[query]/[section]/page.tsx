@@ -1,22 +1,18 @@
-import { PageArchetype } from "../../../../../../ecs/archetypes/page";
-import { PaginationArchetype } from "../../../../../../ecs/archetypes/pagination";
-import { asyncUseEntity } from "../../../../../../ecs/hooks/use-entity/server";
-import {
-  FetchLoadArgs,
-  getWhitelabel,
-  slugify,
-} from "../../../../../../lib/utils";
-import { AssociatedList } from "../../../../../../ui/associated/list";
-import { ServerAssociatedEntry } from "../../../../../../ui/associated/entry/server";
-import { InfiniteLoaderEntries } from "../../../../../../ui/associated/infinite-loader/entries";
+import { PageArchetype } from "~/ecs/archetypes/page";
+import { PaginationArchetype } from "~/ecs/archetypes/pagination";
+import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
+import { FetchLoadArgs, getWhitelabel, slugify } from "~/lib/utils";
+import { AssociatedList } from "~/ui/associated/list";
+import { ServerAssociatedEntry } from "~/ui/associated/entry/server";
+import { InfiniteLoaderEntries } from "~/ui/associated/infinite-loader/entries";
 import { Suspense } from "react";
-import { AssociatedEntryLoadingFallback } from "../../../../../../ui/associated/entry/loading";
-import { TableHeader } from "../../../../../../ui/associated/list/table/header";
-import { TableHeaderLoadingFallback } from "../../../../../../ui/associated/list/table/header/loading";
+import { AssociatedEntryLoadingFallback } from "~/ui/associated/entry/loading";
+import { TableHeader } from "~/ui/associated/list/table/header";
+import { TableHeaderLoadingFallback } from "~/ui/associated/list/table/header/loading";
 import { notFound, redirect } from "next/navigation";
-import AssociatedNotFound from "../../../../../../ui/associated/not-found";
+import AssociatedNotFound from "~/ui/associated/not-found";
 import { Metadata } from "next";
-import { Tabs } from "../../../../../../ui/tabs";
+import { Tabs } from "~/ui/tabs";
 import dynamic from "next/dynamic";
 
 type Props = {
@@ -81,7 +77,7 @@ function Container({
 }) {
   if (paginationSettings && paginationSettings.original) {
     const InfiniteLoader = dynamic(
-      () => import("../../../../../../ui/associated/infinite-loader"),
+      () => import("~/ui/associated/infinite-loader"),
       { ssr: false },
     );
     return (
@@ -138,7 +134,6 @@ export default async function EntityPage({ params }: Props) {
           secondaryTypePlural={label}
         />
         <Suspense>
-          {/* @ts-expect-error Async Server Component */}
           <Tabs params={params} />
         </Suspense>
       </>
@@ -158,7 +153,6 @@ export default async function EntityPage({ params }: Props) {
           label={label}
           tableHeader={
             <Suspense fallback={<TableHeaderLoadingFallback />}>
-              {/* @ts-expect-error Async Server Component */}
               <TableHeader rows={values} label={label} />
             </Suspense>
           }
@@ -170,7 +164,6 @@ export default async function EntityPage({ params }: Props) {
                   key={`${value.network}/${value.type}/${value.query}`}
                   fallback={<AssociatedEntryLoadingFallback />}
                 >
-                  {/* @ts-expect-error Async Server Component */}
                   <ServerAssociatedEntry resourcePath={value} />
                 </Suspense>
               ))}
@@ -180,7 +173,6 @@ export default async function EntityPage({ params }: Props) {
         </AssociatedList>
       </Container>
       <Suspense>
-        {/* @ts-expect-error Async Server Component */}
         <Tabs params={params} />
       </Suspense>
     </>
