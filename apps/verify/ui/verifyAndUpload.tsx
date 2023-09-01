@@ -10,7 +10,7 @@ import UploadedFileSection from "./uploadedFileSection";
 import SvgFileUpload from "./icons/fileUpload";
 
 export default function VerifyAndUpload() {
-  const [files, setFiles] = useState<File[]>();
+  const [files, setFiles] = useState<File[]>([]);
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("22222");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
@@ -37,7 +37,8 @@ export default function VerifyAndUpload() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const fileArray = Array.from(event.target.files);
-      setFiles(fileArray);
+      setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
+      console.log(files);
     }
   };
   const deleteFile = (fileIndex: number) => {
@@ -50,7 +51,8 @@ export default function VerifyAndUpload() {
   const dragNdrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (event.dataTransfer.files) {
-      setFiles(Array.from(event.dataTransfer.files));
+      const fileArray = Array.from(event.dataTransfer.files);
+      setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
     }
   };
 

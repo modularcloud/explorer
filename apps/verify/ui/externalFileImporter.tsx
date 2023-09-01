@@ -9,7 +9,7 @@ import SvgGithub from "./icons/github";
 
 import SvgPlus from "./icons/plus";
 type props = {
-  setFiles: React.Dispatch<React.SetStateAction<File[] | undefined>>;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 };
 /* eslint-disable react/prop-types */
 const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
@@ -34,7 +34,7 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
             );
             files.push(file);
           }
-          setFiles(files);
+          setFiles((prevFiles) => [...prevFiles, ...files] as File[]);
         })
         .catch((error) => {
           console.log(error);
@@ -48,10 +48,9 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
             rawFiles[i].rawFile,
             rawFiles[i].fileName,
           );
-          console.log(file);
           files.push(file);
         }
-        setFiles(files);
+        setFiles((prevFiles) => [...prevFiles, ...files] as File[]);
       }
     }
     setIsLoading(false);
