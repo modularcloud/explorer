@@ -45,8 +45,23 @@ export async function fetchLoad(props: FetchLoadArgs) {
       baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
 
+    let cache: RequestCache = "force-cache";
+
+    if (
+      props.type === "account" ||
+      props.type === "pagination" ||
+      props.type === "address" ||
+      props.type === "balances"
+    ) {
+      cache = "no-store";
+    }
+    // Since this fetch call is not called with `cache: no-store` it will always be cached
+    // However, i suppose blockchain data are immutable ? so this will normally not be a problem
     const response = await fetch(
       `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
+      {
+        cache,
+      },
     );
     if (!response.ok) {
       console.log("Error loading entity", { response });
