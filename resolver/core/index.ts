@@ -50,7 +50,7 @@ export type AnyResolver = Resolver<any>;
 export function createResolver<K, T extends Resolver<any>[]>(
   config: ResolverConfig,
   fn: ResolverFn<K, T>,
-  dependencies: T
+  dependencies: T,
 ): Resolver<K> {
   return async (input: any) => {
     const traces: Trace[] = [];

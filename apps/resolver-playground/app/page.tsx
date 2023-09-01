@@ -48,7 +48,7 @@ export default async function Home() {
       const x: any = {};
       x.y.z;
     },
-    []
+    [],
   );
   const test8 = createResolver(
     { id: "test1", cache: false },
@@ -56,14 +56,14 @@ export default async function Home() {
       const test0Response = await test0(input.toUpperCase());
       return test0Response.type === "success" ? test0Response.result : null;
     },
-    [test7]
+    [test7],
   );
   const test9 = createResolver(
     { id: "test1.5", cache: false },
     async (input) => {
       return input.toLowerCase();
     },
-    []
+    [],
   );
   const test10 = createResolver(
     { id: "test2", cache: false },
@@ -71,9 +71,8 @@ export default async function Home() {
       const result1Response = await test1(input);
       const result1 =
         result1Response.type === "success" ? result1Response.result : null;
-      const result1point5Response: ResolutionResponse = await test1point5(
-        input
-      );
+      const result1point5Response: ResolutionResponse =
+        await test1point5(input);
       const result1point5 =
         result1point5Response.type === "success"
           ? result1point5Response.result
@@ -81,7 +80,7 @@ export default async function Home() {
       return result1 && result1point5 ? result1 + " " + result1point5 : null;
     },
 
-    [test8, test9]
+    [test8, test9],
   ); // This is a test to see if the resolver works
 
   const example = await test10("TESTing");

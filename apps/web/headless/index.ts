@@ -17,11 +17,11 @@ export function registerResolver(route: Route, resolver: AnyResolver) {
 }
 
 export function decodePath(pathStr: string) {
-  return JSON.parse(atob(pathStr.replace('-', '+').replace('_', '/')));
+  return JSON.parse(atob(pathStr.replace("-", "+").replace("_", "/")));
 }
 
 export function encodePath(path: any) {
-    return btoa(JSON.stringify(path)).replace('+', '-').replace('/', '_');
+  return btoa(JSON.stringify(path)).replace("+", "-").replace("/", "_");
 }
 
 export async function resolve(path: Path) {
@@ -29,7 +29,7 @@ export async function resolve(path: Path) {
   const resolver = Router.get(route);
   if (!resolver) {
     throw new Error(
-      `No resolver found for path ${JSON.stringify(path, null, 2)}`
+      `No resolver found for path ${JSON.stringify(path, null, 2)}`,
     );
   }
   return await resolver(query);

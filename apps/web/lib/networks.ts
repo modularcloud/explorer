@@ -10,12 +10,12 @@ export function getEngine() {
   if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
       endpoint: "https://api.nautilus.nautchain.xyz",
-         network: {
-           id: "mainnet",
-           displayName: "Mainnet",
-           nativeToken: "ETH",
-           logoUrl: "/images/nautilus.png",
-           sourcifyChainId: "22222"
+      network: {
+        id: "mainnet",
+        displayName: "Mainnet",
+        nativeToken: "ETH",
+        logoUrl: "/images/nautilus.png",
+        sourcifyChainId: "22222",
       },
     });
     Engine.addConfig("triton", config);

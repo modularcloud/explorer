@@ -26,5 +26,5 @@ export const FetchResolver = createResolver(
         throw new Error(`Unsupported encoding: ${encoding}`);
     }
   },
-  []
+  [],
 );
