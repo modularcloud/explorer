@@ -1,5 +1,6 @@
 import { EXPLORER_CONFIG } from "./explorers";
 import { NetworkConfig } from "./types/network";
+import { env } from "~/env.mjs";
 
 const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
   // Caldera
@@ -84,6 +85,26 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
       Platform: "Eclipse",
     },
   },
+  NAUTILUS_MAINNET: {
+    mcId: "1",
+    displayName: "Mainnet",
+    isTestnet: false,
+    isVerified: false,
+    explorerId: "nautscan",
+    slug: "mainnet",
+    slugPrefix: "nautilus",
+    vm: "evm",
+    nativeToken: "ZBC",
+    logoUrl: "/images/nautilus.png",
+    searchOptionGroup: "Nautilus",
+    rpcUrl: "https://api.evm.proteus.eclipsenetwork.xyz/solana",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
   ECLIPSE_WORLDS: {
     mcId: "ep/3",
     displayName: "Worlds",
@@ -96,7 +117,27 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "ETH",
     logoUrl: "/images/eclipse.png",
     searchOptionGroup: "Eclipse",
-    rpcUrl: "https://api.evm.worlds.eclipsenetwork.xyz/solana",
+    rpcUrl: "https://api.evm.worlds.dev.eclipsenetwork.xyz",
+    stack: {
+      Type: "Rollup",
+      Execution: "EVM",
+      "Data Availability": "Celestia",
+      Platform: "Eclipse",
+    },
+  },
+  ECLIPSE_DEGEN: {
+    mcId: "3",
+    displayName: "Degen",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "degen",
+    slug: "degen",
+    slugPrefix: "eclipse",
+    vm: "evm",
+    nativeToken: "ETH",
+    logoUrl: "/images/eclipse.png",
+    searchOptionGroup: "Eclipse",
+    rpcUrl: "https://api.evm.degen.dev.eclipsenetwork.xyz",
     stack: {
       Type: "Rollup",
       Execution: "EVM",
@@ -177,7 +218,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "DYM",
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
-    rpcUrl: process.env.DYMENSION_HUB_RPC ?? "",
+    rpcUrl: env.DYMENSION_HUB_RPC ?? "",
     stack: {
       Type: "Settlement",
       Execution: "Cosmos SDK",
@@ -217,7 +258,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "RAX",
     logoUrl: "/images/dymension.png",
     searchOptionGroup: "Dymension",
-    rpcUrl: process.env.DYMENSION_ROLLAPP_X_RPC ?? "",
+    rpcUrl: env.DYMENSION_ROLLAPP_X_RPC ?? "",
     stack: {
       Type: "RollApp",
       Execution: "Cosmos SDK",
@@ -227,24 +268,24 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     },
   },
   // Celestia
-  // CELESTIA_MOCHA: {
-  //   mcId: "N/A",
-  //   displayName: "Mocha",
-  //   isTestnet: true,
-  //   isVerified: false,
-  //   explorerId: "celestia",
-  //   slug: "mocha",
-  //   slugPrefix: "celestia",
-  //   vm: "cosmos",
-  //   nativeToken: "TIA",
-  //   logoUrl: "/images/celestia.png",
-  //   searchOptionGroup: "Celestia",
-  //   rpcUrl: process.env.CELESTIA_MOCHA_RPC ?? "",
-  //   stack: {
-  //     Type: "Data Availability",
-  //     Execution: "Cosmos SDK",
-  //   },
-  // },
+  CELESTIA_MOCHA: {
+    mcId: "4",
+    displayName: "Mocha",
+    isTestnet: true,
+    isVerified: false,
+    explorerId: "celestia",
+    slug: "mocha",
+    slugPrefix: "celestia",
+    vm: "cosmos",
+    nativeToken: "TIA",
+    logoUrl: "/images/celestia.png",
+    searchOptionGroup: "Celestia",
+    rpcUrl: env.CELESTIA_MOCHA_RPC ?? "",
+    stack: {
+      Type: "Data Availability",
+      Execution: "Cosmos SDK",
+    },
+  },
   CELESTIA_ARABICA: {
     mcId: "3",
     displayName: "Arabica",
@@ -257,7 +298,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     nativeToken: "TIA",
     logoUrl: "/images/celestia.png",
     searchOptionGroup: "Celestia",
-    rpcUrl: process.env.CELESTIA_ARABICA_RPC ?? "",
+    rpcUrl: env.CELESTIA_ARABICA_RPC ?? "",
     stack: {
       Type: "Data Availability",
       Execution: "Cosmos SDK",

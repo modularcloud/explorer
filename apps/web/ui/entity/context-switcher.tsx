@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { ViewContext } from "../view-context/client";
+import { ViewContext } from "~/ui/view-context/client";
 
 type Props = {
   overview: React.ReactNode;

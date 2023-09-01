@@ -1,6 +1,6 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
 import { TransactionExtract } from ".";
-import { SidebarComponent } from "../../../ecs/components/sidebar";
+import { SidebarComponent } from "~/ecs/components/sidebar";
 
 export const SidebarTransform = {
   schema: SidebarComponent,

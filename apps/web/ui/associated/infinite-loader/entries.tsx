@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense, useContext } from "react";
-import { FetchLoadArgs } from "../../../lib/utils";
-import { ClientAssociatedEntry } from "../entry/client";
-import { AssociatedEntryLoadingFallback } from "../entry/loading";
+import { FetchLoadArgs } from "~/lib/utils";
+import { ClientAssociatedEntry } from "~/ui/associated/entry/client";
+import { AssociatedEntryLoadingFallback } from "~/ui/associated/entry/loading";
 import { InfiniteLoaderContext } from "./context";
 import React from "react";
 

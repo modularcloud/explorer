@@ -6,7 +6,8 @@ import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { uploadFile } from "@uploadcare/upload-client";
-import { convertToHttpIfIpfs } from "../../../lib/utils";
+import { convertToHttpIfIpfs } from "~/lib/utils";
+import { env } from "~/env.mjs";
 
 const MetadataSchema = z.object({
   name: z.string().optional(),
@@ -395,7 +396,7 @@ export async function NFTTransferExtract(
     throw new Error("Transfer not found");
   }
   const blockNumber = receipt.blockNumber;
-  const mc = createModularCloud(process.env.EVM_CHAIN_DATA_SERVICE);
+  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
   const [/*token,*/ block] = await Promise.all([
     // mc.evm.getTokenByAddress(metadata.network.id, log.address),
     web3.eth.getBlock(blockNumber),
@@ -445,7 +446,7 @@ export async function NFTTransferExtract(
           const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
-            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            publicKey: env.UPLOADCARE_API_KEY,
             store: "auto",
             metadata: {
               uri,
@@ -526,7 +527,7 @@ export async function NFTTransferExtract(
           const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
-            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            publicKey: env.UPLOADCARE_API_KEY,
             store: "auto",
             metadata: {
               uri,
@@ -608,7 +609,7 @@ export async function NFTTransferExtract(
           const fimg = await fetch(convertToHttpIfIpfs(res.image));
           const fimgb = Buffer.from(await fimg.arrayBuffer());
           const result = await uploadFile(fimgb, {
-            publicKey: process.env.UPLOADCARE_API_KEY as string,
+            publicKey: env.UPLOADCARE_API_KEY,
             store: "auto",
             metadata: {
               original: res.image,

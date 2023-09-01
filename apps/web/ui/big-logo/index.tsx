@@ -1,4 +1,4 @@
-import { getWhitelabel } from "../../lib/utils";
+import { getWhitelabel } from "~/lib/utils";
 
 export async function BigLogo() {
   const whitelabel = await getWhitelabel();

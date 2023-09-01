@@ -1,4 +1,5 @@
 import { ExplorerConfig } from "./types/explorer";
+import { env } from "~/env.mjs";
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   // Caldera
@@ -67,6 +68,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "worlds",
     includeAllNetworks: true,
   },
+  DEGEN: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for the Degen ecosystem.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, degen",
+    defaultSearchOptionGroup: "Eclipse",
+    env: "degen",
+    id: "degen",
+    includeAllNetworks: true,
+  },
   WAEV: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
@@ -128,6 +141,19 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     id: "proteus",
     includeAllNetworks: false,
   },
+  // Nautilus
+  NAUTSCAN: {
+    name: ["Naut", "Scan"],
+    subtitle: "Modular Cloud",
+    homepageTitle: "NautScan by Modular Cloud",
+    homepageDescription: "A modular block explorer for the Nautilus ecosystem.",
+    homepageKeywords:
+      "nautilus, mainnet, testnet, ethereum, evm, block explorer, modular cloud, solana, eclipse",
+    defaultSearchOptionGroup: "Nautilus",
+    env: "nautscan",
+    id: "nautscan",
+    includeAllNetworks: false,
+  },
   // No whitelabel
   DEFAULT: {
     name: ["Modular", "Cloud"],
@@ -145,5 +171,5 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 
 export const EXPLORER_CONFIG =
   Object.values(EXPLORER_CONFIGS).find(
-    (config) => config.env === process.env.WHITELABEL,
+    (config) => config.env === env.WHITELABEL,
   ) ?? EXPLORER_CONFIGS.DEFAULT;

@@ -148,6 +148,5 @@ export const VerificationResponseSchema = z.object({
 
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 
-
 export const VerifiedSourceSchema = z.record(z.string());
 export type VerifiedSource = z.infer<typeof VerifiedSourceSchema>;
