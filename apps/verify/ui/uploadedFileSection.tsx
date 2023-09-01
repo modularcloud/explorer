@@ -25,7 +25,7 @@ const UploadedFileSection: FC<Props> = ({ files, deleteFile }) => {
         Array.from(files).map((file, index) => (
           <div
             key={index}
-            className="bg-[#F9F5FF] flex   justify-between p-2 my-1 rounded-lg mt-3"
+            className="bg-[#F9F5FF] flex     justify-between p-2 my-1 rounded-lg mt-3"
           >
             <div className="flex gap-x-3  justify-center items-center">
               <div className="bg-[#F4EBFF] rounded-full h-[30px] w-[30px] flex justify-center items-center">

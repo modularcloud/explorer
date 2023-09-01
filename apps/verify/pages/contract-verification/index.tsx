@@ -4,7 +4,7 @@ export default function ContractVerifier() {
   return (
     <div className="">
       <div>
-        <p className="pt-10 text-center text-[#1D2939]  text-4xl  font-bold">
+        <p className="pt-14 xl:pt-20 text-center text-[#1D2939]  text-4xl  font-bold">
           Verifier
         </p>
         <p className="text-center  text-[#344054]">

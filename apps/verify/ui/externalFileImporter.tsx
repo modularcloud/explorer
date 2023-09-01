@@ -68,8 +68,8 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
     }
   };
   return (
-    <div>
-      <div className="flex gap-x-6 my-2 text-[#7B6FE7]">
+    <div className="">
+      <div className="flex flex-col md:flex-row gap-x-6 my-2 text-[#7B6FE7]">
         <div
           className=" bg-[#FCFAFF]  flex  gap-x-2  mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] cursor-pointer"
           onClick={() => {

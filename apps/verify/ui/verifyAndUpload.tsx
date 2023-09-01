@@ -219,28 +219,28 @@ export default function VerifyAndUpload() {
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
         <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
-          <div className="flex  justify-between mb-3">
+          <div className="flex flex-col md:flex-row  justify-between mb-3">
             <div className="flex flex-col w-full">
               <p className="pl-1">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="flex flex-col w-3/4 ">
+            <div className="flex flex-col w-full md:w-3/4 ">
               <p className="pl-1">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900"
+                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900 w-full"
                 placeholder="Contract Address"
               />
             </div>
           </div>
           <ExternalFileImporter setFiles={setFiles} />
-          <div className="flex w-full gap-x-5">
+          <div className="flex w-full gap-x-5 flex-col md:flex-row">
             <label
               htmlFor="file-upload"
-              className="custom-file-upload pt-5 w-[65%]"
+              className="custom-file-upload pt-5 w-full md:w-[65%] "
             >
               <div
                 onDragOver={(e) => {
@@ -269,21 +269,12 @@ export default function VerifyAndUpload() {
                 />
               </div>
             </label>
-            <div className="pt-4 flex flex-col relative w-[40%] ">
+            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto ">
               <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>
 
-          <div className="text-md flex gap-x-3 pt-5">
-            <p>Added Files:</p>
-            {files &&
-              Array.from(files).map((file, index) => (
-                <p key={index} className="text-center">
-                  {file.name},
-                </p>
-              ))}
-          </div>
-          <div className="flex  items-center justify-center">
+          <div className="flex pt-3 items-center justify-center">
             <div
               className="rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
               onClick={onSubmit}

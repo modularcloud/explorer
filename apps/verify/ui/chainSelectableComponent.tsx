@@ -55,7 +55,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
         className={
           loading
             ? "hidden"
-            : "rounded-md mt-2 w-1/2 p-2  flex justify-between items-center border-2   "
+            : "rounded-md mt-2 w-full p-2  flex justify-between items-center border-2  md:w-1/2    "
         }
       >
         {data.map((item, index) => (
