@@ -18,12 +18,17 @@ export default async function processApiRequest(
     const { githubUrl } = req.body;
     const gitHubComponents: GitHubComponents | null =
       extractGithubUrl(githubUrl);
-    const retrievedFiles = await retrieveGithubFile(
-      gitHubComponents?.owner,
-      gitHubComponents?.repo,
-      gitHubComponents?.path,
-    );
-    res.status(200).json(retrievedFiles);
+    if (gitHubComponents !== null && gitHubComponents.owner) {
+      const retrievedFiles = await retrieveGithubFile(
+        gitHubComponents.owner,
+        gitHubComponents.repo,
+        gitHubComponents.path,
+      );
+      res.status(200).json(retrievedFiles);
+    } else {
+      res.status(400).json({ error: "Bad github url" });
+    }
+
     return;
   } catch (err: any) {
     console.error(`Failed to read from GitHub: ${err.message}`);

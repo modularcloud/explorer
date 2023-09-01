@@ -35,14 +35,13 @@
         "CELESTIA_BLOCKSPACE_RACE_RPC",
         "NAMESPACE_ENDPOINT",
         "CELESTIA_ARABICA_RPC",
-        "GITHUB_API_KEY",
         "INTEGRATION_API_URL"
       ]
     },
     "verify#build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"],
-      "env": ["SOURCIFY_URL", "AWS_S3_ACCESSKEY_ID", "AWS_S3_ACCESSKEY_SECRET"]
+      "env": ["SOURCIFY_URL", "AWS_S3_ACCESSKEY_ID", "AWS_S3_ACCESSKEY_SECRET",      "GITHUB_API_KEY"]
     }
   }
 }

@@ -16,15 +16,20 @@ const readRemoteFile = async (url: string): Promise<fileInfo[] | null> => {
     if (buffer[0] === 0x50 && buffer[1] === 0x4b) {
       const zip = new JSZip();
       await zip.loadAsync(response.data);
-
-      zip.forEach(async (relativePath, zipEntry) => {
-        const contentArrayBuffer = await zipEntry.async("arraybuffer");
-        const uint8Array = new Uint8Array(contentArrayBuffer);
-        filesInfo.push({
-          fileName: relativePath,
-          rawFile: Buffer.from(uint8Array).toString("base64"),
-        });
+      const fileProcessingPromises: Promise<void>[] = [];
+      zip.forEach((relativePath, zipEntry) => {
+        fileProcessingPromises.push(
+          (async () => {
+            const contentArrayBuffer = await zipEntry.async("arraybuffer");
+            const uint8Array = new Uint8Array(contentArrayBuffer);
+            filesInfo.push({
+              fileName: relativePath,
+              rawFile: Buffer.from(uint8Array).toString("base64"),
+            });
+          })(),
+        );
       });
+      await Promise.all(fileProcessingPromises);
       return filesInfo;
     } else {
       const fileName = url.split("/")[url.split("/").length - 1];
