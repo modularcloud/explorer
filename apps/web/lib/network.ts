@@ -2,6 +2,7 @@ import "server-only";
 import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
+import { CACHE_KEYS } from "./cache-keys";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -20,11 +21,15 @@ export const singleNetworkSchema = z.object({
   internalId: z.string(),
   integrationId: z.string().uuid(),
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
+  // TODO : change this to the actual primary color for returned by the API
+  primaryColor: z.string().optional().default("#8457FF"),
 });
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
-export async function getSingleNetwork(slug: string) {
+export async function getSingleNetwork(
+  slug: string,
+): Promise<SingleNetwork | null> {
   const getSingleIntegrationFn = nextCache(
     async (slug: string) => {
       const describeIntegrationBySlugAPISchema = z.object({
@@ -50,13 +55,13 @@ export async function getSingleNetwork(slug: string) {
       }
     },
     {
-      tags: ["INTEGRATIONS", slug],
+      tags: CACHE_KEYS.networks.single(slug),
     },
   );
   return await getSingleIntegrationFn(slug);
 }
 
-export async function getAllNetworks() {
+export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   const getAllIntegrationsFn = nextCache(
     async () => {
       try {
@@ -88,7 +93,7 @@ export async function getAllNetworks() {
       }
     },
     {
-      tags: ["INTEGRATIONS", "INTEGRATION_SUMMARY"],
+      tags: CACHE_KEYS.networks.summary(),
     },
   );
 

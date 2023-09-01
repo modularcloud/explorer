@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} text-sleek text-night font-sans`}>
+      <body className={`${inter.variable} font-sans text-foreground`}>
         {children}
         <Toaster />
         <Analytics />

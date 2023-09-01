@@ -1,24 +1,20 @@
 import Link from "next/link";
 
-const footer_links = [
-  { title: "About", id: "about", href: "/" },
-  { title: "Terms", id: "terms", href: "/" },
-  { title: "Privacy", id: "privacy", href: "/" },
-];
-
 export function Footer() {
   return (
-    <footer className="bottom-0 flex h-1/6 flex-col justify-evenly border-t p-2 text-center">
-      <span className="text-slate-900">
+    <footer className="py-10 text-center w-full flex flex-col gap-5">
+      <hr />
+      <span className="text-muted">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.
       </span>
-      {/* <div className="flex flex-row justify-around">
-        {footer_links.map(({ title, id, href }) => (
-          <Link key={id} href={href}>
-            <span className="text-night">{title}</span>
-          </Link>
-        ))}
-      </div> */}
+
+      <div className="flex self-center items-center justify-between px-5 gap-5">
+        <Link href="#">About</Link>
+        <span>&middot;</span>
+        <Link href="#">Terms</Link>
+        <span>&middot;</span>
+        <Link href="#">Privacy</Link>
+      </div>
     </footer>
   );
 }

@@ -58,7 +58,7 @@
     "eslint-config-custom": "*",
     "postcss": "^8.4.21",
     "server-only": "^0.0.1",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^3.3.3",
     "tsconfig": "*",
     "typescript": "^5.1.6"
   }
