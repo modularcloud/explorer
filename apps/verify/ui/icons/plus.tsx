@@ -10,9 +10,9 @@ const SvgPlus = () => {
       <path
         d="M12 5V19M5 12H19"
         stroke="#7B6FE7"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

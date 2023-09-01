@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { AxiosError } from "axios";
+
 import prisma from "../../../prisma/lib/prisma";
 
 export default async function persistVerified(

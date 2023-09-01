@@ -11,7 +11,7 @@ import SvgPlus from "./icons/plus";
 type props = {
   setFiles: React.Dispatch<React.SetStateAction<File[] | undefined>>;
 };
-
+/* eslint-disable react/prop-types */
 const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
   const [showImportFromGithub, setshowImportFromGithub] =
     useState<boolean>(false);
@@ -22,13 +22,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
 
   const handleImport = async (importFrom: string) => {
     setIsLoading(true);
-    let files: File[] = [];
+    const files: File[] = [];
     if (importFrom === "Github") {
       await axios
         .post("api/data-retrieval/github", { githubUrl: url })
         .then((res) => {
           for (let i = 0; i < res.data.length; i++) {
-            let file = convertBase64ToFile(
+            const file = convertBase64ToFile(
               res.data[i].rawFile,
               res.data[i].fileName,
             );
@@ -44,7 +44,7 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
       const rawFiles = await readRemoteFile(url);
       if (rawFiles !== null) {
         for (let i = 0; i < rawFiles.length; i++) {
-          let file = convertBase64ToFile(
+          const file = convertBase64ToFile(
             rawFiles[i].rawFile,
             rawFiles[i].fileName,
           );

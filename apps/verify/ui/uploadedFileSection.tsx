@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 interface Props {
   files: File[] | undefined;
   deleteFile: (fileIndex: number) => void;

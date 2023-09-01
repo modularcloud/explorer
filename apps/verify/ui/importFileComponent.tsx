@@ -1,6 +1,6 @@
 import { ChangeEvent } from "react";
 import SvgXClose from "./icons/x-close";
-
+/* eslint-disable react/prop-types */
 type props = {
   importFrom: string;
   handleUrlChange: (event: ChangeEvent<HTMLInputElement>) => void;

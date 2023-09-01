@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import JSZip, { file } from "jszip";
+import JSZip, from "jszip";
 import { readFileData } from "../utils/readFileData";
 import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
@@ -197,7 +197,7 @@ export default function VerifyAndUpload() {
 
   const readAndZipFiles = () => {
     return new Promise<Blob>(async (resolve, reject) => {
-      let zip = new JSZip();
+      const zip = new JSZip();
       let zipFile;
       if (files) {
         for (let i = 0; i < files?.length; i++) {

@@ -30,8 +30,9 @@ export default async function processApiRequest(
     }
 
     return;
-  } catch (err: any) {
-    console.error(`Failed to read from GitHub: ${err.message}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any/
+  } catch (error: any) {
+    console.error(`Failed to read from GitHub: ${error.message}`);
     res.status(500).json({ Error: err });
     return;
   }
