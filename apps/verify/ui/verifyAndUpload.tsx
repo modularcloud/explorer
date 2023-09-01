@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import JSZip, from "jszip";
+import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
 import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";

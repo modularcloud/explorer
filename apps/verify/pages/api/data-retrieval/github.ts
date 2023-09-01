@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosResponse } from "axios";
 import readRemoteFile, { fileInfo } from "../../../utils/readRemoteFiles";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -30,10 +31,9 @@ export default async function processApiRequest(
     }
 
     return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any/
   } catch (error: any) {
     console.error(`Failed to read from GitHub: ${error.message}`);
-    res.status(500).json({ Error: err });
+    res.status(500).json({ Error: error });
     return;
   }
 }
@@ -45,13 +45,13 @@ const retrieveGithubFile = async (
 ): Promise<fileInfo[]> => {
   const files: fileInfo[] = [];
   const apiEndpoint: string = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  let response: AxiosResponse<GitHubContentItem[] | GitHubContentItem>;
-  response = await axios.get(apiEndpoint, {
-    method: "GET",
-    headers: {
-      Authorization: `token   ${process.env.GITHUB_API_KEY}`,
-    },
-  });
+  const response: AxiosResponse<GitHubContentItem[] | GitHubContentItem> =
+    await axios.get(apiEndpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `token   ${process.env.GITHUB_API_KEY}`,
+      },
+    });
 
   if (Array.isArray(response.data)) {
     for (const item of response.data) {
