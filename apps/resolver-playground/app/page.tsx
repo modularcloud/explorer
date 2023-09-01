@@ -52,7 +52,7 @@ export default async function Home() {
   );
   const test8 = createResolver(
     { id: "test1", cache: false },
-    async (input, test0) => {
+    async (input: string, test0) => {
       const test0Response = await test0(input.toUpperCase());
       return test0Response.type === "success" ? test0Response.result : null;
     },
@@ -60,14 +60,14 @@ export default async function Home() {
   );
   const test9 = createResolver(
     { id: "test1.5", cache: false },
-    async (input) => {
+    async (input: string) => {
       return input.toLowerCase();
     },
     [],
   );
   const test10 = createResolver(
     { id: "test2", cache: false },
-    async (input, test1, test1point5) => {
+    async (input: string, test1, test1point5) => {
       const result1Response = await test1(input);
       const result1 =
         result1Response.type === "success" ? result1Response.result : null;
