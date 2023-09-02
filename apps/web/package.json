@@ -10,6 +10,7 @@
     "ts-check": "tsc --noEmit",
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
   },
+  "type": "module",
   "dependencies": {
     "@modularcloud/ecs": "*",
     "@modularcloud/sdk": "*",

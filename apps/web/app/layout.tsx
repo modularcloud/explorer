@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "~/ui/shadcn/components/ui/toaster";
+import { TailwindIndicator } from "~/ui/tailwind-indicator";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans text-foreground`}>
         {children}
+        {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
         <Toaster />
         <Analytics />
       </body>

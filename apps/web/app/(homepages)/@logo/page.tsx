@@ -4,5 +4,5 @@ interface Props {
   params: Pick<FetchLoadArgs, "network">;
 }
 export default function HomeLogo({ params }: Props) {
-  return <></>;
+  return <>Logo</>;
 }
