@@ -13,7 +13,7 @@ export async function AddressExtract(
   metadata: EngineConfigMetadata,
 ) {
   const address = z.string().parse(_q);
-  const solanaAddressRegex = /^[A-Za-z0-9]{44}$/;
+  const solanaAddressRegex = /^[A-Za-z0-9]{43,44}$/;
   if (!solanaAddressRegex.test(address)) {
     throw new Error("Invalid Solana address");
   }
