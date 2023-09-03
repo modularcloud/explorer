@@ -91,6 +91,20 @@ export type Whitelabel = {
 };
 export function getWhitelabel(): Whitelabel {
   switch (process.env.WHITELABEL) {
+    case "svm":
+      return {
+        searchOptions: {
+          Eclipse: [
+            {
+              displayName: "SVM Devnet",
+              id: "svm-devnet",
+            },
+          ],
+        },
+        defaultNetwork: "svm-devnet",
+        name: ["Modular", "Cloud"],
+        env: "svm",
+      };
     case "nautscan":
       return {
         searchOptions: {

@@ -28,10 +28,6 @@ import {
   VerifiedSourceSchema,
 } from "./schemas";
 
-declare global {
-  var fetch: typeof import("undici").fetch;
-}
-
 export interface ModularCloud {
   celestia: {
     listBlobsByNamespace: (
