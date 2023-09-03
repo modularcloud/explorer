@@ -61,7 +61,6 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     stack: {
       Type: "Rollup",
       Execution: "EVM",
-      "Data Availability": "Celestia",
       Platform: "Eclipse",
     },
   },

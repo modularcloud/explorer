@@ -35,7 +35,7 @@ export default async function RightPanelPage() {
     <RightPanel
       data={data}
       alt={alt}
-      className="sticky top-0 hidden w-80 shrink-0 lg:flex xl:w-[27.875rem]"
+      className="sticky top-0 hidden w-80 shrink-0 xl:w-[27.875rem]" // lg:flex (hidding this for nautilus)
     />
   );
 }
