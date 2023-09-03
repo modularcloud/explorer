@@ -117,6 +117,10 @@ export interface ModularCloud {
   };
 }
 
+declare global {
+  var fetch: typeof import("undici").fetch;
+}
+
 type APIResponse = {
   result: any;
 };
