@@ -1,4 +1,4 @@
-import EntityLayout from "~/app/[network]/[type]/(standard)/[query]/layout";
+import EntityLayout from "~/app/_[network]/[type]/(standard)/[query]/layout";
 import { mapTypes, ShortenedResourcePath } from "./helpers";
 import { getAllNetworks } from "~/lib/network";
 

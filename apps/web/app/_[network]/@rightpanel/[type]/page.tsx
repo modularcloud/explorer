@@ -8,7 +8,7 @@ const VMDisplayNames = {
 } as const;
 
 import type { Value } from "~/schemas/value";
-import type { ShortenedResourcePath } from "~/app/[network]/[type]/(short)/helpers";
+import type { ShortenedResourcePath } from "~/app/_[network]/[type]/(short)/helpers";
 type Props = {
   params: ShortenedResourcePath;
 };

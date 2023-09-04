@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import EntityPage, {
   generateMetadata as _generateMetadata,
-} from "~/app/[network]/[type]/(standard)/[query]/page";
+} from "~/app/_[network]/[type]/(standard)/[query]/page";
 import { ShortenedResourcePath, mapTypes } from "./helpers";
 import { getAllNetworks } from "~/lib/network";
 
