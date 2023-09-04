@@ -43,6 +43,7 @@ type ResolverFn<K, T extends Resolver<K>[]> = {
 
 export type Resolver<K> = {
   (input: K): Promise<ResolutionResponse>;
+  __config: ResolverConfig;
 };
 
 export type AnyResolver = Resolver<any>;
@@ -52,7 +53,7 @@ export function createResolver<K, T extends Resolver<any>[]>(
   fn: ResolverFn<K, T>,
   dependencies: T,
 ): Resolver<K> {
-  return async (input: any) => {
+  const fnWrapper = async (input: any) => {
     const traces: Trace[] = [];
     let resolution: null | Resolution = null;
     try {
@@ -107,4 +108,6 @@ export function createResolver<K, T extends Resolver<any>[]>(
       }
     }
   };
+  fnWrapper.__config = config;
+  return fnWrapper;
 }
