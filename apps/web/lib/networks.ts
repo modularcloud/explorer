@@ -3,11 +3,23 @@ import { CreateCosmosConfig } from "~/integrations/cosmos";
 import { CreateEVMConfig } from "~/integrations/evm";
 import { getWhitelabel } from "./utils";
 import { env } from "~/env.mjs";
+import { CreateSVMConfig } from "~/integrations/svm";
 
 export function getEngine() {
   const whitelabel = getWhitelabel();
   let config: EngineConfig;
-  if (whitelabel.env === "nautilus") {
+  if (whitelabel.env === "svm") {
+    config = CreateSVMConfig({
+      endpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
+      network: {
+        id: "svm-devnet",
+        displayName: "SVM Devnet",
+        nativeToken: "SOL",
+        logoUrl: "/images/eclipse.png",
+      },
+    });
+    Engine.addConfig("svm-devnet", config);
+  } else if (whitelabel.env === "nautilus") {
     config = CreateEVMConfig({
       endpoint: "https://api.nautilus.nautchain.xyz",
       network: {

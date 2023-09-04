@@ -29,7 +29,7 @@ export type NetworkConfig = {
   slugPrefix: string;
 
   // What type of VM is used by this chain
-  vm: "evm" | "cosmos";
+  vm: "evm" | "cosmos" | "svm";
 
   // The native token symbol of this chain
   nativeToken: string;
