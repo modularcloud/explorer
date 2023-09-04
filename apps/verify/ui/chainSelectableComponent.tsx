@@ -29,10 +29,6 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
             name: "Nautilus Mainnet",
             chainId: 22222,
           },
-          {
-            name: "Nautilus Proteus Testnet",
-            chainId: 88002,
-          },
         ];
         setData(chainList);
       } catch (error) {
