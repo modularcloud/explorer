@@ -11,3 +11,5 @@ export default function BlockLayout({
     </>
   );
 }
+
+export const runtime = "edge";
