@@ -13,7 +13,7 @@ export default async function NetworkLogo(props: Props) {
   const bgGradientCSS = `linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%);`;
 
   return (
-    <div className="flex flex-col gap-8 items-center">
+    <div className="flex flex-col gap-8 items-center mt-44">
       <small className="uppercase text-lg ">MODULAR CLOUD</small>
 
       <p className="font-logo text-5xl font-bold md:text-6xl capitalize">

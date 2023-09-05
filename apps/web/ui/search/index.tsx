@@ -18,7 +18,7 @@ export function Search({ optionGroups }: Props) {
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
     return values.find((network) => network.id === params.network) ?? values[0];
-  }, [optionGroups]);
+  }, [optionGroups, params.network]);
 
   // Set main Color to correspond to the network's main color
   if (network.mainColor && network.mainColor !== theme.mainColor) {

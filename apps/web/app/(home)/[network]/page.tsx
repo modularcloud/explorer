@@ -1,3 +1,5 @@
+import { NetworkWidgets } from "~/ui/network-widgets";
+
 import { notFound } from "next/navigation";
 import { getSingleNetwork } from "~/lib/network";
 import { capitalize } from "~/lib/utils";
@@ -15,10 +17,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${capitalize(network.chainBrand)} - ModularCloud`,
-    description: ``, // TODO
+    // description: ``, // TODO... should be returned by the API ?
   };
 }
 
-export default function NetworkLogo({ params }: Props) {
-  return <>Widget Network</>;
+export default function NetworkWidgetPage({ params }: Props) {
+  return <NetworkWidgets />;
 }
