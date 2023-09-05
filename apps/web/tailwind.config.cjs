@@ -1,3 +1,5 @@
+const config = require("tailwind-config/tailwind.config.js");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -10,6 +12,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      ...config.theme.extend,
       container: {
         center: true,
         padding: "2rem",
@@ -18,6 +21,7 @@ module.exports = {
         },
       },
       colors: {
+        ...config.theme.extend.colors,
         foreground: {
           DEFAULT: "hsl(var(--color-foreground))",
         },

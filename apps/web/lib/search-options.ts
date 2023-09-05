@@ -13,6 +13,8 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
     const brand = currentValue.chainBrand;
     if (acc[brand]) {
       acc[brand].push({
+        // TODO set main color
+        verified: currentValue.paidVersion,
         displayName: currentValue.chainName,
         id: currentValue.slug,
       });

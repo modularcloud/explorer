@@ -86,6 +86,8 @@ export async function fetchLoad(props: FetchLoadArgs) {
 
 export type SearchOption = {
   displayName: string;
+  verified?: boolean;
+  mainColor?: string;
   id: string;
 };
 export type OptionGroups = {
@@ -117,4 +119,9 @@ export function truncateString(
   const start = address.slice(0, numCharsBefore);
   const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
   return `${start}....${end}`;
+}
+
+export function capitalize(str: string) {
+  const firstChar = str.charAt(0);
+  return firstChar.toUpperCase() + str.substring(1);
 }

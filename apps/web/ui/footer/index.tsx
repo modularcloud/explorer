@@ -4,7 +4,7 @@ import { ShortcutKey } from "~/ui/shortcut-key";
 export function Footer() {
   return (
     <footer className="py-10 text-center w-full flex flex-col gap-5">
-      <div className="hidden md:flex items-center gap-14 mx-auto">
+      <div className="hidden md:flex items-center gap-10 lg:gap-14 mx-auto flex-wrap justify-center">
         <ShortcutKey command="/" commandName="slash" label="Search" />
         <ShortcutKey command="E" label="Latest block" />
         <ShortcutKey command="⌥" commandName="Option" label="Clipboard" />
