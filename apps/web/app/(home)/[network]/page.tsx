@@ -21,6 +21,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
+// TODO : see this for inspiration for widgets => https://nautscan.com/
+// See this file for more ref : https://github.com/modularcloud/explorer/blob/0818NautilusMainnetStatsPage/apps/web/ui/stats/index.tsx
 export default function NetworkWidgetPage({ params }: Props) {
   return <NetworkWidgets />;
 }

@@ -22,7 +22,7 @@ export const singleNetworkSchema = z.object({
   integrationId: z.string().uuid(),
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
   // TODO : change this to the actual primary color for returned by the API
-  primaryColor: z.string().optional().default("#8457FF"),
+  mainColor: z.string().optional().default("#8457FF"),
 });
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
