@@ -10,7 +10,7 @@ export default async function NetworkLogo(props: Props) {
   if (!network) notFound();
 
   // TODO : use the css returned from the API
-  const bgGradientCSS = `linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%);`;
+  const bgGradientCSS = `linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%)`;
 
   return (
     <div className="flex flex-col gap-8 items-center mt-44">
