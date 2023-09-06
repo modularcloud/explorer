@@ -90,7 +90,7 @@ function Container({
       </InfiniteLoader>
     );
   }
-  return <>{children}</>;
+  return <div className="absolute top-0 w-full">{children}</div>;
 }
 
 export default async function EntityPage({ params }: Props) {

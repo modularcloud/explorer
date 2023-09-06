@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const prismaLogging = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error']
+  log: ["query", "info", "warn", "error"],
 });
 
 export default prisma;

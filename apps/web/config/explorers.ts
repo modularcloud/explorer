@@ -56,6 +56,18 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     includeAllNetworks: true,
   },
   // Eclipse
+  SVM: {
+    name: ["Modular", "Cloud"],
+    subtitle: "Explorer",
+    homepageTitle: "Explorer by Modular Cloud",
+    homepageDescription: "A block exporer for SVM Devnet.",
+    homepageKeywords:
+      "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, svm",
+    defaultSearchOptionGroup: "Eclipse",
+    env: "svm",
+    id: "svm",
+    includeAllNetworks: true,
+  },
   WORLDS: {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
