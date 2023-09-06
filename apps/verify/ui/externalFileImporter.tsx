@@ -70,10 +70,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
     <div className="">
       <div className="flex flex-col md:flex-row gap-x-6 my-2 text-[#7B6FE7]">
         <div
-          className=" bg-[#FCFAFF]  flex  gap-x-2  mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] cursor-pointer"
+          className={` bg-[#FCFAFF]  flex  gap-x-2  mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] cursor-pointer ${
+            !showImportFromGithub && showImportFromRemote ? "blur-[0.5px]" : ""
+          }`}
           onClick={() => {
             setshowImportFromGithub(!showImportFromGithub);
             setshowImportFromRemote(false);
+            setUrl("");
           }}
         >
           {isLoading && (
@@ -88,10 +91,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
         </div>
 
         <div
-          className=" bg-[#FCFAFF] cursor-pointer flex gap-x-2 mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7]"
+          className={`bg-[#FCFAFF] cursor-pointer flex gap-x-2 mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] ${
+            !showImportFromRemote && showImportFromGithub ? "blur-[0.5px]" : ""
+          }`}
           onClick={() => {
             setshowImportFromRemote(!showImportFromRemote);
             setshowImportFromGithub(false);
+            setUrl("");
           }}
         >
           <SvgPlus />
