@@ -72,7 +72,10 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
         "accent-primary",
       )}
     >
-      <TransactionHistory className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4" />
+      <TransactionHistory
+        mainColor={mainColor}
+        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+      />
 
       <Card className="lg:row-start-1 lg:col-start-1">WALLET ADRESSES</Card>
       <Card className="lg:row-start-1 lg:col-start-2">AVG BLOCK TIME</Card>
