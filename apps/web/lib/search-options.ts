@@ -1,5 +1,5 @@
 import { getAllNetworks } from "./network";
-import type { OptionGroups } from "./utils";
+import type { OptionGroups, SearchOption } from "./utils";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
@@ -11,17 +11,18 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
 
   const optionGroups = integrations.reduce((acc, currentValue) => {
     const brand = currentValue.chainBrand;
+
+    const newOption = {
+      primaryColor: currentValue.config.primaryColor,
+      layout: currentValue.config.widgetLayout,
+      verified: currentValue.paidVersion,
+      displayName: currentValue.chainName,
+      id: currentValue.slug,
+    } satisfies SearchOption;
     if (acc[brand]) {
-      acc[brand].push({
-        mainColor: currentValue.mainColor,
-        verified: currentValue.paidVersion,
-        displayName: currentValue.chainName,
-        id: currentValue.slug,
-      });
+      acc[brand].push(newOption);
     } else {
-      acc[brand] = [
-        { displayName: currentValue.chainName, id: currentValue.slug },
-      ];
+      acc[brand] = [newOption];
     }
 
     return acc;

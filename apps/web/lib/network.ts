@@ -13,6 +13,16 @@ export const singleNetworkSchema = z.object({
       decimals: z.number(),
     }),
     platform: z.string().max(64).optional(),
+    // TODO : These are defaulted for now, but it should be returned by the API
+    widgetLayout: z
+      .enum(["EvmWithPrice", "EvmWithoutPrice"])
+      .optional()
+      .default("EvmWithPrice"),
+    primaryColor: z.string().optional().default("224 94% 51%"),
+    cssGradient: z
+      .string()
+      .optional()
+      .default(`linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%)`),
   }),
   paidVersion: z.boolean(),
   slug: z.string(),
@@ -21,8 +31,6 @@ export const singleNetworkSchema = z.object({
   internalId: z.string(),
   integrationId: z.string().uuid(),
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
-  // TODO : change this to the actual primary color for returned by the API
-  mainColor: z.string().optional().default("#8457FF"),
 });
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;

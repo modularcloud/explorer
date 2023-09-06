@@ -1,3 +1,4 @@
+export { default as ArrowDown } from "./ArrowDown";
 export { default as ArrowOff } from "./ArrowOff";
 export { default as ArrowOn } from "./ArrowOn";
 export { default as ArrowRight } from "./ArrowRight";

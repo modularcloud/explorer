@@ -29,6 +29,7 @@ module.exports = {
           DEFAULT: "hsl(var(--color-neutral))",
         },
         muted: "hsl(var(--color-muted))",
+        primary: "hsl(var(--color-primary))",
       },
       // borderRadius: {
       //   lg: "var(--radius)",

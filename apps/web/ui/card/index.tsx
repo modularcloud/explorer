@@ -4,14 +4,18 @@ import * as React from "react";
 interface Props {
   children: React.ReactNode;
   className?: string;
+  withoutPadding?: boolean;
 }
 
-export function Card({ children, className }: Props) {
+export function Card({ children, className, withoutPadding }: Props) {
   return (
     <div
       className={clsx(
-        "border-mid-dark-100 w-full rounded-lg border shadow-sm p-4 bg-white",
         className,
+        "border-mid-dark-100 w-full rounded-lg border shadow-sm bg-white",
+        {
+          "p-4": !withoutPadding,
+        },
       )}
     >
       {children}

@@ -1,7 +1,6 @@
 import { Footer } from "~/ui/footer";
 import { Search } from "~/ui/search";
 import { getSearchOptionGroups } from "~/lib/search-options";
-import { ThemeProvider } from "~/app/theme-context-provider";
 import { EXPLORER_CONFIG } from "~/config/explorers";
 
 import type { Metadata } from "next";
@@ -31,15 +30,13 @@ export default async function HomeLayout({
         backgroundPosition: "top center",
       }}
     >
-      <ThemeProvider>
-        <div className="flex flex-col justify-center h-full w-full flex-1 gap-24">
-          <section className="flex flex-col gap-8">
-            {logo}
-            <Search optionGroups={searchOptionGroups} />
-          </section>
-          <section>{children}</section>
-        </div>
-      </ThemeProvider>
+      <div className="flex flex-col justify-center h-full w-full flex-1 gap-24">
+        <section className="flex flex-col gap-8">
+          {logo}
+          <Search optionGroups={searchOptionGroups} />
+        </section>
+        <section>{children}</section>
+      </div>
 
       <Footer />
     </main>

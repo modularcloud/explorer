@@ -1,6 +1,7 @@
 import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
+import type { SingleNetwork } from "./network";
 
 export function convertToHttpIfIpfs(url: string) {
   if (url.startsWith("ipfs://")) {
@@ -87,7 +88,8 @@ export async function fetchLoad(props: FetchLoadArgs) {
 export type SearchOption = {
   displayName: string;
   verified?: boolean;
-  mainColor?: string;
+  primaryColor?: string;
+  layout?: SingleNetwork["config"]["widgetLayout"];
   id: string;
 };
 export type OptionGroups = {

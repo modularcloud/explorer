@@ -9,9 +9,6 @@ export default async function NetworkLogo(props: Props) {
   const network = await getSingleNetwork(props.params.network);
   if (!network) notFound();
 
-  // TODO : use the css returned from the API
-  const bgGradientCSS = `linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%)`;
-
   return (
     <div className="flex flex-col gap-8 items-center mt-44">
       <small className="uppercase text-lg ">MODULAR CLOUD</small>
@@ -20,7 +17,7 @@ export default async function NetworkLogo(props: Props) {
         <span
           className="text-transparent bg-clip-text"
           style={{
-            backgroundImage: bgGradientCSS,
+            backgroundImage: network.config.cssGradient,
           }}
         >
           {network.chainBrand}
