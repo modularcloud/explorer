@@ -123,7 +123,21 @@ export function truncateString(
   return `${start}....${end}`;
 }
 
+/**
+ * Make the 1st char fo a string uppercase and the other lowercase
+ * @param str
+ * @returns
+ */
 export function capitalize(str: string) {
   const firstChar = str.charAt(0);
-  return firstChar.toUpperCase() + str.substring(1);
+  return firstChar.toUpperCase() + str.substring(1).toLowerCase();
+}
+
+export function formatCurrencyToUSD(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumSignificantDigits: 3,
+    currency: "USD",
+    style: "currency",
+  }).format(value);
 }

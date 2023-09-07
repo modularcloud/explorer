@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useParams } from "next/navigation";
 import { Card } from "~/ui/card";
-import clsx from "clsx";
+import { cn } from "~/ui/shadcn/utils";
 import { TransactionHistory } from "~/ui/network-widgets/widgets/transaction-history";
 
 interface Props {
@@ -66,7 +66,7 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
         // @ts-expect-error this is a CSS variable
         "--color-primary": mainColor,
       }}
-      className={clsx(
+      className={cn(
         "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px]",
         "w-full gap-4 font-medium",
         "accent-primary",
@@ -108,7 +108,7 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
 function Placeholder(props: { className?: string; isLoading?: boolean }) {
   return (
     <div
-      className={clsx(props.className, "bg-muted/20 rounded-lg", {
+      className={cn(props.className, "bg-muted/20 rounded-lg", {
         "animate-pulse": props.isLoading,
       })}
     />
