@@ -33,7 +33,7 @@ export function AreaChart({
   } | null>(null);
   const [tooltipValue, setTooltipValue] = React.useState<number | null>(null);
 
-  // Keep all the dots values inside
+  // Keep all the dots values inside a ref because they are not directly related to rendering
   const dots = React.useRef<{ x: number; y: number }[]>([]);
 
   return (
@@ -42,10 +42,10 @@ export function AreaChart({
         data={data}
         onMouseMove={(e) => {
           if (dots.current.length > 0 && e.activeTooltipIndex !== undefined) {
-            const currentDot = dots.current[e.activeTooltipIndex];
-
-            if (currentDot) {
-              const { x, y } = currentDot;
+            // get the
+            const currentActiveDot = dots.current[e.activeTooltipIndex];
+            if (currentActiveDot) {
+              const { x, y } = currentActiveDot;
               if (tooltipPosition?.x !== x || tooltipPosition.y !== y) {
                 setTooltipPosition({ x, y });
               }
@@ -136,8 +136,8 @@ export function AreaChart({
         />
         <Area
           activeDot={({ cx, cy, index }) => {
+            // set fixed dots index for the current dot
             dots.current[index] = { x: cx, y: cy };
-
             return (
               <circle
                 cx={cx}
