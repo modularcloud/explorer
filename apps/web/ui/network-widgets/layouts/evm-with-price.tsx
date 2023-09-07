@@ -4,6 +4,17 @@ import { useParams } from "next/navigation";
 import { Card } from "~/ui/card";
 import { cn } from "~/ui/shadcn/utils";
 import { TransactionHistory } from "~/ui/network-widgets/widgets/transaction-history";
+import {
+  BarChart,
+  Clock,
+  Disabled,
+  Document,
+  Folder,
+  Gas,
+  Globe,
+  UsdCoin,
+} from "~/ui/icons";
+import { IconCard } from "~/ui/network-widgets/widgets/icon-card";
 
 interface Props {
   mainColor: string;
@@ -69,7 +80,7 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
       className={cn(
         "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px]",
         "w-full gap-4 font-medium",
-        "accent-primary",
+        "accent-primary place-items-stretch",
       )}
     >
       <TransactionHistory
@@ -77,27 +88,45 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
       />
 
-      <Card className="lg:row-start-1 lg:col-start-1">WALLET ADRESSES</Card>
-      <Card className="lg:row-start-1 lg:col-start-2">AVG BLOCK TIME</Card>
+      <IconCard
+        className="lg:row-start-1 lg:col-start-1"
+        label="WALLET ADRESSES"
+        icon={Folder}
+        value="160,275"
+      />
+      <IconCard
+        className="lg:row-start-1 lg:col-start-2"
+        label="Avg Block Time"
+        icon={Clock}
+        value="0.353 seconds"
+      />
       <Card className="col-span-2 row-span-2 lg:row-start-2">TRANSACTIONS</Card>
 
-      <Card className="lg:row-start-1 lg:col-start-3">TOTAL BLOCKS</Card>
+      <IconCard
+        className="lg:row-start-1 lg:col-start-3"
+        label="TOTAL BLOCKS"
+        icon={Disabled}
+        value="5,479,579"
+      />
 
       <Placeholder className="col-span-1 row-span-1 hidden lg:block lg:row-start-2" />
 
-      <Card className="lg:col-span-2 lg:row-start-3 lg:col-start-3">
-        CONTRACTS DEPLOYED
-      </Card>
+      <IconCard
+        className="lg:col-span-2 lg:row-start-3 lg:col-start-3"
+        label="CONTRACTS DEPLOYED"
+        icon={Document}
+        value="225"
+      />
 
-      <Card>TOTAL TRANSACTIONS</Card>
+      <IconCard label="TOTAL TRANSACTIONS" icon={BarChart} value="298,739" />
 
-      <Card>ZPC PRICE</Card>
+      <IconCard label="ZBC PRICE" icon={UsdCoin} value="$0.0118" />
 
       <Placeholder className="lg:col-span-2 row-span-1 hidden lg:block" />
       <Placeholder className="col-span-1 row-span-1 hidden lg:block" />
 
-      <Card>MARKET CAP</Card>
-      <Card>GAS PRICE</Card>
+      <IconCard label="MARKET CAP" icon={Globe} value="$8,289,757.70" />
+      <IconCard label="GAS PRICE" icon={Gas} value="30 Gwei ($3.55e-10)" />
       <Card className="col-span-2 row-span-2 md:row-start-4 lg:col-start-4">
         LATEST BLOCKS
       </Card>
