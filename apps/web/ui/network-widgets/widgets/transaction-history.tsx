@@ -7,34 +7,15 @@ import { formatCurrencyToUSD } from "~/lib/utils";
 interface Props {
   className?: string;
   mainColor: string;
+  data: {
+    x: string;
+    y: number; // USD
+  }[];
 }
-
-const data = [
-  {
-    time: "Apr 08",
-    volume: 4000,
-  },
-  {
-    time: "Apr 15",
-    volume: 2000,
-  },
-  {
-    time: "Apr 20",
-    volume: 27800,
-  },
-  {
-    time: "Apr 24",
-    volume: 23900,
-  },
-  {
-    time: "Apr 29",
-    volume: 34900,
-  },
-];
 
 export function TransactionHistory(props: Props) {
   return (
-    <Card className={cn("flex flex-col", props.className)}>
+    <Card className={cn("flex flex-col p-0", props.className)}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Transaction History</p>
         <span className="text-muted font-normal">Last 14 Days</span>
@@ -44,7 +25,7 @@ export function TransactionHistory(props: Props) {
           mainColor={props.mainColor}
           valueFormatter={formatCurrencyToUSD}
           tooltipValueFormatter={(val) => `$` + val}
-          data={data.map((datum) => ({ x: datum.time, y: datum.volume }))}
+          data={props.data}
         />
       </div>
     </Card>

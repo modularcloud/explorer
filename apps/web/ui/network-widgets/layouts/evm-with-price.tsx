@@ -3,7 +3,6 @@ import * as React from "react";
 import { useParams } from "next/navigation";
 import { Card } from "~/ui/card";
 import { cn } from "~/ui/shadcn/utils";
-import { TransactionHistory } from "~/ui/network-widgets/widgets/transaction-history";
 import {
   BarChart,
   Clock,
@@ -15,6 +14,15 @@ import {
   UsdCoin,
 } from "~/ui/icons";
 import { IconCard } from "~/ui/network-widgets/widgets/icon-card";
+import { TransactionHistory } from "~/ui/network-widgets/widgets/transaction-history";
+import {
+  LatestTransactions,
+  type TransactionRow,
+} from "~/ui/network-widgets/widgets/latest-transactions";
+import {
+  LatestBlocks,
+  type BlockRow,
+} from "~/ui/network-widgets/widgets/latest-blocks";
 
 interface Props {
   mainColor: string;
@@ -67,6 +75,70 @@ function EvmWithPriceSkeleton() {
   );
 }
 
+// TODO : remove this
+const transactionHistoryDummyData = [
+  {
+    time: "Apr 08",
+    volume: 4000,
+  },
+  {
+    time: "Apr 15",
+    volume: 2000,
+  },
+  {
+    time: "Apr 20",
+    volume: 27800,
+  },
+  {
+    time: "Apr 24",
+    volume: 23900,
+  },
+  {
+    time: "Apr 29",
+    volume: 34900,
+  },
+];
+
+const transactionRows: TransactionRow[] = [
+  {
+    hash: "E9A41C60FA1DCBA5B9CE5434341dkeugfouyrgofihenrlflierherhu",
+    success: true,
+    type: "Get reward",
+  },
+  { hash: "E9A41C60FA1DCBA5B9CE5434342", success: false, type: "Pay for data" },
+  { hash: "E9A41C60FA1DCBA5B9CE5434343", success: true, type: "Delegate" },
+  { hash: "E9A41C60FA1DCBA5B9CE5434344", success: false, type: "Pay for data" },
+  { hash: "E9A41C60FA1DCBA5B9CE5434345", success: true, type: "Get reward" },
+];
+
+const blockRows: BlockRow[] = [
+  {
+    number: 1851531,
+    noOfTransactions: 50,
+    timestamp: Date.now(),
+  },
+  {
+    number: 1851532,
+    noOfTransactions: 30,
+    timestamp: Date.now(),
+  },
+  {
+    number: 1851533,
+    noOfTransactions: 40,
+    timestamp: Date.now(),
+  },
+  {
+    number: 1851534,
+    noOfTransactions: 50,
+    timestamp: Date.now(),
+  },
+  {
+    number: 1851535,
+    noOfTransactions: 50,
+    timestamp: Date.now(),
+  },
+];
+
 export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
   const params = useParams();
   const network = params.network as string;
@@ -86,6 +158,10 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
       <TransactionHistory
         mainColor={mainColor}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+        data={transactionHistoryDummyData.map((datum) => ({
+          x: datum.time,
+          y: datum.volume,
+        }))}
       />
 
       <IconCard
@@ -100,7 +176,10 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
         icon={Clock}
         value="0.353 seconds"
       />
-      <Card className="col-span-2 row-span-2 lg:row-start-2">TRANSACTIONS</Card>
+      <LatestTransactions
+        className="col-span-2 row-span-2 lg:row-start-2"
+        data={transactionRows}
+      />
 
       <IconCard
         className="lg:row-start-1 lg:col-start-3"
@@ -127,9 +206,10 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
 
       <IconCard label="MARKET CAP" icon={Globe} value="$8,289,757.70" />
       <IconCard label="GAS PRICE" icon={Gas} value="30 Gwei ($3.55e-10)" />
-      <Card className="col-span-2 row-span-2 md:row-start-4 lg:col-start-4">
-        LATEST BLOCKS
-      </Card>
+      <LatestBlocks
+        className="col-span-2 row-span-2 md:row-start-4 lg:col-start-4"
+        data={blockRows}
+      />
     </div>
   );
 }
