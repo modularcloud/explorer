@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import clsx from "clsx";
 
 import type { OptionGroups } from "~/lib/utils";
+import { Tooltip } from "../tooltip";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -39,7 +40,13 @@ export function Search({ optionGroups }: Props) {
       >
         <div className="inline-flex gap-2 items-center">
           <span>{network.displayName}</span>
-          {network.verified && <FancyCheck className="text-primary" />}
+          {network.verified && (
+            <Tooltip label="This chain is verified">
+              <span>
+                <FancyCheck className="text-primary" />
+              </span>
+            </Tooltip>
+          )}
         </div>
         <div>
           <Recycle className="text-muted" />
