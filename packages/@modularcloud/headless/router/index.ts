@@ -1,10 +1,5 @@
-type PageConfig = {
-  type: "test1" | "test2";
-  payload: any;
-};
-
 type RouteNode = {
-  config?: PageConfig;
+  resolver?: string;
   staticChildren: { [key: string]: RouteNode };
   dynamicChild?: RouteNode;
   dynamicSegmentKeys: string[];
@@ -22,7 +17,7 @@ function extractDynamicSegment(segment: string): string | null {
   return match ? match[1] : null;
 }
 
-export function addRoute(path: string[], config: PageConfig) {
+export function addRoute(path: string[], resolver: string) {
   let currentNode = root;
   let dynamicSegmentNames: string[] = [];
 
@@ -38,9 +33,9 @@ export function addRoute(path: string[], config: PageConfig) {
     currentNode = handleStaticSegment(currentNode, segment);
   }
 
-  checkForDuplicateRoute(currentNode, config, path);
+  checkForDuplicateRoute(currentNode, resolver, path);
   currentNode.dynamicSegmentKeys = dynamicSegmentNames;
-  currentNode.config = config;
+  currentNode.resolver = resolver;
 }
 
 function handleDynamicSegment(node: RouteNode) {
@@ -63,12 +58,12 @@ function handleStaticSegment(node: RouteNode, segment: string) {
 
 function checkForDuplicateRoute(
   node: RouteNode,
-  config: PageConfig,
+  resolver: string,
   path: string[],
 ) {
-  if (node.config) {
+  if (node.resolver) {
     throw new Error(
-      `Duplicate route: ${config.type} at ${path.join("/")} not added.`,
+      `Duplicate route: ${resolver} at ${path.join("/")} not added.`,
     );
   }
 }
@@ -79,7 +74,7 @@ function zip(a: string[], b: string[]): [string, string][] {
 
 export function matchRoute(
   path: string[],
-): (PageConfig & { params: { [key: string]: string } }) | null {
+): ({ resolver: string, params: { [key: string]: string } }) | null {
   let currentNode = root;
   const dynamicSegmentValues: string[] = [];
 
@@ -94,12 +89,12 @@ export function matchRoute(
     }
   }
 
-  if (!currentNode.config) {
+  if (!currentNode.resolver) {
     return null;
   }
 
   return {
-    ...currentNode.config,
+    resolver: currentNode.resolver,
     params: Object.fromEntries(
       zip(currentNode.dynamicSegmentKeys, dynamicSegmentValues),
     ),
