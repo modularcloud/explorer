@@ -23,6 +23,7 @@ export const singleNetworkSchema = z.object({
     cssGradient: z
       .string()
       .optional()
+      // this value is directly used as `background-image: linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%);`
       .default(`linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%)`),
   }),
   paidVersion: z.boolean(),
