@@ -18,6 +18,7 @@ export const singleNetworkSchema = z.object({
       .enum(["EvmWithPrice", "EvmWithoutPrice"])
       .optional()
       .default("EvmWithPrice"),
+    // This is in HSL format, and is used like this : hsl("224 94% 51%")
     primaryColor: z.string().optional().default("224 94% 51%"),
     cssGradient: z
       .string()
