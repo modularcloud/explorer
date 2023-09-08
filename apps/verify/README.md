@@ -72,7 +72,7 @@ Description:
 
 Verifies the provided smart contract code against the deployed contract address. This endpoint is used to ensure that the deployed contract matches the submitted source code. 
 
-Request Body :
+Request Body:
 
 ```json
 {
@@ -108,7 +108,7 @@ Responses:
 	-	eg: 
 	```
 	 { "result": [ { "address": "0x123f681646d4a755815f9cb19e1acc8565a0c2ac", "chainId": "1", "status": "perfect", "libraryMap": { "lib1": "0x3f681646d4a755815f9cb19e1acc8565a0c2ac", "lib2": "0x4f681646d4a755815f9cb19e1acc8565a0c2ac" } } ] }  
-- 400 Bad Request: It can be returned due to errors mentioned below 
+- 400 Bad Request: It can be returned due to the errors mentioned below 
 	- Unexpected token in JSON:
 		eg.: 
 		```
@@ -131,7 +131,7 @@ Responses:
 		{  "error":  "Couldn't extract files from the request. Please make sure you have added files"  }
 		 ```
 - 500 Internal Server Error:  
-	-	All the other errors including compilation mismatch and resource missing 
+	-	All the other errors including compilation mismatch and resources missing 
 
 **/api/contract-verification/persist-verified**
 
@@ -142,7 +142,7 @@ POST
 Description: 
 This endpoint is used to persist the verified contracts in the database. 
 
-Request Body :
+Request Body:
  ``` 
  {"verificationStatus": "string",
   "contractAddress": "string",
@@ -152,8 +152,8 @@ Request Body :
  ```
  The body of the request must be a JSON object with the following properties:
 - verificationStatus: Indicates  whether the contract is fully verified or partially verified 
-- contractAddress:The smart contract address Which has been verified.
-- chainId:The ID of the blockchain where the contract has been deployed.
+- contractAddress: The smart contract address Which has been verified.
+- chainId: The ID of the blockchain where the contract has been deployed.
 - isVerified:  Indicates whether the contract has been verified or not, with `true` representing a successful verification and `false` indicating a failed or incomplete verification.
 - uploadedUrl: Contains the URL where the files associated with the contract have been stored
 	
