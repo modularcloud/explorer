@@ -17,7 +17,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${capitalize(network.chainBrand)} - ModularCloud`,
-    // description: ``, // TODO... should be returned by the API ?
+    description: `A block explorer for the ${network.chainBrand} ecosystem.`,
   };
 }
 
