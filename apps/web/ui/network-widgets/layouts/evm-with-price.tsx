@@ -78,7 +78,7 @@ export function EvmWithPriceWidgetLayout({ mainColor }: Props) {
         "--color-primary": mainColor,
       }}
       className={cn(
-        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px]",
+        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",
         "w-full gap-4 font-medium",
         "accent-primary place-items-stretch",
       )}

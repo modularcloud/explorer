@@ -41,8 +41,8 @@ export function AreaChart({
       <RCAreaChart
         data={data}
         onMouseMove={(e) => {
+          // e.activeTooltipIndex correspond to the index of the current active dot
           if (dots.current.length > 0 && e.activeTooltipIndex !== undefined) {
-            // get the
             const currentActiveDot = dots.current[e.activeTooltipIndex];
             if (currentActiveDot) {
               const { x, y } = currentActiveDot;
@@ -152,6 +152,7 @@ export function AreaChart({
           type="monotone"
           dataKey="y"
           strokeWidth={2}
+          animationDuration={500}
           stroke={`hsl(${mainColor})`}
           fill="url(#gradient)"
         />
