@@ -1,6 +1,5 @@
 import * as React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Card } from "~/ui/card";
 import { cn } from "~/ui/shadcn/utils";
 import { ArrowOut, CheckCircle, XCircle } from "~/ui/icons";
@@ -8,18 +7,21 @@ import { ArrowOut, CheckCircle, XCircle } from "~/ui/icons";
 interface Props {
   className?: string;
   data: TransactionRow[];
+  networkSlug: string;
 }
 
-export function LatestTransactions({ className, data }: Props) {
-  const params = useParams();
-
+export function LatestTransactions({
+  className,
+  data,
+  networkSlug: network,
+}: Props) {
   const allData = data.slice(0, 5);
   return (
     <Card className={cn(className, "p-0")}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Latest Transactions</p>
         <Link
-          href={`/${params.network}/latest/transactions`}
+          href={`/${network}/latest/transactions`}
           className={cn(
             "rounded-md border border-mid-dark-100 py-2 px-3",
             "focus:border-primary outline-none",
@@ -36,7 +38,7 @@ export function LatestTransactions({ className, data }: Props) {
           <li key={tr.hash}>
             <TransactionRow
               {...tr}
-              network={params.network as string}
+              network={network}
               className={cn(
                 index === 4 && "focus:rounded-b-md [&:not(:focus)]:border-none",
               )}

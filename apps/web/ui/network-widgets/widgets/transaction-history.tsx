@@ -1,17 +1,41 @@
+"use client";
 import * as React from "react";
 import { Card } from "~/ui/card";
 import { AreaChart } from "~/ui/area-chart";
 import { cn } from "~/ui/shadcn/utils";
-import { formatCurrencyToUSD } from "~/lib/utils";
 
 interface Props {
   className?: string;
   mainColor: string;
   data: {
-    x: string;
-    y: number; // USD
+    time: string;
+    volume: number; // USD
   }[];
 }
+
+export function formatCurrencyToUSD(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumSignificantDigits: 3,
+    maximumFractionDigits: 2,
+    currency: "USD",
+    style: "currency",
+  }).format(value);
+}
+
+const scaleValueFormatter = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumSignificantDigits: 3,
+  currency: "USD",
+  style: "currency",
+});
+
+const tooltipValueFormatter = new Intl.NumberFormat("en-US", {
+  maximumSignificantDigits: 6,
+  maximumFractionDigits: 3,
+  currency: "USD",
+  style: "currency",
+});
 
 export function TransactionHistory(props: Props) {
   return (
@@ -23,9 +47,12 @@ export function TransactionHistory(props: Props) {
       <div className="pr-4 py-4 h-full">
         <AreaChart
           mainColor={props.mainColor}
-          valueFormatter={formatCurrencyToUSD}
-          tooltipValueFormatter={(val) => `$` + val}
-          data={props.data}
+          valueFormatter={(val) => scaleValueFormatter.format(val)}
+          tooltipValueFormatter={(val) => tooltipValueFormatter.format(val)}
+          data={props.data.map((datum) => ({
+            x: datum.time,
+            y: datum.volume,
+          }))}
         />
       </div>
     </Card>

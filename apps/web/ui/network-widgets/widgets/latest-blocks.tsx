@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,19 +15,18 @@ export type BlockRow = {
 
 interface Props {
   className?: string;
+  networkSlug: string;
   data: BlockRow[];
 }
 
-export function LatestBlocks({ className, data }: Props) {
-  const params = useParams();
-
+export function LatestBlocks({ className, data, networkSlug: network }: Props) {
   const allData = data.slice(0, 5);
   return (
     <Card className={cn(className, "p-0")}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Latests Blocks</p>
         <Link
-          href={`/${params.network}/latest/blocks`}
+          href={`/${network}/latest/blocks`}
           className={cn(
             "rounded-md border border-mid-dark-100 py-2 px-3",
             "focus:border-primary outline-none",
@@ -43,7 +43,7 @@ export function LatestBlocks({ className, data }: Props) {
           <li key={tr.number} className="flex-1">
             <BlockRow
               {...tr}
-              network={params.network as string}
+              network={network}
               className={cn(
                 index === 4 && "focus:rounded-b-md [&:not(:focus)]:border-none",
               )}
@@ -74,7 +74,10 @@ function BlockRow(props: TransactionRowProps) {
       )}
     >
       <p>{props.number}</p>
-      <p className="truncate">{props.noOfTransactions} Transactions</p>
+      <p className="truncate">
+        {props.noOfTransactions} transaction
+        {props.noOfTransactions > 1 ? "s" : ""}
+      </p>
 
       <ClientTime time={props.timestamp} className="flex-shrink-0 text-muted" />
     </Link>
