@@ -323,7 +323,7 @@ export async function EvmWithPriceWidgetLayout({ network }: Props) {
 function Placeholder(props: { className?: string; isLoading?: boolean }) {
   return (
     <div
-      className={cn(props.className, "bg-muted/20 rounded-lg", {
+      className={cn(props.className, "bg-muted-100 rounded-lg", {
         "animate-pulse": props.isLoading,
       })}
     />
