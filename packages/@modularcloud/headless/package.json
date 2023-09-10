@@ -14,6 +14,10 @@
         "test": "jest",
         "lint": "TIMING=1 eslint \"**/*.ts*\""
     },
+    "dependencies": {
+        "@modularcloud-resolver/core": "*",
+        "zod": "^3.22.2"
+    },
     "devDependencies": {
         "@types/jest": "^29.5.3",
         "eslint": "^7.32.0",
