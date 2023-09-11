@@ -1,11 +1,10 @@
-"use client";
 import * as React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Card } from "~/ui/card";
 import { cn } from "~/ui/shadcn/utils";
 import { ArrowOut } from "~/ui/icons";
-import { ClientTime } from "~/ui/tables/time";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 export type BlockRow = {
   number: number;
@@ -24,7 +23,7 @@ export function LatestBlocks({ className, data, networkSlug: network }: Props) {
   return (
     <Card className={cn(className, "p-0")}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
-        <p className="text-lg">Latests Blocks</p>
+        <p className="text-lg">Latest Blocks</p>
         <Link
           href={`/${network}/latest/blocks`}
           className={cn(
@@ -60,6 +59,8 @@ interface TransactionRowProps extends BlockRow {
   network: string;
 }
 function BlockRow(props: TransactionRowProps) {
+  dayjs.extend(relativeTime);
+
   return (
     <Link
       href={`/${props.network}/block/${props.number}`}
@@ -79,7 +80,16 @@ function BlockRow(props: TransactionRowProps) {
         {props.noOfTransactions > 1 ? "s" : ""}
       </p>
 
-      <ClientTime time={props.timestamp} className="flex-shrink-0 text-muted" />
+      {/* 
+        We render the time directly in the server because we are in edge runtime,
+        and most of the time, the edge location is not far from the user
+       */}
+      <time
+        dateTime={new Date(props.timestamp).toISOString()}
+        className="flex-shrink-0 text-muted"
+      >
+        {dayjs(props.timestamp).fromNow()}
+      </time>
     </Link>
   );
 }
