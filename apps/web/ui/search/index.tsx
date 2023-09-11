@@ -4,8 +4,8 @@ import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { useParams } from "next/navigation";
 import clsx from "clsx";
 
+import { Tooltip } from "~/ui/tooltip";
 import type { OptionGroups } from "~/lib/utils";
-import { Tooltip } from "../tooltip";
 
 interface Props {
   optionGroups: OptionGroups;
