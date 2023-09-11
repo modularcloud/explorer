@@ -24,7 +24,7 @@ export default async function HomeLayout({
 
   return (
     <main
-      className="min-h-screen flex flex-col justify-between container mx-auto h-full"
+      className="min-h-screen flex flex-col justify-between container mx-auto h-full gap-14"
       style={{
         backgroundImage: "url(/images/home-layout-vector.svg)",
         backgroundPosition: "top center",
