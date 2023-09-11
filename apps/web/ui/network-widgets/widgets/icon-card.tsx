@@ -15,8 +15,8 @@ export function IconCard({ icon: Icon, label, value, className }: Props) {
       <div className="rounded-md border border-mid-dark-100 p-3">
         <Icon className="h-5 w-5 text-primary" />
       </div>
-      <p className="text-muted uppercase">{label}</p>
-      <p>{value}</p>
+      <p className="text-muted uppercase text-sm">{label}</p>
+      <p className="text-lg tracking-[-0.01125rem]">{value}</p>
     </Card>
   );
 }
