@@ -6,14 +6,13 @@ import { LongVal } from "~/ui/long-val";
 import Image from "next/image";
 import SvgGreenTick from "~/ui/icons/GreenTick";
 import SvgRedCross from "~/ui/icons/RedCross";
-import { CopyableValue } from "~/ui/copyable";
 
 export function CellBox({ value }: { value: Cell }) {
   if (value.type === "badge") {
     return <Badge text={value.payload.text} extra={value.payload.extraCount} />;
   }
   if (value.type === "standard") {
-    return value.payload ? <CopyableValue value={value.payload} /> : <></>;
+    return <>{String(value.payload)}</>;
   }
   if (value.type === "status") {
     return <Status status={value.payload} />;
@@ -28,19 +27,16 @@ export function CellBox({ value }: { value: Cell }) {
   }
   if (value.type === "longval") {
     return (
-      <CopyableValue value={value.payload.value}>
         <LongVal
           value={value.payload.value}
           max={value.payload.maxLength ?? 50}
           step={value.payload.stepDown ?? 10}
           strategy={value.payload.strategy}
         />
-      </CopyableValue>
     );
   }
   if (value.type === "block") {
     return (
-      <CopyableValue value={value.payload.number}>
         <div className="flex flex-nowrap whitespace-nowrap">
           {value.payload.number}
           <CompactDate
@@ -48,7 +44,6 @@ export function CellBox({ value }: { value: Cell }) {
             datetime={value.payload.timestamp}
           />
         </div>
-      </CopyableValue>
     );
   }
   if (value.type === "image") {
