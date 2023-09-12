@@ -241,7 +241,7 @@ export async function EvmWithPriceWidgetLayout({ network }: Props) {
       )}
 
       <TransactionHistory
-        mainColor={network.config.primaryColor}
+        brandColor={network.config.primaryColor}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
         data={transactionHistoryData}
       />

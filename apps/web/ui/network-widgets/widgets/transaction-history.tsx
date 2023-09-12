@@ -6,7 +6,7 @@ import { cn } from "~/ui/shadcn/utils";
 
 interface Props {
   className?: string;
-  mainColor: string;
+  brandColor: string;
   data: {
     time: string;
     volume: number; // USD
@@ -46,7 +46,7 @@ export function TransactionHistory(props: Props) {
       </header>
       <div className="pr-4 py-4 h-full">
         <AreaChart
-          mainColor={props.mainColor}
+          brandColor={props.brandColor}
           valueFormatter={(val) => scaleValueFormatter.format(val)}
           tooltipValueFormatter={(val) => tooltipValueFormatter.format(val)}
           data={props.data.map((datum) => ({

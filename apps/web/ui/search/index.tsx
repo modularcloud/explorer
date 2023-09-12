@@ -5,8 +5,11 @@ import { useParams } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
 
 import { Tooltip } from "~/ui/tooltip";
-import type { OptionGroups } from "~/lib/utils";
 import { SearchModal } from "./search-modal";
+
+import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+
+import type { OptionGroups } from "~/lib/utils";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -20,11 +23,16 @@ export function Search({ optionGroups }: Props) {
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
+  // OUR DEFAULT BRAND COLOR is this ONE
+  const primaryColor = !!params.network
+    ? network.primaryColor!
+    : DEFAULT_BRAND_COLOR;
+
   return (
     <div
       style={{
         // @ts-expect-error this is a CSS variable
-        "--color-primary": network.primaryColor,
+        "--color-primary": primaryColor,
       }}
       className={cn(
         "flex items-center rounded-lg border border-mid-dark-100 bg-white max-w-[450px] w-full mx-auto",
@@ -32,7 +40,7 @@ export function Search({ optionGroups }: Props) {
         "shadow-sm",
       )}
     >
-      <SearchModal network={network}>
+      <SearchModal network={network} brandColor={primaryColor}>
         <button
           className={cn(
             "px-4 py-2 border-r border-mid-dark-100 rounded-l-lg font-medium",

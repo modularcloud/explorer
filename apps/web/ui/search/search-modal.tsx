@@ -16,9 +16,10 @@ import type { SearchOption } from "~/lib/utils";
 interface Props {
   network: SearchOption;
   children?: React.ReactNode;
+  brandColor: string;
 }
 
-export function SearchModal({ network, children }: Props) {
+export function SearchModal({ network, children, brandColor }: Props) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -29,7 +30,7 @@ export function SearchModal({ network, children }: Props) {
           className="flex flex-col gap-1"
           style={{
             // @ts-expect-error this is a CSS variable
-            "--color-primary": network.primaryColor,
+            "--color-primary": brandColor,
           }}
         >
           <div className="flex">
