@@ -50,6 +50,7 @@ export { default as Recycle } from "./Recycle";
 export { default as RedCross } from "./RedCross";
 export { default as RightSidebarOff } from "./RightSidebarOff";
 export { default as RightSidebarOn } from "./RightSidebarOn";
+export { default as Search } from "./Search";
 export { default as SearchOff } from "./SearchOff";
 export { default as SearchOn } from "./SearchOn";
 export { default as Spinner } from "./Spinner";

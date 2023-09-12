@@ -11,7 +11,7 @@ interface Props {
 
 export function IconCard({ icon: Icon, label, value, className }: Props) {
   return (
-    <Card className={cn(className, "flex flex-col gap-4 items-start")}>
+    <Card className={cn("flex flex-col gap-4 items-start", className)}>
       <div className="rounded-md border border-mid-dark-100 p-3">
         <Icon className="h-5 w-5 text-primary" />
       </div>
