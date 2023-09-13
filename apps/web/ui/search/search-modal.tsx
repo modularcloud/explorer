@@ -131,24 +131,26 @@ function IntegrationGridView({
       rowIndex?: number;
       colIndex?: number;
     }) => {
-      setSelectedRowIndex((prev) => {
-        if (rowIndex !== undefined) return rowIndex;
-        return prev;
-      });
-      setSelectedColIndex((prev) => {
-        if (colIndex !== undefined) return colIndex;
-        return prev;
-      });
+      // we default to the ref values as they have the previous values in store
+      const newRowIndex =
+        rowIndex !== undefined
+          ? rowIndex
+          : selectedItemPositionRef.current.rowIndex;
+      const newColIndex =
+        colIndex !== undefined
+          ? colIndex
+          : selectedItemPositionRef.current.colIndex;
+
+      setSelectedRowIndex(newRowIndex);
+      setSelectedColIndex(newColIndex);
       setSelectedOption(option);
 
       // Sync this ref state, so that the values we use inside of the `useEffect` are up to date
-      selectedItemPositionRef.current.option = option;
-      if (rowIndex !== undefined) {
-        selectedItemPositionRef.current.rowIndex = rowIndex;
-      }
-      if (colIndex !== undefined) {
-        selectedItemPositionRef.current.colIndex = colIndex;
-      }
+      selectedItemPositionRef.current = {
+        option,
+        rowIndex: newRowIndex,
+        colIndex: newColIndex,
+      };
     },
     [],
   );
@@ -258,11 +260,6 @@ function IntegrationGridView({
       // navigation between the same group
       const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex + 1];
 
-      console.log({
-        _,
-        nextGroupOptions,
-      });
-
       let nextOption = nextGroupOptions[selectedOptionIndex];
       if (!nextOption) {
         nextOption = nextGroupOptions[0];
@@ -289,11 +286,6 @@ function IntegrationGridView({
       // navigation between the same group
       const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex - 1];
 
-      console.log({
-        _,
-        nextGroupOptions,
-      });
-
       let nextOption = nextGroupOptions[selectedOptionIndex];
       if (!nextOption) {
         nextOption = nextGroupOptions[0];
@@ -306,6 +298,22 @@ function IntegrationGridView({
     }
   }, [groupedByLines, selectOption]);
 
+  const scrollOptionIntoView = React.useCallback(() => {
+    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    if (option) {
+      // scroll option into view
+      const element = document.getElementById(
+        `row-${rowIndex}-col-${colIndex}-option-${option.slug}`,
+      ) as HTMLDivElement | null;
+
+      element?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "start",
+      });
+    }
+  }, []);
+
   React.useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       // Prevent scrolling
@@ -316,9 +324,11 @@ function IntegrationGridView({
       switch (e.key) {
         case "ArrowUp":
           moveSelectionUp();
+          scrollOptionIntoView();
           break;
         case "ArrowDown":
           moveSelectionDown();
+          scrollOptionIntoView();
           break;
         case "ArrowLeft":
           moveSelectionLeft();
@@ -387,7 +397,8 @@ function IntegrationGridView({
                         selectedRowIndex == rowIndex;
                       return (
                         <div
-                          key={`option-${option.slug}`}
+                          id={`row-${rowIndex}-col-${colIndex}-option-${option.slug}`}
+                          key={`row-${rowIndex}-col-${colIndex}-option-${option.slug}`}
                           onMouseEnter={() => {
                             selectOption({ option, rowIndex, colIndex });
                           }}
