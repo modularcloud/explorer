@@ -36,6 +36,7 @@ export { default as FancyCheck } from "./FancyCheck";
 export { default as Folder } from "./Folder";
 export { default as Gas } from "./Gas";
 export { default as Globe } from "./Globe";
+export { default as GlobeCyber } from "./GlobeCyber";
 export { default as GreenTick } from "./GreenTick";
 export { default as ListView } from "./ListView";
 export { default as ListViewOff } from "./ListViewOff";

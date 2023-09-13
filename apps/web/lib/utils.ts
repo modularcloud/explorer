@@ -87,20 +87,14 @@ export async function fetchLoad(props: FetchLoadArgs) {
 
 export type SearchOption = {
   displayName: string;
+  brandName: string;
   verified?: boolean;
   primaryColor?: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
-  id: string;
+  slug: string;
 };
 export type OptionGroups = {
   [groupDisplayName: string]: SearchOption[];
-};
-export type Whitelabel = {
-  name: [string] | [string, string];
-  searchOptions: OptionGroups;
-  defaultNetwork: string;
-  subText?: string;
-  env: string;
 };
 
 export function slugify(str: string): string {

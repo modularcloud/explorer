@@ -10,6 +10,7 @@ import { SearchModal } from "./search-modal";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 import type { OptionGroups } from "~/lib/utils";
+import { Button } from "~/ui/button";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -20,7 +21,9 @@ export function Search({ optionGroups }: Props) {
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
-    return values.find((network) => network.id === params.network) ?? values[0];
+    return (
+      values.find((network) => network.slug === params.network) ?? values[0]
+    );
   }, [optionGroups, params.network]);
 
   // OUR DEFAULT BRAND COLOR is this ONE
@@ -40,14 +43,12 @@ export function Search({ optionGroups }: Props) {
         "shadow-sm",
       )}
     >
-      <SearchModal network={network} brandColor={primaryColor}>
-        <button
-          className={cn(
-            "px-4 py-2 border-r border-mid-dark-100 rounded-l-lg font-medium",
-            "hover:bg-muted/5 transition duration-200",
-            "inline-flex gap-4 items-center",
-          )}
-        >
+      <SearchModal
+        network={network}
+        brandColor={primaryColor}
+        optionGroups={optionGroups}
+      >
+        <Button className={cn("border-r rounded-r-none")}>
           <div className="inline-flex gap-2 items-center">
             <span>{network.displayName}</span>
             {network.verified && (
@@ -61,7 +62,7 @@ export function Search({ optionGroups }: Props) {
           <div>
             <Recycle className="text-muted" />
           </div>
-        </button>
+        </Button>
       </SearchModal>
 
       <div
