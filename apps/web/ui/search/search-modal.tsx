@@ -81,49 +81,268 @@ export function SearchModal({
  */
 function IntegrationGridView({
   inputQuery,
+  onSelectOption,
   optionGroups,
   className,
-  onSelectChain,
 }: {
   inputQuery: string;
   optionGroups: OptionGroups;
   className?: string;
-  onSelectChain?: (chain: SearchOption) => void;
+  onSelectOption?: (chain: SearchOption) => void;
 }) {
-  const isOneColumn = useMediaQuery(`(max-width: 594px)`);
+  const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
-    `(min-width: 595px) and (max-width: 800px)`,
+    "(min-width: 595px) and (max-width: 800px)",
   );
-  const isThreeColumns = useMediaQuery(`(min-width: 900px)`);
-
-  const [selectedGroupIndex, setSelectedGroupIndex] = React.useState(0);
-  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
-  const [selectedOption, setSelectedOption] =
-    React.useState<SearchOption | null>(null);
+  const isThreeColumns = useMediaQuery("(min-width: 900px)");
 
   const noOfColumns = isOneColumn ? 1 : isTwoColumns ? 2 : 3;
 
   const groupedByLines = React.useMemo(
     () =>
       chunkArray(
-        // TODO : remove double entries
-        [
-          ...Object.entries(optionGroups),
-          // ...Object.entries(optionGroups)
-        ],
+        // TODO : remove double entries (they are only for testing)
+        [...Object.entries(optionGroups), ...Object.entries(optionGroups)],
         noOfColumns,
       ),
     [noOfColumns, optionGroups],
   );
 
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
+  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
+  const [selectedOption, setSelectedOption] =
+    React.useState<SearchOption | null>(null);
+
+  // BEWARE : BIG HACK !!!
+  // We store these values in double to avoid recreating the useEffect whenever one of them changes
+  const selectedItemPositionRef = React.useRef({
+    rowIndex: selectedRowIndex,
+    colIndex: selectedColIndex,
+    option: selectedOption,
+  });
+
   const selectOption = React.useCallback(
-    (option: SearchOption | null, rowIndex: number, colIndex: number) => {
-      setSelectedGroupIndex(rowIndex);
-      setSelectedColIndex(colIndex);
+    ({
+      rowIndex,
+      colIndex,
+      option,
+    }: {
+      option: SearchOption | null;
+      rowIndex?: number;
+      colIndex?: number;
+    }) => {
+      setSelectedRowIndex((prev) => {
+        if (rowIndex !== undefined) return rowIndex;
+        return prev;
+      });
+      setSelectedColIndex((prev) => {
+        if (colIndex !== undefined) return colIndex;
+        return prev;
+      });
       setSelectedOption(option);
+
+      // Sync this ref state, so that the values we use inside of the `useEffect` are up to date
+      selectedItemPositionRef.current.option = option;
+      if (rowIndex !== undefined) {
+        selectedItemPositionRef.current.rowIndex = rowIndex;
+      }
+      if (colIndex !== undefined) {
+        selectedItemPositionRef.current.colIndex = colIndex;
+      }
     },
     [],
   );
+
+  /**
+   * 1- Navigating up/down has 3 cases :
+   *    - inside of the same column
+   *       ⮑ if the selectedOption index is between 0 and less than groupIndex - 1
+   *    - between rows
+   *       ⮑ when the selectedOption index is equal to groupIndex - 1, when change rows
+   *          and select the first item of the next row  if the key is ArrowDown
+   *          or the last item of previous row if the key is ArrowUp
+   *    - Stuck
+   *       ⮑  when there is no next row (for `ArrowDown`) or previous row (for `ArrowUp`)
+   */
+  const moveSelectionDown = React.useCallback(() => {
+    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+
+    let selectedOptionIndex = currentGroupOptions.findIndex(
+      (item) => item.slug === option?.slug,
+    );
+
+    if (selectedOptionIndex === -1) {
+      // we select the first element of the group if there is none selected
+      selectOption({
+        option: currentGroupOptions[0],
+        rowIndex: 0,
+        colIndex: 0,
+      });
+    } else if (
+      selectedOptionIndex >= 0 &&
+      selectedOptionIndex < currentGroupOptions.length - 1
+    ) {
+      // navigation between the same group
+      selectOption({
+        option: currentGroupOptions[selectedOptionIndex + 1],
+      });
+    } else if (rowIndex < groupedByLines.length - 1) {
+      // navigation between rows
+      const [_, nextGroupOptions] = groupedByLines[rowIndex + 1][colIndex];
+      selectOption({
+        option: nextGroupOptions[0],
+        rowIndex: rowIndex + 1,
+      });
+    }
+  }, [groupedByLines, selectOption]);
+
+  const moveSelectionUp = React.useCallback(() => {
+    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+
+    let selectedOptionIndex = currentGroupOptions.findIndex(
+      (item) => item.slug === option?.slug,
+    );
+
+    // we don't do anything here
+    if (selectedOptionIndex === -1) return;
+
+    if (
+      selectedOptionIndex > 0 &&
+      selectedOptionIndex <= currentGroupOptions.length - 1
+    ) {
+      // navigation between the same group
+      selectOption({
+        option: currentGroupOptions[selectedOptionIndex - 1],
+      });
+    } else if (rowIndex > 0) {
+      // navigation between rows
+      const [_, nextGroupOptions] = groupedByLines[rowIndex - 1][colIndex];
+
+      selectOption({
+        option: nextGroupOptions[nextGroupOptions.length - 1], // select last index of the row up
+        rowIndex: rowIndex - 1,
+      });
+    }
+  }, [groupedByLines, selectOption]);
+
+  /**
+   * 1- Navigating left/right has 2 cases :
+   *    - between columns
+   *       ⮑ when the column index is between 0 and groupedByLines[rowIndex] - 1, when change columns
+   *          and select the item in the same position on the nextGroup
+   *          if this position doesn't correspond to any item, we select the first item
+   *    - Stuck
+   *       ⮑  when there is no next column (for `ArrowRight`) or previous column (for `ArrowLeft`)
+   */
+  const moveSelectionRight = React.useCallback(() => {
+    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+
+    let selectedOptionIndex = currentGroupOptions.findIndex(
+      (item) => item.slug === option?.slug,
+    );
+
+    if (selectedOptionIndex === -1) {
+      // we select the first element of the group if there is none selected
+      selectOption({
+        option: currentGroupOptions[0],
+        rowIndex: 0,
+        colIndex: 0,
+      });
+    } else if (
+      colIndex >= 0 &&
+      colIndex < groupedByLines[rowIndex].length - 1
+    ) {
+      // navigation between the same group
+      const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex + 1];
+
+      console.log({
+        _,
+        nextGroupOptions,
+      });
+
+      let nextOption = nextGroupOptions[selectedOptionIndex];
+      if (!nextOption) {
+        nextOption = nextGroupOptions[0];
+      }
+
+      selectOption({
+        option: nextOption,
+        colIndex: colIndex + 1,
+      });
+    }
+  }, [groupedByLines, selectOption]);
+
+  const moveSelectionLeft = React.useCallback(() => {
+    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+
+    let selectedOptionIndex = currentGroupOptions.findIndex(
+      (item) => item.slug === option?.slug,
+    );
+
+    if (selectedOptionIndex === -1) return;
+
+    if (colIndex > 0 && colIndex <= groupedByLines[rowIndex].length - 1) {
+      // navigation between the same group
+      const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex - 1];
+
+      console.log({
+        _,
+        nextGroupOptions,
+      });
+
+      let nextOption = nextGroupOptions[selectedOptionIndex];
+      if (!nextOption) {
+        nextOption = nextGroupOptions[0];
+      }
+
+      selectOption({
+        option: nextOption,
+        colIndex: colIndex - 1,
+      });
+    }
+  }, [groupedByLines, selectOption]);
+
+  React.useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      // Prevent scrolling
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+      }
+
+      switch (e.key) {
+        case "ArrowUp":
+          moveSelectionUp();
+          break;
+        case "ArrowDown":
+          moveSelectionDown();
+          break;
+        case "ArrowLeft":
+          moveSelectionLeft();
+          break;
+        case "ArrowRight":
+          moveSelectionRight();
+          break;
+        default:
+          // we don't care for other key events
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", listener);
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, [
+    groupedByLines,
+    moveSelectionDown,
+    moveSelectionUp,
+    moveSelectionLeft,
+    moveSelectionRight,
+  ]);
 
   return (
     <div
@@ -165,21 +384,29 @@ function IntegrationGridView({
                       const isSelected =
                         selectedOption?.slug === option.slug &&
                         selectedColIndex === colIndex &&
-                        selectedGroupIndex == rowIndex;
+                        selectedRowIndex == rowIndex;
                       return (
                         <div
                           key={`option-${option.slug}`}
                           onMouseEnter={() => {
-                            selectOption(option, rowIndex, colIndex);
+                            selectOption({ option, rowIndex, colIndex });
                           }}
                           onFocus={() => {
-                            selectOption(option, rowIndex, colIndex);
+                            selectOption({ option, rowIndex, colIndex });
                           }}
                           onBlur={() => {
-                            selectOption(null, 0, 0);
+                            selectOption({
+                              option: null,
+                              rowIndex: 0,
+                              colIndex: 0,
+                            });
                           }}
                           onMouseLeave={() => {
-                            selectOption(null, 0, 0);
+                            selectOption({
+                              option: null,
+                              rowIndex: 0,
+                              colIndex: 0,
+                            });
                           }}
                           className={cn(
                             "pl-3 pr-1.5 py-1.5 flex justify-between items-center rounded-md",
