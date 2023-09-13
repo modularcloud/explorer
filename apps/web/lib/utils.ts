@@ -126,3 +126,44 @@ export function capitalize(str: string) {
   const firstChar = str.charAt(0);
   return firstChar.toUpperCase() + str.substring(1).toLowerCase();
 }
+
+/**
+ * Check if the child element overflows the parent
+ * @param parent
+ * @param child
+ * @returns
+ */
+export function isElementOverflowing(parent: HTMLElement, child: HTMLElement) {
+  const parentRect = parent.getBoundingClientRect();
+  const childRect = child.getBoundingClientRect();
+
+  // Check if the child overflows the parent in any direction
+  if (
+    childRect.left < parentRect.left ||
+    childRect.right > parentRect.right ||
+    childRect.top < parentRect.top ||
+    childRect.bottom > parentRect.bottom
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Group an array into chunks of specified size
+ * @example
+ *   chunkArray([1, 2, 3, 4, 5, 6, 7, 8, 9], 3) // returns: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+ *
+ * @param array
+ * @param chunkSize
+ * @returns
+ */
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  let result: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    let chunk = array.slice(i, i + chunkSize);
+    result.push(chunk);
+  }
+  return result;
+}
