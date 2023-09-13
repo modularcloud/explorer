@@ -16,6 +16,7 @@ interface Props {
 }
 
 /**
+ * FIXME : Bugs when resizing
  *  - the grid view is navigable with up/down/left/right arrows,
  *  - the grid should be navigable with mouse
  *  - the grid should be navigable with tab key (?)
