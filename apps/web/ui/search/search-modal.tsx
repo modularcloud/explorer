@@ -37,6 +37,10 @@ export function SearchModal({
   const [currentSelectedNetwork, setCurrentSelectedNetwork] =
     React.useState<SearchOption | null>(null);
 
+  const onSelectOption = React.useCallback((option: SearchOption) => {
+    setCurrentSelectedNetwork(option);
+  }, []);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -65,6 +69,7 @@ export function SearchModal({
         <IntegrationGridView
           optionGroups={optionGroups}
           inputQuery={inputValue}
+          onSelectOption={onSelectOption}
           className="max-h-[calc(100%-60px)] overflow-y-auto"
         />
       </DialogContent>

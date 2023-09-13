@@ -13,7 +13,6 @@ interface Props {
   optionGroups: OptionGroups;
   className?: string;
   onSelectOption?: (chain: SearchOption) => void;
-  onChangeSelectOption?: (chain: SearchOption) => void;
 }
 
 /**
@@ -256,14 +255,15 @@ export function IntegrationGridView({
     }
   }, []);
 
+  // Listen for keyboard events
   React.useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
+    const navigationListener = (event: KeyboardEvent) => {
       // Prevent scrolling
-      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-        e.preventDefault();
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
       }
 
-      switch (e.key) {
+      switch (event.key) {
         case "ArrowUp":
           moveSelectionUp();
           scrollOptionIntoView();
@@ -284,9 +284,20 @@ export function IntegrationGridView({
       }
     };
 
-    window.addEventListener("keydown", listener);
+    const keyUpListener = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        const { option } = selectedItemPositionRef.current;
+        if (option) {
+          onSelectOption?.(option);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", navigationListener);
+    window.addEventListener("keyup", keyUpListener);
     return () => {
-      window.removeEventListener("keydown", listener);
+      window.removeEventListener("keyup", keyUpListener);
+      window.removeEventListener("keydown", navigationListener);
     };
   }, [
     groupedByLines,
@@ -295,6 +306,7 @@ export function IntegrationGridView({
     moveSelectionLeft,
     moveSelectionRight,
     scrollOptionIntoView,
+    onSelectOption,
   ]);
 
   React.useEffect(() => {
@@ -355,9 +367,10 @@ export function IntegrationGridView({
                         selectedColIndex === colIndex &&
                         selectedRowIndex == rowIndex;
                       return (
-                        <div
+                        <button
                           id={`row-${rowIndex}-col-${colIndex}-option-${option.slug}`}
                           key={`row-${rowIndex}-col-${colIndex}-option-${option.slug}`}
+                          onClick={() => onSelectOption?.(option)}
                           onMouseEnter={() => {
                             selectOption({ option, rowIndex, colIndex });
                           }}
@@ -395,18 +408,17 @@ export function IntegrationGridView({
                           >
                             {capitalize(option.displayName)}
                           </span>
-                          <Button
-                            tabIndex={-1}
+                          <div
                             aria-hidden="true"
                             className={cn(
                               "opacity-0 transition-none bg-white",
-                              "hover:bg-white",
                               "group-aria-[selected=true]:opacity-100",
+                              "px-4 py-2 rounded-lg font-medium",
                             )}
                           >
                             Select
-                          </Button>
-                        </div>
+                          </div>
+                        </button>
                       );
                     })}
                   </div>
