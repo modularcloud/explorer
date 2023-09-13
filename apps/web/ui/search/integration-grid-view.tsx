@@ -13,10 +13,10 @@ interface Props {
   optionGroups: OptionGroups;
   className?: string;
   onSelectOption?: (chain: SearchOption) => void;
+  onChangeSelectOption?: (chain: SearchOption) => void;
 }
 
 /**
- * FIXME : Bugs when resizing
  *  - the grid view is navigable with up/down/left/right arrows,
  *  - the grid should be navigable with mouse
  *  - the grid should be navigable with tab key (?)
@@ -296,6 +296,21 @@ export function IntegrationGridView({
     moveSelectionRight,
     scrollOptionIntoView,
   ]);
+
+  React.useEffect(() => {
+    /**
+     * Reset the selection everytime the number of columns changes
+     * This is a fix for bugs when the window get resized
+     *   ⮑ this bug happens when there is an active selection and the number of columns get reduced (from 3 to 2 for ex)
+     *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
+     *      to fix it, we just reset the selected column to 0
+     */
+    selectOption({
+      option: null,
+      rowIndex: 0,
+      colIndex: 0,
+    });
+  }, [noOfColumns, selectOption]);
 
   return (
     <div
