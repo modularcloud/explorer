@@ -18,7 +18,7 @@ interface Props {
 export const Search = ({ optionGroups, defaultValue }: Props) => {
   const router = useRouter();
   const [option, setOption] = useState(
-    defaultValue ?? Object.values(optionGroups)[0][0].slug,
+    defaultValue ?? Object.values(optionGroups)[0][0].id,
   );
   const [isSearching, setIsSearching] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -52,7 +52,7 @@ export const Search = ({ optionGroups, defaultValue }: Props) => {
                               <Select.Item
                                 className="hover:text-ocean cursor-pointer outline-none"
                                 key={index}
-                                value={option.slug}
+                                value={option.id}
                               >
                                 <Select.ItemText>
                                   {option.displayName}

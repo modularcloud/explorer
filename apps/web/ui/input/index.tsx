@@ -7,12 +7,12 @@ export type InputProps = Omit<
 > & {
   inputClassName?: string;
   helpText?: string;
-  renderLeadingIcon?: (classNames: string) => JSX.Element;
-  renderTrailingIcon?: (classNames: string) => JSX.Element;
+  renderLeadingIcon?: (classNames: string) => React.ReactNode;
+  renderTrailingIcon?: (classNames: string) => React.ReactNode;
   size?: "small" | "medium" | "large";
 };
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
   function Input(
     {
       className,
@@ -43,6 +43,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             "flex w-full items-center gap-2 rounded-md border px-3",
             "bg-white shadow-sm focus-within:border",
             "ring-primary/20 focus-within:border-primary focus-within:ring-2",
+            "transition duration-150",
             {
               "py-2 px-2": size === "medium",
               "py-1 text-sm": size === "small",
@@ -51,9 +52,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             },
           )}
         >
-          <div className="inline-grid place-items-center p-1.5">
+          <div className="inline-grid place-items-center">
             {renderLeadingIcon?.(
-              cn("text-muted flex-shrink-0", {
+              cn("text-muted flex-shrink-0 m-1.5", {
                 "h-4 w-4": size !== "large",
                 "h-5 w-5": size === "large",
               }),

@@ -91,7 +91,7 @@ export type SearchOption = {
   verified?: boolean;
   primaryColor?: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
-  slug: string;
+  id: string;
 };
 export type OptionGroups = {
   [groupDisplayName: string]: SearchOption[];

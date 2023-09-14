@@ -17,7 +17,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       layout: currentValue.config.widgetLayout,
       verified: currentValue.paidVersion,
       displayName: currentValue.chainName,
-      slug: currentValue.slug,
+      id: currentValue.slug,
       brandName: currentValue.chainBrand,
     } satisfies SearchOption;
     if (acc[brand]) {

@@ -21,9 +21,7 @@ export function Search({ optionGroups }: Props) {
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
-    return (
-      values.find((network) => network.slug === params.network) ?? values[0]
-    );
+    return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
   // OUR DEFAULT BRAND COLOR is this ONE
