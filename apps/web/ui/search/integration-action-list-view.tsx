@@ -21,6 +21,14 @@ export function IntegrationActionListView({
   selectedNetwork,
 }: Props) {
   const router = useRouter();
+
+  // prefetch these routes for faster navigation
+  React.useEffect(() => {
+    router.prefetch(`/${selectedNetwork.id}`);
+    router.prefetch(`/${selectedNetwork.id}/latest/blocks`);
+    router.prefetch(`/${selectedNetwork.id}/latest/transactions`);
+  }, [router, selectedNetwork]);
+
   const items = React.useMemo(
     () => ({
       Pages: [
