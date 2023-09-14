@@ -30,7 +30,6 @@ export function IntegrationGridView({
   const isTwoColumns = useMediaQuery(
     "(min-width: 595px) and (max-width: 800px)",
   );
-  //   const isThreeColumns = useMediaQuery("(min-width: 900px)");
 
   const gridRef = React.useRef<React.ElementRef<"div">>(null);
 
@@ -427,10 +426,10 @@ export function IntegrationGridView({
             })}
           </div>
 
-          {rowIndex < groupedByLines.length - 1 ||
-            (groupedByLines.length === 1 && rowIndex === 0 && (
-              <hr className="bg-mid-dark-100" />
-            ))}
+          {(rowIndex < groupedByLines.length - 1 ||
+            (groupedByLines.length === 1 && rowIndex === 0)) && (
+            <hr className="bg-mid-dark-100" />
+          )}
         </React.Fragment>
       ))}
     </div>
