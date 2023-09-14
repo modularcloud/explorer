@@ -190,6 +190,7 @@ interface Props {
   network: SingleNetwork;
 }
 
+// TODO : transform this into a client component
 export async function EvmWithPriceWidgetLayout({ network }: Props) {
   const [
     zbcPrice,

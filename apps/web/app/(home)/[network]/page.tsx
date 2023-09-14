@@ -32,6 +32,7 @@ export default async function NetworkWidgetPage({ params }: Props) {
   switch (network.config.widgetLayout) {
     case "EvmWithPrice":
       return (
+        // TODO don't await on the server and instead generate this page statically
         <React.Suspense fallback={<EvmWithPriceSkeleton />}>
           <EvmWithPriceWidgetLayout network={network} />
         </React.Suspense>
