@@ -24,7 +24,7 @@ export async function AccountExtract(
     const celestiaBase =
       metadata.network.id.indexOf("mocha") !== -1
         ? "https://rpc-mocha.pops.one"
-        : "http://consensus-full-arabica-9.celestia-arabica.com:26657";
+        : "http://consensus-full-arabica-10.celestia-arabica.com:26657";
     const data = getBalanceQueryData(address, "utia");
     queryInput = `${celestiaBase}/abci_query?path="/cosmos.bank.v1beta1.Query/Balance"&data=0x${data}`;
     denom = "TIA";
