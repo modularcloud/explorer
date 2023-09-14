@@ -351,13 +351,22 @@ export function IntegrationGridView({
                     "pl-4": colIndex === noOfColumns,
                   })}
                 >
-                  <div className="flex flex-col" role="group">
+                  <div
+                    className="flex flex-col"
+                    role="group"
+                    aria-labelledby={`row-${rowIndex}-col-${colIndex}-header`}
+                  >
                     <div
                       className="flex items-center gap-2 px-3 py-1.5"
-                      role="columnheader"
+                      aria-hidden="true"
+                      role="presentation"
+                      id={`row-${rowIndex}-col-${colIndex}-header`}
                     >
                       <span>{capitalize(groupName)}</span>
-                      <GlobeCyber className="h-4 w-4 text-primary" />
+                      <GlobeCyber
+                        className="h-4 w-4 text-primary"
+                        aria-hidden="true"
+                      />
                     </div>
 
                     {options.map((option) => {
