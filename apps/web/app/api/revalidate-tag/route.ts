@@ -4,7 +4,6 @@ import { z } from "zod";
 import { env } from "~/env.mjs";
 
 const revalidateRequestSchema = z.object({
-  revalidateToken: z.string(),
   tag: z.string().min(1),
 });
 
@@ -38,12 +37,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const { revalidateToken, tag } = result.data;
+  const { tag } = result.data;
+  const authorization = request.headers.get("Authorization");
+
+  const revalidateToken = authorization?.split(" ")[1];
+
   if (revalidateToken !== env.REVALIDATE_TOKEN) {
     return NextResponse.json(
       {
         errors: {
-          revalidateToken: ["You must provide a valid token"],
+          revalidateToken: [
+            "You must provide a valid token in the header as `Authorization: Bearer <token>`",
+          ],
         },
       },
       {
