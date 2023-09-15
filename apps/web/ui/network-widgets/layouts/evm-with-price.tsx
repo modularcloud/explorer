@@ -26,7 +26,11 @@ interface Props {
 
 // TODO : transform this into a client component
 export function EvmWithPriceWidgetLayout({ network }: Props) {
-  const { data: apiResult, isLoading } = useWidgetData(network.id);
+  const { data: apiResult, isLoading, error } = useWidgetData(network.id);
+
+  if (error) {
+    return <EvmWithPriceSkeleton error={error.toString()} />;
+  }
 
   if (!apiResult || isLoading) {
     return <EvmWithPriceSkeleton />;
