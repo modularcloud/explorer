@@ -3,7 +3,7 @@ import * as React from "react";
 import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-price";
 
 import { notFound } from "next/navigation";
-import { getAllNetworks, getSingleNetwork } from "~/lib/network";
+import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/utils";
 import { getSearchOptionGroups } from "~/lib/search-options";
 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const network = await getSingleNetwork(props.params.network);
+  const network = await getSingleNetworkCached(props.params.network);
   if (!network) notFound();
 
   return {
@@ -25,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
-  const network = (await getSingleNetwork(params.network))!;
+  const network = (await getSingleNetworkCached(params.network))!;
 
   const searchOptionGroups = await getSearchOptionGroups();
   const values = Object.values(searchOptionGroups).flat();

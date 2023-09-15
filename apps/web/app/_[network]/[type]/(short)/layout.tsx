@@ -1,6 +1,6 @@
 import EntityLayout from "~/app/_[network]/[type]/(standard)/[query]/layout";
 import { mapTypes, ShortenedResourcePath } from "./helpers";
-import { getAllNetworks } from "~/lib/network";
+import { getAllNetworksCached } from "~/lib/network";
 
 type Props = {
   params: ShortenedResourcePath;
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default async function ShortEntityLayout({ params, children }: Props) {
-  const allNetWorks = await getAllNetworks();
+  const allNetWorks = await getAllNetworksCached();
   return (
     <EntityLayout params={mapTypes(params, allNetWorks[0].slug)}>
       {children}

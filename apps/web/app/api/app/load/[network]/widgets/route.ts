@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSingleNetwork } from "~/lib/network";
+import { getSingleNetworkCached } from "~/lib/network";
 import {
   getZbcPrice,
   getGasPrice,
@@ -12,7 +12,7 @@ import {
 } from "~/lib/server-utils";
 
 export async function GET(_: Request, ctx: { params: { network: string } }) {
-  const network = await getSingleNetwork(ctx.params.network);
+  const network = await getSingleNetworkCached(ctx.params.network);
 
   if (!network || !network.config.rpcUrls.evm) {
     return NextResponse.json(

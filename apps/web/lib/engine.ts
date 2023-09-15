@@ -1,11 +1,11 @@
 import { Engine, EngineConfig } from "@modularcloud/ecs";
 import { CreateCosmosConfig } from "~/integrations/cosmos";
 import { CreateEVMConfig } from "~/integrations/evm";
-import { getSingleNetwork } from "./network";
+import { getSingleNetworkCached } from "./network";
 
 export async function getEngine(networkSlug: string) {
   let config: EngineConfig | null = null;
-  const integration = await getSingleNetwork(networkSlug);
+  const integration = await getSingleNetworkCached(networkSlug);
   if (!integration) return null;
 
   let primary: EngineConfig | null = null;

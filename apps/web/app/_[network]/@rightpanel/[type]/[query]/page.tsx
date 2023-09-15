@@ -1,6 +1,6 @@
 import { Sidebar } from "~/ecs/components/sidebar";
 import { RightPanel } from "~/ui/right-panel/component";
-import { getSingleNetwork } from "~/lib/network";
+import { getSingleNetworkCached } from "~/lib/network";
 
 import type { Value } from "~/schemas/value";
 import type { FetchLoadArgs } from "~/lib/utils";
@@ -14,7 +14,7 @@ const VMDisplayNames = {
 } as const;
 
 export default async function RightPanelPage({ params }: Props) {
-  const network = await getSingleNetwork(params.network);
+  const network = await getSingleNetworkCached(params.network);
 
   if (!network) return null;
 

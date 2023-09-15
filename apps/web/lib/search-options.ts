@@ -1,4 +1,4 @@
-import { getAllNetworks } from "./network";
+import { getAllNetworksCached } from "./network";
 import type { OptionGroups, SearchOption } from "./utils";
 
 /**
@@ -7,7 +7,7 @@ import type { OptionGroups, SearchOption } from "./utils";
  * @returns `{ [brand]: [ {chain1}, {chain2}, {chain3} ] }`
  */
 export async function getSearchOptionGroups(): Promise<OptionGroups> {
-  const integrations = await getAllNetworks();
+  const integrations = await getAllNetworksCached();
 
   const optionGroups = integrations.reduce((acc, currentValue) => {
     const brand = currentValue.chainBrand;
