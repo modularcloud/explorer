@@ -38,14 +38,6 @@ export async function getEventSignatureName(topic: string) {
 export type FetchLoadArgs = { network: string; type: string; query: string };
 export async function fetchLoad(props: FetchLoadArgs) {
   try {
-    let baseUrl = "http://localhost:3000";
-    if (process.env.VERCEL_URL) {
-      baseUrl = `https://${process.env.VERCEL_URL}`;
-    }
-    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-      baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-    }
-
     let cache: RequestCache = "force-cache";
 
     if (
@@ -59,7 +51,9 @@ export async function fetchLoad(props: FetchLoadArgs) {
     // Since this fetch call is not called with `cache: no-store` it will always be cached
     // However, i suppose blockchain data are immutable ? so this will normally not be a problem
     const response = await fetch(
-      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
+      `${getBaseURL()}/api/app/load/${props.network}/${props.type}/${
+        props.query
+      }`,
       {
         cache,
       },
@@ -166,4 +160,15 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
     result.push(chunk);
   }
   return result;
+}
+
+export function getBaseURL() {
+  let baseUrl = "http://localhost:3000";
+  if (process.env.VERCEL_URL) {
+    baseUrl = `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+  return baseUrl;
 }
