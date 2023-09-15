@@ -5,11 +5,27 @@ import { env } from "~/env.mjs";
 
 const revalidateRequestSchema = z.object({
   revalidateToken: z.string(),
-  tag: z.string(),
+  tag: z.string().min(1),
 });
 
 export async function POST(request: Request) {
-  const result = revalidateRequestSchema.safeParse(await request.json());
+  let requestJson = {};
+  try {
+    requestJson = await request.json();
+  } catch (error) {
+    return NextResponse.json(
+      {
+        errors: {
+          "*": ["The request is malformed, please provide a valid JSON body"],
+        },
+      },
+      {
+        status: 415,
+      },
+    );
+  }
+
+  const result = revalidateRequestSchema.safeParse(requestJson);
 
   if (!result.success) {
     return NextResponse.json(
@@ -26,7 +42,9 @@ export async function POST(request: Request) {
   if (revalidateToken !== env.REVALIDATE_TOKEN) {
     return NextResponse.json(
       {
-        error: "You must provide a valid token",
+        errors: {
+          revalidateToken: ["You must provide a valid token"],
+        },
       },
       {
         status: 401,
