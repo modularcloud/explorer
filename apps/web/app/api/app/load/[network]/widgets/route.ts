@@ -8,6 +8,7 @@ import {
   getLatestBlocks,
   getLatestTransactions,
   getTransactionHistoryData,
+  APICORSHeaders,
 } from "~/lib/server-utils";
 
 export async function GET(_: Request, ctx: { params: { network: string } }) {
@@ -20,6 +21,9 @@ export async function GET(_: Request, ctx: { params: { network: string } }) {
       },
       {
         status: 404,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
       },
     );
   }
@@ -43,17 +47,24 @@ export async function GET(_: Request, ctx: { params: { network: string } }) {
       getLatestTransactions(network.slug, network.config.rpcUrls.evm!),
     ]);
 
-    return NextResponse.json({
-      data: {
-        zbcPrice,
-        gasPrice,
-        blockMetrics,
-        realTimeMetrics,
-        transactionHistory,
-        latestBlocks,
-        latestTransactions,
+    return NextResponse.json(
+      {
+        data: {
+          zbcPrice,
+          gasPrice,
+          blockMetrics,
+          realTimeMetrics,
+          transactionHistory,
+          latestBlocks,
+          latestTransactions,
+        },
       },
-    });
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      },
+    );
   } else {
     return NextResponse.json(
       {
@@ -61,9 +72,18 @@ export async function GET(_: Request, ctx: { params: { network: string } }) {
       },
       {
         status: 422,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
       },
     );
   }
+}
+
+export async function OPTIONS(_: Request) {
+  return new Response(null, {
+    headers: APICORSHeaders,
+  });
 }
 
 export const runtime = "edge";

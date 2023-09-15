@@ -6,6 +6,14 @@ import Web3 from "web3";
 import { z } from "zod";
 import { fetchLoad, getEventSignatureName } from "./utils";
 
+export const APICORSHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Headers":
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+} as const;
+
 type Callback = (...args: any[]) => Promise<any>;
 export function nextCache<T extends Callback>(
   cb: T,
