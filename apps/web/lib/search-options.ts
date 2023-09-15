@@ -13,7 +13,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
     const brand = currentValue.chainBrand;
 
     const newOption = {
-      primaryColor: currentValue.config.primaryColor,
+      brandColor: currentValue.config.primaryColor,
       layout: currentValue.config.widgetLayout,
       verified: currentValue.paidVersion,
       displayName: currentValue.chainName,

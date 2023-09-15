@@ -89,7 +89,7 @@ export type SearchOption = {
   displayName: string;
   brandName: string;
   verified?: boolean;
-  primaryColor?: string;
+  brandColor: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
   id: string;
 };

@@ -26,7 +26,7 @@ export function Search({ optionGroups }: Props) {
 
   // OUR DEFAULT BRAND COLOR is this ONE
   const primaryColor = !!params.network
-    ? network.primaryColor!
+    ? network.brandColor!
     : DEFAULT_BRAND_COLOR;
 
   return (
