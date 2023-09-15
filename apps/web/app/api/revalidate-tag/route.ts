@@ -1,12 +1,28 @@
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 
-export async function GET(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
+const revalidateRequestSchema = z.object({
+  revalidateToken: z.string(),
+  tag: z.string(),
+});
 
-  const revalidateToken = searchParams.get("revalidate-token");
-  const tag = searchParams.get("tag");
+export async function POST(request: Request) {
+  const result = revalidateRequestSchema.safeParse(await request.json());
+
+  if (!result.success) {
+    return NextResponse.json(
+      {
+        errors: result.error.flatten().fieldErrors,
+      },
+      {
+        status: 422,
+      },
+    );
+  }
+
+  const { revalidateToken, tag } = result.data;
   if (revalidateToken !== env.REVALIDATE_TOKEN) {
     return NextResponse.json(
       {
@@ -14,15 +30,6 @@ export async function GET(request: Request) {
       },
       {
         status: 401,
-      },
-    );
-  } else if (!tag) {
-    return NextResponse.json(
-      {
-        error: "You must provide a tag in the query params",
-      },
-      {
-        status: 422,
       },
     );
   }
