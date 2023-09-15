@@ -54,7 +54,10 @@ export function IntegrationGridView({
           <div
             role="row"
             aria-rowindex={rowIndex + 1}
-            className="flex items-stretch"
+            className="grid items-stretch"
+            style={{
+              gridTemplateColumns: `repeat(${noOfColumns}, minmax(0, 1fr))`,
+            }}
           >
             {rowGroups.map((column, colIndex) => {
               const [groupName, options] = column;
