@@ -103,6 +103,7 @@ export function SearchModal({
           {!currentSelectedNetwork && (
             <IntegrationGridView
               optionGroups={optionGroups}
+              defaultChainBrand={network.brandName}
               inputQuery={inputValue}
               onSelectOption={onSelectOption}
               className="max-h-[calc(100%-60px)] overflow-y-auto"

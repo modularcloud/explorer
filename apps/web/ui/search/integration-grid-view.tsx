@@ -4,15 +4,15 @@ import { GlobeCyber } from "~/ui/icons";
 import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
 import { capitalize } from "~/lib/utils";
-
-import type { SearchOption, OptionGroups } from "~/lib/utils";
 import { useItemGrid } from "./use-item-grid";
 
+import type { SearchOption, OptionGroups } from "~/lib/utils";
 interface Props {
   inputQuery: string;
   className?: string;
   optionGroups: OptionGroups;
   onSelectOption?: (chain: SearchOption) => void;
+  defaultChainBrand?: string;
 }
 
 /**
@@ -25,6 +25,7 @@ export function IntegrationGridView({
   onSelectOption,
   optionGroups,
   className,
+  defaultChainBrand,
 }: Props) {
   const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
@@ -40,6 +41,7 @@ export function IntegrationGridView({
     parentRef: gridRef.current,
     optionGroups: optionGroups,
     onSelectOption,
+    defaultOptionGroupKey: defaultChainBrand,
   });
 
   return (

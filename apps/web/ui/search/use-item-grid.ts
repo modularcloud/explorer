@@ -2,11 +2,11 @@ import * as React from "react";
 import { chunkArray, isElementOverflowing } from "~/lib/utils";
 
 type UseItemGridArgs<T> = {
-  /** the number of columns */
   noOfColumns: number;
-  optionGroups: { [groupDisplayName: string]: T[] };
   parentRef?: React.ElementRef<"div"> | null;
   onSelectOption?: (option: T) => void;
+  optionGroups: { [groupDisplayName: string]: T[] };
+  defaultOptionGroupKey?: string; // the default key to make first
 };
 
 /**
@@ -19,13 +19,25 @@ export function useItemGrid<
   noOfColumns,
   optionGroups,
   parentRef,
+  defaultOptionGroupKey,
   onSelectOption,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
-  const groupedByLines = React.useMemo(
-    () => chunkArray(Object.entries(optionGroups), noOfColumns),
-    [noOfColumns, optionGroups],
-  );
+  const groupedByLines = React.useMemo(() => {
+    let groups = Object.entries(optionGroups);
+    if (defaultOptionGroupKey && optionGroups[defaultOptionGroupKey]) {
+      groups = groups.sort((a, b) => {
+        if (a[0] === defaultOptionGroupKey) {
+          return -1;
+        }
+        if (b[0] === defaultOptionGroupKey) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    return chunkArray(groups, noOfColumns);
+  }, [noOfColumns, optionGroups, defaultOptionGroupKey]);
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
   const [selectedColIndex, setSelectedColIndex] = React.useState(0);
