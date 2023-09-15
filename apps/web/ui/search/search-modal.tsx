@@ -16,15 +16,16 @@ import { cn } from "~/ui/shadcn/utils";
 import { IntegrationGridView } from "./integration-grid-view";
 import { type SearchOption, type OptionGroups, capitalize } from "~/lib/utils";
 import { IntegrationActionListView } from "./integration-action-list-view";
+import { isAddress, isHash, isHeight } from "~/lib/search";
 interface Props {
-  network: SearchOption;
+  defaultNetwork: SearchOption;
   children?: React.ReactNode;
   brandColor: string;
   optionGroups: OptionGroups;
 }
 
 export function SearchModal({
-  network,
+  defaultNetwork,
   children,
   brandColor,
   optionGroups,
@@ -32,21 +33,28 @@ export function SearchModal({
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
-  const [currentSelectedNetwork, setCurrentSelectedNetwork] =
+  const [selectedNetwork, setSelectedNetwork] =
     React.useState<SearchOption | null>(null);
 
   const onSelectOption = React.useCallback((option: SearchOption) => {
-    setCurrentSelectedNetwork(option);
+    setSelectedNetwork(option);
     inputRef.current?.focus();
     setInputValue(""); // clear input
   }, []);
+
+  const isTransactionQuery = isHash(inputValue);
+  const isAddressQuery = isAddress(inputValue);
+  const isBlockQuery = isHeight(inputValue);
+  const isEntity = isTransactionQuery || isAddressQuery || isBlockQuery;
+
+  const currentNetwork = isEntity ? defaultNetwork : selectedNetwork;
 
   return (
     <Dialog
       open={isDialogOpen}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          setCurrentSelectedNetwork(null);
+          setSelectedNetwork(null);
           setInputValue(""); // clear input
         }
         setIsDialogOpen(isOpen);
@@ -68,16 +76,16 @@ export function SearchModal({
                 id="query"
                 ref={inputRef}
                 placeholder={
-                  currentSelectedNetwork
+                  selectedNetwork
                     ? "Search"
-                    : `Search ${network.displayName} or Switch Chain`
+                    : `Search ${defaultNetwork.displayName} or Switch Chain`
                 }
                 autoComplete="off"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 helpText="Search blocks, transactions, or addresses"
                 renderLeadingIcon={(cls) =>
-                  currentSelectedNetwork ? (
+                  currentNetwork ? (
                     <div className="flex items-center gap-2 p-1">
                       <GlobeCyber
                         className="h-4 w-4 text-primary"
@@ -85,9 +93,9 @@ export function SearchModal({
                       />
                       {/* <LoadingIndicator className="h-4 w-4 text-primary" /> */}
                       <span className="whitespace-nowrap">
-                        {capitalize(currentSelectedNetwork.brandName)}
+                        {capitalize(currentNetwork.brandName)}
                         &nbsp;/&nbsp;
-                        {capitalize(currentSelectedNetwork.displayName)}
+                        {capitalize(currentNetwork.displayName)}
                       </span>
 
                       <ArrowRight className="text-muted" aria-hidden="true" />
@@ -100,23 +108,23 @@ export function SearchModal({
             </div>
           </DialogHeader>
 
-          {!currentSelectedNetwork && (
+          {!currentNetwork && !isEntity && (
             <IntegrationGridView
               optionGroups={optionGroups}
-              defaultChainBrand={network.brandName}
-              inputQuery={inputValue}
+              defaultChainBrand={defaultNetwork.brandName}
+              filter={inputValue}
               onSelectOption={onSelectOption}
               className="max-h-[calc(100%-60px)] overflow-y-auto"
             />
           )}
 
-          {currentSelectedNetwork && (
+          {currentNetwork && (
             <IntegrationActionListView
               inputQuery={inputValue}
-              selectedNetwork={currentSelectedNetwork}
-              onChangeChainClicked={() => setCurrentSelectedNetwork(null)}
+              selectedNetwork={currentNetwork}
+              onChangeChainClicked={() => setSelectedNetwork(null)}
               onNavigate={() => {
-                setCurrentSelectedNetwork(null);
+                setSelectedNetwork(null);
                 setInputValue(""); // clear input
                 setIsDialogOpen(false);
               }}

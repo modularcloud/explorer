@@ -6,7 +6,7 @@ type UseItemGridArgs<T> = {
   parentRef?: React.ElementRef<"div"> | null;
   onSelectOption?: (option: T) => void;
   optionGroups: { [groupDisplayName: string]: T[] };
-  defaultOptionGroupKey?: string; // the default key to make first
+  defaultOptionGroupKey?: string; // the default key to show first in the list
 };
 
 /**
@@ -36,6 +36,7 @@ export function useItemGrid<
         return 0;
       });
     }
+
     return chunkArray(groups, noOfColumns);
   }, [noOfColumns, optionGroups, defaultOptionGroupKey]);
 

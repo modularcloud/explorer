@@ -42,7 +42,7 @@ export function Search({ optionGroups }: Props) {
       )}
     >
       <SearchModal
-        network={network}
+        defaultNetwork={network}
         brandColor={primaryColor}
         optionGroups={optionGroups}
       >

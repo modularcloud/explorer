@@ -8,7 +8,7 @@ import { useItemGrid } from "./use-item-grid";
 
 import type { SearchOption, OptionGroups } from "~/lib/utils";
 interface Props {
-  inputQuery: string;
+  filter: string;
   className?: string;
   optionGroups: OptionGroups;
   onSelectOption?: (chain: SearchOption) => void;
@@ -21,12 +21,39 @@ interface Props {
  *  - the grid should be navigable with tab key (?)
  */
 export function IntegrationGridView({
-  inputQuery,
+  filter,
   onSelectOption,
   optionGroups,
   className,
   defaultChainBrand,
 }: Props) {
+  const filteredOptionGroup = React.useMemo(() => {
+    // filter chain brands starting with the filter
+    let optionGroupsByChainBrand = Object.keys(optionGroups)
+      .filter((key) => key.toLowerCase().startsWith(filter.toLowerCase()))
+      .reduce((obj, key) => {
+        obj[key] = optionGroups[key];
+        return obj;
+      }, {} as OptionGroups);
+
+    // filter chains starting with the filter
+    let optionGroupsByChainName = Object.entries(optionGroups)
+      .filter(([, items]) => {
+        return items.some((item) =>
+          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
+        );
+      })
+      .reduce((obj, [key, items]) => {
+        // remove chains that don't start with the filter
+        obj[key] = items.filter((item) =>
+          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
+        );
+        return obj;
+      }, {} as OptionGroups);
+
+    return { ...optionGroupsByChainBrand, ...optionGroupsByChainName };
+  }, [filter, optionGroups]);
+
   const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
     "(min-width: 595px) and (max-width: 800px)",
@@ -39,7 +66,7 @@ export function IntegrationGridView({
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
     parentRef: gridRef.current,
-    optionGroups: optionGroups,
+    optionGroups: filteredOptionGroup,
     onSelectOption,
     defaultOptionGroupKey: defaultChainBrand,
   });
