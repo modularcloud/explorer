@@ -106,7 +106,7 @@ export function IntegrationGridView({
                           className={cn(
                             "pl-3 pr-1.5 py-1.5 flex justify-between items-center rounded-md",
                             "group cursor-pointer",
-                            "aria-[selected=true]:bg-muted/10",
+                            "aria-[selected=true]:bg-muted-100",
                             "focus-visible:outline-none",
                           )}
                         >
