@@ -63,21 +63,14 @@ export function createResolver<K, T extends Resolver<any>[]>(
           const result = await dependency(input);
           traces.push(result.trace);
 
-          if (result.type === "error" || result.type === "pending") {
-            const { trace, ...rest } = result;
-            resolution = rest;
-          }
-
           return result;
         };
       }) as T;
       const result = await fn(input, ...deps);
-      if (!resolution) {
-        resolution = {
-          type: "success",
-          result,
-        };
-      }
+      resolution = {
+        type: "success",
+        result,
+      };
     } catch (e) {
       if (e === PendingException) {
         resolution = {

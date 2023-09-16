@@ -265,15 +265,14 @@ describe("Deeply nested pending resolution", () => {
       trace: expect.objectContaining({
         resolverId: "test2",
         input: "TESTing",
-        resolution: { type: "pending", resolverId: "test0", input: "TESTING" },
+        resolution: { type: "success", result: null },
         dependencies: [
           expect.objectContaining({
             resolverId: "test1",
             input: "TESTing",
             resolution: {
-              type: "pending",
-              resolverId: "test0",
-              input: "TESTING",
+              type: "success",
+              result: null,
             },
             dependencies: [
               expect.objectContaining({
@@ -294,9 +293,8 @@ describe("Deeply nested pending resolution", () => {
           }),
         ],
       }),
-      type: "pending",
-      resolverId: "test0",
-      input: "TESTING",
+      type: "success",
+      result: null,
     });
   });
 });
@@ -358,18 +356,16 @@ describe("Deeply nested error resolution", () => {
         resolverId: "test2",
         input: "TESTing",
         resolution: {
-          type: "error",
-          error:
-            "test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')",
+          type: "success",
+          result: null,
         },
         dependencies: [
           expect.objectContaining({
             resolverId: "test1",
             input: "TESTing",
             resolution: {
-              type: "error",
-              error:
-                "test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')",
+              type: "success",
+              result: null,
             },
             dependencies: [
               expect.objectContaining({
@@ -390,9 +386,8 @@ describe("Deeply nested error resolution", () => {
           }),
         ],
       }),
-      type: "error",
-      error:
-        "test0(\"TESTING\"): TypeError: Cannot read properties of undefined (reading 'z')",
+      type: "success",
+      result: null,
     });
   });
 });
