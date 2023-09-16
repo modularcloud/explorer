@@ -47,7 +47,11 @@ export function SearchModal({
   const isBlockQuery = isHeight(inputValue);
   const isEntity = isTransactionQuery || isAddressQuery || isBlockQuery;
 
-  const currentNetwork = isEntity ? defaultNetwork : selectedNetwork;
+  const currentNetwork = selectedNetwork
+    ? selectedNetwork
+    : isEntity
+    ? defaultNetwork
+    : selectedNetwork;
 
   return (
     <Dialog
