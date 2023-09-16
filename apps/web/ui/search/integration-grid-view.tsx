@@ -5,6 +5,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
 import { capitalize } from "~/lib/utils";
 import { useItemGrid } from "./use-item-grid";
+import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
 import type { SearchOption, OptionGroups } from "~/lib/utils";
 interface Props {
@@ -27,32 +28,7 @@ export function IntegrationGridView({
   className,
   defaultChainBrand,
 }: Props) {
-  const filteredOptionGroup = React.useMemo(() => {
-    // filter chain brands starting with the filter
-    let optionGroupsByChainBrand = Object.keys(optionGroups)
-      .filter((key) => key.toLowerCase().startsWith(filter.toLowerCase()))
-      .reduce((obj, key) => {
-        obj[key] = optionGroups[key];
-        return obj;
-      }, {} as OptionGroups);
-
-    // filter chains starting with the filter
-    let optionGroupsByChainName = Object.entries(optionGroups)
-      .filter(([, items]) => {
-        return items.some((item) =>
-          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
-        );
-      })
-      .reduce((obj, [key, items]) => {
-        // remove chains that don't start with the filter
-        obj[key] = items.filter((item) =>
-          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
-        );
-        return obj;
-      }, {} as OptionGroups);
-
-    return { ...optionGroupsByChainBrand, ...optionGroupsByChainName };
-  }, [filter, optionGroups]);
+  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, filter);
 
   const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
@@ -69,6 +45,7 @@ export function IntegrationGridView({
     optionGroups: filteredOptionGroup,
     onSelectOption,
     defaultOptionGroupKey: defaultChainBrand,
+    selectFirstItem: !!filter,
   });
 
   return (
