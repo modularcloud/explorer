@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { z } from "zod";
 import { CACHE_KEYS } from "~/lib/cache-keys";
+import { getBaseURL } from "~/lib/utils";
 
 const widgetDataSchema = z.object({
   zbcPrice: z.number(),
@@ -45,16 +46,8 @@ export function useWidgetData(networkSlug: string) {
   return useSWR(
     CACHE_KEYS.widgets.evmWithPrice(networkSlug),
     async () => {
-      let baseUrl = "http://localhost:3000";
-      if (process.env.VERCEL_URL) {
-        baseUrl = `https://${process.env.VERCEL_URL}`;
-      }
-      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-      }
-
       const response = await fetch(
-        `${baseUrl}/api/app/load/${networkSlug}/widgets`,
+        `${getBaseURL()}/api/app/load/${networkSlug}/widgets`,
       );
 
       return widgetAPIResponseSchema.parse(await response.json());

@@ -13,10 +13,12 @@ import { LoadingIndicator } from "~/ui/loading-indicator";
 
 import { cn } from "~/ui/shadcn/utils";
 
-import { IntegrationGridView } from "./integration-grid-view";
-import { type SearchOption, type OptionGroups, capitalize } from "~/lib/utils";
 import { IntegrationActionListView } from "./integration-action-list-view";
 import { isAddress, isHash, isHeight } from "~/lib/search";
+import { useSearcheableEntities } from "./use-searcheable-entities";
+import { IntegrationGridView } from "./integration-grid-view";
+import { type SearchOption, type OptionGroups, capitalize } from "~/lib/utils";
+
 interface Props {
   defaultNetwork: SearchOption;
   children?: React.ReactNode;
@@ -39,7 +41,7 @@ export function SearchModal({
   const onSelectOption = React.useCallback((option: SearchOption) => {
     setSelectedNetwork(option);
     inputRef.current?.focus();
-    setInputValue(""); // clear input
+    setInputValue("");
   }, []);
 
   const isTransactionQuery = isHash(inputValue);
@@ -53,13 +55,31 @@ export function SearchModal({
     ? defaultNetwork
     : selectedNetwork;
 
+  let typesToCheck = [];
+  if (isTransactionQuery) {
+    typesToCheck.push("transaction");
+  }
+  if (isAddressQuery) {
+    typesToCheck.push("address");
+  }
+  if (isBlockQuery) {
+    typesToCheck.push("block");
+  }
+
+  const { data: searcheableTypes, isLoading } = useSearcheableEntities({
+    network: defaultNetwork.id,
+    query: inputValue,
+    typesToCheck,
+    enabled: typesToCheck.length > 0,
+  });
+
   return (
     <Dialog
       open={isDialogOpen}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
           setSelectedNetwork(null);
-          setInputValue(""); // clear input
+          setInputValue("");
         }
         setIsDialogOpen(isOpen);
       }}
@@ -91,11 +111,15 @@ export function SearchModal({
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
                     <div className="flex items-center gap-2 p-1">
-                      <GlobeCyber
-                        className="h-4 w-4 text-primary"
-                        aria-hidden="true"
-                      />
-                      {/* <LoadingIndicator className="h-4 w-4 text-primary" /> */}
+                      {isLoading ? (
+                        <LoadingIndicator className="h-4 w-4 text-primary" />
+                      ) : (
+                        <GlobeCyber
+                          className="h-4 w-4 text-primary"
+                          aria-hidden="true"
+                        />
+                      )}
+
                       <span className="whitespace-nowrap">
                         {capitalize(currentNetwork.brandName)}
                         &nbsp;/&nbsp;
@@ -124,12 +148,16 @@ export function SearchModal({
 
           {currentNetwork && (
             <IntegrationActionListView
-              inputQuery={inputValue}
+              query={inputValue}
+              searcheableTypes={searcheableTypes ?? []}
               selectedNetwork={currentNetwork}
-              onChangeChainClicked={() => setSelectedNetwork(null)}
+              onChangeChainClicked={() => {
+                setSelectedNetwork(null);
+                setInputValue("");
+              }}
               onNavigate={() => {
                 setSelectedNetwork(null);
-                setInputValue(""); // clear input
+                setInputValue("");
                 setIsDialogOpen(false);
               }}
             />

@@ -51,9 +51,9 @@ export async function fetchLoad(props: FetchLoadArgs) {
     // Since this fetch call is not called with `cache: no-store` it will always be cached
     // However, i suppose blockchain data are immutable ? so this will normally not be a problem
     const response = await fetch(
-      `${getBaseURL()}/api/app/load/${props.network}/${props.type}/${
-        props.query
-      }`,
+      `${getBaseURL()}/api/app/load/${props.network}/${
+        props.type
+      }/${encodeURIComponent(props.query)}`,
       {
         cache,
       },

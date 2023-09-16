@@ -3,22 +3,31 @@ import { cn } from "~/ui/shadcn/utils";
 import { useItemGrid } from "./use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
-import type { SearchOption } from "~/lib/utils";
+import { capitalize, type SearchOption } from "~/lib/utils";
 
 interface Props {
-  inputQuery: string;
+  query: string;
   selectedNetwork: SearchOption;
   className?: string;
   onNavigate: () => void;
   onChangeChainClicked: () => void;
+  searcheableTypes: string[];
 }
 
+type ListItemType = {
+  id: string;
+  icon: () => React.ReactNode;
+  label: React.ReactNode;
+  onSelect: () => void;
+};
+
 export function IntegrationActionListView({
-  inputQuery,
+  query,
   className,
   onNavigate,
   onChangeChainClicked,
   selectedNetwork,
+  searcheableTypes,
 }: Props) {
   const router = useRouter();
 
@@ -27,10 +36,68 @@ export function IntegrationActionListView({
     router.prefetch(`/${selectedNetwork.id}`);
     router.prefetch(`/${selectedNetwork.id}/latest/blocks`);
     router.prefetch(`/${selectedNetwork.id}/latest/transactions`);
-  }, [router, selectedNetwork]);
 
-  const items = React.useMemo(
-    () => ({
+    if (query) {
+      router.prefetch(
+        `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
+      );
+    }
+
+    for (const type of searcheableTypes) {
+      router.prefetch(
+        `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
+      );
+    }
+  }, [router, selectedNetwork, query, searcheableTypes]);
+
+  const items = React.useMemo(() => {
+    let items: {
+      [key: string]: Array<ListItemType>;
+    } = {};
+
+    if (query.length > 0) {
+      items = {
+        Types: [
+          {
+            id: "search",
+            icon: () => null,
+            label: <p className="text-muted">Search for&nbsp;{query}</p>,
+            onSelect: () => {
+              onNavigate();
+              router.push(
+                `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
+              );
+            },
+          },
+        ],
+      };
+
+      for (const type of searcheableTypes) {
+        items["Types"].push({
+          id: type,
+          icon: () => null,
+          label: (
+            <p className="text-muted">
+              Go to&nbsp;
+              <strong className="font-medium text-foreground">
+                {capitalize(type)}
+              </strong>
+              &nbsp;
+              {query}
+            </p>
+          ),
+          onSelect: () => {
+            onNavigate();
+            router.push(
+              `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
+            );
+          },
+        });
+      }
+    }
+
+    items = {
+      ...items,
       Pages: [
         {
           id: "chain-homepage",
@@ -68,21 +135,27 @@ export function IntegrationActionListView({
           onSelect: onChangeChainClicked,
         },
       ],
-    }),
-    [onNavigate, onChangeChainClicked, router, selectedNetwork],
-  );
+    };
+
+    return items;
+  }, [
+    onNavigate,
+    onChangeChainClicked,
+    router,
+    selectedNetwork,
+    query,
+    searcheableTypes,
+  ]);
 
   const listRef = React.useRef<React.ElementRef<"div">>(null);
 
-  type ItemType = (typeof items)[keyof typeof items][number];
-
-  const { registerOptionProps, groupedByLines: groupedItems } =
-    useItemGrid<ItemType>({
-      noOfColumns: 1,
-      optionGroups: items,
-      parentRef: listRef.current,
-      onSelectOption: (option) => option.onSelect(),
-    });
+  const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
+    noOfColumns: 1,
+    optionGroups: items,
+    parentRef: listRef.current,
+    onSelectOption: (option) => option.onSelect(),
+    selectFirstItem: query.length > 0,
+  });
 
   return (
     <div
@@ -112,7 +185,7 @@ export function IntegrationActionListView({
                   {...registerOptionProps(rowIndex, 0, item)}
                   className={cn(
                     "py-2 pl-4 rounded-md cursor-pointer text-start",
-                    "aria-[selected=true]:bg-muted/10 aria-[selected=true]:text-foreground",
+                    "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
                     "focus-visible:outline-none",
                     "flex items-center gap-4",
                   )}
