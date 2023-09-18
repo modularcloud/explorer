@@ -1,4 +1,4 @@
-import { Search } from "~/ui/search";
+import { Search } from "~/ui/old-search";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HeaderMenu } from "./menu";

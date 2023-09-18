@@ -7,6 +7,7 @@ const config = {
   transpilePackages: ["service-manager"],
   experimental: {
     logging: "verbose",
+    useDeploymentId: true,
   },
   images: {
     domains: [

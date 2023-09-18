@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const dayjs = require("dayjs");
-const relativeTime = require("dayjs/plugin/relativeTime");
+import * as React from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { cn } from "~/ui/shadcn/utils";
 
 type Props = {
   time: number;
+  className?: string;
 };
-export function ClientTime({ time }: Props) {
-  const [text, setText] = useState("");
-  useEffect(() => {
+export function ClientTime({ time, className }: Props) {
+  const [text, setText] = React.useState("");
+  React.useEffect(() => {
     dayjs.extend(relativeTime);
     setText(dayjs(time).fromNow());
     const interval = setInterval(() => {
       setText(dayjs(time).fromNow());
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
-  return <time dateTime={new Date(time).toISOString()}>{text}</time>;
+  }, [time]);
+
+  return (
+    <time dateTime={new Date(time).toISOString()} className={cn(className)}>
+      {text}
+    </time>
+  );
 }

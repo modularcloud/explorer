@@ -1,5 +1,5 @@
 import { SummaryPresenter } from "~/ui/presenters/summary-presenter";
-import { ExplorerLineChart, ExplorerLineChartProps } from "~/ui/chart";
+import { ExplorerLineChart, ExplorerLineChartProps } from "~/ui/old-chart";
 import { BlocksAndTransactionsSummaryDisplay } from "~/ui/tables";
 import Web3 from "web3";
 import { z } from "zod";

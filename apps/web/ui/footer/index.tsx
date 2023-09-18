@@ -1,24 +1,28 @@
 import Link from "next/link";
-
-const footer_links = [
-  { title: "About", id: "about", href: "/" },
-  { title: "Terms", id: "terms", href: "/" },
-  { title: "Privacy", id: "privacy", href: "/" },
-];
+import { ShortcutKey } from "~/ui/shortcut-key";
 
 export function Footer() {
   return (
-    <footer className="bottom-0 flex h-1/6 flex-col justify-evenly border-t p-2 text-center">
-      <span className="text-slate-900">
+    <footer className="py-10 text-center w-full flex flex-col gap-5">
+      <div className="hidden md:flex items-center gap-10 lg:gap-14 mx-auto flex-wrap justify-center">
+        <ShortcutKey command="/" commandName="slash" label="Search" />
+        <ShortcutKey command="E" label="Latest block" />
+        <ShortcutKey command="⌥" commandName="Option" label="Clipboard" />
+        <ShortcutKey command="B" label="Search Blocks" />
+        <ShortcutKey command="O" label="Select hash" />
+      </div>
+      <hr />
+      <span className="text-muted">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.
       </span>
-      {/* <div className="flex flex-row justify-around">
-        {footer_links.map(({ title, id, href }) => (
-          <Link key={id} href={href}>
-            <span className="text-night">{title}</span>
-          </Link>
-        ))}
-      </div> */}
+
+      <div className="flex self-center items-center justify-between px-5 gap-5">
+        <Link href="#">About</Link>
+        <span>&middot;</span>
+        <Link href="#">Terms</Link>
+        <span>&middot;</span>
+        <Link href="#">Privacy</Link>
+      </div>
     </footer>
   );
 }

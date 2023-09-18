@@ -2,6 +2,7 @@ import "server-only";
 import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
+import { CACHE_KEYS } from "./cache-keys";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -12,6 +13,18 @@ export const singleNetworkSchema = z.object({
       decimals: z.number(),
     }),
     platform: z.string().max(64).optional(),
+    // TODO : These are defaulted for now, but it should be returned by the API
+    widgetLayout: z
+      .enum(["EvmWithPrice", "EvmWithoutPrice"])
+      .optional()
+      .default("EvmWithPrice"),
+    // This is in HSL format, and is used like this : hsl("224 94% 51%")
+    primaryColor: z.string().optional().default("224 94% 51%"),
+    cssGradient: z
+      .string()
+      .optional()
+      // this value is directly used as `background-image: linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%);`
+      .default(`linear-gradient(90deg, #0F4EF7 -10.76%, #00D5E2 98.22%)`),
   }),
   paidVersion: z.boolean(),
   slug: z.string(),
@@ -24,7 +37,9 @@ export const singleNetworkSchema = z.object({
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
-export async function getSingleNetwork(slug: string) {
+export async function getSingleNetwork(
+  slug: string,
+): Promise<SingleNetwork | null> {
   const getSingleIntegrationFn = nextCache(
     async (slug: string) => {
       const describeIntegrationBySlugAPISchema = z.object({
@@ -50,13 +65,13 @@ export async function getSingleNetwork(slug: string) {
       }
     },
     {
-      tags: ["INTEGRATIONS", slug],
+      tags: CACHE_KEYS.networks.single(slug),
     },
   );
   return await getSingleIntegrationFn(slug);
 }
 
-export async function getAllNetworks() {
+export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   const getAllIntegrationsFn = nextCache(
     async () => {
       try {
@@ -88,7 +103,7 @@ export async function getAllNetworks() {
       }
     },
     {
-      tags: ["INTEGRATIONS", "INTEGRATION_SUMMARY"],
+      tags: CACHE_KEYS.networks.summary(),
     },
   );
 

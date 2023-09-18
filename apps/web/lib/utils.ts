@@ -1,6 +1,7 @@
 import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
+import type { SingleNetwork } from "./network";
 
 export function convertToHttpIfIpfs(url: string) {
   if (url.startsWith("ipfs://")) {
@@ -86,6 +87,9 @@ export async function fetchLoad(props: FetchLoadArgs) {
 
 export type SearchOption = {
   displayName: string;
+  verified?: boolean;
+  primaryColor?: string;
+  layout?: SingleNetwork["config"]["widgetLayout"];
   id: string;
 };
 export type OptionGroups = {
@@ -117,4 +121,14 @@ export function truncateString(
   const start = address.slice(0, numCharsBefore);
   const end = numCharsAfter ? address.slice(-numCharsAfter) : "";
   return `${start}....${end}`;
+}
+
+/**
+ * Make the 1st char fo a string uppercase and the other lowercase
+ * @param str
+ * @returns
+ */
+export function capitalize(str: string) {
+  const firstChar = str.charAt(0);
+  return firstChar.toUpperCase() + str.substring(1).toLowerCase();
 }
