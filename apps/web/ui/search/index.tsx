@@ -70,7 +70,7 @@ export function Search({ optionGroups }: Props) {
           "hover:bg-muted/5 transition duration-200",
           "flex-1 h-full",
         )}
-        action="/search"
+        action={`/${network.id}/search`}
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
@@ -78,7 +78,9 @@ export function Search({ optionGroups }: Props) {
           const searchQuery = formData.get("search")?.toString();
           // this makes sure we don't navigate to an empty search route (which would throw a 404)
           if (searchQuery) {
-            router.push(`/search/${encodeURIComponent(searchQuery)}`);
+            router.push(
+              `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+            );
           }
         }}
       >
@@ -90,7 +92,9 @@ export function Search({ optionGroups }: Props) {
           onChange={(e) => {
             if (e.target.value) {
               // prefetch on search to make the navigation faster
-              router.prefetch(`/search/${encodeURIComponent(e.target.value)}`);
+              router.prefetch(
+                `/${network.id}/search/${encodeURIComponent(e.target.value)}`,
+              );
             }
           }}
         />
