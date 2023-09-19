@@ -1,13 +1,11 @@
 import * as React from "react";
 
-import {
-  EvmWithPriceSkeleton,
-  EvmWithPriceWidgetLayout,
-} from "~/ui/network-widgets/layouts/evm-with-price";
+import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-price";
 
 import { notFound } from "next/navigation";
-import { getSingleNetwork } from "~/lib/network";
+import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/utils";
+import { getSearchOptionGroups } from "~/lib/search-options";
 
 import type { FetchLoadArgs } from "~/lib/utils";
 import type { Metadata } from "next";
@@ -17,7 +15,7 @@ interface Props {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const network = await getSingleNetwork(props.params.network);
+  const network = await getSingleNetworkCached(props.params.network);
   if (!network) notFound();
 
   return {
@@ -27,18 +25,21 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
-  const network = (await getSingleNetwork(params.network))!;
+  const network = (await getSingleNetworkCached(params.network))!;
+
+  const searchOptionGroups = await getSearchOptionGroups();
+  const values = Object.values(searchOptionGroups).flat();
+  const searchOption = values.find((network) => network.id === params.network);
 
   switch (network.config.widgetLayout) {
     case "EvmWithPrice":
-      return (
-        <React.Suspense fallback={<EvmWithPriceSkeleton />}>
-          <EvmWithPriceWidgetLayout network={network} />
-        </React.Suspense>
-      );
+      return <EvmWithPriceWidgetLayout network={searchOption!} />;
     default:
       return null;
   }
 }
 
-export const fetchCache = "default-no-store";
+export async function generateStaticParams() {
+  const allNetworks = await getAllNetworks();
+  return allNetworks.map((network) => ({ network: network.slug }));
+}

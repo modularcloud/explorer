@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
 import { env } from "~/env.mjs";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-  "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers":
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-} as const;
+import { APICORSHeaders } from "~/lib/server-utils";
 
 export async function GET(_: Request) {
   // we use `ep/6` because this is the default value for when there is not whitelabel
@@ -23,7 +16,7 @@ export async function GET(_: Request) {
 
 export async function OPTIONS(_: Request) {
   return new Response(null, {
-    headers: corsHeaders,
+    headers: APICORSHeaders,
   });
 }
 

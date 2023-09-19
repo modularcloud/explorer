@@ -1,5 +1,5 @@
 import { Sidebar } from "~/ecs/components/sidebar";
-import { getSingleNetwork } from "~/lib/network";
+import { getSingleNetworkCached } from "~/lib/network";
 import { RightPanel } from "~/ui/right-panel/component";
 
 const VMDisplayNames = {
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default async function RightPanelPage({ params }: Props) {
-  const network = await getSingleNetwork(params.network);
+  const network = await getSingleNetworkCached(params.network);
   if (!network) return null;
   let vm: (typeof VMDisplayNames)[keyof typeof VMDisplayNames] | null = null;
   if (network.config.rpcUrls.cosmos) {

@@ -14,3 +14,5 @@ export default function HomeLogo() {
     </div>
   );
 }
+
+export const runtime = "edge";

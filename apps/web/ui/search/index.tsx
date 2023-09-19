@@ -2,10 +2,15 @@
 import * as React from "react";
 import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { useParams } from "next/navigation";
-import clsx from "clsx";
+import { cn } from "~/ui/shadcn/utils";
+
+import { Tooltip } from "~/ui/tooltip";
+import { SearchModal } from "./search-modal";
+
+import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 import type { OptionGroups } from "~/lib/utils";
-import { Tooltip } from "../tooltip";
+import { Button } from "~/ui/button";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -19,41 +24,47 @@ export function Search({ optionGroups }: Props) {
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
+  // OUR DEFAULT BRAND COLOR is this ONE
+  const primaryColor = !!params.network
+    ? network.brandColor!
+    : DEFAULT_BRAND_COLOR;
+
   return (
     <div
       style={{
         // @ts-expect-error this is a CSS variable
-        "--color-primary": network.primaryColor,
+        "--color-primary": primaryColor,
       }}
-      className={clsx(
+      className={cn(
         "flex items-center rounded-lg border border-mid-dark-100 bg-white max-w-[450px] w-full mx-auto",
         "focus-within:border-primary focus-within:border-1.5",
         "shadow-sm",
       )}
     >
-      <button
-        className={clsx(
-          "px-4 py-2 border-r border-mid-dark-100 rounded-l-lg font-medium",
-          "hover:bg-muted/5 transition duration-200",
-          "inline-flex gap-4 items-center",
-        )}
+      <SearchModal
+        defaultNetwork={network}
+        brandColor={primaryColor}
+        optionGroups={optionGroups}
       >
-        <div className="inline-flex gap-2 items-center">
-          <span>{network.displayName}</span>
-          {network.verified && (
-            <Tooltip label="This chain is verified">
-              <span>
-                <FancyCheck className="text-primary" />
-              </span>
-            </Tooltip>
-          )}
-        </div>
-        <div>
-          <Recycle className="text-muted" />
-        </div>
-      </button>
+        <Button className={cn("border-r rounded-r-none")}>
+          <div className="inline-flex gap-2 items-center">
+            <span>{network.displayName}</span>
+            {network.verified && (
+              <Tooltip label="This chain is verified">
+                <span>
+                  <FancyCheck className="text-primary" />
+                </span>
+              </Tooltip>
+            )}
+          </div>
+          <div>
+            <Recycle className="text-muted" />
+          </div>
+        </Button>
+      </SearchModal>
+
       <div
-        className={clsx(
+        className={cn(
           "flex items-center px-4 py-2 rounded-r-lg",
           "hover:bg-muted/5 transition duration-200",
           "flex-1",

@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import { getSingleNetwork } from "~/lib/network";
+import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
 import type { FetchLoadArgs } from "~/lib/utils";
 
 interface Props {
   params: Pick<FetchLoadArgs, "network">;
 }
 export default async function NetworkLogo(props: Props) {
-  const network = await getSingleNetwork(props.params.network);
+  const network = await getSingleNetworkCached(props.params.network);
   if (!network) notFound();
 
   return (
@@ -25,4 +25,9 @@ export default async function NetworkLogo(props: Props) {
       </p>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const allNetworks = await getAllNetworks();
+  return allNetworks.map((network) => ({ network: network.slug }));
 }

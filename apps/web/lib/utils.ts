@@ -38,14 +38,6 @@ export async function getEventSignatureName(topic: string) {
 export type FetchLoadArgs = { network: string; type: string; query: string };
 export async function fetchLoad(props: FetchLoadArgs) {
   try {
-    let baseUrl = "http://localhost:3000";
-    if (process.env.VERCEL_URL) {
-      baseUrl = `https://${process.env.VERCEL_URL}`;
-    }
-    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-      baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-    }
-
     let cache: RequestCache = "force-cache";
 
     if (
@@ -59,7 +51,9 @@ export async function fetchLoad(props: FetchLoadArgs) {
     // Since this fetch call is not called with `cache: no-store` it will always be cached
     // However, i suppose blockchain data are immutable ? so this will normally not be a problem
     const response = await fetch(
-      `${baseUrl}/api/app/load/${props.network}/${props.type}/${props.query}`,
+      `${getBaseURL()}/api/app/load/${props.network}/${
+        props.type
+      }/${encodeURIComponent(props.query)}`,
       {
         cache,
       },
@@ -87,20 +81,14 @@ export async function fetchLoad(props: FetchLoadArgs) {
 
 export type SearchOption = {
   displayName: string;
+  brandName: string;
   verified?: boolean;
-  primaryColor?: string;
+  brandColor: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
   id: string;
 };
 export type OptionGroups = {
   [groupDisplayName: string]: SearchOption[];
-};
-export type Whitelabel = {
-  name: [string] | [string, string];
-  searchOptions: OptionGroups;
-  defaultNetwork: string;
-  subText?: string;
-  env: string;
 };
 
 export function slugify(str: string): string {
@@ -131,4 +119,56 @@ export function truncateString(
 export function capitalize(str: string) {
   const firstChar = str.charAt(0);
   return firstChar.toUpperCase() + str.substring(1).toLowerCase();
+}
+
+/**
+ * Check if the child element overflows the parent
+ * @param parent
+ * @param child
+ * @returns
+ */
+export function isElementOverflowing(parent: HTMLElement, child: HTMLElement) {
+  const parentRect = parent.getBoundingClientRect();
+  const childRect = child.getBoundingClientRect();
+
+  // Check if the child overflows the parent in any direction
+  if (
+    childRect.left < parentRect.left ||
+    childRect.right > parentRect.right ||
+    childRect.top < parentRect.top ||
+    childRect.bottom > parentRect.bottom
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Group an array into chunks of specified size
+ * @example
+ *   chunkArray([1, 2, 3, 4, 5, 6, 7, 8, 9], 3) // returns: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+ *
+ * @param array
+ * @param chunkSize
+ * @returns
+ */
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  let result: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    let chunk = array.slice(i, i + chunkSize);
+    result.push(chunk);
+  }
+  return result;
+}
+
+export function getBaseURL() {
+  let baseUrl = "http://localhost:3000";
+  if (process.env.VERCEL_URL) {
+    baseUrl = `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+  return baseUrl;
 }

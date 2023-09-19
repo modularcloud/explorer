@@ -17,13 +17,13 @@ interface Props {
     x: string;
     y: number; // USD
   }[];
-  mainColor: string;
+  brandColor: string;
   tooltipValueFormatter?: (tooltipValue: number) => string;
   valueFormatter?: (value: number) => string;
 }
 
 export function AreaChart({
-  mainColor,
+  brandColor,
   data,
   tooltipValueFormatter,
   valueFormatter,
@@ -65,12 +65,12 @@ export function AreaChart({
           <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="5%"
-              stopColor={`hsl(${mainColor})`}
+              stopColor={`hsl(${brandColor})`}
               stopOpacity={0.35}
             />
             <stop
               offset="95%"
-              stopColor={`hsl(${mainColor})`}
+              stopColor={`hsl(${brandColor})`}
               stopOpacity={0}
             />
           </linearGradient>
@@ -146,7 +146,7 @@ export function AreaChart({
                 r={4}
                 stroke="white"
                 strokeWidth={1.5}
-                fill={`hsl(${mainColor})`}
+                fill={`hsl(${brandColor})`}
               />
             );
           }}
@@ -154,7 +154,7 @@ export function AreaChart({
           dataKey="y"
           strokeWidth={2}
           animationDuration={500}
-          stroke={`hsl(${mainColor})`}
+          stroke={`hsl(${brandColor})`}
           fill="url(#gradient)"
         />
       </RCAreaChart>

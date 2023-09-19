@@ -1,28 +1,58 @@
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 
-export async function GET(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
+const revalidateRequestSchema = z.object({
+  tag: z.string().min(1),
+});
 
-  const revalidateToken = searchParams.get("revalidate-token");
-  const tag = searchParams.get("tag");
-  if (revalidateToken !== env.REVALIDATE_TOKEN) {
+export async function POST(request: Request) {
+  let requestJson = {};
+  try {
+    requestJson = await request.json();
+  } catch (error) {
     return NextResponse.json(
       {
-        error: "You must provide a valid token",
+        errors: {
+          "*": ["The request is malformed, please provide a valid JSON body"],
+        },
       },
       {
-        status: 401,
+        status: 415,
       },
     );
-  } else if (!tag) {
+  }
+
+  const result = revalidateRequestSchema.safeParse(requestJson);
+
+  if (!result.success) {
     return NextResponse.json(
       {
-        error: "You must provide a tag in the query params",
+        errors: result.error.flatten().fieldErrors,
       },
       {
         status: 422,
+      },
+    );
+  }
+
+  const { tag } = result.data;
+  const authorization = request.headers.get("Authorization");
+
+  const revalidateToken = authorization?.split(" ")[1];
+
+  if (revalidateToken !== env.REVALIDATE_TOKEN) {
+    return NextResponse.json(
+      {
+        errors: {
+          revalidateToken: [
+            "You must provide a valid token in the header as `Authorization: Bearer <token>`",
+          ],
+        },
+      },
+      {
+        status: 401,
       },
     );
   }
