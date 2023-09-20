@@ -63,6 +63,7 @@ export async function getRealTimeMetrics() {
   const metrics = await fetch(`${baseUrl}/api/metrics`).then((res) =>
     res.json(),
   );
+
   return {
     contractsDeployed: Number(metrics.result.realTimeMetrics.CONTRACT),
     totalTransactions: Number(metrics.result.realTimeMetrics.TRANSACTION),
