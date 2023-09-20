@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
 
 import { Tooltip } from "~/ui/tooltip";
@@ -18,6 +18,7 @@ interface Props {
 
 export function Search({ optionGroups }: Props) {
   const params = useParams();
+  const router = useRouter();
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
@@ -36,9 +37,9 @@ export function Search({ optionGroups }: Props) {
         "--color-primary": primaryColor,
       }}
       className={cn(
-        "flex items-center rounded-lg border border-mid-dark-100 bg-white max-w-[450px] w-full mx-auto",
+        "flex items-stretch rounded-lg border border-mid-dark-100 bg-white max-w-[450px] w-full mx-auto",
         "focus-within:border-primary focus-within:border-1.5",
-        "shadow-sm",
+        "shadow-sm h-12",
       )}
     >
       <SearchModal
@@ -46,7 +47,7 @@ export function Search({ optionGroups }: Props) {
         brandColor={primaryColor}
         optionGroups={optionGroups}
       >
-        <Button className={cn("border-r rounded-r-none")}>
+        <Button className={cn("border-r rounded-r-none h-full")}>
           <div className="inline-flex gap-2 items-center">
             <span>{network.displayName}</span>
             {network.verified && (
@@ -63,21 +64,45 @@ export function Search({ optionGroups }: Props) {
         </Button>
       </SearchModal>
 
-      <div
+      <form
         className={cn(
-          "flex items-center px-4 py-2 rounded-r-lg",
+          "flex flex-grow items-stretch rounded-r-lg",
           "hover:bg-muted/5 transition duration-200",
-          "flex-1",
+          "flex-1 h-full",
         )}
+        action={`/${network.id}/search`}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+
+          const searchQuery = formData.get("search")?.toString();
+          // this makes sure we don't navigate to an empty search route (which would throw a 404)
+          if (searchQuery) {
+            router.push(
+              `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+            );
+          }
+        }}
       >
         <input
           type="text"
+          name="search"
           placeholder="Go to hash"
-          className="focus:outline-none placeholder:text-muted font-medium bg-transparent flex-1"
+          className="focus:outline-none placeholder:text-muted font-medium bg-transparent flex-grow py-2 pl-4 h-full"
+          onChange={(e) => {
+            if (e.target.value) {
+              // prefetch on search to make the navigation faster
+              router.prefetch(
+                `/${network.id}/search/${encodeURIComponent(e.target.value)}`,
+              );
+            }
+          }}
         />
 
-        <ArrowRight className="text-muted" />
-      </div>
+        <button className="h-full rounded-r-lg px-4 py-2 inline-flex items-center justify-center">
+          <ArrowRight className="text-muted" aria-hidden="true" />
+        </button>
+      </form>
     </div>
   );
 }

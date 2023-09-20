@@ -1,7 +1,7 @@
-import { Sidebar } from "~/ecs/components/sidebar";
 import { RightPanel } from "~/ui/right-panel/component";
 import { getSingleNetworkCached } from "~/lib/network";
 
+import type { Sidebar } from "~/ecs/components/sidebar";
 import type { Value } from "~/schemas/value";
 import type { FetchLoadArgs } from "~/lib/utils";
 interface Props {

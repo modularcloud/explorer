@@ -1,8 +1,8 @@
-import { Metadata } from "next";
 import EntityPage, {
   generateMetadata as _generateMetadata,
 } from "~/app/_[network]/[type]/(standard)/[query]/page";
-import { ShortenedResourcePath, mapTypes } from "./helpers";
+import type { Metadata } from "next";
+import { type ShortenedResourcePath, mapTypes } from "./helpers";
 import { getAllNetworksCached } from "~/lib/network";
 
 type Props = {

@@ -6,7 +6,11 @@ const config = {
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
   experimental: {
-    logging: "verbose",
+    logging: {
+      level: "verbose",
+      // @ts-expect-error this is normally a boolean but nextjs types thing wrong
+      fullUrl: true,
+    },
     useDeploymentId: true,
   },
   images: {

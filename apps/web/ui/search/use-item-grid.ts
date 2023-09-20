@@ -102,6 +102,8 @@ export function useItemGrid<
    */
   const moveSelectionDown = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+
     const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentGroupOptions.findIndex(
@@ -135,6 +137,8 @@ export function useItemGrid<
 
   const moveSelectionUp = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+
     const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentGroupOptions.findIndex(
@@ -174,6 +178,8 @@ export function useItemGrid<
    */
   const moveSelectionRight = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+
     const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentGroupOptions.findIndex(
@@ -208,6 +214,8 @@ export function useItemGrid<
 
   const moveSelectionLeft = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+
     const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentGroupOptions.findIndex(
@@ -234,6 +242,7 @@ export function useItemGrid<
 
   const scrollOptionIntoView = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+
     if (option) {
       // scroll option into view
       const element = document.getElementById(

@@ -1,5 +1,5 @@
 import EntityLayout from "~/app/_[network]/[type]/(standard)/[query]/layout";
-import { mapTypes, ShortenedResourcePath } from "./helpers";
+import { mapTypes, type ShortenedResourcePath } from "./helpers";
 import { getAllNetworksCached } from "~/lib/network";
 
 type Props = {
