@@ -37,17 +37,22 @@ export function SearchModal({
   const {
     isSearchModalOpen: isDialogOpen,
     setSearchModalOpen: setIsDialogOpen,
+    searchValue: inputValue,
+    setSearchValue: setInputValue,
   } = React.use(GlobalHotkeyContext);
-  const [inputValue, setInputValue] = React.useState("");
+
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
     React.useState<SearchOption | null>(null);
 
-  const onSelectOption = React.useCallback((option: SearchOption) => {
-    setSelectedNetwork(option);
-    inputRef.current?.focus();
-    setInputValue("");
-  }, []);
+  const onSelectOption = React.useCallback(
+    (option: SearchOption) => {
+      setSelectedNetwork(option);
+      inputRef.current?.focus();
+      setInputValue("");
+    },
+    [setInputValue],
+  );
 
   const isTransactionQuery = isHash(inputValue);
   const isAddressQuery = isAddress(inputValue);

@@ -6,12 +6,16 @@ import type { OptionGroups } from "~/lib/utils";
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
   setSearchModalOpen: (open: boolean) => void;
+  searchValue: string;
+  setSearchValue: (value: string) => void;
 };
 
 export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   {
     isSearchModalOpen: false,
+    searchValue: "",
     setSearchModalOpen() {}, // dummy
+    setSearchValue() {}, // dummy
   },
 );
 
@@ -23,6 +27,7 @@ export function GlobalHotkeyProvider({
   optionGroups: OptionGroups;
 }) {
   const [isSearchModalOpen, setSearchModalOpen] = React.useState(false);
+  const [initialSearchValue, setInitialSearchValue] = React.useState("");
   const router = useRouter();
   const params = useParams();
   const sequenceKeyPressedRef = React.useRef<boolean>(false);
@@ -41,7 +46,9 @@ export function GlobalHotkeyProvider({
         const text = event.clipboardData?.getData("text/plain");
         if (text) {
           // Push
-          router.push(`/${network.id}/search/${encodeURIComponent(text)}`);
+          setSearchModalOpen(true);
+          setInitialSearchValue(text);
+          // router.push(`/${network.id}/search/${encodeURIComponent(text)}`);
         }
       }
     };
@@ -85,6 +92,8 @@ export function GlobalHotkeyProvider({
       value={{
         isSearchModalOpen,
         setSearchModalOpen,
+        searchValue: initialSearchValue,
+        setSearchValue: setInitialSearchValue,
       }}
     >
       {children}
