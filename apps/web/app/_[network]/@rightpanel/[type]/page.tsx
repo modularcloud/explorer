@@ -1,7 +1,7 @@
-import { Sidebar } from "~/ecs/components/sidebar";
 import { getSingleNetworkCached } from "~/lib/network";
 import { RightPanel } from "~/ui/right-panel/component";
 
+import type { Sidebar } from "~/ecs/components/sidebar";
 const VMDisplayNames = {
   evm: "Ethereum Virtual Machine",
   cosmos: "Cosmos SDK",

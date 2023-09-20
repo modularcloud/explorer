@@ -3,7 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "noErrorTruncation": true,
-    "verbatimModuleSyntax": true,
     "plugins": [
       {
         "name": "next"
