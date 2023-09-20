@@ -55,6 +55,7 @@ export function useWidgetData(networkSlug: string) {
     {
       refreshInterval: 30 * 1000, // each 30 seconds
       errorRetryCount: 2,
+      keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
     },
   );
