@@ -4,11 +4,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import JSZip from "jszip";
 import { readFileData } from "../utils/readFileData";
-
+import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
+import UploadedFileSection from "./uploadedFileSection";
+import SvgFileUpload from "./icons/fileUpload";
 
 export default function VerifyAndUpload() {
-  const [files, setFiles] = useState<FileList>();
+  const [files, setFiles] = useState<File[]>([]);
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("22222");
   type VerificationStatus = "FULL" | "PARTIAL" | null;
@@ -34,13 +36,23 @@ export default function VerifyAndUpload() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setFiles(event.target.files);
+      const fileArray = Array.from(event.target.files);
+      setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
+      console.log(files);
+    }
+  };
+  const deleteFile = (fileIndex: number) => {
+    if (files) {
+      const newFiles = [...files];
+      newFiles.splice(fileIndex, 1);
+      setFiles(newFiles);
     }
   };
   const dragNdrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (event.dataTransfer.files) {
-      setFiles(event.dataTransfer.files);
+      const fileArray = Array.from(event.dataTransfer.files);
+      setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
     }
   };
 
@@ -187,7 +199,7 @@ export default function VerifyAndUpload() {
 
   const readAndZipFiles = () => {
     return new Promise<Blob>(async (resolve, reject) => {
-      let zip = new JSZip();
+      const zip = new JSZip();
       let zipFile;
       if (files) {
         for (let i = 0; i < files?.length; i++) {
@@ -207,69 +219,68 @@ export default function VerifyAndUpload() {
   return (
     <div className="flex flex-col items-center justify-center">
       <ToastContainer />
-      <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl border-t-4 border-solid border-[#234594]">
-        <div className="w-[80vw] rounded-lg bg-white px-14 py-10">
-          <div>
-            <p className="text-center text-2xl font-bold">Upload files</p>
-          </div>
-          <div>
-            <p className="pb-5 text-center">
-              Add the Solidity source files and metadata of the contract you
-              want to verify.
-            </p>
-          </div>
-          <label
-            htmlFor="file-upload"
-            className="custom-file-upload relative w-full pt-5"
-          >
-            <div className="flex">
-              <p>Select Chain:</p>
+      <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
+        <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
+          <div className="flex flex-col md:flex-row  justify-between mb-3">
+            <div className="flex flex-col w-full">
+              <p className="pl-1">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="w-full py-4">
+            <div className="flex flex-col w-full md:w-3/4 ">
+              <p className="pl-1">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="h-10 w-full rounded-lg border-2 border-[#2753bb] indent-2  font-light placeholder:text-gray-800"
+                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900 w-full"
                 placeholder="Contract Address"
               />
             </div>
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onDrop={dragNdrop}
-              className="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#234594] p-20 font-light"
-            >
-              <p>Drag and drop here or</p>
-              <p>Browse files</p>
-              <input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-                required
-                multiple
-              />
-            </div>
-          </label>
-          <div className="text-md flex gap-x-3 pt-5">
-            <p>Added Files:</p>
-            {files &&
-              Array.from(files).map((file, index) => (
-                <p key={index} className="text-center">
-                  {file.name},
-                </p>
-              ))}
           </div>
-          <div
-            className="flex cursor-pointer items-center justify-center"
-            onClick={onSubmit}
-          >
-            <div className="rounded-lg bg-[#254ba5] px-4 py-2 text-white">
+          <ExternalFileImporter setFiles={setFiles} />
+          <div className="flex w-full gap-x-5 flex-col md:flex-row">
+            <label
+              htmlFor="file-upload"
+              className="custom-file-upload pt-5 w-full md:w-[65%] "
+            >
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onDrop={dragNdrop}
+                className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-solid p-20  font-light"
+              >
+                <div className="bg-[#F2F4F7] h-[40px] w-[40px] rounded-full relative flex-col flex justify-center items-center">
+                  <div className="relative  rounded-full bg-[#F9FAFB] flex justify-center items-center  ">
+                    <SvgFileUpload />
+                  </div>
+                </div>
+                <p className="text-[#6941C6]">Click to Upload</p>
+                <p className="text-sm  text-[#667085]">
+                  Drag and drop here or Browse files
+                </p>
+                <input
+                  id="file-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  required
+                  multiple
+                />
+              </div>
+            </label>
+            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto ">
+              <UploadedFileSection deleteFile={deleteFile} files={files} />
+            </div>
+          </div>
+
+          <div className="flex pt-3 items-center justify-center">
+            <div
+              className="rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
+              onClick={onSubmit}
+            >
               Verify
             </div>
           </div>

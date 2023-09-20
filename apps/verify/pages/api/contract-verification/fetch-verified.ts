@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma/lib/prisma";
 import axios, { AxiosResponse } from "axios";
@@ -58,8 +60,8 @@ const unzipAndRead = (
   response: AxiosResponse<any>,
   contractData: Verification,
 ) => {
-  return new Promise((resolve, reject) => {
-    let data: any = { ...contractData };
+  return new Promise((resolve) => {
+    const data: any = { ...contractData };
     data.files = {};
     response.data
       .pipe(unzipper.Parse())

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, CSSProperties } from "react";
-import axios from "axios";
+
 import ClipLoader from "react-spinners/ClipLoader";
 const override: CSSProperties = {
   borderColor: "#2753bb",
@@ -18,7 +18,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
   onSelectionChange,
 }) => {
   const [data, setData] = useState<Chain[]>([]);
-  let [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +55,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
         className={
           loading
             ? "hidden"
-            : "rounded-md  mx-1 pl-1  flex justify-center items-center border-2 border-[#2753bb] border-solid"
+            : "rounded-md mt-2 w-full p-2  flex justify-between items-center border-2  md:w-1/2    "
         }
       >
         {data.map((item, index) => (
