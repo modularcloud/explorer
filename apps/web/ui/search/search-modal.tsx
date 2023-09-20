@@ -17,7 +17,9 @@ import { IntegrationActionListView } from "./integration-action-list-view";
 import { isAddress, isHash, isHeight } from "~/lib/search";
 import { useSearcheableEntities } from "./use-searcheable-entities";
 import { IntegrationGridView } from "./integration-grid-view";
-import { type SearchOption, type OptionGroups, capitalize } from "~/lib/utils";
+import { capitalize } from "~/lib/utils";
+import { GlobalHotkeyContext } from "../global-hotkey-provider";
+import type { SearchOption, OptionGroups } from "~/lib/utils";
 
 interface Props {
   defaultNetwork: SearchOption;
@@ -32,7 +34,10 @@ export function SearchModal({
   brandColor,
   optionGroups,
 }: Props) {
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const {
+    isSearchModalOpen: isDialogOpen,
+    setSearchModalOpen: setIsDialogOpen,
+  } = React.use(GlobalHotkeyContext);
   const [inputValue, setInputValue] = React.useState("");
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
