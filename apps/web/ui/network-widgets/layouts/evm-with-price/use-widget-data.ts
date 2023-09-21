@@ -53,7 +53,10 @@ export function useWidgetData(networkSlug: string) {
       return widgetAPIResponseSchema.parse(await response.json());
     },
     {
-      refreshInterval: 5_000, // 5 seconds
+      refreshInterval: 30 * 1000, // each 30 seconds
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
     },
   );
 }

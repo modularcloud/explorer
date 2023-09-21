@@ -7,7 +7,7 @@ export default async function SearchRedirectPage({
 }) {
   // In case of the form submission without JS enabled
   if (searchParams?.search) {
-    redirect(`/search/${encodeURIComponent(searchParams?.search)}`);
+    redirect(`./search/${encodeURIComponent(searchParams?.search)}`);
   } else {
     notFound();
   }
