@@ -51,23 +51,18 @@ export async function getBlockMetrics(rpcURL: string) {
   };
 }
 
-export async function getRealTimeMetrics() {
-  let baseUrl = "http://localhost:3000";
-  if (process.env.VERCEL_URL) {
-    baseUrl = `https://${process.env.VERCEL_URL}`;
-  }
-  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-    baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-  }
-
-  const metrics = await fetch(`${baseUrl}/api/metrics`).then((res) =>
-    res.json(),
-  );
+export async function getRealTimeMetrics(integrationUuid: string) {
+  const response = await fetch(
+    env.METRICS_API_URL + `/chain/${integrationUuid}/metrics`,
+    {
+      cache: "no-store",
+    },
+  ).then((res) => res.json());
 
   return {
-    contractsDeployed: Number(metrics.result.realTimeMetrics.CONTRACT),
-    totalTransactions: Number(metrics.result.realTimeMetrics.TRANSACTION),
-    walletAddresses: Number(metrics.result.realTimeMetrics.UNIQUE_ADDRESS),
+    contractsDeployed: Number(response.result.metrics.CONTRACT),
+    totalTransactions: Number(response.result.metrics.TRANSACTION),
+    walletAddresses: Number(response.result.metrics.UNIQUE_ADDRESS),
   };
 }
 

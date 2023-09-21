@@ -41,7 +41,7 @@ export async function GET(_: Request, ctx: { params: { network: string } }) {
       getZbcPrice(),
       getGasPrice(network.config.rpcUrls.evm!),
       getBlockMetrics(network.config.rpcUrls.evm!),
-      getRealTimeMetrics(),
+      getRealTimeMetrics(network.integrationId),
       getTransactionHistoryData(),
       getLatestBlocks(network.slug, network.config.rpcUrls.evm!),
       getLatestTransactions(network.slug, network.config.rpcUrls.evm!),
