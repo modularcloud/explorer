@@ -53,7 +53,7 @@ export async function getBlockMetrics(rpcURL: string) {
 
 export async function getRealTimeMetrics(integrationUuid: string) {
   const response = await fetch(
-    env.METRICS_API_URL + `/chain/${integrationUuid}/metrics`,
+    `${env.METRICS_API_URL}/chain/${integrationUuid}/metrics`,
     {
       cache: "no-store",
     },
@@ -66,34 +66,32 @@ export async function getRealTimeMetrics(integrationUuid: string) {
   };
 }
 
-export async function getTransactionHistoryData() {
+export async function getTransactionVolumeHistory(integrationUuid: string) {
   const TransactionVolumeSchema = z.object({
     endTime: z.string(),
     volumeInWei: z.string(),
   });
 
-  return fetch(env.METRICS_API_URL + "/v2/1/transaction-volume-data")
+  return fetch(
+    `${env.METRICS_API_URL}/chain/${integrationUuid}/transaction-volume-data`,
+  )
     .then((res) => res.json())
-    .then((res) => {
-      return TransactionVolumeSchema.array().parse(
-        res.result.transactionVolumes,
-      );
-    })
+    .then((res) =>
+      TransactionVolumeSchema.array().parse(res.result.transactionVolumes),
+    )
     .then((res) => {
       return res
-        .sort((a, b) => {
-          return Number(new Date(a.endTime)) - Number(new Date(b.endTime));
-        })
-        .slice(-14)
-        .map((item) => {
-          return {
-            time: new Date(item.endTime).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            }),
-            volume: Number(Web3.utils.fromWei(item.volumeInWei)),
-          };
-        });
+        .sort(
+          (a, b) => Number(new Date(a.endTime)) - Number(new Date(b.endTime)),
+        ) // sort by date ascending
+        .slice(-14) // only the last 14 days
+        .map((item) => ({
+          time: new Date(item.endTime).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          volume: Number(Web3.utils.fromWei(item.volumeInWei)),
+        }));
     });
 }
 
