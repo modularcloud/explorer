@@ -4,11 +4,9 @@ export default function BlockLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <h1>Block Layout</h1>
-
+    <main className="min-h-screen flex flex-col justify-between container mx-auto h-full gap-14">
       {children}
-    </>
+    </main>
   );
 }
 
