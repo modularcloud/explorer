@@ -51,54 +51,47 @@ export async function getBlockMetrics(rpcURL: string) {
   };
 }
 
-export async function getRealTimeMetrics() {
-  let baseUrl = "http://localhost:3000";
-  if (process.env.VERCEL_URL) {
-    baseUrl = `https://${process.env.VERCEL_URL}`;
-  }
-  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-    baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-  }
-
-  const metrics = await fetch(`${baseUrl}/api/metrics`).then((res) =>
-    res.json(),
-  );
+export async function getRealTimeMetrics(integrationUuid: string) {
+  const response = await fetch(
+    `${env.METRICS_API_URL}/chain/${integrationUuid}/metrics`,
+    {
+      cache: "no-store",
+    },
+  ).then((res) => res.json());
 
   return {
-    contractsDeployed: Number(metrics.result.realTimeMetrics.CONTRACT),
-    totalTransactions: Number(metrics.result.realTimeMetrics.TRANSACTION),
-    walletAddresses: Number(metrics.result.realTimeMetrics.UNIQUE_ADDRESS),
+    contractsDeployed: Number(response.result.metrics.CONTRACT),
+    totalTransactions: Number(response.result.metrics.TRANSACTION),
+    walletAddresses: Number(response.result.metrics.UNIQUE_ADDRESS),
   };
 }
 
-export async function getTransactionHistoryData() {
+export async function getTransactionVolumeHistory(integrationUuid: string) {
   const TransactionVolumeSchema = z.object({
     endTime: z.string(),
     volumeInWei: z.string(),
   });
 
-  return fetch(env.METRICS_API_URL + "/v2/1/transaction-volume-data")
+  return fetch(
+    `${env.METRICS_API_URL}/chain/${integrationUuid}/transaction-volume-data`,
+  )
     .then((res) => res.json())
-    .then((res) => {
-      return TransactionVolumeSchema.array().parse(
-        res.result.transactionVolumes,
-      );
-    })
+    .then((res) =>
+      TransactionVolumeSchema.array().parse(res.result.transactionVolumes),
+    )
     .then((res) => {
       return res
-        .sort((a, b) => {
-          return Number(new Date(a.endTime)) - Number(new Date(b.endTime));
-        })
-        .slice(-14)
-        .map((item) => {
-          return {
-            time: new Date(item.endTime).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            }),
-            volume: Number(Web3.utils.fromWei(item.volumeInWei)),
-          };
-        });
+        .sort(
+          (a, b) => Number(new Date(a.endTime)) - Number(new Date(b.endTime)),
+        ) // sort by date ascending
+        .slice(-14) // only the last 14 days
+        .map((item) => ({
+          time: new Date(item.endTime).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          volume: Number(Web3.utils.fromWei(item.volumeInWei)),
+        }));
     });
 }
 
