@@ -40,6 +40,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           "border-mid-dark-100 bg-white max-w-[450px] w-full",
           "shadow-sm py-2 outline-none",
           "focus:ring-primary/20 focus:ring-2 focus:border-primary",
+          "hover:bg-muted/5 transition duration-200",
         )}
         style={{
           // @ts-expect-error this is a CSS variable

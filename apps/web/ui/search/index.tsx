@@ -99,7 +99,10 @@ export function Search({ optionGroups }: Props) {
           }}
         />
 
-        <button className="h-full rounded-r-lg px-4 py-2 inline-flex items-center justify-center">
+        <button
+          className="h-full rounded-r-lg px-4 py-2 inline-flex items-center justify-center"
+          type="submit"
+        >
           <ArrowRight className="text-muted" aria-hidden="true" />
         </button>
       </form>

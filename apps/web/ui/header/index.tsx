@@ -1,11 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 import * as React from "react";
 
 import { HeaderSearchButton } from "./header-search-button";
 import { Grid, List } from "~/ui/icons";
 
 import { getSearchOptionGroups } from "~/lib/search-options";
-import Link from "next/link";
+import { HeaderLogoLink } from "./header-logo-link";
 
 type Props = {};
 
@@ -14,13 +13,7 @@ export async function Header({}: Props) {
 
   return (
     <header className="bg-white sticky top-0 z-10 flex justify-between items-center px-6 py-4">
-      <Link href="/">
-        <img
-          src="/images/mc-logo.svg"
-          alt="ModularCloud Logo"
-          className="h-5 w-5"
-        />
-      </Link>
+      <HeaderLogoLink />
 
       <HeaderSearchButton optionGroups={optionGroups} />
 
