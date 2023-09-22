@@ -1,48 +1,38 @@
-import { Search } from "~/ui/old-search";
-import Link from "next/link";
-import { Suspense } from "react";
-import { HeaderMenu } from "./menu";
-import { MobileActions } from "~/ui/mobile-actions";
+/* eslint-disable @next/next/no-img-element */
+import * as React from "react";
+
+import { HeaderSearchButton } from "./header-search-button";
+import { Grid, List } from "~/ui/icons";
+
 import { getSearchOptionGroups } from "~/lib/search-options";
+import Link from "next/link";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+type Props = {};
 
-type Props = {
-  resourcePath: FetchLoadArgs;
-};
+export async function Header({}: Props) {
+  const optionGroups = await getSearchOptionGroups();
 
-export async function Header({ resourcePath }: Props) {
-  const searchOptionGroups = await getSearchOptionGroups();
   return (
-    <div className="h-header bg-translucent backdrop-blur-xs sticky top-0 z-10 flex flex-col">
-      <div className="flex flex-grow items-center justify-between space-x-4 px-4 pb-px sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="font-logo flex items-center justify-between text-[1.125rem] font-[700]"
-        >
-          Modular
-          <span className="from-ocean to-royal bg-gradient-to-r bg-clip-text text-transparent">
-            Cloud
-          </span>
-        </Link>
-        <div className="hidden w-[23rem] lg:flex xl:w-[28rem]">
-          <Search
-            defaultValue={resourcePath.network}
-            optionGroups={searchOptionGroups}
-          />
-        </div>
-        <Suspense
-          fallback={
-            <MobileActions
-              searchOptions={searchOptionGroups}
-              rightPanelDisabled={true}
-            />
-          }
-        >
-          <HeaderMenu resourcePath={resourcePath} />
-        </Suspense>
+    <header className="bg-white sticky top-0 z-10 flex justify-between items-center px-6 py-4">
+      <Link href="/">
+        <img
+          src="/images/mc-logo.svg"
+          alt="ModularCloud Logo"
+          className="h-5 w-5"
+        />
+      </Link>
+
+      <HeaderSearchButton optionGroups={optionGroups} />
+
+      <div className="flex gap-2 items-stretch">
+        <button className="p-2 rounded-lg bg-white">
+          <Grid className="text-muted  col-span-2" />
+        </button>
+        <div className="h-8 w-[1px] bg-muted/20" aria-hidden="true" />
+        <button className="p-2 rounded-lg bg-white">
+          <List className="text-muted col-span-2" />
+        </button>
       </div>
-      <div className="bg-night h-px w-full opacity-[.04]"></div>
-    </div>
+    </header>
   );
 }

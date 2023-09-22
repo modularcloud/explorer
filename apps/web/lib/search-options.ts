@@ -19,6 +19,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       displayName: currentValue.chainName,
       id: currentValue.slug,
       brandName: currentValue.chainBrand,
+      logoURL: currentValue.config.logoUrl,
     } satisfies SearchOption;
     if (acc[brand]) {
       acc[brand].push(newOption);

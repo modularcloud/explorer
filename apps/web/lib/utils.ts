@@ -85,6 +85,7 @@ export type SearchOption = {
   verified?: boolean;
   brandColor: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
+  logoURL: string;
   id: string;
 };
 export type OptionGroups = {
@@ -171,4 +172,24 @@ export function getBaseURL() {
     baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
   }
   return baseUrl;
+}
+
+/**
+ * Truncate a hash string to a maximum length of 24 characters.
+ *
+ * If the input string is longer than 24 characters, it takes the first 10
+ * and last 10 characters, and concatenates them with '...' in between.
+ * If the input string is less than or equal to 24 characters, it returns the string as is.
+ *
+ * @param {string} hash - The hash string to truncate.
+ * @returns {string} - The truncated hash string.
+ */
+export function truncateHash(hash: string) {
+  if (hash.length <= 24) {
+    return hash;
+  }
+
+  const start = hash.substring(0, 10);
+  const end = hash.substring(hash.length - 10, hash.length);
+  return `${start}...${end}`;
 }

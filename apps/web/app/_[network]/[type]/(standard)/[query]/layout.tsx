@@ -1,5 +1,5 @@
 import { ViewContextProvider } from "~/ui/view-context";
-import { Header } from "~/ui/header";
+// import { Header } from "~/ui/header";
 import type { FetchLoadArgs } from "~/lib/utils";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 export default async function EntityLayout({ params, children }: Props) {
   return (
     <ViewContextProvider resourcePath={params}>
-      <Header resourcePath={params} />
+      {/* <Header resourcePath={params} /> */}
       {children}
     </ViewContextProvider>
   );
