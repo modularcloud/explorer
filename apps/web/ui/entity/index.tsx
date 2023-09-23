@@ -2,7 +2,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { FetchLoadArgs } from "~/lib/utils";
 import { ContextSwitcher } from "./context-switcher";
-import Overview from "./overview";
+import Overview from "./old-overview";
 import { Raw } from "./raw";
 
 type Props = { resourcePath: FetchLoadArgs };
