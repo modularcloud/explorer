@@ -8,6 +8,12 @@ import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
 import UploadedFileSection from "./uploadedFileSection";
 import SvgFileUpload from "./icons/fileUpload";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -217,24 +223,26 @@ export default function VerifyAndUpload() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div
+      className={` ${inter.variable} font-sans flex flex-col items-center justify-center`}
+    >
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
         <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
           <div className="flex flex-col md:flex-row  justify-between mb-3">
-            <div className="flex flex-col w-full">
-              <p className="pl-1">Select Chain</p>
+            <div className="flex flex-col w-full ">
+              <p className="">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
             <div className="flex flex-col w-full md:w-3/4 ">
-              <p className="pl-1">Contract Address</p>
+              <p className="pl-1 ">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900 w-full"
-                placeholder="Contract Address"
+                className="p-2 mt-2 rounded-lg  border-2 border-solid   border-gray-300 font-sans  font-light placeholder:text-gray-600 w-full"
+                placeholder="0xbb0e34e178a36b85af3622a7166b0543be239db2"
               />
             </div>
           </div>

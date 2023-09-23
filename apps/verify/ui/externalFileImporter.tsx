@@ -111,15 +111,19 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           importUrl={url}
           handleImport={handleImport}
           toggleImport={toggleImport}
+          placeholder={
+            "https://github.com/Uniswap/v3-core/archive/refs/heads/main.zip"
+          }
         />
       )}
       {showImportFromRemote && (
         <ImportFileComponent
-          importFrom="Remote"
+          importFrom="Remote  file or zip"
           handleUrlChange={handleUrlChange}
           importUrl={url}
           handleImport={handleImport}
           toggleImport={toggleImport}
+          placeholder="https://modular.cloud/contract.zip"
         />
       )}
     </div>
