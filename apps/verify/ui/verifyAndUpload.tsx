@@ -71,6 +71,12 @@ export default function VerifyAndUpload() {
       toast.error("Please add files to verify");
       return;
     }
+    if (contractAddress == "") {
+      toast.error(
+        "We noticed you left the contract address blank. Please fill it in ",
+      );
+      return;
+    }
     toastId = toast.loading("Verifying Files", {
       position: "top-center",
       closeOnClick: true,
