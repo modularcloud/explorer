@@ -1,19 +1,30 @@
+/* eslint-disable @next/next/no-img-element */
 import * as React from "react";
 
 import { HeaderSearchButton } from "./header-search-button";
 import { Grid, List } from "~/ui/icons";
 
 import { getSearchOptionGroups } from "~/lib/search-options";
-import { HeaderLogoLink } from "./header-logo-link";
+import Link from "next/link";
 
-type Props = {};
+type Props = {
+  networkSlug: string;
+};
 
-export async function Header({}: Props) {
+export async function Header({ networkSlug }: Props) {
   const optionGroups = await getSearchOptionGroups();
 
   return (
     <header className="bg-white sticky top-0 z-10 flex justify-between items-center px-6 py-4">
-      <HeaderLogoLink />
+      <Link href={`/${networkSlug}`} className="flex items-center gap-4">
+        <img
+          src="/images/mc-logo.svg"
+          alt="ModularCloud Logo"
+          className="h-5 w-5"
+        />
+
+        <h1 className="font-medium text-xl">Modular Cloud</h1>
+      </Link>
 
       <HeaderSearchButton optionGroups={optionGroups} />
 
