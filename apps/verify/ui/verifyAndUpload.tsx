@@ -242,7 +242,7 @@ export default function VerifyAndUpload() {
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="flex flex-col w-full md:w-3/4 ">
+            <div className="flex flex-col w-full md:w-3/5 ">
               <p className="pl-1 ">Contract Address</p>
               <input
                 type="text"
@@ -285,7 +285,7 @@ export default function VerifyAndUpload() {
                 />
               </div>
             </label>
-            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto ">
+            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto pl-1 ">
               <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>

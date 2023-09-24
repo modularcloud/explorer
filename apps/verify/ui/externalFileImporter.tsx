@@ -112,7 +112,7 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           handleImport={handleImport}
           toggleImport={toggleImport}
           placeholder={
-            "https://github.com/Uniswap/v3-core/archive/refs/heads/main.zip"
+            "https://github.com/OpenZeppelin/master/contracts/token/ERC20"
           }
         />
       )}

@@ -81,12 +81,12 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
             <ChevronDownIcon />
           </Select.Icon>
         </Select.Trigger>
-        <Select.Portal className="    ">
-          <Select.Content className="rounded-lg ">
+        <Select.Portal>
+          <Select.Content>
             <Select.Viewport className="px-2 overflow-hidden max-h-80 cursor-pointer absolute top-10 w-full    ">
               {data.map((item, index) => (
                 <Select.Item
-                  className="z-10 bg-white p-2 relative w-full hover:rounded-lg hover:border-gray-100 rounded-md mx-2 hover:bg-gray-50  "
+                  className="z-10 bg-white p-2 relative w-full  rounded-md mx-2 hover:bg-gray-50 !border-none !outline-none  "
                   key={index}
                   value={item.chainId.toString()}
                 >
