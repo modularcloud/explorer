@@ -1,5 +1,4 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import Decimal from "decimal.js";
 import { AddressExtract } from ".";
 import { CardComponent } from "~/ecs/components/card";
 
