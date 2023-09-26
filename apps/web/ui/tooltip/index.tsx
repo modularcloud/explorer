@@ -5,11 +5,12 @@ import { cn } from "../shadcn/utils";
 interface Props {
   children: React.ReactNode;
   label: string;
+  delayInMS?: number;
 }
 
-export function Tooltip({ children, label }: Props) {
+export function Tooltip({ children, label, delayInMS = 500 }: Props) {
   return (
-    <RadixTooltip.Provider>
+    <RadixTooltip.Provider delayDuration={delayInMS}>
       <RadixTooltip.Root>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
