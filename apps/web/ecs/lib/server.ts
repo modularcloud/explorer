@@ -7,6 +7,9 @@ type Args<T extends AnyArchetypeSchema> = {
   archetype: T;
 };
 
+/**
+ * New cached way to fetch the entity, only one will be executed
+ */
 export const fetchEntity = cache(async function fetchEntity<
   T extends AnyArchetypeSchema,
 >({ resourcePath, archetype }: Args<T>) {
