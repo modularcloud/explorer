@@ -23,12 +23,10 @@ export default async function BlockLayout({
       }}
     >
       <Header networkSlug={params.network} />
-      <div className="grid tab:grid-cols-6 lg:grid-cols-5">
+      <div className="grid tab:grid-cols-6 lg:grid-cols-6">
         <div
           id="main-content"
-          className={cn(
-            rightpanel ? "tab:col-span-4 lg:col-span-3" : "col-span-5",
-          )}
+          className={cn(rightpanel ? "tab:col-span-4" : "col-span-6")}
         >
           {children}
         </div>

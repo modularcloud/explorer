@@ -1,15 +1,25 @@
+import * as React from "react";
+import { Overview } from "~/ui/entity/overview";
+
 import { notFound } from "next/navigation";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { fetchEntity } from "~/ecs/lib/server";
 import { getSingleNetworkCached } from "~/lib/network";
 
 import type { FetchLoadArgs } from "~/lib/utils";
-
 interface Props {
   params: FetchLoadArgs;
 }
-export default function Page({ params: { network, type, query } }: Props) {
-  return <h1 className="text-xl font-bold">{`${network}/${type}/${query}`}</h1>;
+export default async function Page({ params }: Props) {
+  const entity = await fetchEntity({
+    resourcePath: params,
+    archetype: PageArchetype,
+  });
+
+  if (!entity) notFound();
+
+  // TODO : show Suspense skeleton as fallback when loading async attributes
+  return <Overview entity={entity} />;
 }
 
 export async function generateMetadata(props: Props) {

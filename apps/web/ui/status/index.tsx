@@ -1,29 +1,9 @@
-import clsx from "clsx";
-import SvgGreenTick from "~/ui/icons/GreenTick";
-import SvgRedCross from "~/ui/icons/RedCross";
+import * as React from "react";
 
-type Props = {
-  children?: React.ReactNode;
+interface Props {
   status: boolean;
-  mode?: string;
-};
+}
 
-export function Status({ children, status, mode }: Props) {
-  return mode === "icon" ? (
-    status ? (
-      <SvgGreenTick />
-    ) : (
-      <SvgRedCross />
-    )
-  ) : (
-    <div
-      className={clsx(
-        "flex items-center gap-2",
-        status ? "text-specialty-green" : "text-specialty-red",
-      )}
-    >
-      {status ? <SvgGreenTick /> : <SvgRedCross />}
-      {children ?? (status ? "Success" : "Failure")}
-    </div>
-  );
+export function Status({ status }: Props) {
+  return <></>;
 }

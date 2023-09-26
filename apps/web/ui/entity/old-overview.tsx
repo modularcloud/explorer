@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Status } from "~/ui/status";
+import { OldStatus } from "~/ui/old-status";
 import { Value } from "~/schemas/value";
 import clsx from "clsx";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
@@ -7,7 +7,7 @@ import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { Suspense } from "react";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
-import { CopyableValue } from "~/ui/copyable";
+import { OldCopyableValue } from "~/ui/old-copyable";
 
 import type { FetchLoadArgs } from "~/lib/utils";
 type Props = {
@@ -32,7 +32,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
       ) : null}
       {type === "status" ? (
         <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-          <Status status={payload} />
+          <OldStatus status={payload} />
         </dd>
       ) : null}
       {type === "list" ? (
@@ -45,7 +45,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <ol>
             {payload.map((value) => (
               <li key={value} className="truncate">
-                <CopyableValue value={value} />
+                <OldCopyableValue value={value} />
               </li>
             ))}
           </ol>
@@ -58,7 +58,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
             "truncate",
           )}
         >
-          <CopyableValue value={payload} />
+          <OldCopyableValue value={payload} />
         </dd>
       ) : null}
     </div>
@@ -81,7 +81,7 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   );
 }
 
-export default function Overview({ entity }: Props) {
+export default function OldOverview({ entity }: Props) {
   const { attributes, asyncAttributes, entityTypeName, entityId } =
     entity.components.sidebar.data;
   return (
@@ -92,7 +92,7 @@ export default function Overview({ entity }: Props) {
             {`${entityTypeName} Information`}
           </h3>
           <p className="text-temp-500 mt-1 max-w-2xl truncate text-sm leading-6">
-            <CopyableValue value={entityId} />
+            <OldCopyableValue value={entityId} />
           </p>
         </div>
         <div className="mx-6">

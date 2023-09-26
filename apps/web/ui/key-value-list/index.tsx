@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { Status } from "~/ui/status";
+import { OldStatus } from "~/ui/old-status";
 import { Value } from "~/schemas/value";
 import Image from "next/image";
-import { CopyableValue } from "~/ui/copyable";
+import { OldCopyableValue } from "~/ui/old-copyable";
 
 interface Props {
   attributes: Record<string, Value>;
@@ -28,7 +28,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
       ) : null}
       {type === "status" ? (
         <dd>
-          <Status status={payload} />
+          <OldStatus status={payload} />
         </dd>
       ) : null}
       {type === "list" ? (
@@ -36,7 +36,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <ol>
             {payload.map((value) => (
               <li key={value} className="truncate">
-                <CopyableValue value={value} />
+                <OldCopyableValue value={value} />
               </li>
             ))}
           </ol>
@@ -44,7 +44,7 @@ function Entry({ label, value }: { label: string; value: Value }) {
       ) : null}
       {type === "standard" ? (
         <dd className="truncate">
-          <CopyableValue value={payload} />
+          <OldCopyableValue value={payload} />
         </dd>
       ) : null}
     </>

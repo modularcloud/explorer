@@ -11,7 +11,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export function CopyableValue({ value, link, children }: Props) {
+export function OldCopyableValue({ value, link, children }: Props) {
   // Use hooks for toast notifications and routing
   const { toast } = useToast();
   const router = useRouter();

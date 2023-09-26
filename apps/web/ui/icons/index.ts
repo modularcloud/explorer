@@ -21,6 +21,7 @@ export { default as CloseOff } from "./CloseOff";
 export { default as CloseOn } from "./CloseOn";
 export { default as CodeOff } from "./CodeOff";
 export { default as CodeOn } from "./CodeOn";
+export { default as Copy } from "./Copy";
 export { default as CopyOff } from "./CopyOff";
 export { default as CopyOn } from "./CopyOn";
 export { default as CubesOff } from "./CubesOff";

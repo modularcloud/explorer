@@ -181,15 +181,28 @@ export function getBaseURL() {
  * and last 10 characters, and concatenates them with '...' in between.
  * If the input string is less than or equal to 24 characters, it returns the string as is.
  *
- * @param {string} hash - The hash string to truncate.
- * @returns {string} - The truncated hash string.
+ * @param hash - The hash string to truncate.
+ * @returns - The truncated hash string.
  */
-export function truncateHash(hash: string) {
-  if (hash.length <= 24) {
+export function truncateHash(hash: string, maxLength: number = 23) {
+  if (hash.length <= maxLength) {
     return hash;
   }
 
-  const start = hash.substring(0, 10);
-  const end = hash.substring(hash.length - 10, hash.length);
+  const singleSectionLength = Math.floor((maxLength - 3) / 2);
+
+  const start = hash.substring(0, singleSectionLength);
+  const end = hash.substring(hash.length - singleSectionLength, hash.length);
   return `${start}...${end}`;
+}
+
+// Function to copy the value to the clipboard
+export async function copyValueToClipboard(value: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+    return true;
+  } catch (err) {
+    console.error("Failed to copy text: ", err);
+    return false;
+  }
 }
