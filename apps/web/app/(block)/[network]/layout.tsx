@@ -23,16 +23,25 @@ export default async function BlockLayout({
       }}
     >
       <Header networkSlug={params.network} />
-      <div className="grid tab:grid-cols-6 lg:grid-cols-6">
+      <div className="grid tab:grid-cols-6">
         <div
           id="main-content"
-          className={cn(rightpanel ? "tab:col-span-4" : "col-span-6")}
+          className={cn(
+            rightpanel ? "tab:col-span-4" : "col-span-6",
+            "mt-[65px]",
+          )}
         >
           {children}
         </div>
 
         {rightpanel && (
-          <aside className="h-[calc(100vh-65px)] bg-muted/10 w-full col-span-2 hidden tab:block">
+          <aside
+            className={cn(
+              "h-[calc(100vh-65px)] bg-muted-100 hidden tab:block w-1/3",
+              "fixed top-[65px] bottom-0 right-0",
+              "overflow-hidden",
+            )}
+          >
             {rightpanel}
           </aside>
         )}

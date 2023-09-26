@@ -1,6 +1,10 @@
 import * as React from "react";
 import { CopyableValue } from "~/ui/copyable-value";
+import { Status } from "~/ui/status";
+
 import { cn } from "~/ui/shadcn/utils";
+import { fetchEntity } from "~/ecs/lib/server";
+import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 
 import type { Value } from "~/schemas/value";
 import type { Entity } from "@modularcloud/ecs";
@@ -11,7 +15,13 @@ type Props = {
   entity: Entity<typeof PageArchetype>;
 };
 
-function Entry({ label, value }: { label: string; value: Value }) {
+interface EntryProps {
+  label: string;
+  value: Value;
+  notCopyable?: boolean;
+}
+
+function Entry({ label, value, notCopyable = false }: EntryProps) {
   const { type, payload } = value;
   if (!payload) return null;
 
@@ -21,40 +31,78 @@ function Entry({ label, value }: { label: string; value: Value }) {
 
       {type === "standard" && (
         <dd className={cn("col-span-3")}>
-          <CopyableValue value={payload.toString()} />
+          {notCopyable ? (
+            <span>{payload.toString()}</span>
+          ) : (
+            <CopyableValue value={payload.toString()} />
+          )}
         </dd>
       )}
+      {type === "status" && (
+        <dd className={cn("col-span-3")}>
+          <Status status={payload} />
+        </dd>
+      )}
+
+      {/* TODO : handle "list" & "image" types */}
+      {/* {type === "list" && (
+        <dd
+          className={cn(
+            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
+            "truncate",
+          )}
+        >
+          <ol>
+            {payload.map((value) => (
+              <li key={value} className="truncate">
+                <CopyableValue value={value} />
+              </li>
+            ))}
+          </ol>
+        </dd>
+      )} */}
     </div>
   );
 }
 
-export function Overview({ entity }: Props) {
-  const { attributes, asyncAttributes } = entity.components.sidebar.data;
+async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
+  const entity = await fetchEntity({
+    resourcePath,
+    archetype: AttributesArchetype,
+  });
+  if (!entity) return null;
+  const attributes = entity.components.attributes.data;
   return (
-    <section className="py-8">
+    <>
+      {Object.entries(attributes).map(([key, value]) => {
+        return <Entry key={key} label={key} value={value} />;
+      })}
+    </>
+  );
+}
+
+export function Overview({ entity }: Props) {
+  const { attributes, asyncAttributes, entityTypeName } =
+    entity.components.sidebar.data;
+
+  return (
+    <section className="pt-8 pb-4">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
+        <Entry
+          label="Type"
+          notCopyable
+          value={{
+            type: "standard",
+            payload: entityTypeName,
+          }}
+        />
         {Object.entries(attributes).map(([key, value]) => {
           return <Entry key={key} label={key} value={value} />;
         })}
 
-        {/* TODO : handle async entries */}
-        {/* {Object.entries(attributes).map(([key, value]) => {
-              return <Entry key={key} label={key} value={value} />;
-            })}
-            {(asyncAttributes ?? []).map((set) => (
-              <Suspense
-                key={`${set.src.network}/${set.src.type}/${set.src.query}`}
-                fallback={
-                  <>
-                    {Object.entries(set.fallback).map(([key, value]) => {
-                      return <Entry key={key} label={key} value={value} />;
-                    })}
-                  </>
-                }
-              >
-                <AsyncEntries resourcePath={set.src} />
-              </Suspense>
-            ))} */}
+        {(asyncAttributes ?? []).map((set) => (
+          <AsyncEntries resourcePath={set.src} />
+        ))}
       </dl>
     </section>
   );

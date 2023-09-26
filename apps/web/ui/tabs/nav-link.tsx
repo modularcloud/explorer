@@ -38,7 +38,7 @@ export function NavLink({
         "flex text-center flex-col group h-full items-center group outline-none",
         {
           "text-foreground bg-white": isSelected,
-          "text-muted  bg-muted/10": !isSelected,
+          "text-muted  bg-muted-100": !isSelected,
           "rounded-bl-lg": currentIndex === activeTabIndex + 1,
           "rounded-br-lg": currentIndex === activeTabIndex - 1,
           "w-52": !isDummy,

@@ -1,9 +1,30 @@
 import * as React from "react";
+import { CheckCircle, XCircle } from "~/ui/icons";
 
 interface Props {
   status: boolean;
 }
 
 export function Status({ status }: Props) {
-  return <></>;
+  return (
+    <div className="rounded-lg items-center px-4 py-2 gap-1 justify-center border border-mid-dark-100 inline-flex">
+      {status ? (
+        <>
+          <CheckCircle
+            className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-0.5"
+            aria-hidden="true"
+          />
+          <span className="text-teal-900">Success</span>
+        </>
+      ) : (
+        <>
+          <XCircle
+            className="h-5 w-5 flex-shrink-0 text-red-500 relative top-0.5"
+            aria-hidden="true"
+          />
+          <span className="text-red-900">Failed</span>
+        </>
+      )}
+    </div>
+  );
 }
