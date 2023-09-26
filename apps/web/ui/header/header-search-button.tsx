@@ -11,6 +11,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { capitalize, truncateHash } from "~/lib/utils";
 
 import type { FetchLoadArgs, OptionGroups } from "~/lib/utils";
+import { Button } from "../button";
 interface Props {
   optionGroups: OptionGroups;
 }
@@ -34,14 +35,13 @@ export function HeaderSearchButton({ optionGroups }: Props) {
       defaultNetwork={network}
       brandColor={network.brandColor}
     >
-      <button
+      <Button
         className={cn(
-          "flex items-center justify-between gap-2 rounded-lg border px-4",
-          "border-mid-dark-100 bg-white max-w-[450px] w-full",
-          "shadow-sm py-2 outline-none",
-          "focus:ring-primary/20 focus:ring-2 focus:border-primary",
-          "hover:bg-muted/5 transition duration-200",
+          "flex items-center justify-between gap-2",
+          "max-w-[450px] w-full",
+          "shadow-sm",
         )}
+        variant="bordered"
         style={{
           // @ts-expect-error this is a CSS variable
           "--color-primary": network.brandColor,
@@ -69,7 +69,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
         <span>
           <ArrowRight className="text-muted" aria-hidden="true" />
         </span>
-      </button>
+      </Button>
     </SearchModal>
   );
 }

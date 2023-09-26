@@ -47,7 +47,11 @@ export function Search({ optionGroups }: Props) {
         brandColor={primaryColor}
         optionGroups={optionGroups}
       >
-        <Button className={cn("border-r rounded-r-none h-full")}>
+        <Button
+          className={
+            "border-0 border-r rounded-r-none h-full border-mid-dark-100"
+          }
+        >
           <div className="inline-flex gap-2 items-center">
             <span>{network.displayName}</span>
             {network.verified && (

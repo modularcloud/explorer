@@ -3,10 +3,11 @@ import * as React from "react";
 
 import { HeaderSearchButton } from "./header-search-button";
 import { Grid, List } from "~/ui/icons";
+import Link from "next/link";
 
 import { getSearchOptionGroups } from "~/lib/search-options";
-import Link from "next/link";
-import { cn } from "../shadcn/utils";
+import { cn } from "~/ui/shadcn/utils";
+import { Button } from "~/ui/button";
 
 type Props = {
   networkSlug: string;
@@ -35,13 +36,13 @@ export async function Header({ networkSlug }: Props) {
       <HeaderSearchButton optionGroups={optionGroups} />
 
       <div className="flex gap-2 items-stretch">
-        <button className="p-2 rounded-lg bg-white">
+        <Button isSquared>
           <Grid className="text-muted  col-span-2" />
-        </button>
+        </Button>
         <div className="h-8 w-[1px] bg-muted/20" aria-hidden="true" />
-        <button className="p-2 rounded-lg bg-white">
+        <Button isSquared>
           <List className="text-muted col-span-2" />
-        </button>
+        </Button>
       </div>
     </header>
   );
