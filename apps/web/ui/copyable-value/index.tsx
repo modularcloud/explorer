@@ -24,7 +24,7 @@ export function CopyableValue({ value, hideCopyIcon = false }: Props) {
           >
             {value}
           </p>
-          <Tooltip label="Copy value">
+          <Tooltip label="Copy value to clipboard">
             <button
               className={cn(
                 "rounded-md p-2 inline-flex items-center justify-center",
