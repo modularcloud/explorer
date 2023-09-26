@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as RadixTooltip from "@radix-ui/react-tooltip";
-import { cn } from "../shadcn/utils";
+import { cn } from "~/ui/shadcn/utils";
 
 interface Props {
   children: React.ReactNode;
