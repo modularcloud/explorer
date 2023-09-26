@@ -12,6 +12,15 @@ interface Props {
   params: FetchLoadArgs & { section?: string };
 }
 
+type Tabs = {
+  Icon?: React.ComponentType<{
+    className?: string;
+    "aria-hidden"?: boolean | "true" | "false";
+  }> | null;
+  name: string | null;
+  totalCount: number | null;
+};
+
 export async function HeaderTabs({ params }: Props) {
   const entity = await fetchEntity({
     resourcePath: params,
@@ -20,49 +29,73 @@ export async function HeaderTabs({ params }: Props) {
 
   if (!entity) return null;
   const associated = entity.components.associated.data;
-  const tabs = Object.keys(associated);
+
+  const tabs: Tabs[] = Object.entries(associated).map(([name, entry]) => {
+    const Icon = name === "Transactions" ? ArrowLeftRight : ArrowRight;
+
+    if (entry.type === "static") {
+      return {
+        Icon,
+        name,
+        totalCount: entry.values.length,
+      };
+    }
+
+    return {
+      Icon,
+      name,
+      totalCount: null,
+    };
+  });
 
   // always put the "Overview" Tab first
-  tabs.unshift(ENTITY_INDEX_TAB_NAME);
+  tabs.unshift({ name: ENTITY_INDEX_TAB_NAME, totalCount: null, Icon: Stars });
   // add dummy tab at the end to fill space
-  tabs.push("#");
+  tabs.push({
+    name: null,
+    totalCount: null,
+  });
 
   return (
-    <nav className="relative z-20 overflow-x-auto overflow-y-clip w-full h-[50px]">
+    <nav className="sticky z-20 overflow-x-auto overflow-y-clip w-full h-[50px] top-10">
       <ol className="flex min-w-max items-stretch w-full h-full">
         {tabs.map((tab, index) => {
-          // FIXME: We hardcode the icons as of now but they should be returned from the API
-          const Icon =
-            tab === ENTITY_INDEX_TAB_NAME
-              ? Stars
-              : tab === "Transactions"
-              ? ArrowLeftRight
-              : ArrowRight;
-
-          const isDummyTab = tab === "#";
           return (
             <li
-              key={tab}
-              className={cn("h-full", isDummyTab && "flex-grow flex-shrink")}
+              key={tab.name}
+              className={cn(
+                "h-full",
+                tab.name === null && "flex-grow flex-shrink",
+              )}
             >
-              {isDummyTab ? (
-                <NavLink href="#" currentIndex={index} tabs={tabs} isDummy />
+              {tab.name === null ? (
+                <NavLink
+                  href="#"
+                  currentIndex={index}
+                  tabs={tabs.map((tab) => tab.name!).filter(Boolean)}
+                  isDummy
+                />
               ) : (
                 <NavLink
-                  tabs={tabs}
+                  tabs={tabs.map((tab) => tab.name!).filter(Boolean)}
                   href={`/${params.network}/${params.type}/${params.query}/${
-                    tab === ENTITY_INDEX_TAB_NAME ? "" : slugify(tab)
+                    tab.name === ENTITY_INDEX_TAB_NAME ? "" : slugify(tab.name)
                   }`}
                   currentIndex={index}
                 >
-                  <span className="inline-flex items-center justify-center gap-2 p-4">
-                    {Icon && <Icon aria-hidden="true" />}
-                    {tab}
+                  <span
+                    className={cn(
+                      "inline-flex items-center justify-center gap-2 p-2 m-2",
+                      "ring-primary rounded-lg",
+                      "group-focus:ring-2",
+                    )}
+                  >
+                    {tab.Icon && <tab.Icon aria-hidden="true" />}
+                    {tab.name}
 
-                    {tab !== ENTITY_INDEX_TAB_NAME && (
-                      // FIXME : This is hardcoded but it should be returned from the API
+                    {tab.totalCount !== null && (
                       <CounterBadge
-                        count={30}
+                        count={tab.totalCount}
                         className={cn(
                           "group-[:not([aria-current=page])]:bg-transparent",
                           "group-[:not([aria-current=page])]:border",
