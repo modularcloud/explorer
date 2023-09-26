@@ -57,7 +57,7 @@ export async function HeaderTabs({ params }: Props) {
   });
 
   return (
-    <nav className="sticky z-20 overflow-x-auto overflow-y-clip w-full h-[50px] top-[65px]">
+    <nav className="sticky z-20 overflow-x-auto overflow-y-clip w-full h-[50px] top-[65px] hide-scrollbars">
       <ol className="flex min-w-max items-stretch w-full h-full">
         {tabs.map((tab, index) => {
           return (
