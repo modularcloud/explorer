@@ -44,7 +44,7 @@ const ChooseContractPopup: FC<props> = ({
               {Object.keys(files).map((contractName, index) => (
                 <div
                   key={index}
-                  className="flex   justify-between p-4 items-center mt-7  border-2 border-gray-100 rounded-lg  w-3/4 "
+                  className="flex    justify-between p-4 items-center mt-7  border-2 border-gray-100 rounded-lg  w-3/4 "
                 >
                   <div className="flex gap-x-3 items-center justify-center ">
                     <div>
@@ -73,7 +73,7 @@ const ChooseContractPopup: FC<props> = ({
               ))}
               <div
                 onClick={submit}
-                className="sticky  mt-4  rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
+                className="sticky  bottom-[1%] z-20 mt-4  rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
               >
                 Submit
               </div>
