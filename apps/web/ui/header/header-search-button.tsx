@@ -62,7 +62,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
               src={`/images/nautilus-logo-small.png`}
               width={16}
               height={16}
-              alt={`Logo ${network.brandName} ${network.displayName}`}
+              alt={`Logo ${network.brandName}`}
               className="object-center object-contain flex-shrink-0"
             />
 

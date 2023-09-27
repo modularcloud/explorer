@@ -1,7 +1,7 @@
 import { FetchLoadArgs } from "~/lib/utils";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { PageArchetype } from "~/ecs/archetypes/page";
-import { RightPanel } from "./component";
+import { OldRightPanel } from "./component";
 
 interface Props {
   className?: string;
@@ -15,7 +15,7 @@ export async function AssociatedRightPanel({ resourcePath, className }: Props) {
   });
   if (!entity) return null;
   return (
-    <RightPanel
+    <OldRightPanel
       data={entity.components.sidebar.data}
       alt={resourcePath.network}
       className={className}

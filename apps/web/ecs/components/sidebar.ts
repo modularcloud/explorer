@@ -2,6 +2,8 @@ import { createComponentSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import { ValueSchema } from "~/schemas/value";
 
+import type { Prettify } from "~/lib/types";
+
 const SidebarSchema = z.object({
   // Entity details at the top
   logo: z.string(),
@@ -26,4 +28,4 @@ const SidebarSchema = z.object({
 
 export const SidebarComponent = createComponentSchema(SidebarSchema, "sidebar");
 
-export type Sidebar = z.infer<typeof SidebarSchema>;
+export type Sidebar = Prettify<z.infer<typeof SidebarSchema>>;

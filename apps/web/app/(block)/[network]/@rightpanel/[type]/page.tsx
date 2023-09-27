@@ -1,7 +1,9 @@
 import * as React from "react";
 
-interface Props {}
+interface Props {
+  // params: Omit<>
+}
 
-export default function RightPanelShortenedPage({}: Props) {
+export default async function RightPanelShortenedPage({}: Props) {
   return <></>;
 }
