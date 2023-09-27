@@ -7,7 +7,9 @@ interface props {
   files: object | undefined;
   showContractPopUp: boolean;
   setShowContractPopUp: React.Dispatch<React.SetStateAction<boolean>>;
-  setChosenContractIndex: React.Dispatch<React.SetStateAction<number>>;
+  setChosenContractIndex: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
   data: ContractData;
   onSubmit: () => void;
 }
@@ -32,7 +34,7 @@ const ChooseContractPopup: FC<props> = ({
   };
   return (
     <div>
-      {showContractPopUp && (
+      {showContractPopUp && files && (
         <div className="fixed top-0 left-0 h-screen  w-screen backdrop-blur-md overflow-auto z-20 ">
           <div className="absolute  top-[20%] h-[70%]  left-1/4 w-1/2 z-10  ">
             <div className="absolute     p-3 pb-4  h-full flex  overflow-auto flex-col bg-white rounded-md w-full  items-center ">
