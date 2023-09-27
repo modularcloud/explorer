@@ -100,7 +100,7 @@ export async function HeaderTabs({ params }: Props) {
                           "group-[:not([aria-current=page])]:bg-transparent",
                           "group-[:not([aria-current=page])]:border",
                           "group-[:not([aria-current=page])]:text-muted",
-                          "group-[:not([aria-current=page])]:border-muted",
+                          "group-[:not([aria-current=page])]:border-muted/20",
                         )}
                       />
                     )}
