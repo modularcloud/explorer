@@ -35,6 +35,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
       optionGroups={optionGroups}
       defaultNetwork={network}
       brandColor={network.brandColor}
+      position="top"
     >
       <Button
         className={cn(
@@ -91,16 +92,11 @@ export function HeaderSearchButton({ optionGroups }: Props) {
 
             {/* mobile */}
             <span className="md:hidden" aria-hidden="true">
-              {params.query ? params.query.substring(0, 5) : ""}
-            </span>
-
-            {/* tablet */}
-            <span className="hidden md:inline tab:hidden" aria-hidden="true">
-              {params.query ? truncateHash(params.query, 11) : ""}
+              {params.query ? params.query : ""}
             </span>
 
             {/* bigger screens */}
-            <span className="hidden tab:inline" aria-hidden="true">
+            <span className="hidden md:inline" aria-hidden="true">
               {params.query ? truncateHash(params.query, 25) : ""}
             </span>
           </span>
