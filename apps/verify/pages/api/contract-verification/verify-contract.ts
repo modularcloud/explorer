@@ -5,7 +5,7 @@ export default async function verifyContract(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { contractAddress, files, chain } = req.body;
+  const { contractAddress, files, chain, chosenContract } = req.body;
 
   try {
     console.log("Making API call...");
@@ -15,6 +15,7 @@ export default async function verifyContract(
         address: contractAddress,
         chain: chain,
         files: files,
+        chosenContract: chosenContract,
       },
     );
     if (

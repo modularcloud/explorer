@@ -9,30 +9,39 @@ import ChainSelectableComponent from "./chainSelectableComponent";
 import UploadedFileSection from "./uploadedFileSection";
 import SvgFileUpload from "./icons/fileUpload";
 import { Inter } from "next/font/google";
+import ChooseContractPopup from "./chooseContractPopup";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
+type VerificationStatus = "FULL" | "PARTIAL" | null;
+export type ContractData = {
+  contractAddress: string;
+  chainId: string;
+  files: Record<string, any>;
+  uploadedUrl: string;
+  verificationStatus: VerificationStatus;
+  chosenContract: number | undefined;
+};
+
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("22222");
-  type VerificationStatus = "FULL" | "PARTIAL" | null;
-  type ContractData = {
-    contractAddress: typeof contractAddress;
-    chainId: string;
-    files: Record<string, any>;
-    uploadedUrl: string;
-    verificationStatus: VerificationStatus;
-  };
+  const [showContractPopUp, setShowContractPopUp] = useState<boolean>(false);
+  const [contractDeployedSolidityFiles, setContractDeployedSolidityFiles] =
+    useState({});
+  const [chosenContractIndex, setChosenContractIndex] = useState<number>();
+  const HARDHAT_OUTPUT_FORMAT_REGEX = /"hh-sol-build-info-1"/;
 
   const data: ContractData = {
     contractAddress: contractAddress,
     chainId: chainId,
     files: {},
     uploadedUrl: "",
+    chosenContract: chosenContractIndex,
     verificationStatus: null,
   };
 
@@ -44,7 +53,6 @@ export default function VerifyAndUpload() {
     if (event.target.files) {
       const fileArray = Array.from(event.target.files);
       setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
-      console.log(files);
     }
   };
   const deleteFile = (fileIndex: number) => {
@@ -104,7 +112,6 @@ export default function VerifyAndUpload() {
       });
     }
   };
-
   const checkContractVerified = async () => {
     const response = await axios
       .get(
@@ -137,6 +144,7 @@ export default function VerifyAndUpload() {
           contractAddress: data.contractAddress,
           chain: data.chainId,
           files: data.files,
+          chosenContract: data.chosenContract,
         },
       );
       if (sourcifyResponse.status == 200) {
@@ -217,6 +225,21 @@ export default function VerifyAndUpload() {
         for (let i = 0; i < files?.length; i++) {
           const file = files[i];
           const fileContents = await readFileData(file);
+          const fileType = file.name.includes(".")
+            ? file.name.split(".").pop()
+            : null;
+          if (
+            fileType?.toLowerCase() === "json" &&
+            fileContents.match(HARDHAT_OUTPUT_FORMAT_REGEX) &&
+            typeof data.chosenContract == "undefined"
+          ) {
+            let loadedJson = JSON.parse(fileContents);
+            if (typeof loadedJson === "string") {
+              loadedJson = JSON.parse(loadedJson);
+            }
+            setContractDeployedSolidityFiles(loadedJson.output.contracts);
+            setShowContractPopUp(true);
+          }
           data.files[file.name] = fileContents;
           zip.file(file.name, file);
         }
@@ -235,6 +258,14 @@ export default function VerifyAndUpload() {
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
         <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
+          <ChooseContractPopup
+            setChosenContractIndex={setChosenContractIndex}
+            data={data}
+            files={contractDeployedSolidityFiles}
+            showContractPopUp={showContractPopUp}
+            setShowContractPopUp={setShowContractPopUp}
+            onSubmit={onSubmit}
+          />
           <div className="flex flex-col md:flex-row  justify-between mb-3">
             <div className="flex flex-col w-full ">
               <p className="">Select Chain</p>
