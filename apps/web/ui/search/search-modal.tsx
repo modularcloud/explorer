@@ -1,6 +1,6 @@
 "use client";
-
 import * as React from "react";
+// components
 import {
   Dialog,
   DialogContent,
@@ -10,22 +10,24 @@ import {
 import { Input } from "~/ui/input";
 import { ArrowRight, GlobeCyber, Search } from "~/ui/icons";
 import { LoadingIndicator } from "~/ui/loading-indicator";
-
-import { cn } from "~/ui/shadcn/utils";
-
 import { IntegrationActionListView } from "./integration-action-list-view";
-import { isAddress, isHash, isHeight } from "~/lib/search";
 import { useSearcheableEntities } from "./use-searcheable-entities";
 import { IntegrationGridView } from "./integration-grid-view";
-import { capitalize } from "~/lib/utils";
-import { GlobalHotkeyContext } from "../global-hotkey-provider";
-import type { SearchOption, OptionGroups } from "~/lib/utils";
+import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
+// utils
+import { isAddress, isHash, isHeight } from "~/lib/search";
+import { capitalize } from "~/lib/utils";
+import { cn } from "~/ui/shadcn/utils";
+
+// types
+import type { SearchOption, OptionGroups } from "~/lib/utils";
 interface Props {
   defaultNetwork: SearchOption;
   children?: React.ReactNode;
   brandColor: string;
   optionGroups: OptionGroups;
+  position?: "top" | "middle";
 }
 
 export function SearchModal({
@@ -33,6 +35,7 @@ export function SearchModal({
   children,
   brandColor,
   optionGroups,
+  position = "middle",
 }: Props) {
   const {
     isSearchModalOpen: isDialogOpen,
@@ -54,10 +57,11 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const isTransactionQuery = isHash(inputValue);
-  const isAddressQuery = isAddress(inputValue);
-  const isBlockQuery = isHeight(inputValue);
-  const isEntity = isTransactionQuery || isAddressQuery || isBlockQuery;
+  const isTransactionOrBlockQuery = isHash(inputValue);
+  const isAddressOnlyQuery = isAddress(inputValue);
+  const isBlockOnlyQuery = isHeight(inputValue);
+  const isEntity =
+    isTransactionOrBlockQuery || isAddressOnlyQuery || isBlockOnlyQuery;
 
   const currentNetwork = selectedNetwork
     ? selectedNetwork
@@ -65,15 +69,15 @@ export function SearchModal({
     ? defaultNetwork
     : selectedNetwork;
 
-  let typesToCheck = [];
-  if (isTransactionQuery) {
-    typesToCheck.push("transaction");
+  let typesToCheck: string[] = [];
+  if (isTransactionOrBlockQuery) {
+    typesToCheck = ["transaction", "block"];
   }
-  if (isAddressQuery) {
-    typesToCheck.push("address");
+  if (isAddressOnlyQuery) {
+    typesToCheck = ["address"];
   }
-  if (isBlockQuery) {
-    typesToCheck.push("block");
+  if (isBlockOnlyQuery) {
+    typesToCheck = ["block"];
   }
 
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
@@ -100,9 +104,14 @@ export function SearchModal({
           // @ts-expect-error this is a CSS variable
           "--color-primary": brandColor,
         }}
-        className="max-w-[900px] max-h-[545px]  md:h-full h-[calc(100%-2rem)]"
+        className={cn(
+          "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-2rem)]",
+          {
+            "top-[34%]": position === "top",
+          },
+        )}
       >
-        <div className="flex flex-col h-full max-h-full overflow-y-auto">
+        <div className="flex flex-col h-full max-h-full overflow-y-auto break-words">
           <DialogHeader className="inline-flex flex-col gap-1 h-min">
             <div className="flex">
               <Input
