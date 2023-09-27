@@ -80,7 +80,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           <span
             className={cn(
               "text-muted min-w-0",
-              "whitespace-nowrap text-ellipsis overflow-x-hidden max-w-full flex-shrink",
+              "whitespace-nowrap text-ellipsis overflow-x-hidden flex-shrink",
             )}
           >
             <span>{entityType}&nbsp;</span>
