@@ -31,6 +31,7 @@ export async function HeaderTabs({ params }: Props) {
   const associated = entity.components.associated.data;
 
   const tabs: Tabs[] = Object.entries(associated).map(([name, entry]) => {
+    // FIXME: this should use a global map somewhere (i think)
     const Icon = name === "Transactions" ? ArrowLeftRight : ArrowRight;
 
     if (entry.type === "static") {
@@ -57,7 +58,12 @@ export async function HeaderTabs({ params }: Props) {
   });
 
   return (
-    <nav className="sticky z-20 overflow-x-auto overflow-y-clip w-full h-[50px] top-[65px] hide-scrollbars bg-white">
+    <nav
+      className={cn(
+        "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs hide-scrollbars bg-white",
+        "left-0 top-header w-full tab:w-2/3",
+      )}
+    >
       <ol className="flex min-w-max items-stretch w-full h-full">
         {tabs.map((tab, index) => {
           return (
@@ -85,7 +91,7 @@ export async function HeaderTabs({ params }: Props) {
                 >
                   <span
                     className={cn(
-                      "inline-flex items-center justify-center gap-2 p-2 m-2",
+                      "inline-flex items-center justify-center gap-2 p-1 m-1",
                       "ring-primary rounded-lg",
                       "group-focus:ring-2",
                     )}

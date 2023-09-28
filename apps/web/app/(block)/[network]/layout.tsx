@@ -1,7 +1,13 @@
-import { getSingleNetworkCached } from "~/lib/network";
-import { FetchLoadArgs } from "~/lib/utils";
+// components
 import { Header } from "~/ui/header";
+import { HideBodyOverflow } from "~/ui/hide-body-overflow";
+
+// utils
+import { getSingleNetworkCached } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
+
+// types
+import type { FetchLoadArgs } from "~/lib/utils";
 
 export default async function BlockLayout({
   children,
@@ -22,13 +28,21 @@ export default async function BlockLayout({
         "--gradient-primary": network!.config.cssGradient,
       }}
     >
+      <HideBodyOverflow />
+
       <Header networkSlug={params.network} />
-      <div className="grid tab:grid-cols-6">
+
+      <div className="grid lg:grid-cols-6">
         <div
           id="main-content"
           className={cn(
-            rightpanel ? "tab:col-span-4" : "col-span-6",
-            "mt-[65px]",
+            "mt-[65px] bg-muted-100 min-h-screen",
+            // style children but not the header nav
+            "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white",
+            {
+              "lg:col-span-4": !!rightpanel,
+              "col-span-6": !rightpanel,
+            },
           )}
         >
           {children}
@@ -37,7 +51,9 @@ export default async function BlockLayout({
         {rightpanel && (
           <aside
             className={cn(
-              "h-[calc(100vh-65px)] bg-muted-100 hidden tab:block w-1/3",
+              // the height of the sidebar is the total height of the screen - the height of the <Header /> component
+              "h-[calc(100vh_-_theme('spacing.header'))] max-w-[33.333%] w-1/3",
+              "bg-muted-100 hidden lg:block",
               "fixed top-[65px] bottom-0 right-0",
               "overflow-hidden",
             )}

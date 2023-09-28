@@ -1,11 +1,14 @@
 import * as React from "react";
+// components
 import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
 
+// utils
 import { cn } from "~/ui/shadcn/utils";
 import { fetchEntity } from "~/ecs/lib/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 
+// types
 import type { Value } from "~/schemas/value";
 import type { Entity } from "@modularcloud/ecs";
 import type { PageArchetype } from "~/ecs/archetypes/page";
@@ -86,7 +89,7 @@ export function Overview({ entity }: Props) {
     entity.components.sidebar.data;
 
   return (
-    <section className="pt-8 pb-4">
+    <section className="pb-4">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
         <Entry
           label="Type"

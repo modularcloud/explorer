@@ -1,22 +1,35 @@
 "use client";
-
 import * as React from "react";
+// components
 import { Copy } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { Button } from "~/ui/button";
 
+// utils
 import { copyValueToClipboard, truncateHash } from "~/lib/utils";
 import { useToast } from "~/ui/shadcn/components/ui/use-toast";
+import { cn } from "~/ui/shadcn/utils";
 
+// types
 interface Props {
   value: string;
   hideCopyIcon?: boolean;
+  className?: string;
 }
 
-export function CopyableValue({ value, hideCopyIcon = false }: Props) {
+export function CopyableValue({
+  value,
+  className,
+  hideCopyIcon = false,
+}: Props) {
   const { toast } = useToast();
   return (
-    <span className="inline-flex gap-2 max-w-full w-full py-1 items-center">
+    <span
+      className={cn(
+        "inline-flex gap-2 max-w-full w-full py-1 items-center",
+        className,
+      )}
+    >
       {!hideCopyIcon ? (
         <>
           <p
@@ -28,6 +41,7 @@ export function CopyableValue({ value, hideCopyIcon = false }: Props) {
           <Tooltip label="Copy value to clipboard">
             <Button
               isSquared
+              className="bg-transparent"
               onClick={async () => {
                 const copied = await copyValueToClipboard(value);
 
@@ -46,7 +60,7 @@ export function CopyableValue({ value, hideCopyIcon = false }: Props) {
       ) : (
         <Tooltip label="Copy value to clipboard">
           <Button
-            className="max-w-full"
+            className="max-w-full bg-transparent font-normal"
             onClick={async () => {
               const copied = await copyValueToClipboard(value);
 
@@ -58,7 +72,10 @@ export function CopyableValue({ value, hideCopyIcon = false }: Props) {
               }
             }}
           >
-            <span className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full">
+            <span
+              className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full"
+              tabIndex={-1}
+            >
               {value}
             </span>
           </Button>

@@ -1,16 +1,19 @@
 "use client";
 import * as React from "react";
-import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
-import { useParams, useRouter } from "next/navigation";
-import { cn } from "~/ui/shadcn/utils";
 
+// components
+import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { SearchModal } from "./search-modal";
+import { Button } from "~/ui/button";
 
+// utils
+import { useParams, useRouter } from "next/navigation";
+import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
+// types
 import type { OptionGroups } from "~/lib/utils";
-import { Button } from "~/ui/button";
 
 interface Props {
   optionGroups: OptionGroups;
@@ -53,7 +56,10 @@ export function Search({ optionGroups }: Props) {
           }
         >
           <div className="inline-flex gap-2 items-center">
-            <span>{network.displayName}</span>
+            <span aria-hidden="true">{network.displayName}</span>
+            <span className="sr-only">
+              Current network : {network.displayName} of {network.brandName},
+            </span>
             {network.verified && (
               <Tooltip label="This chain is verified">
                 <span>
@@ -63,7 +69,7 @@ export function Search({ optionGroups }: Props) {
             )}
           </div>
           <div>
-            <Recycle className="text-muted" />
+            <Recycle className="text-muted" aria-hidden="true" />
           </div>
         </Button>
       </SearchModal>

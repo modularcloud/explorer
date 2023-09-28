@@ -20,7 +20,7 @@ export async function Header({ networkSlug }: Props) {
   return (
     <header
       className={cn(
-        "bg-white flex justify-between items-center px-6 py-4 gap-4",
+        "bg-white flex justify-between items-center px-6 py-4 gap-4 h-header",
         "fixed left-0 right-0 top-0 z-10",
       )}
     >
