@@ -25,6 +25,81 @@ Watch [this video tutorial](https://youtu.be/RA-z7K21dmk) and follow the instruc
 4. Click the Verify button.
 5. Wait for the interface to present a pop-up response with feedback.
 
+
+## Verifying contracts deployed using hardhat
+
+
+
+### Prerequisites
+
+- A contract that has been deployed using Hardhat.
+- The Hardhat `.json` output file generated under `artifacts/build-info`.
+
+
+
+###  Step by Step guide for verification
+
+#### 1. Prepare Hardhat JSON Artifacts
+
+- Before starting with the verification process, make sure you've parsed the Hardhat `.json` output file located under `artifacts/build-info`. This file contains necessary details about the compiled contract.
+
+  **Note**: If you deployed your contract using Hardhat before version 2.6.8, you should follow these steps:
+    - Modify the `hardhat-config.js` manually to output metadata inside the `build-info/` file:
+
+    ```javascript
+    // hardhat-config.js
+    module.exports = {
+      ...
+      solidity: {
+        settings: {
+          version: ...,
+          optimizer: {...},
+          outputSelection: {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "metadata", // <-- add this
+                ...
+              ]
+            },
+          },
+        },
+      },
+      ...
+    };
+    ```
+
+
+####  2 . Upload the Solidity Contract File
+
+- Click on the designated area or button to browse your File Explorer.
+- Locate and select the `.sol` contract file you wish to verify.
+
+####  3. Input the Contract Address
+
+- In the provided field, paste the corresponding contract address that you'd like to verify. This address should be the one where your contract is currently deployed.
+
+#### 4. Select the Appropriate Chain
+
+- Using the dropdown menu select the blockchain network or chain on which your contract is deployed.
+
+####  5. Initiate Verification
+
+- Click on the 'Verify' button to begin the verification process.
+
+####  6. Choose the Main Contract
+
+- After clicking on the 'Verify' button, a pop-up will appear listing all the contracts present in your `.sol` file.
+- From the list, select the main contract you wish to verify.
+
+####  7. Confirmation
+
+- Once the verification is successful, you should receive a confirmation message, and others will be able to view the source code when they access your contract on the dedicated block explorer.
+
+---
+
 ## Interacting with verified contracts
 
 NautScan will display the verification status to users when they view the contract page. It is possible for your contract to be fully or partially verified. Partial verification refers to cases when the deployed bytecode of the onchain contract matches the bytecode resulting from the recompilation with the metadata and the source files _but does not match the metadata hash_.
