@@ -1,6 +1,6 @@
 import { AnyArchetypeSchema, verifyArchetype } from "@modularcloud/ecs";
 import { cache } from "react";
-import { fetchLoad } from "~/lib/utils";
+import { fetchLoad } from "~/lib/shared-utils";
 
 type Args<T extends AnyArchetypeSchema> = {
   resourcePath: Parameters<typeof fetchLoad>[0];

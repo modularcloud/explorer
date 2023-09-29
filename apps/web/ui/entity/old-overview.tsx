@@ -9,7 +9,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
 import { OldCopyableValue } from "~/ui/old-copyable";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 type Props = {
   entity: Entity<typeof PageArchetype>;
 };

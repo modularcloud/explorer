@@ -17,11 +17,11 @@ import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
 import { isAddress, isHash, isHeight } from "~/lib/search";
-import { capitalize } from "~/lib/utils";
+import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { SearchOption, OptionGroups } from "~/lib/utils";
+import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {
   defaultNetwork: SearchOption;
   children?: React.ReactNode;

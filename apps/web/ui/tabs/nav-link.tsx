@@ -3,7 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { slugify, type FetchLoadArgs } from "~/lib/utils";
+import { slugify, type FetchLoadArgs } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
 interface Props {

@@ -7,7 +7,7 @@ import { getSingleNetworkCached } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 export default async function BlockLayout({
   children,

@@ -3,11 +3,11 @@ import { GlobeCyber } from "~/ui/icons";
 
 import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
-import { capitalize } from "~/lib/utils";
+import { capitalize } from "~/lib/shared-utils";
 import { useItemGrid } from "./use-item-grid";
 import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
-import type { SearchOption, OptionGroups } from "~/lib/utils";
+import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {
   filter: string;
   className?: string;

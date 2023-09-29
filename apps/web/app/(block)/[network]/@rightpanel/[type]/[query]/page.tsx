@@ -8,7 +8,7 @@ import { fetchEntity } from "~/ecs/lib/server";
 import { getSingleNetworkCached } from "~/lib/network";
 
 // types
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 interface Props {
   params: FetchLoadArgs;
 }

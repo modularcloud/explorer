@@ -1,7 +1,7 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { PaginationArchetype } from "~/ecs/archetypes/pagination";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { slugify } from "~/lib/utils";
+import { slugify } from "~/lib/shared-utils";
 import { AssociatedList } from "~/ui/associated/list";
 import { ServerAssociatedEntry } from "~/ui/associated/entry/server";
 import { InfiniteLoaderEntries } from "~/ui/associated/infinite-loader/entries";
@@ -15,7 +15,7 @@ import { Tabs } from "~/ui/tabs";
 import dynamic from "next/dynamic";
 
 import type { Metadata } from "next";
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 type Props = {
   params: FetchLoadArgs & {
     section: string;

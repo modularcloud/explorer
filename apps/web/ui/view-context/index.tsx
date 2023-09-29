@@ -1,6 +1,6 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 import { DEFAULT_ASSOCIATED_VIEW } from "./constants";
 import { ClientViewContextProvider } from "./client";
 

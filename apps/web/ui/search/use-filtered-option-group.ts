@@ -1,5 +1,5 @@
 import * as React from "react";
-import { OptionGroups } from "~/lib/utils";
+import { OptionGroups } from "~/lib/shared-utils";
 
 export function useFilteredOptionGroup(
   optionGroups: OptionGroups,

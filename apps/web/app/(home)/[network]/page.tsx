@@ -4,10 +4,10 @@ import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-
 
 import { notFound } from "next/navigation";
 import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
-import { capitalize } from "~/lib/utils";
+import { capitalize } from "~/lib/shared-utils";
 import { getSearchOptionGroups } from "~/lib/search-options";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
 
 interface Props {

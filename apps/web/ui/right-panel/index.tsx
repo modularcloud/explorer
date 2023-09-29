@@ -16,7 +16,7 @@ import { Status } from "~/ui/status";
 import { ShortcutKey } from "~/ui/shortcut-key";
 
 // utils
-import { capitalize } from "~/lib/utils";
+import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import { isMacLike } from "~/lib/server-utils";
 

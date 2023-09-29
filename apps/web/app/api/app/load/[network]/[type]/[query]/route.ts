@@ -4,7 +4,7 @@ import { getEngine } from "~/lib/engine";
 import { NextResponse } from "next/server";
 import { APICORSHeaders } from "~/lib/server-utils";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type EngineLoadResponse = Awaited<ReturnType<typeof Engine.load>>;
 

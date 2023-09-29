@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { OptionGroups } from "~/lib/utils";
+import { OptionGroups } from "~/lib/shared-utils";
 import { DialogPanel } from "~/ui/dialog-panel";
 import SvgRightSidebarOff from "~/ui/icons/RightSidebarOff";
 import SvgSearchOff from "~/ui/icons/SearchOff";

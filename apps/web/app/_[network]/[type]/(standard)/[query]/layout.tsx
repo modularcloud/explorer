@@ -1,6 +1,6 @@
 import { ViewContextProvider } from "~/ui/view-context";
 // import { Header } from "~/ui/header";
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
   params: FetchLoadArgs;

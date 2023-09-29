@@ -1,5 +1,5 @@
 import * as React from "react";
-import { chunkArray, isElementOverflowing } from "~/lib/utils";
+import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;

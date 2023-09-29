@@ -9,10 +9,10 @@ import { Button } from "~/ui/button";
 // utils
 import { useParams } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
-import { capitalize, truncateHash } from "~/lib/utils";
+import { capitalize, truncateHash } from "~/lib/shared-utils";
 
 // types
-import type { FetchLoadArgs, OptionGroups } from "~/lib/utils";
+import type { FetchLoadArgs, OptionGroups } from "~/lib/shared-utils";
 interface Props {
   optionGroups: OptionGroups;
 }

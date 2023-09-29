@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 interface Props {
   params: Pick<FetchLoadArgs, "network">;

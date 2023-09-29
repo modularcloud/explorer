@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { z } from "zod";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import { getBaseURL } from "~/lib/utils";
+import { getBaseURL } from "~/lib/shared-utils";
 
 const widgetDataSchema = z.object({
   zbcPrice: z.number(),

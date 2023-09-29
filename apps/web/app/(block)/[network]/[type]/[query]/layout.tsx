@@ -3,7 +3,7 @@ import * as React from "react";
 import { HeaderTabs } from "~/ui/tabs/header-tabs";
 
 // types
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 interface Props {
   children: React.ReactNode;

@@ -4,7 +4,7 @@ import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { Entity } from "~/ui/entity";
 import { Tabs } from "~/ui/tabs";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
 type Props = {
   params: FetchLoadArgs;

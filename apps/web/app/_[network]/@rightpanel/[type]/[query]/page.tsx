@@ -3,7 +3,7 @@ import { getSingleNetworkCached } from "~/lib/network";
 
 import type { Sidebar } from "~/ecs/components/sidebar";
 import type { Value } from "~/schemas/value";
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 interface Props {
   params: FetchLoadArgs;
 }

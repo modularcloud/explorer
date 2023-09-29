@@ -2,7 +2,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { OldRightPanel } from "~/ui/right-panel/component";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 interface Props {
   params: FetchLoadArgs & { section: string };
 }

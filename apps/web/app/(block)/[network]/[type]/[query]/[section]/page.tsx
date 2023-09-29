@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 
 interface Props {
   params: FetchLoadArgs & {

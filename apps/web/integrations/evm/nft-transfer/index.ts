@@ -6,7 +6,7 @@ import { z } from "zod";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { uploadFile } from "@uploadcare/upload-client";
-import { convertToHttpIfIpfs } from "~/lib/utils";
+import { convertToHttpIfIpfs } from "~/lib/shared-utils";
 import { env } from "~/env.mjs";
 
 const MetadataSchema = z.object({

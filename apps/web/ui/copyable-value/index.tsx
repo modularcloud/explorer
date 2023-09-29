@@ -6,7 +6,7 @@ import { Tooltip } from "~/ui/tooltip";
 import { Button } from "~/ui/button";
 
 // utils
-import { copyValueToClipboard, truncateHash } from "~/lib/utils";
+import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { useToast } from "~/ui/shadcn/components/ui/use-toast";
 import { cn } from "~/ui/shadcn/utils";
 

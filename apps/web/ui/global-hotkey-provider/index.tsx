@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { OptionGroups } from "~/lib/utils";
+import type { OptionGroups } from "~/lib/shared-utils";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;

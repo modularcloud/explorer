@@ -1,6 +1,6 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs, slugify } from "~/lib/utils";
+import { FetchLoadArgs, slugify } from "~/lib/shared-utils";
 import { Badge } from "~/ui/badge";
 
 const INDEX_TAB_NAME = "Overview";

@@ -1,4 +1,4 @@
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { OldRightPanel } from "./component";

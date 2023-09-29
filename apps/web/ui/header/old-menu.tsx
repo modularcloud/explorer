@@ -5,7 +5,7 @@ import { AssociatedRightPanel } from "~/ui/right-panel/associated";
 import { ViewSwitcher } from "~/ui/view-switcher";
 import { getSearchOptionGroups } from "~/lib/search-options";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 type Props = {
   resourcePath: FetchLoadArgs;
 };

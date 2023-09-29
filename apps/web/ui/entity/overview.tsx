@@ -12,7 +12,7 @@ import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import type { Value } from "~/schemas/value";
 import type { Entity } from "@modularcloud/ecs";
 import type { PageArchetype } from "~/ecs/archetypes/page";
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
   entity: Entity<typeof PageArchetype>;

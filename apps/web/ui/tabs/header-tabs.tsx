@@ -2,7 +2,7 @@ import * as React from "react";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { fetchEntity } from "~/ecs/lib/server";
 import { ENTITY_INDEX_TAB_NAME } from "~/lib/constants";
-import { type FetchLoadArgs, slugify } from "~/lib/utils";
+import { type FetchLoadArgs, slugify } from "~/lib/shared-utils";
 import { CounterBadge } from "~/ui/counter-badge";
 import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 import { cn } from "~/ui/shadcn/utils";
