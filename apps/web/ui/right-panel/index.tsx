@@ -18,7 +18,7 @@ import { ShortcutKey } from "~/ui/shortcut-key";
 // utils
 import { capitalize } from "~/lib/utils";
 import { cn } from "~/ui/shadcn/utils";
-import { headers } from "next/headers";
+import { isMacLike } from "~/lib/server-utils";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
@@ -137,9 +137,6 @@ export function RightPanel({ data, network }: Props) {
       ([, entry]) => entry.payload !== null && entry.payload !== undefined,
     );
 
-  const ua = headers().get("user-agent");
-  const isMacLike = !ua ? false : /(Mac|iPhone|iPod|iPad)/i.test(ua);
-
   return (
     <div className="w-full grid h-full max-h-full auto-rows-min">
       <section
@@ -246,7 +243,7 @@ export function RightPanel({ data, network }: Props) {
             <HotkeyEntry
               label="Copy"
               keys={[
-                isMacLike
+                isMacLike()
                   ? {
                       cmd: "⌘",
                       label: "Command",
