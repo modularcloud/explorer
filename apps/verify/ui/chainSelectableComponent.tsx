@@ -49,19 +49,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
       chainId: 88002,
     },
   ];
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setData(chainList);
-  //       setSelectedChainName(chainList[0].name);
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+
 
   const handleSelection = (selectedValue: string) => {
     onSelectionChange(selectedValue);
