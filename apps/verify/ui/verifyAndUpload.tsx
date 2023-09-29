@@ -8,13 +8,7 @@ import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
 import UploadedFileSection from "./uploadedFileSection";
 import SvgFileUpload from "./icons/fileUpload";
-import { Inter } from "next/font/google";
 import ChooseContractPopup from "./chooseContractPopup";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 type VerificationStatus = "FULL" | "PARTIAL" | null;
 export type ContractData = {
@@ -252,9 +246,7 @@ export default function VerifyAndUpload() {
   };
 
   return (
-    <div
-      className={` ${inter.variable} font-sans flex flex-col items-center justify-center`}
-    >
+    <div className="flex flex-col items-center justify-center">
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
         <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
