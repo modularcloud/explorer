@@ -84,7 +84,7 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   );
 }
 
-export function Overview({ entity }: Props) {
+export async function Overview({ entity }: Props) {
   const { attributes, asyncAttributes, entityTypeName } =
     entity.components.sidebar.data;
 
@@ -92,7 +92,7 @@ export function Overview({ entity }: Props) {
     <section className="pb-4">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
         <Entry
-          label="Type"
+          label="Entity Type"
           notCopyable
           value={{
             type: "standard",

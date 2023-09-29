@@ -1,43 +1,23 @@
-import clsx from "clsx";
 import * as React from "react";
+import { cn } from "~/ui/shadcn/utils";
 
 export type ShortcutKeyProps = {
-  commands: [string] | [string, string];
-  label: string;
+  command: Exclude<React.ReactNode, null | undefined>; // nonnullable type
+  label?: string;
   className?: string;
-  combined?: boolean;
 };
 
-export function ShortcutKey({
-  commands,
-  label,
-  combined = false,
-}: ShortcutKeyProps) {
+export function ShortcutKey({ command, label, className }: ShortcutKeyProps) {
   return (
-    <div className={clsx("flex items-center gap-2")}>
-      <div className="flex gap-1 items-center">
-        <kbd
-          aria-hidden="true"
-          className="px-2.5 py-1 border border-muted/20 bg-muted/10 rounded-md inline-block flex-shrink-0"
-          suppressHydrationWarning
-        >
-          {commands[0]}
-        </kbd>
-
-        {commands.length > 1 && (
-          <>
-            {!combined && <span>&nbsp;then&nbsp;</span>}
-            <kbd
-              aria-hidden="true"
-              className="px-2.5 py-1 border border-muted/20 bg-muted/10 rounded-md inline-block flex-shrink-0"
-              suppressHydrationWarning
-            >
-              {commands[1]}
-            </kbd>
-          </>
-        )}
-      </div>
-      <span className="text-neutral">{label}</span>
-    </div>
+    <kbd
+      aria-label={label ?? command.toString()}
+      className={cn(
+        "px-2.5 py-1 border border-mid-dark-100 bg-white rounded-md inline-block flex-shrink-0",
+        className,
+      )}
+      suppressHydrationWarning
+    >
+      {command}
+    </kbd>
   );
 }

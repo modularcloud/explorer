@@ -48,6 +48,15 @@ export default async function BlockLayout({
           {children}
         </div>
 
+        {/* Down gradient  */}
+        <div
+          className={cn(
+            "fixed w-full bottom-0 z-30 left-0 h-10 !bg-gradient-to-b !rounded-none from-transparent bg-transparent to-mid-dark-100",
+            {
+              "lg:w-2/3": !!rightpanel,
+            },
+          )}
+        />
         {rightpanel && (
           <aside
             className={cn(

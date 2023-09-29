@@ -11,16 +11,19 @@ import { useToast } from "~/ui/shadcn/components/ui/use-toast";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
+import type { TooltipPosition } from "~/ui/tooltip";
 interface Props {
   value: string;
   hideCopyIcon?: boolean;
   className?: string;
+  tooltipPosition?: TooltipPosition;
 }
 
 export function CopyableValue({
   value,
   className,
   hideCopyIcon = false,
+  tooltipPosition,
 }: Props) {
   const { toast } = useToast();
   return (
@@ -38,7 +41,7 @@ export function CopyableValue({
           >
             {value}
           </p>
-          <Tooltip label="Copy value to clipboard">
+          <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
             <Button
               isSquared
               className="bg-transparent"
@@ -53,12 +56,13 @@ export function CopyableValue({
                 }
               }}
             >
+              <span className="sr-only">Copy value to clipboard</span>
               <Copy aria-hidden="true" className="text-muted" />
             </Button>
           </Tooltip>
         </>
       ) : (
-        <Tooltip label="Copy value to clipboard">
+        <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
           <Button
             className="max-w-full bg-transparent font-normal"
             onClick={async () => {
@@ -78,6 +82,8 @@ export function CopyableValue({
             >
               {value}
             </span>
+
+            <span className="sr-only">Copy value to clipboard</span>
           </Button>
         </Tooltip>
       )}

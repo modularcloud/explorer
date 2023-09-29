@@ -3,19 +3,23 @@ import * as React from "react";
 import * as RadixTooltip from "@radix-ui/react-tooltip";
 import { cn } from "~/ui/shadcn/utils";
 
+export type TooltipPosition = RadixTooltip.TooltipContentProps["side"];
+
 interface Props {
   children: React.ReactNode;
   label: string;
   delayInMS?: number;
+  side?: TooltipPosition;
 }
 
-export function Tooltip({ children, label, delayInMS = 500 }: Props) {
+export function Tooltip({ children, label, side, delayInMS = 500 }: Props) {
   return (
     <RadixTooltip.Provider delayDuration={delayInMS}>
       <RadixTooltip.Root>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
           <RadixTooltip.Content
+            side={side}
             className={cn(
               "will-change-[transform,opacity]",
               "data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade",
