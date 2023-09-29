@@ -19,11 +19,82 @@ You can quickly [verify contracts from this web page](https://contract-verificat
 
 Watch [this video tutorial](https://youtu.be/RA-z7K21dmk) and follow the instructions below.
 
-1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload.
-2. Paste the corresponding contract address you'd like to verify.
-3. Ensure **Nautilus Mainnet** is selected in the dropdown.
-4. Click the Verify button.
-5. Wait for the interface to present a pop-up response with feedback.
+### Prerequisites
+
+- A contract that has been deployed 
+- Solidity files used in the contract.
+- The Metadata.json file, If it is deployed using  Hardhat then upload `.json` output file generated under `artifacts/build-info`.
+
+
+
+###  Step by Step guide for verification
+
+#### 1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload
+
+  Before starting with the verification process, if the contract is deployed through hardhat make sure you've parsed the Hardhat `.json` output file located under `artifacts/build-info`. This file contains the necessary details about the compiled contract.
+
+  
+
+  **Note**: If the Hardhat  version is earlier than   2.6.8, you should follow these steps:
+  
+ -   Modify the `hardhat-config.js` manually to output metadata inside the `build-info/` file:
+
+
+
+    ```
+    // hardhat-config.js
+    module.exports = {
+      ...
+      solidity: {
+        settings: {
+          version: ...,
+          optimizer: {...},
+          outputSelection: {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "metadata", // <-- add this
+                ...
+              ]
+            },
+          },
+        },
+      },
+      ...
+    };
+    ```
+
+
+####  2 . Upload the Solidity Contract File
+
+- Click on the designated area or button to browse your File Explorer.
+- Locate and select the `.sol` contract file you wish to verify.
+
+####  3. Input the Contract Address
+
+- In the provided field, paste the corresponding contract address that you'd like to verify. This address should be the one where your contract is currently deployed.
+
+#### 4. Select the Appropriate Chain
+
+- Using the dropdown menu select the blockchain network or chain on which your contract is deployed.
+
+####  5. Initiate Verification
+
+- Click on the 'Verify' button to begin the verification process.
+
+####  6. Choose the Main Contract
+
+- After clicking on the 'Verify' button, if the contract is deployed through hardhat  a pop-up will appear listing all the contracts present in your `.sol` file.
+- From the list, select the main contract you wish to verify.
+
+####  7. Confirmation
+
+- Wait for the interface to present a pop-up response with feedback.
+- Once the verification is successful, you should receive a confirmation message, and others will be able to view the source code when they access your contract on the dedicated block explorer.
+
+---
 
 ## Interacting with verified contracts
 
