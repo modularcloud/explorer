@@ -1,7 +1,14 @@
-import React, { useEffect, useState, CSSProperties } from "react";
+import React, { useState, CSSProperties } from "react";
 import * as Select from "@radix-ui/react-select";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { Inter } from "next/font/google";
+
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 const override: CSSProperties = {
   borderColor: "#2753bb",
   margin: 0,
@@ -86,7 +93,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
             <Select.Viewport className="px-2 overflow-hidden max-h-80 cursor-pointer absolute top-10 w-full    ">
               {data.map((item, index) => (
                 <Select.Item
-                  className="z-10 bg-white p-2 relative w-full  rounded-md mx-2 hover:bg-gray-50 !border-none !outline-none  "
+                  className={`z-10  bg-white p-2 relative w-full  rounded-md mx-2 hover:bg-gray-50 !border-none !outline-none ${inter.variable} font-sans `} 
                   key={index}
                   value={item.chainId.toString()}
                 >
