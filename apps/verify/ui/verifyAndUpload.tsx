@@ -28,6 +28,7 @@ export default function VerifyAndUpload() {
   const [contractDeployedSolidityFiles, setContractDeployedSolidityFiles] =
     useState({});
   const [chosenContractIndex, setChosenContractIndex] = useState<number>();
+  const [metadataJsonExists, SetMetadataJsonExists] = useState<boolean>(false);
   const HARDHAT_OUTPUT_FORMAT_REGEX = /"hh-sol-build-info-1"/;
 
   const data: ContractData = {
@@ -170,15 +171,24 @@ export default function VerifyAndUpload() {
           error = error.response.data.message;
         } else {
           error = error.response.data.error;
+          if (
+            error ==
+              'Metadata file not found. Did you include "metadata.json"?' &&
+            metadataJsonExists
+          ) {
+            error = " The provided metadata is invalid.";
+          }
         }
       }
       console.error("File Verification or ", error);
       toast.update(toastId, {
-        render: ` Verification Failed ${error}`,
+        render: ` Verification Failed: ${error}`,
         type: "error",
         isLoading: false,
         closeOnClick: true,
       });
+    } finally {
+      setChosenContractIndex(undefined);
     }
   };
 
@@ -222,6 +232,9 @@ export default function VerifyAndUpload() {
           const fileType = file.name.includes(".")
             ? file.name.split(".").pop()
             : null;
+          if (fileType?.toLowerCase() === "json") {
+            SetMetadataJsonExists(true);
+          }
           if (
             fileType?.toLowerCase() === "json" &&
             fileContents.match(HARDHAT_OUTPUT_FORMAT_REGEX) &&
@@ -231,8 +244,10 @@ export default function VerifyAndUpload() {
             if (typeof loadedJson === "string") {
               loadedJson = JSON.parse(loadedJson);
             }
-            setContractDeployedSolidityFiles(loadedJson.output.contracts);
-            setShowContractPopUp(true);
+            if (Object.keys(loadedJson.output.contracts).length > 1) {
+              setContractDeployedSolidityFiles(loadedJson.output.contracts);
+              setShowContractPopUp(true);
+            }
           }
           data.files[file.name] = fileContents;
           zip.file(file.name, file);
@@ -249,7 +264,7 @@ export default function VerifyAndUpload() {
     <div className="flex flex-col items-center justify-center">
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
-        <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
+        <div className="w-[90vw] rounded-xl border-solid bg-[#FCFCFC] px-14 py-10 shadow-lg ">
           <ChooseContractPopup
             setChosenContractIndex={setChosenContractIndex}
             data={data}
@@ -258,28 +273,28 @@ export default function VerifyAndUpload() {
             setShowContractPopUp={setShowContractPopUp}
             onSubmit={onSubmit}
           />
-          <div className="flex flex-col md:flex-row  justify-between mb-3">
-            <div className="flex flex-col w-full ">
+          <div className="mb-3 flex flex-col  justify-between md:flex-row">
+            <div className="flex w-full flex-col ">
               <p className="">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="flex flex-col w-full md:w-3/5 ">
+            <div className="flex w-full flex-col md:w-3/5 ">
               <p className="pl-1 ">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="p-2 mt-2 rounded-lg  border-2 border-solid   border-gray-300 font-sans  font-light placeholder:text-gray-600 w-full"
+                className="mt-2 w-full rounded-lg  border-2 border-solid   border-gray-300 p-2  font-sans font-light placeholder:text-gray-600"
                 placeholder="0xbb0e34e178a36b85af3622a7166b0543be239db2"
               />
             </div>
           </div>
           <ExternalFileImporter setFiles={setFiles} />
-          <div className="flex w-full gap-x-5 flex-col md:flex-row">
+          <div className="flex w-full flex-col gap-x-5 md:flex-row">
             <label
               htmlFor="file-upload"
-              className="custom-file-upload pt-5 w-full md:w-[65%] "
+              className="custom-file-upload w-full pt-5 md:w-[65%] "
             >
               <div
                 onDragOver={(e) => {
@@ -289,8 +304,8 @@ export default function VerifyAndUpload() {
                 onDrop={dragNdrop}
                 className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-solid p-20  font-light"
               >
-                <div className="bg-[#F2F4F7] h-[40px] w-[40px] rounded-full relative flex-col flex justify-center items-center">
-                  <div className="relative  rounded-full bg-[#F9FAFB] flex justify-center items-center  ">
+                <div className="relative flex h-[40px] w-[40px] flex-col items-center justify-center rounded-full bg-[#F2F4F7]">
+                  <div className="relative  flex items-center justify-center rounded-full bg-[#F9FAFB]  ">
                     <SvgFileUpload />
                   </div>
                 </div>
@@ -308,14 +323,14 @@ export default function VerifyAndUpload() {
                 />
               </div>
             </label>
-            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto pl-1 ">
+            <div className="relative flex w-full flex-col overflow-auto pl-1 pt-4  md:h-80 md:w-[40%] ">
               <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>
 
-          <div className="flex pt-3 items-center justify-center">
+          <div className="flex items-center justify-center pt-3">
             <div
-              className="rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
+              className="w-1/5 cursor-pointer rounded-lg  bg-[#7B6FE7] px-4 py-2 text-center text-white "
               onClick={onSubmit}
             >
               Verify
