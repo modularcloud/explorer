@@ -29,14 +29,19 @@ Watch [this video tutorial](https://youtu.be/RA-z7K21dmk) and follow the instruc
 
 ###  Step by Step guide for verification
 
-1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload
+#### 1. Click to browse your File Explorer for the .sol contract file and .json metadata file for upload
 
-    - Before starting with the verification process, if the contract is deployed through hardhat make sure you've parsed the Hardhat `.json` output file located under `artifacts/build-info`. This file contains necessary details about the compiled contract.
+  Before starting with the verification process, if the contract is deployed through hardhat make sure you've parsed the Hardhat `.json` output file located under `artifacts/build-info`. This file contains the necessary details about the compiled contract.
 
-  **Note**: If you deployed your contract using Hardhat before version 2.6.8, you should follow these steps:
-    - Modify the `hardhat-config.js` manually to output metadata inside the `build-info/` file:
+  
 
-    ```javascript
+  **Note**: If the Hardhat  version is earlier than   2.6.8, you should follow these steps:
+  
+ -   Modify the `hardhat-config.js` manually to output metadata inside the `build-info/` file:
+
+
+
+    ```
     // hardhat-config.js
     module.exports = {
       ...
