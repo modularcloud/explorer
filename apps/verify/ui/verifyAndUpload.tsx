@@ -8,25 +8,34 @@ import ExternalFileImporter from "./externalFileImporter";
 import ChainSelectableComponent from "./chainSelectableComponent";
 import UploadedFileSection from "./uploadedFileSection";
 import SvgFileUpload from "./icons/fileUpload";
+import ChooseContractPopup from "./chooseContractPopup";
+
+type VerificationStatus = "FULL" | "PARTIAL" | null;
+export type ContractData = {
+  contractAddress: string;
+  chainId: string;
+  files: Record<string, any>;
+  uploadedUrl: string;
+  verificationStatus: VerificationStatus;
+  chosenContract: number | undefined;
+};
 
 export default function VerifyAndUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [contractAddress, setContractAddress] = useState<string>("");
   const [chainId, setChainId] = useState<string>("22222");
-  type VerificationStatus = "FULL" | "PARTIAL" | null;
-  type ContractData = {
-    contractAddress: typeof contractAddress;
-    chainId: string;
-    files: Record<string, any>;
-    uploadedUrl: string;
-    verificationStatus: VerificationStatus;
-  };
+  const [showContractPopUp, setShowContractPopUp] = useState<boolean>(false);
+  const [contractDeployedSolidityFiles, setContractDeployedSolidityFiles] =
+    useState({});
+  const [chosenContractIndex, setChosenContractIndex] = useState<number>();
+  const HARDHAT_OUTPUT_FORMAT_REGEX = /"hh-sol-build-info-1"/;
 
   const data: ContractData = {
     contractAddress: contractAddress,
     chainId: chainId,
     files: {},
     uploadedUrl: "",
+    chosenContract: chosenContractIndex,
     verificationStatus: null,
   };
 
@@ -38,7 +47,6 @@ export default function VerifyAndUpload() {
     if (event.target.files) {
       const fileArray = Array.from(event.target.files);
       setFiles((prevFiles) => [...prevFiles, ...fileArray] as File[]);
-      console.log(files);
     }
   };
   const deleteFile = (fileIndex: number) => {
@@ -63,6 +71,12 @@ export default function VerifyAndUpload() {
   const onSubmit = async () => {
     if (!files) {
       toast.error("Please add files to verify");
+      return;
+    }
+    if (contractAddress == "") {
+      toast.error(
+        "We noticed you left the contract address blank. Please fill it in ",
+      );
       return;
     }
     toastId = toast.loading("Verifying Files", {
@@ -92,7 +106,6 @@ export default function VerifyAndUpload() {
       });
     }
   };
-
   const checkContractVerified = async () => {
     const response = await axios
       .get(
@@ -125,6 +138,7 @@ export default function VerifyAndUpload() {
           contractAddress: data.contractAddress,
           chain: data.chainId,
           files: data.files,
+          chosenContract: data.chosenContract,
         },
       );
       if (sourcifyResponse.status == 200) {
@@ -205,6 +219,21 @@ export default function VerifyAndUpload() {
         for (let i = 0; i < files?.length; i++) {
           const file = files[i];
           const fileContents = await readFileData(file);
+          const fileType = file.name.includes(".")
+            ? file.name.split(".").pop()
+            : null;
+          if (
+            fileType?.toLowerCase() === "json" &&
+            fileContents.match(HARDHAT_OUTPUT_FORMAT_REGEX) &&
+            typeof data.chosenContract == "undefined"
+          ) {
+            let loadedJson = JSON.parse(fileContents);
+            if (typeof loadedJson === "string") {
+              loadedJson = JSON.parse(loadedJson);
+            }
+            setContractDeployedSolidityFiles(loadedJson.output.contracts);
+            setShowContractPopUp(true);
+          }
           data.files[file.name] = fileContents;
           zip.file(file.name, file);
         }
@@ -221,20 +250,28 @@ export default function VerifyAndUpload() {
       <ToastContainer />
       <div className="my-7 flex flex-col items-center justify-center gap-y-6 rounded-xl   ">
         <div className="w-[90vw] shadow-lg rounded-xl bg-[#FCFCFC] px-14 py-10 border-solid ">
+          <ChooseContractPopup
+            setChosenContractIndex={setChosenContractIndex}
+            data={data}
+            files={contractDeployedSolidityFiles}
+            showContractPopUp={showContractPopUp}
+            setShowContractPopUp={setShowContractPopUp}
+            onSubmit={onSubmit}
+          />
           <div className="flex flex-col md:flex-row  justify-between mb-3">
-            <div className="flex flex-col w-full">
-              <p className="pl-1">Select Chain</p>
+            <div className="flex flex-col w-full ">
+              <p className="">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="flex flex-col w-full md:w-3/4 ">
-              <p className="pl-1">Contract Address</p>
+            <div className="flex flex-col w-full md:w-3/5 ">
+              <p className="pl-1 ">Contract Address</p>
               <input
                 type="text"
                 onChange={onContractAddressChange}
-                className="p-2 mt-2 rounded-lg  border-2 border-solid border-gray-300  font-light placeholder:text-gray-900 w-full"
-                placeholder="Contract Address"
+                className="p-2 mt-2 rounded-lg  border-2 border-solid   border-gray-300 font-sans  font-light placeholder:text-gray-600 w-full"
+                placeholder="0xbb0e34e178a36b85af3622a7166b0543be239db2"
               />
             </div>
           </div>
@@ -271,7 +308,7 @@ export default function VerifyAndUpload() {
                 />
               </div>
             </label>
-            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto ">
+            <div className="pt-4 flex flex-col relative w-full md:w-[40%] md:h-80  overflow-auto pl-1 ">
               <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>

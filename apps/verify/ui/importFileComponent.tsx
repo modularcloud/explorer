@@ -5,6 +5,7 @@ type props = {
   importFrom: string;
   handleUrlChange: (event: ChangeEvent<HTMLInputElement>) => void;
   importUrl: string;
+  placeholder: string;
   handleImport: (importFrom: string) => void;
   toggleImport: (importFrom: string) => void;
 };
@@ -14,6 +15,7 @@ const ImportFileComponent: React.FC<props> = ({
   importUrl,
   handleImport,
   toggleImport,
+  placeholder,
 }) => {
   return (
     <div>
@@ -26,7 +28,7 @@ const ImportFileComponent: React.FC<props> = ({
             <input
               className="rounded-md border-[1px] border-[#D0D5DD] p-1.5  w-[98%]"
               type="text"
-              placeholder="Repository name or Repository URL"
+              placeholder={placeholder}
               value={importUrl}
               onChange={(event) => {
                 handleUrlChange(event);
