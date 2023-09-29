@@ -162,7 +162,7 @@ export function RightPanel({ data, network }: Props) {
 
         {network.paidVersion && (
           <Tooltip label="This chain is verified">
-            <span>
+            <span tabIndex={0} className="rounded-md">
               <FancyCheck className="text-primary" aria-hidden="true" />
             </span>
           </Tooltip>

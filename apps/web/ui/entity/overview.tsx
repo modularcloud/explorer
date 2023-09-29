@@ -29,11 +29,11 @@ function Entry({ label, value, notCopyable = false }: EntryProps) {
   if (!payload) return null;
 
   return (
-    <div className="border-b border-mid-dark-100 py-4 grid grid-cols-5 items-center gap-4 px-6">
+    <div className="border-b border-mid-dark-100 py-4 grid grid-cols-5 items-baseline gap-4 px-6">
       <dt className="col-span-2 font-medium">{label}</dt>
 
       {type === "standard" && (
-        <dd className={cn("col-span-3")}>
+        <dd className="col-span-3">
           {notCopyable ? (
             <span>{payload.toString()}</span>
           ) : (
@@ -41,29 +41,26 @@ function Entry({ label, value, notCopyable = false }: EntryProps) {
           )}
         </dd>
       )}
+
       {type === "status" && (
-        <dd className={cn("col-span-3")}>
+        <dd className="col-span-3">
           <Status status={payload} />
         </dd>
       )}
 
-      {/* TODO : handle "list" & "image" types */}
-      {/* {type === "list" && (
-        <dd
-          className={cn(
-            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate",
-          )}
-        >
-          <ol>
+      {type === "list" && (
+        <dd className="col-span-3">
+          <ol className="flex flex-col items-start gap-1 w-full">
             {payload.map((value) => (
-              <li key={value} className="truncate">
+              <li key={value} className="w-full">
                 <CopyableValue value={value} />
               </li>
             ))}
           </ol>
         </dd>
-      )} */}
+      )}
+
+      {/* TODO : handle "image" type */}
     </div>
   );
 }
