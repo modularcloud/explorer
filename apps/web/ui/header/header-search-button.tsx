@@ -33,7 +33,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
   return (
     <SearchModal
       optionGroups={optionGroups}
-      defaultNetwork={network}
+      defaultNetwork={{
+        value: network,
+        selected: true,
+      }}
       brandColor={network.brandColor}
       position="top"
     >

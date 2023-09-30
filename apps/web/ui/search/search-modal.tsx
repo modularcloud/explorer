@@ -23,7 +23,10 @@ import { cn } from "~/ui/shadcn/utils";
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {
-  defaultNetwork: SearchOption;
+  defaultNetwork: {
+    value: SearchOption;
+    selected?: boolean;
+  };
   children?: React.ReactNode;
   brandColor: string;
   optionGroups: OptionGroups;
@@ -46,7 +49,9 @@ export function SearchModal({
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
-    React.useState<SearchOption | null>(null);
+    React.useState<SearchOption | null>(
+      defaultNetwork.selected ? defaultNetwork.value : null,
+    );
 
   const onSelectOption = React.useCallback(
     (option: SearchOption) => {
@@ -66,7 +71,7 @@ export function SearchModal({
   const currentNetwork = selectedNetwork
     ? selectedNetwork
     : isEntity
-    ? defaultNetwork
+    ? defaultNetwork.value
     : selectedNetwork;
 
   let typesToCheck: string[] = [];
@@ -81,7 +86,7 @@ export function SearchModal({
   }
 
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
-    network: defaultNetwork.id,
+    network: defaultNetwork.value.id,
     query: inputValue,
     typesToCheck,
     enabled: typesToCheck.length > 0,
@@ -92,7 +97,9 @@ export function SearchModal({
       open={isDialogOpen}
       onOpenChange={(isOpen) => {
         if (!isOpen) {
-          setSelectedNetwork(null);
+          setSelectedNetwork(
+            defaultNetwork.selected ? defaultNetwork.value : null,
+          );
           setInputValue("");
         }
         setIsDialogOpen(isOpen);
@@ -121,7 +128,7 @@ export function SearchModal({
                 placeholder={
                   selectedNetwork
                     ? "Search"
-                    : `Search ${defaultNetwork.displayName} or Switch Chain`
+                    : `Search ${defaultNetwork.value.displayName} or Switch Chain`
                 }
                 autoComplete="off"
                 value={inputValue}
@@ -158,7 +165,7 @@ export function SearchModal({
           {!currentNetwork && !isEntity && (
             <IntegrationGridView
               optionGroups={optionGroups}
-              defaultChainBrand={defaultNetwork.brandName}
+              defaultChainBrand={defaultNetwork.value.brandName}
               filter={inputValue}
               onSelectOption={onSelectOption}
               className="max-h-[calc(100%-60px)] overflow-y-auto"
