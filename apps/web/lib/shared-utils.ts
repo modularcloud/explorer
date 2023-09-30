@@ -206,3 +206,30 @@ export async function copyValueToClipboard(value: string) {
     return false;
   }
 }
+
+/**
+ * Generate an array of numbers from start to the end
+ *
+ * @example
+ *      range(1, 5);
+ *      // => [1, 2, 3, 4, 5]
+ * @param start
+ * @param end
+ * @returns
+ */
+export function range(start: number, end: number): number[] {
+  return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+}
+
+/**
+ * Wait for the specified amount of time
+ *
+ * @example
+ *  await wait(1000); // will wait for 1 second
+ *
+ * @param ms the time in milliseconds
+ * @returns
+ */
+export function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

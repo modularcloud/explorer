@@ -1,6 +1,6 @@
 import * as React from "react";
 // components
-import { Overview } from "~/ui/entity/overview";
+import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
 
 // utils
 import { notFound } from "next/navigation";
@@ -14,6 +14,14 @@ interface Props {
   params: FetchLoadArgs;
 }
 export default async function Page({ params }: Props) {
+  return (
+    <React.Suspense fallback={<OverviewSkeleton />}>
+      <PageContent params={params} />
+    </React.Suspense>
+  );
+}
+
+async function PageContent({ params }: Props) {
   const entity = await fetchEntity({
     resourcePath: params,
     archetype: PageArchetype,
@@ -21,7 +29,6 @@ export default async function Page({ params }: Props) {
 
   if (!entity) notFound();
 
-  // TODO : show Suspense skeleton as fallback when loading async attributes
   return <Overview entity={entity} />;
 }
 

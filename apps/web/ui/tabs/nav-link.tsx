@@ -62,3 +62,35 @@ export function NavLink({
     </Link>
   );
 }
+
+interface NavLinkSkeletonProps {
+  children?: React.ReactNode;
+  isLast?: boolean;
+  isAfterOverview?: boolean;
+}
+
+export function NavLinkSkeleton({
+  children,
+  isAfterOverview = false,
+  isLast = false,
+}: NavLinkSkeletonProps) {
+  const params = useParams() as FetchLoadArgs & { section?: string };
+
+  return (
+    <div
+      className={cn(
+        "flex text-center flex-col group h-full items-center group outline-none",
+        "text-muted bg-muted-100",
+        // compensate the 1px space caused by the selection gradient
+        "pt-[1px]",
+        {
+          "rounded-bl-lg": !params.section && isAfterOverview,
+          "w-52": !isLast,
+          "flex-grow flex-shrink": isLast,
+        },
+      )}
+    >
+      {children}
+    </div>
+  );
+}
