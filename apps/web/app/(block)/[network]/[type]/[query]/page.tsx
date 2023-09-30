@@ -9,19 +9,12 @@ import { fetchEntity } from "~/ecs/lib/server";
 import { getSingleNetworkCached } from "~/lib/network";
 
 // types
-import type { FetchLoadArgs } from "~/lib/shared-utils";
+import { wait, type FetchLoadArgs } from "~/lib/shared-utils";
 interface Props {
   params: FetchLoadArgs;
 }
-export default async function Page({ params }: Props) {
-  return (
-    <React.Suspense fallback={<OverviewSkeleton />}>
-      <PageContent params={params} />
-    </React.Suspense>
-  );
-}
 
-async function PageContent({ params }: Props) {
+export default async function Page({ params }: Props) {
   const entity = await fetchEntity({
     resourcePath: params,
     archetype: PageArchetype,
