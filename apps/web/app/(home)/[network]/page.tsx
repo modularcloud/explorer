@@ -19,7 +19,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   if (!network) notFound();
 
   return {
-    title: `${capitalize(network.chainBrand)} - ModularCloud`,
+    title: `${capitalize(network.chainBrand)}`,
     description: `A block explorer for the ${network.chainBrand} ecosystem.`,
   };
 }

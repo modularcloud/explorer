@@ -1,12 +1,15 @@
 import Link from "next/link";
+
+// utils
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 export const metadata = {
   title: "Page Not found - ModularCloud",
 };
+
 export default function NotFound() {
   return (
-    <div
+    <main
       className="flex h-screen w-full flex-col items-center justify-center gap-6 text-center"
       style={{
         // @ts-expect-error this is a CSS variable
@@ -46,6 +49,6 @@ export default function NotFound() {
           Go home
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

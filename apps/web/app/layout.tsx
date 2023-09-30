@@ -1,15 +1,31 @@
 import "~/styles/globals.css";
-import { Inter } from "next/font/google";
+// components
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
+
+// utils
+import { Inter } from "next/font/google";
 import { getSearchOptionGroups } from "~/lib/search-options";
+import { EXPLORER_CONFIG } from "~/config/explorers";
+
+// types
+import type { Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s - ModularCloud",
+    default: EXPLORER_CONFIG.homepageTitle,
+  },
+  description: EXPLORER_CONFIG.homepageDescription,
+  keywords: EXPLORER_CONFIG.homepageKeywords,
+};
 
 export default async function RootLayout({
   children,
