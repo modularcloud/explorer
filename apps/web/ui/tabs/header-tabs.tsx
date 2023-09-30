@@ -62,6 +62,9 @@ export async function HeaderTabs({ params }: Props) {
       className={cn(
         "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs hide-scrollbars bg-white",
         "left-0 top-header w-full tab:w-2/3",
+        // this is to style the main section when the content is visible (no 404)
+        // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
+        "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
       )}
     >
       <ol className="flex min-w-max items-stretch w-full h-full">

@@ -29,16 +29,19 @@ export async function generateMetadata(props: Props) {
     };
   }
 
-  const network = await getSingleNetworkCached(props.params.network);
+  const [network, entity] = await Promise.all([
+    getSingleNetworkCached(props.params.network),
+    fetchEntity({
+      resourcePath: props.params,
+      archetype: PageArchetype,
+    }),
+  ]);
 
-  if (!network) notFound();
-
-  const entity = await fetchEntity({
-    resourcePath: props.params,
-    archetype: PageArchetype,
-  });
-
-  if (!entity) notFound();
+  if (!network || !entity) {
+    return {
+      title: "Not found - Modularcloud",
+    };
+  }
 
   return {
     title: `${entity.components.page.data.metadata.title} - ModularCloud`,

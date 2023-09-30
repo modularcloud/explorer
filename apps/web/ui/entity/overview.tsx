@@ -4,7 +4,6 @@ import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
 
 // utils
-import { cn } from "~/ui/shadcn/utils";
 import { fetchEntity } from "~/ecs/lib/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 
