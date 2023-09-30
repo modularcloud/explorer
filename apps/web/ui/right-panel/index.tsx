@@ -119,11 +119,6 @@ function HotkeyEntry({ label, keys, isLast, isFirst }: HotkeyEntryProps) {
 interface Props {
   data: Sidebar;
   network: SingleNetwork;
-  /**
-   * to show a different mapping of hotkeys
-   * when we are on a "list" view, we can navigate with arrow keys and can copy/paste & open new links
-   */
-  currentSectionType?: "list" | "overview";
 }
 
 export function RightPanel({ data, network }: Props) {
@@ -171,6 +166,7 @@ export function RightPanel({ data, network }: Props) {
       >
         <dl className="w-full">
           <div className="grid gap-4 text-lg w-full grid-cols-5">
+            {/* components Header */}
             <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
               <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
               {entityTypeName}
@@ -180,10 +176,11 @@ export function RightPanel({ data, network }: Props) {
                 tooltipPosition="left"
                 value={entityId}
                 hideCopyIcon
-                className="[&>button]:uppercase"
+                className="[&>button]:uppercase justify-end"
               />
             </dd>
           </div>
+
           {allAttributes.map(([name, entry], index) => (
             <Entry
               key={name}
@@ -254,6 +251,19 @@ export function RightPanel({ data, network }: Props) {
                     },
                 {
                   cmd: "C",
+                },
+              ]}
+            />
+            <HotkeyEntry
+              label="Switch Tabs"
+              keys={[
+                {
+                  cmd: "Ctrl",
+                  label: "Control",
+                },
+                {
+                  cmd: "1-9",
+                  label: "One to nine",
                 },
               ]}
             />
