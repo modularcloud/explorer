@@ -1,11 +1,15 @@
 "use client";
 import * as React from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 
+// components
+import Link from "next/link";
+
+// utils
+import { useParams } from "next/navigation";
 import { slugify, type FetchLoadArgs } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
+// types
 interface Props {
   href: string;
   currentIndex: number;
@@ -34,6 +38,7 @@ export function NavLink({
   return (
     <Link
       href={href}
+      tabIndex={isDummy ? -1 : 0}
       className={cn(
         "flex text-center flex-col group h-full items-center group outline-none",
         {
