@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
+import { SkipToMainContent } from "~/ui/skip-to-main-content";
 
 // utils
 import { Inter } from "next/font/google";
@@ -40,6 +41,7 @@ export default async function RootLayout({
         className={`${inter.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
+        <SkipToMainContent />
         <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
           {children}
           {process.env.NODE_ENV !== "production" && <TailwindIndicator />}

@@ -35,6 +35,7 @@ export default async function BlockLayout({
       <div className="grid lg:grid-cols-6">
         <div
           id="main-content"
+          tabIndex={0}
           className={cn(
             "mt-[65px] bg-muted-100 min-h-screen",
             // style children but not the header nav
