@@ -6,7 +6,7 @@ pkgs.mkShell {
   name = "modularcloud";
 
   buildInputs = with pkgs; [
-    nodejs_20
+    nodejs_18
     nodePackages.npm
     protobuf
   ];
