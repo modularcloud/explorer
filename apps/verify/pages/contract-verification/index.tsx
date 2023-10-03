@@ -18,7 +18,7 @@ export default function ContractVerifier() {
             and metadata.
           </p>
           <a
-            href="https://docs.modular.cloud/"
+            href="https://docs.modular.cloud/verification"
             target="_blank"
             className="bold pl-1 text-[#7B6FE7] hover:cursor-pointer hover:underline"
             rel="noreferrer"
