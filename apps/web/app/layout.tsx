@@ -36,7 +36,12 @@ export default async function RootLayout({
   const searchOptionGroups = await getSearchOptionGroups();
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <head />
+      <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
+      </head>
       <body
         className={`${inter.variable} font-sans text-foreground`}
         suppressHydrationWarning
