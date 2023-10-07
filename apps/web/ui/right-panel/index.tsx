@@ -133,7 +133,15 @@ export function RightPanel({ data, network }: Props) {
     );
 
   return (
-    <div className="w-full grid h-full max-h-full auto-rows-min">
+    <div
+      className="w-full grid h-full max-h-full auto-rows-min"
+      style={{
+        backgroundImage: "url(/images/grid-layout-vector.svg)",
+        backgroundPosition: "bottom center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+      }}
+    >
       <section
         id="header"
         className="border-b px-8 py-6 gap-4 flex items-center w-full flex-shrink"
