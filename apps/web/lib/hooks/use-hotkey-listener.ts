@@ -5,13 +5,13 @@ type SimpleCallback = () => Promise<any>;
 type UseHotkeyListenerArgs = {
   key: string;
   modifier?: "CTRL" | "CMD" | "ALT";
-  callback: SimpleCallback;
+  listener: SimpleCallback;
 };
 
 export function useHotkeyListener({
   key,
   modifier,
-  callback,
+  listener,
 }: UseHotkeyListenerArgs) {
   const { isSearchModalOpen } = React.use(GlobalHotkeyContext);
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
@@ -35,7 +35,7 @@ export function useHotkeyListener({
         event.key.toLowerCase() === key.toLowerCase() &&
         (!modifier || keysPressedRef.current[modifier])
       ) {
-        callback();
+        listener();
       }
     };
 
@@ -50,5 +50,5 @@ export function useHotkeyListener({
       window.removeEventListener("keyup", keyUpListener);
       window.removeEventListener("keydown", keyDownListener);
     };
-  }, [isSearchModalOpen, callback, key, modifier]);
+  }, [isSearchModalOpen, listener, key, modifier]);
 }
