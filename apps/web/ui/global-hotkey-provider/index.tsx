@@ -3,19 +3,33 @@ import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { OptionGroups } from "~/lib/shared-utils";
 
+type SimpleCallback = () => Promise<any>;
+type HotKeySequence = {
+  key: string;
+  modifier?: "CTRL" | "CMD" | "ALT";
+  callback: SimpleCallback;
+};
+
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
   setSearchModalOpen: (open: boolean) => void;
   searchValue: string;
   setSearchValue: (value: string) => void;
+  registerHotKeySequence: (
+    sequenceId: string,
+    sequence: HotKeySequence,
+  ) => void;
+  unRegisterHotKeySequence: (sequenceId: string) => void;
 };
 
 export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   {
     isSearchModalOpen: false,
     searchValue: "",
-    setSearchModalOpen() {}, // dummy
-    setSearchValue() {}, // dummy
+    setSearchModalOpen() {},
+    setSearchValue() {},
+    registerHotKeySequence: () => {},
+    unRegisterHotKeySequence: () => {},
   },
 );
 
@@ -27,10 +41,17 @@ export function GlobalHotkeyProvider({
   optionGroups: OptionGroups;
 }) {
   const [isSearchModalOpen, setSearchModalOpen] = React.useState(false);
+  const [hotkeyList, setHotkeyList] = React.useState<
+    Record<string, HotKeySequence>
+  >({});
+  const currentPressedModifierRef = React.useRef<
+    HotKeySequence["modifier"] | null
+  >(null);
+
   const [initialSearchValue, setInitialSearchValue] = React.useState("");
   const router = useRouter();
   const params = useParams();
-  const sequenceKeyPressedRef = React.useRef<boolean>(false);
+  const sequenceKeyPressedRef = React.useRef(false);
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
@@ -41,14 +62,12 @@ export function GlobalHotkeyProvider({
     const pasteEventListener = (event: ClipboardEvent) => {
       if (
         !isSearchModalOpen &&
-        !(document.activeElement instanceof HTMLInputElement) // if the input is not focused
+        !(document.activeElement instanceof HTMLInputElement)
       ) {
         const text = event.clipboardData?.getData("text/plain");
         if (text) {
-          // Push
           setSearchModalOpen(true);
           setInitialSearchValue(text);
-          // router.push(`/${network.id}/search/${encodeURIComponent(text)}`);
         }
       }
     };
@@ -87,6 +106,45 @@ export function GlobalHotkeyProvider({
     };
   }, [isSearchModalOpen, router, network.id]);
 
+  React.useEffect(() => {
+    const keyDownListener = (event: KeyboardEvent) => {
+      const sequence = Object.entries(hotkeyList).find(([id, sequence]) => {
+        if (sequence.key) {
+          // TODO
+        }
+      });
+      // if(event.)
+      // if (event.key === "/" && !isSearchModalOpen) {
+      //   setSearchModalOpen(true);
+      //   event.preventDefault();
+      // } else if (event.key.toLowerCase() === "g") {
+      //   // signal that we clicked on `G` and only wait for 1 second to listen for the next key press
+      //   sequenceKeyPressedRef.current = true;
+      //   setTimeout(() => {
+      //     sequenceKeyPressedRef.current = false;
+      //   }, 1000);
+      // } else if (["b", "t"].includes(event.key.toLowerCase())) {
+      //   const key = event.key.toLowerCase();
+      //   if (sequenceKeyPressedRef.current) {
+      //     sequenceKeyPressedRef.current = false;
+      //     if (key === "b") {
+      //       router.push(`/${network.id}/latest/blocks`);
+      //     } else {
+      //       router.push(`/${network.id}/latest/transactions`);
+      //     }
+      //   }
+      // } else {
+      //   // ignore the shortcut if other keys are pressed
+      //   sequenceKeyPressedRef.current = false;
+      // }
+    };
+
+    window.addEventListener("keydown", keyDownListener);
+    return () => {
+      window.removeEventListener("keydown", keyDownListener);
+    };
+  }, [hotkeyList]);
+
   return (
     <GlobalHotkeyContext.Provider
       value={{
@@ -94,6 +152,20 @@ export function GlobalHotkeyProvider({
         setSearchModalOpen,
         searchValue: initialSearchValue,
         setSearchValue: setInitialSearchValue,
+        registerHotKeySequence(sequenceId, sequence) {
+          setHotkeyList((old) => {
+            return {
+              ...old,
+              [sequenceId]: sequence,
+            };
+          });
+        },
+        unRegisterHotKeySequence(sequenceId) {
+          setHotkeyList((old) => {
+            const { [sequenceId]: _, ...rest } = old;
+            return rest;
+          });
+        },
       }}
     >
       {children}
