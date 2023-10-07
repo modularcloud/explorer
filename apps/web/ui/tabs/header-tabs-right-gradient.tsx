@@ -26,6 +26,23 @@ export function HeaderTabsRightGradient() {
     }
   }, [path]);
 
+  React.useEffect(() => {
+    const onResize = () => {
+      const parent = ref.current?.parentElement;
+
+      if (parent && isOverflown(parent)) {
+        setIsHidden(false);
+      } else {
+        setIsHidden(true);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
   return (
     <div
       ref={ref}
