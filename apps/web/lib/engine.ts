@@ -53,7 +53,7 @@ export async function getEngine(networkSlug: string) {
     Engine,
     // Normally This will be always defined when used
     // this is just to silence typescript
-    config: config ?? {},
+    config: config ?? ({} as EngineConfig),
   };
 }
 

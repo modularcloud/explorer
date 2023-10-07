@@ -21,8 +21,6 @@ export async function GET(_: Request, { params }: { params: FetchLoadArgs }) {
         params.type === "account" ||
         params.type === "token"
       ) {
-        // @ts-expect-error the return type of config is `EngineConfig`, but TypeScript
-        // coercices thee return type to `{}`
         const types = Object.keys(config.loaders);
         data = await Promise.any(
           types
@@ -43,14 +41,14 @@ export async function GET(_: Request, { params }: { params: FetchLoadArgs }) {
       console.error("Error loading entity with params: ", params);
       console.error(e);
     }
-
-    return NextResponse.json(data, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      status: data === null ? 404 : 200, // 404 means we have not been able to fetch the data
-    });
   }
+
+  return NextResponse.json(data, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+    status: data === null ? 404 : 200, // 404 means we have not been able to fetch the data
+  });
 }
 
 export async function OPTIONS(_: Request) {
