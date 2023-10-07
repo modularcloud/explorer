@@ -3,24 +3,42 @@ import * as React from "react";
 import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
 
 // utils
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { fetchEntity } from "~/ecs/lib/server";
 import { getSingleNetworkCached } from "~/lib/network";
 
 // types
-import { wait, type FetchLoadArgs } from "~/lib/shared-utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 interface Props {
   params: FetchLoadArgs;
 }
 
-export default async function Page({ params }: Props) {
+export default function Page({ params }: Props) {
+  return (
+    <React.Suspense fallback={<OverviewSkeleton />}>
+      <AyncPageContent params={params} />
+    </React.Suspense>
+  );
+}
+
+async function AyncPageContent({ params }: Props) {
   const entity = await fetchEntity({
     resourcePath: params,
     archetype: PageArchetype,
   });
 
   if (!entity) notFound();
+
+  if (params.type === "search") {
+    redirect(
+      `/${
+        params.network
+      }/${entity.components.sidebar.data.entityTypeName.toLowerCase()}/${
+        params.query
+      }`,
+    );
+  }
 
   return <Overview entity={entity} />;
 }
