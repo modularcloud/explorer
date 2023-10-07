@@ -64,7 +64,7 @@ export default async function BlockLayout({
               // the height of the sidebar is the total height of the screen - the height of the <Header /> component
               "h-[calc(100vh_-_theme('spacing.header'))] max-w-[33.333%] w-1/3",
               "bg-muted-100 hidden lg:block",
-              "fixed top-[65px] bottom-0 right-0",
+              "fixed top-[63px] bottom-0 right-0",
               "overflow-hidden",
             )}
           >
