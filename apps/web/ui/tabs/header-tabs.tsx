@@ -1,17 +1,18 @@
 import * as React from "react";
 // components
-import { CounterBadge } from "~/ui/counter-badge";
-import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
-import { NavLink, NavLinkSkeleton } from "./nav-link";
 import { Skeleton } from "~/ui/skeleton";
+import { CounterBadge } from "~/ui/counter-badge";
 import { HeaderTabsRightGradient } from "./header-tabs-right-gradient";
+import { NavLink, NavLinkSkeleton } from "./nav-link";
+import { HeaderTabsHotkeyListener } from "./header-tabs-hotkey-listener";
+import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 
 // utils
-import { PageArchetype } from "~/ecs/archetypes/page";
-import { fetchEntity } from "~/ecs/lib/server";
-import { ENTITY_INDEX_TAB_NAME } from "~/lib/constants";
 import { cn } from "~/ui/shadcn/utils";
+import { fetchEntity } from "~/ecs/lib/server";
+import { PageArchetype } from "~/ecs/archetypes/page";
 import { slugify, range } from "~/lib/shared-utils";
+import { ENTITY_INDEX_TAB_NAME } from "~/lib/constants";
 
 // types
 import type { FetchLoadArgs } from "~/lib/shared-utils";
@@ -76,6 +77,9 @@ export async function HeaderTabs({ params }: Props) {
       )}
     >
       <HeaderTabsRightGradient />
+      <HeaderTabsHotkeyListener
+        tabList={tabs.map((tab) => tab.name!).filter(Boolean)}
+      />
       <ol className="flex min-w-max items-stretch w-full h-full">
         {tabs.map((tab, index) => {
           return (

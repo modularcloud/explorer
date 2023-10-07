@@ -1,26 +1,36 @@
 import * as React from "react";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
-type SimpleCallback = () => Promise<any>;
-type UseHotkeyListenerArgs = {
-  key: string;
+type HotkeyListener<TKeys extends string = string> = (
+  keyPressed: TKeys,
+) => void;
+type UseHotkeyListenerArgs<TKeys extends string = string> = {
+  keys: TKeys[];
   modifier?: "CTRL" | "CMD" | "ALT";
-  listener: SimpleCallback;
+  listener: HotkeyListener<TKeys>;
 };
 
-export function useHotkeyListener({
-  key,
+export function useHotkeyListener<TKeys extends string = string>({
+  keys,
   modifier,
   listener,
-}: UseHotkeyListenerArgs) {
+}: UseHotkeyListenerArgs<TKeys>) {
   const { isSearchModalOpen } = React.use(GlobalHotkeyContext);
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
 
   React.useEffect(() => {
+    function isKeyPressed(key: string): key is TKeys {
+      return (
+        keys.includes(key as TKeys) &&
+        (!modifier || keysPressedRef.current[modifier])
+      );
+    }
+
     const keyDownListener = (event: KeyboardEvent) => {
-      if (!isSearchModalOpen) {
+      if (isSearchModalOpen) {
         return;
       }
+
       if (event.ctrlKey) {
         keysPressedRef.current["CTRL"] = true;
       } else if (event.metaKey) {
@@ -31,11 +41,8 @@ export function useHotkeyListener({
         keysPressedRef.current[event.key] = true;
       }
 
-      if (
-        event.key.toLowerCase() === key.toLowerCase() &&
-        (!modifier || keysPressedRef.current[modifier])
-      ) {
-        listener();
+      if (isKeyPressed(event.key)) {
+        listener(event.key);
       }
     };
 
@@ -50,5 +57,5 @@ export function useHotkeyListener({
       window.removeEventListener("keyup", keyUpListener);
       window.removeEventListener("keydown", keyDownListener);
     };
-  }, [isSearchModalOpen, listener, key, modifier]);
+  }, [isSearchModalOpen, listener, keys, modifier]);
 }
