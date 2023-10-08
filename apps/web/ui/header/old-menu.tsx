@@ -1,7 +1,7 @@
 import { MobileActions } from "~/ui/mobile-actions";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { AssociatedRightPanel } from "~/ui/right-panel/associated";
+import { AssociatedRightPanel } from "~/ui/right-panel/old-associated";
 import { ViewSwitcher } from "~/ui/view-switcher";
 import { getSearchOptionGroups } from "~/lib/search-options";
 

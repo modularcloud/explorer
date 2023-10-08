@@ -18,7 +18,6 @@ export function HeaderTabsHotkeyListener({ tabList }: Props) {
     keys: range(1, tabList.length).map(String),
     listener(keyPressed) {
       const selectedTab = tabList[Number(keyPressed) - 1];
-      console.log({ keyPressed, selectedTab });
       if (selectedTab) {
         router.push(
           `/${params.network}/${params.type}/${params.query}/${

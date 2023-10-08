@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 // components
 import Image from "next/image";
@@ -18,7 +19,7 @@ import { ShortcutKey } from "~/ui/shortcut-key";
 // utils
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
-import { isMacLike } from "~/lib/server-utils";
+import { isMacLike } from "~/lib/client-utils";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
