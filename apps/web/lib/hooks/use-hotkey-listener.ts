@@ -1,31 +1,22 @@
 import * as React from "react";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
-type HotkeyListener<TKeys extends string = string> = (
-  keyPressed: TKeys,
-) => void;
-type UseHotkeyListenerArgs<TKeys extends string = string> = {
-  keys: TKeys[];
+type HotkeyListener = (keyPressed: string) => void;
+type UseHotkeyListenerArgs = {
+  keys: string[];
   modifier?: "CTRL" | "CMD" | "ALT";
-  listener: HotkeyListener<TKeys>;
+  listener: HotkeyListener;
 };
 
-export function useHotkeyListener<TKeys extends string = string>({
+export function useHotkeyListener({
   keys,
   modifier,
   listener,
-}: UseHotkeyListenerArgs<TKeys>) {
+}: UseHotkeyListenerArgs) {
   const { isSearchModalOpen } = React.use(GlobalHotkeyContext);
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
 
   React.useEffect(() => {
-    function isKeyPressed(key: string): key is TKeys {
-      return (
-        keys.includes(key as TKeys) &&
-        (!modifier || keysPressedRef.current[modifier])
-      );
-    }
-
     const keyDownListener = (event: KeyboardEvent) => {
       if (isSearchModalOpen) {
         return;
@@ -41,7 +32,10 @@ export function useHotkeyListener<TKeys extends string = string>({
         keysPressedRef.current[event.key] = true;
       }
 
-      if (isKeyPressed(event.key)) {
+      if (
+        keys.includes(event.key) &&
+        (!modifier || keysPressedRef.current[modifier])
+      ) {
         listener(event.key);
       }
     };
