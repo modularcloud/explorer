@@ -37,72 +37,70 @@ export type ResolutionResponse = {
   trace: Trace;
 } & Resolution;
 
-type ResolverFn<T extends Resolver<any>[]> = {
-  (input: any, ...dependencies: T): Promise<any>;
+type ResolverFn<K, T extends Resolver<K>[]> = {
+  (input: K, ...dependencies: T): Promise<any>;
 };
 
-type Resolver<T extends ResolverFn<any>> = {
-  (input: Parameters<T>[0]): Promise<ResolutionResponse>;
+export type Resolver<K> = {
+  (input: K): Promise<ResolutionResponse>;
+  __config: ResolverConfig;
 };
 
-export function createResolver<T extends Resolver<any>[]>(
+export type AnyResolver = Resolver<any>;
+
+export function createResolver<K, T extends Resolver<any>[]>(
   config: ResolverConfig,
-  fn: ResolverFn<T>,
+  fn: ResolverFn<K, T>,
   dependencies: T,
-): Resolver<ResolverFn<T>> {
-  return async (input: any) => {
+): Resolver<K> {
+  const fnWrapper = async (input: any) => {
     const traces: Trace[] = [];
-    let resolution: Resolution = {
-      type: "pending",
-      resolverId: config.id,
-      input,
-    };
+    let resolution: null | Resolution = null;
     try {
       // inject a side effect for storing traces
       const deps = dependencies.map((dependency) => {
         return async (input: any) => {
           const result = await dependency(input);
           traces.push(result.trace);
+
           return result;
         };
       }) as T;
+      const result = await fn(input, ...deps);
       resolution = {
         type: "success",
-        result: await fn(input, ...deps),
+        result,
       };
     } catch (e) {
-      if (e !== PendingException) {
+      if (e === PendingException) {
+        resolution = {
+          type: "pending",
+          resolverId: config.id,
+          input,
+        };
+      } else {
         resolution = {
           type: "error",
-          error: String(e),
+          error: `${config.id}(${JSON.stringify(input)}): ${e}`,
         };
       }
     } finally {
-      return {
-        trace: {
-          resolverId: config.id,
-          input,
-          resolution: resolution,
-          createdAt: Date.now(),
-          dependencies: traces,
-        },
-        ...resolution,
-      };
+      if (resolution) {
+        return {
+          trace: {
+            resolverId: config.id,
+            input,
+            resolution: resolution,
+            createdAt: Date.now(),
+            dependencies: traces,
+          },
+          ...resolution,
+        };
+      } else {
+        throw new Error("Execution failure");
+      }
     }
   };
+  fnWrapper.__config = config;
+  return fnWrapper;
 }
-
-// const test1 = createResolver(
-//   { id: "test1", input: {}, cache: false },
-//   async (input) => {
-//     return input;
-//   },
-//   []
-// );
-// const test2 = createResolver(
-//   { id: "test2", input: {}, cache: false },
-//   async (input, test1) => {
-//     return test1(input);
-//   },
-//   [test1]
-// );
