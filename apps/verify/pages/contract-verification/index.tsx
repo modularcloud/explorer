@@ -12,7 +12,7 @@ export default function ContractVerifier() {
         <p className="pt-14 text-center text-4xl font-bold  text-[#1D2939]  xl:pt-20">
           Verifier
         </p>
-        <div className="flex items-center justify-center pt-3 text-center text-[#344054]">
+        <div className=" tab:flex items-center justify-center pt-3 text-center     text-[#344054] ">
           <p>
             Verify smart contracts by recompiling with the Solidity source code
             and metadata.

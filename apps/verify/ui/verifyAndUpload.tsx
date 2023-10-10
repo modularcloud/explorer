@@ -223,39 +223,58 @@ export default function VerifyAndUpload() {
 
   const readAndZipFiles = () => {
     return new Promise<Blob>(async (resolve, reject) => {
-      const zip = new JSZip();
-      let zipFile;
-      if (files) {
-        for (let i = 0; i < files?.length; i++) {
-          const file = files[i];
-          const fileContents = await readFileData(file);
-          const fileType = file.name.includes(".")
-            ? file.name.split(".").pop()
-            : null;
-          if (fileType?.toLowerCase() === "json") {
-            SetMetadataJsonExists(true);
-          }
-          if (
-            fileType?.toLowerCase() === "json" &&
-            fileContents.match(HARDHAT_OUTPUT_FORMAT_REGEX) &&
-            typeof data.chosenContract == "undefined"
-          ) {
-            let loadedJson = JSON.parse(fileContents);
-            if (typeof loadedJson === "string") {
-              loadedJson = JSON.parse(loadedJson);
+      try {
+        const zip = new JSZip();
+        let zipFile;
+        if (files) {
+          for (let i = 0; i < files?.length; i++) {
+            const file = files[i];
+            const fileContents = await readFileData(file);
+            const fileType = file.name.includes(".")
+              ? file.name.split(".").pop()
+              : null;
+            if (fileType?.toLowerCase() === "json") {
+              SetMetadataJsonExists(true);
             }
-            if (Object.keys(loadedJson.output.contracts).length > 1) {
-              setContractDeployedSolidityFiles(loadedJson.output.contracts);
-              setShowContractPopUp(true);
+            if (
+              fileType?.toLowerCase() === "json" &&
+              fileContents.match(HARDHAT_OUTPUT_FORMAT_REGEX) &&
+              typeof data.chosenContract == "undefined"
+            ) {
+              let loadedJson = JSON.parse(fileContents);
+              if (typeof loadedJson === "string") {
+                loadedJson = JSON.parse(loadedJson);
+              }
+              if (Object.keys(loadedJson.output.contracts).length > 1) {
+                setContractDeployedSolidityFiles(loadedJson.output.contracts);
+                setShowContractPopUp(true);
+                throw new Error("Verification Paused:");
+              }
             }
+            data.files[file.name] = fileContents;
+            zip.file(file.name, file);
           }
-          data.files[file.name] = fileContents;
-          zip.file(file.name, file);
+          zip.generateAsync({ type: "blob" }).then(async (content) => {
+            zipFile = new Blob([content], { type: "application/zip" });
+            resolve(zipFile);
+          });
         }
-        zip.generateAsync({ type: "blob" }).then(async (content) => {
-          zipFile = new Blob([content], { type: "application/zip" });
-          resolve(zipFile);
-        });
+      } catch (error) {
+        if (error.message === "Verification Paused:") {
+          toast.update(toastId, {
+            render: ` Verification Paused:Detected Multiple contracts, but can only verify 1 at a time. Please choose a main contract and click Submit`,
+            type: "warning",
+            isLoading: false,
+            closeOnClick: true,
+          });
+        } else {
+          toast.update(toastId, {
+            render: `Error on reading files`,
+            type: "error",
+            isLoading: false,
+            closeOnClick: true,
+          });
+        }
       }
     });
   };
@@ -273,14 +292,14 @@ export default function VerifyAndUpload() {
             setShowContractPopUp={setShowContractPopUp}
             onSubmit={onSubmit}
           />
-          <div className="mb-3 flex flex-col  justify-between md:flex-row">
+          <div className="tab:flex-row mb-3 flex  flex-col justify-between">
             <div className="flex w-full flex-col ">
               <p className="">Select Chain</p>
               <ChainSelectableComponent
                 onSelectionChange={handleChainSelectionChange}
               />
             </div>
-            <div className="flex w-full flex-col md:w-3/5 ">
+            <div className="tab:w-3/5 flex w-full flex-col ">
               <p className="pl-1 ">Contract Address</p>
               <input
                 type="text"
@@ -291,10 +310,10 @@ export default function VerifyAndUpload() {
             </div>
           </div>
           <ExternalFileImporter setFiles={setFiles} />
-          <div className="flex w-full flex-col gap-x-5 md:flex-row">
+          <div className="tab:flex-row flex w-full flex-col gap-x-5">
             <label
               htmlFor="file-upload"
-              className="custom-file-upload w-full pt-5 md:w-[65%] "
+              className="custom-file-upload tab:w-[65%] w-full pt-5 "
             >
               <div
                 onDragOver={(e) => {
@@ -309,8 +328,8 @@ export default function VerifyAndUpload() {
                     <SvgFileUpload />
                   </div>
                 </div>
-                <p className="text-[#6941C6]">Click to Upload</p>
-                <p className="text-sm  text-[#667085]">
+                <p className="text-center text-[#6941C6]">Click to Upload</p>
+                <p className="text-center  text-sm text-[#667085]">
                   Drag and drop here or Browse files
                 </p>
                 <input
@@ -323,7 +342,7 @@ export default function VerifyAndUpload() {
                 />
               </div>
             </label>
-            <div className="relative flex w-full flex-col overflow-auto pl-1 pt-4  md:h-80 md:w-[40%] ">
+            <div className="tab:h-80 tab:w-[40%] relative flex w-full flex-col overflow-auto  pl-1 pt-4 ">
               <UploadedFileSection deleteFile={deleteFile} files={files} />
             </div>
           </div>
