@@ -79,13 +79,6 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
             setUrl("");
           }}
         >
-          {isLoading && (
-            <div className="absolute left-0 top-0 z-40  m-0 h-full min-w-[100%]  overflow-hidden  backdrop-blur-md ">
-              <div className="absolute left-1/2  top-[40%] m-0 w-full   ">
-                <PuffLoader color="#7B6FE7" size={200} />
-              </div>
-            </div>
-          )}
           <SvgGithub />
           <p className="pr-2">Import from GitHub</p>
         </div>
@@ -103,6 +96,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           <SvgPlus />
           <p className="pr-2">Import from remote</p>
         </div>
+        {isLoading && (
+          <div className="absolute left-0 top-0 z-40  m-0 h-full min-w-[100%]  overflow-hidden  backdrop-blur-md ">
+            <div className="absolute left-1/2  top-[40%] m-0 w-full   ">
+              <PuffLoader color="#7B6FE7" size={200} />
+            </div>
+          </div>
+        )}
       </div>
       {showImportFromGithub && (
         <ImportFileComponent
