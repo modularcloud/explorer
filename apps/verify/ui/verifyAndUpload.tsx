@@ -263,7 +263,7 @@ export default function VerifyAndUpload() {
         if (error instanceof Error) {
           if (error.message === "Verification Paused:") {
             toast.update(toastId, {
-              render: ` Verification Paused:Detected Multiple contracts, but can only verify 1 at a time. Please choose a main contract and click Submit`,
+              render: ` Verification Paused: Multiple contracts detected. Please select the primary contract and click Submit.`,
               type: "warning",
               isLoading: false,
               closeOnClick: true,
