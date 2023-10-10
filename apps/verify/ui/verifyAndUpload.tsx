@@ -215,7 +215,7 @@ export default function VerifyAndUpload() {
           throw new Error("File Upload Failed");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading file:", error);
       throw new Error("File Upload Failed");
     }
@@ -260,20 +260,22 @@ export default function VerifyAndUpload() {
           });
         }
       } catch (error) {
-        if (error.message === "Verification Paused:") {
-          toast.update(toastId, {
-            render: ` Verification Paused:Detected Multiple contracts, but can only verify 1 at a time. Please choose a main contract and click Submit`,
-            type: "warning",
-            isLoading: false,
-            closeOnClick: true,
-          });
-        } else {
-          toast.update(toastId, {
-            render: `Error on reading files`,
-            type: "error",
-            isLoading: false,
-            closeOnClick: true,
-          });
+        if (error instanceof Error) {
+          if (error.message === "Verification Paused:") {
+            toast.update(toastId, {
+              render: ` Verification Paused:Detected Multiple contracts, but can only verify 1 at a time. Please choose a main contract and click Submit`,
+              type: "warning",
+              isLoading: false,
+              closeOnClick: true,
+            });
+          } else {
+            toast.update(toastId, {
+              render: `Error on reading files`,
+              type: "error",
+              isLoading: false,
+              closeOnClick: true,
+            });
+          }
         }
       }
     });
