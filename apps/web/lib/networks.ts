@@ -44,7 +44,7 @@ export function getEngine() {
     Engine.addConfig("mainnet", config);
   } else if (whitelabel.env === "waev") {
     config = CreateEVMConfig({
-      endpoint: "https://api.evm.waev.eclipsenetwork.xyz/solana",
+      endpoint: "https://api.evm.waev.dev.eclipsenetwork.xyz",
       network: {
         id: "waev",
         displayName: "Waev",
