@@ -11,7 +11,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "web": "turbo run dev --parallel --filter=!docs --filter=!verify --filter=!resolver-playground",
+    "web": "turbo run dev --parallel --filter=!docs --filter=!verify --filter=!playground",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
