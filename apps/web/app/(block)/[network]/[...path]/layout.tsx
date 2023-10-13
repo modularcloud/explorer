@@ -6,10 +6,10 @@ import { HeaderTabs, HeaderTabsSkeleton } from "~/ui/tabs/header-tabs";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { FetchLoadArgs } from "~/lib/shared-utils";
+import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
   children: React.ReactNode;
-  params: { network: string, path: string[] };
+  params: HeadlessRoute;
 }
 
 export default function EntityLayout({ children, params }: Props) {

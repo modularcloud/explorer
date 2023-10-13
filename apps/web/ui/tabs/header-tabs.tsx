@@ -9,20 +9,11 @@ import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 
 // utils
 import { cn } from "~/ui/shadcn/utils";
-import { fetchEntity } from "~/ecs/lib/server";
-import { PageArchetype } from "~/ecs/archetypes/page";
-import { slugify, range } from "~/lib/shared-utils";
-import { ENTITY_INDEX_TAB_NAME } from "~/lib/constants";
-import { getSingleNetworkCached } from "~/lib/network";
-import { notFound } from "next/navigation";
-import { createSVMIntegration } from "@modularcloud/headless";
-
-// types
-import type { FetchLoadArgs } from "~/lib/shared-utils";
-import type { Page } from "@modularcloud/headless";
+import { range } from "~/lib/shared-utils";
+import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
 
 interface Props {
-  params: { network: string, path: string[] };
+  params: HeadlessRoute;
 }
 
 type Tabs = {
@@ -36,39 +27,15 @@ type Tabs = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const network = await getSingleNetworkCached(params.network);
-    if(!network) {
-        notFound();
-    }
+  const page = await loadPage(params);
 
-    if(!network.config.rpcUrls["svm"]) {
-        notFound();
-    }
-
-    const integration = createSVMIntegration({
-        chainBrand: network.chainBrand,
-        chainName: network.chainName,
-        chainLogo: network.config.logoUrl,
-        entityType: "placeholder1",
-        entityQuery: "placeholder2",
-        rpcEndpoint: network.config.rpcUrls["svm"],
-        nativeToken: network.config.token.name
-    });
-
-    const resolution = await integration.resolveRoute(params.path);
-    if(!resolution || resolution.type !== "success") {
-      return null;
-    }
-
-    const page: Page = resolution.result;
-
-    // Eventually, we will use this schema directly without modification
-    const resolvedTabs = page.tabs;
+  // TODO: use this schema directly without modification
+  const resolvedTabs = page.tabs;
 
   const tabs: Tabs[] = resolvedTabs.map((tab) => {
     // FIXME: this should use a global map somewhere (i think)
     let Icon = tab.text === "Transactions" ? ArrowLeftRight : ArrowRight;
-    if(tab.text === "Overview") Icon = Stars;
+    if (tab.text === "Overview") Icon = Stars;
 
     return {
       Icon,
@@ -113,13 +80,21 @@ export async function HeaderTabs({ params }: Props) {
                 <NavLink
                   href="#"
                   currentIndex={index}
-                  tabs={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
+                  tabs={tabs
+                    .map((tab) => tab.route?.join("/")!)
+                    .filter(Boolean)}
                   isDummy
                 />
               ) : (
                 <NavLink
-                  tabs={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
-                  href={tab.route ? `/${params.network}/${tab.route.join("/")}` : "#"}
+                  tabs={tabs
+                    .map((tab) => tab.route?.join("/")!)
+                    .filter(Boolean)}
+                  href={
+                    tab.route
+                      ? `/${params.network}/${tab.route.join("/")}`
+                      : "#"
+                  }
                   currentIndex={index}
                 >
                   <span
