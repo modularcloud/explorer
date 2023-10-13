@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@modularcloud-resolver/core": "*",
+        "@modularcloud-resolver/sealevel": "*",
         "zod": "^3.22.2"
     },
     "devDependencies": {

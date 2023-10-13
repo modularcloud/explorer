@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Temporarily using this based off the old config schema
-const ConfigSchema = z.object({
+export const ConfigSchema = z.object({
     endpoint: z.string(),
     slug: z.string(),
     displayName: z.string(),

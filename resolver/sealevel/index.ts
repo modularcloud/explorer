@@ -27,7 +27,7 @@ export const BlockResolver = createResolver(
     const parsedSlot = Number(slot);
     if(isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
     
-    return jsonRpcResolver({
+    const rpcResponse = await jsonRpcResolver({
       endpoint: endpoint,
       method: "getBlock",
       params: [
@@ -40,6 +40,8 @@ export const BlockResolver = createResolver(
         },
       ],
     });
+    if(rpcResponse.type === "success") return rpcResponse.result;
+    if(rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -65,7 +67,7 @@ export const TransactionResolver = createResolver(
     },
     jsonRpcResolver,
   ) => {
-    return jsonRpcResolver({
+    const rpcResponse = await jsonRpcResolver({
       endpoint: endpoint,
       method: "getTransaction",
       params: [
@@ -77,6 +79,8 @@ export const TransactionResolver = createResolver(
         },
       ],
     });
+    if(rpcResponse.type === "success") return rpcResponse.result;
+    if(rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -102,7 +106,7 @@ export const BalanceResolver = createResolver(
     },
     jsonRpcResolver,
   ) => {
-    return jsonRpcResolver({
+    const rpcResponse = await jsonRpcResolver({
       endpoint: endpoint,
       method: "getBalance",
       params: [
@@ -114,6 +118,8 @@ export const BalanceResolver = createResolver(
         },
       ],
     });
+    if(rpcResponse.type === "success") return rpcResponse.result;
+    if(rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -143,7 +149,7 @@ export const SignaturesForAddressResolver = createResolver(
     },
     jsonRpcResolver,
   ) => {
-    return jsonRpcResolver({
+    const rpcResponse = await jsonRpcResolver({
       endpoint: endpoint,
       method: "getSignaturesForAddress",
       params: [
@@ -157,6 +163,8 @@ export const SignaturesForAddressResolver = createResolver(
         },
       ],
     });
+    if(rpcResponse.type === "success") return rpcResponse.result;
+    if(rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
