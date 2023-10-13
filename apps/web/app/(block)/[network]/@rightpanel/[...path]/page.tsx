@@ -4,11 +4,13 @@ import { VMDisplayName, VMDisplayNames } from "~/lib/constants";
 import { getSingleNetworkCached } from "~/lib/network";
 import { Value } from "~/schemas/value";
 import { RightPanel } from "~/ui/right-panel";
+import { createSVMIntegration } from "@modularcloud/headless";
 
 import type { FetchLoadArgs } from "~/lib/shared-utils";
+import type { Page } from "@modularcloud/headless";
 
 interface Props {
-  params: Omit<FetchLoadArgs, "query">;
+  params: { network: string, path: string[] };
 }
 
 export default async function RightPanelShortenedPage({ params }: Props) {
@@ -16,33 +18,33 @@ export default async function RightPanelShortenedPage({ params }: Props) {
 
   if (!network) return null;
 
-  let vm: VMDisplayName | null = null;
-  if (network.config.rpcUrls.cosmos) {
-    vm = VMDisplayNames["cosmos"];
-  }
+  if(!network.config.rpcUrls["svm"]) {
+    return null;
+}
 
-  // if EVM is defined, EVM will take priority
-  if (network.config.rpcUrls.evm) {
-    vm = VMDisplayNames["evm"];
-  }
+const integration = createSVMIntegration({
+    chainBrand: network.chainBrand,
+    chainName: network.chainName,
+    chainLogo: network.config.logoUrl,
+    entityType: "placeholder1",
+    entityQuery: "placeholder2",
+    rpcEndpoint: network.config.rpcUrls["svm"],
+    nativeToken: network.config.token.name
+});
 
-  const attributes: Record<string, Value> = {
-    Plaftorm: {
-      type: "standard",
-      payload: network.config.platform,
-    },
-    Execution: {
-      type: "standard",
-      payload: vm,
-    },
-  };
+  const resolution = await integration.resolveRoute(params.path);
+  
+  if(!resolution || resolution.type !== "success") {
+    return null;
+  }
+  const page: Page = resolution.result;
 
   const data: Sidebar = {
     logo: network.config.logoUrl,
-    entityTypeName: "Network",
-    entityId: network.chainName,
-    attributesHeader: "Network Information",
-    attributes,
+    entityTypeName: page.sidebar.headerKey,
+    entityId: page.sidebar.headerValue,
+    attributesHeader: `${page.sidebar.headerKey} Information`,
+    attributes: page.sidebar.properties,
   };
 
   return <RightPanel network={network} data={data} />;
