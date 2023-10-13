@@ -4,6 +4,8 @@ import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
 import { addRoute, matchRoute, registerResolver } from "../../router";
 
+export type IntegrationResponse = ResolutionResponse | null;
+
 export function createSVMIntegration(context: PageContext) {
     registerResolver(addressOverviewResolver);
     registerResolver(addressTransactionsResolver);
@@ -20,7 +22,7 @@ export function createSVMIntegration(context: PageContext) {
     addRoute(["blocks", "[slot]", "transactions"], "svm-block-transactions-0.0.0");
 
     return {
-        resolveRoute: async (path: string[]): Promise<ResolutionResponse | null> => {
+        resolveRoute: async (path: string[]): Promise<IntegrationResponse> => {
             const match = matchRoute(path);
             console.log("match", match);
             if (match) {
