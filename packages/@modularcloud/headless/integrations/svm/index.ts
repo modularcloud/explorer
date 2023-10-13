@@ -1,4 +1,4 @@
-import { createResolver } from "@modularcloud-resolver/core";
+import { createResolver, ResolutionResponse } from "@modularcloud-resolver/core";
 import * as Sealevel from "@modularcloud-resolver/sealevel";
 import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
@@ -20,7 +20,7 @@ export function createSVMIntegration(context: PageContext) {
     addRoute(["blocks", "[slot]", "transactions"], "svm-block-transactions-0.0.0");
 
     return {
-        resolveRoute: (path: string[]) => {
+        resolveRoute: async (path: string[]): Promise<ResolutionResponse | null> => {
             const match = matchRoute(path);
             console.log("match", match);
             if (match) {
