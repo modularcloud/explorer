@@ -9,7 +9,7 @@ type Params = {
     path: string[];
 }
 
-async function AyncPageContent({ params }: Props) {
+async function AyncPageContent({ params }: { params: Params }) {
     const network = await getSingleNetworkCached(params.network);
     if(!network) {
         notFound();
@@ -48,7 +48,7 @@ async function AyncPageContent({ params }: Props) {
     return <pre className="overflow-scroll h-screen">{JSON.stringify(resolution,null,2)}</pre>
   }
 
-  export default function Page({ params }: Props) {
+  export default function Page({ params }: { params: Params }) {
     return (
       <React.Suspense fallback={<OverviewSkeleton />}>
         <AyncPageContent params={params} />
@@ -78,8 +78,8 @@ export async function generateMetadata({ params }: { params: Params }) {
     });
     
     const resolution = await integration.resolveRoute(params.path);
-    const page: Page = resolution.result;
-    if(resolution.type === "success") {
+    if(resolution && resolution.type === "success") {
+        const page: Page = resolution.result;
         return {
             title: page.metadata.title,
             description: page.metadata.description,

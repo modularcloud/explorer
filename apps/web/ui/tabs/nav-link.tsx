@@ -25,7 +25,7 @@ export function NavLink({
   children,
   isDummy = false,
 }: Props) {
-  const params = useParams() as Pick<"network", FetchLoadArgs> & { path: string[] };
+  const params: { path: string[], network: string } = useParams();
 
   let activeTabIndex = tabs.findIndex(
     (tab) => tab === params.path.join("/"),

@@ -80,7 +80,7 @@ export async function HeaderTabs({ params }: Props) {
 
   // add dummy tab at the end to fill space
   tabs.push({
-    name: null,
+    text: null,
     totalCount: null,
     route: null,
   });
