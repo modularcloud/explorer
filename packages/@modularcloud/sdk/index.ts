@@ -163,6 +163,7 @@ const NETWORK_ID_MAP: Record<string, string> = {
   "nautilus-proteus": "ep/6",
   proteus: "ep/6",
   mainnet: "1",
+  waev: "4",
 };
 
 function normalizeNetworkId(networkId: string) {
