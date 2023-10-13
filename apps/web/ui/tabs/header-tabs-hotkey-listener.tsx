@@ -20,9 +20,7 @@ export function HeaderTabsHotkeyListener({ tabList }: Props) {
       const selectedTab = tabList[Number(keyPressed) - 1];
       if (selectedTab) {
         router.push(
-          `/${params.network}/${params.type}/${params.query}/${
-            selectedTab === ENTITY_INDEX_TAB_NAME ? "" : slugify(selectedTab)
-          }`,
+          `/${params.network}/${selectedTab}`,
         );
       }
     },

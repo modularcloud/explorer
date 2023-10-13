@@ -13,12 +13,16 @@ import { fetchEntity } from "~/ecs/lib/server";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { slugify, range } from "~/lib/shared-utils";
 import { ENTITY_INDEX_TAB_NAME } from "~/lib/constants";
+import { getSingleNetworkCached } from "~/lib/network";
+import { notFound } from "next/navigation";
+import { createSVMIntegration } from "@modularcloud/headless";
 
 // types
 import type { FetchLoadArgs } from "~/lib/shared-utils";
+import type { Page } from "@modularcloud/headless";
 
 interface Props {
-  params: FetchLoadArgs & { section?: string };
+  params: { network: string, path: string[] };
 }
 
 type Tabs = {
@@ -26,44 +30,59 @@ type Tabs = {
     className?: string;
     "aria-hidden"?: boolean | "true" | "false";
   }> | null;
-  name: string | null;
+  text: string | null;
+  route: string[] | null;
   totalCount: number | null;
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const entity = await fetchEntity({
-    resourcePath: params,
-    archetype: PageArchetype,
-  });
-  if (!entity) return null;
-
-  const associated = entity.components.associated.data;
-
-  const tabs: Tabs[] = Object.entries(associated).map(([name, entry]) => {
-    // FIXME: this should use a global map somewhere (i think)
-    const Icon = name === "Transactions" ? ArrowLeftRight : ArrowRight;
-
-    if (entry.type === "static") {
-      return {
-        Icon,
-        name,
-        totalCount: entry.values.length,
-      };
+  const network = await getSingleNetworkCached(params.network);
+    if(!network) {
+        notFound();
     }
+
+    if(!network.config.rpcUrls["svm"]) {
+        notFound();
+    }
+
+    const integration = createSVMIntegration({
+        chainBrand: network.chainBrand,
+        chainName: network.chainName,
+        chainLogo: network.config.logoUrl,
+        entityType: "placeholder1",
+        entityQuery: "placeholder2",
+        rpcEndpoint: network.config.rpcUrls["svm"],
+        nativeToken: network.config.token.name
+    });
+
+    const resolution = await integration.resolveRoute(params.path);
+    if(!resolution || resolution.type !== "success") {
+      return null;
+    }
+
+    const page: Page = resolution.result;
+
+    // Eventually, we will use this schema directly without modification
+    const resolvedTabs = page.tabs;
+
+  const tabs: Tabs[] = resolvedTabs.map((tab) => {
+    // FIXME: this should use a global map somewhere (i think)
+    let Icon = tab.text === "Transactions" ? ArrowLeftRight : ArrowRight;
+    if(tab.text === "Overview") Icon = Stars;
 
     return {
       Icon,
-      name,
+      text: tab.text,
+      route: tab.route,
       totalCount: null,
     };
   });
 
-  // always put the "Overview" Tab first
-  tabs.unshift({ name: ENTITY_INDEX_TAB_NAME, totalCount: null, Icon: Stars });
   // add dummy tab at the end to fill space
   tabs.push({
     name: null,
     totalCount: null,
+    route: null,
   });
 
   return (
@@ -78,31 +97,29 @@ export async function HeaderTabs({ params }: Props) {
     >
       <HeaderTabsRightGradient />
       <HeaderTabsHotkeyListener
-        tabList={tabs.map((tab) => tab.name!).filter(Boolean)}
+        tabList={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
       />
       <ol className="flex min-w-max items-stretch w-full h-full">
         {tabs.map((tab, index) => {
           return (
             <li
-              key={tab.name}
+              key={tab.text}
               className={cn(
                 "h-full",
-                tab.name === null && "flex-grow flex-shrink",
+                tab.text === null && "flex-grow flex-shrink",
               )}
             >
-              {tab.name === null ? (
+              {tab.text === null ? (
                 <NavLink
                   href="#"
                   currentIndex={index}
-                  tabs={tabs.map((tab) => tab.name!).filter(Boolean)}
+                  tabs={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
                   isDummy
                 />
               ) : (
                 <NavLink
-                  tabs={tabs.map((tab) => tab.name!).filter(Boolean)}
-                  href={`/${params.network}/${params.type}/${params.query}/${
-                    tab.name === ENTITY_INDEX_TAB_NAME ? "" : slugify(tab.name)
-                  }`}
+                  tabs={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
+                  href={tab.route ? `/${params.network}/${tab.route.join("/")}` : "#"}
                   currentIndex={index}
                 >
                   <span
@@ -113,7 +130,7 @@ export async function HeaderTabs({ params }: Props) {
                     )}
                   >
                     {tab.Icon && <tab.Icon aria-hidden="true" />}
-                    {tab.name}
+                    {tab.text}
 
                     {tab.totalCount !== null && (
                       <CounterBadge
@@ -149,26 +166,7 @@ export function HeaderTabsSkeleton({ params }: Pick<Props, "params">) {
       )}
     >
       <ol className="flex min-w-max items-stretch w-full h-full">
-        <li className="h-full flex-shrink-0 flex-grow-0">
-          <NavLink
-            tabs={[ENTITY_INDEX_TAB_NAME]}
-            href={`/${params.network}/${params.type}/${params.query}/`}
-            currentIndex={0}
-          >
-            <span
-              className={cn(
-                "inline-flex items-center justify-center gap-2 p-1 m-1",
-                "ring-primary rounded-lg",
-                "group-focus:ring-2",
-              )}
-            >
-              <Stars aria-hidden="true" />
-              {ENTITY_INDEX_TAB_NAME}
-            </span>
-          </NavLink>
-        </li>
-
-        {range(1, 3).map((_, index) => {
+        {range(0, 3).map((_, index) => {
           return (
             <li key={index} className="h-full">
               <NavLinkSkeleton isAfterOverview={index === 0}>

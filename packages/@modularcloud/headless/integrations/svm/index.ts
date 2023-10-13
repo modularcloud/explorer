@@ -87,11 +87,11 @@ async (
     tabs: [
         {
         text: "Overview",
-        route: ["addresses", "[address]"],
+        route: ["addresses", address],
         },
         {
         text: "Transactions",
-        route: ["addresses", "[address]", "transactions"],
+        route: ["addresses", address, "transactions"],
         },
     ],
     };
@@ -237,11 +237,11 @@ async (
         tabs: [
         {
             text: "Overview",
-            route: ["addresses", "[address]"],
+            route: ["addresses", address],
         },
         {
             text: "Transactions",
-            route: ["addresses", "[address]", "transactions"],
+            route: ["addresses", address, "transactions"],
         },
         ],
     };
@@ -359,11 +359,11 @@ async (
     tabs: [
         {
         text: "Overview",
-        route: ["addresses", "[address]"],
+        route: ["transactions", signature],
         },
         {
         text: "Instructions",
-        route: ["addresses", "[address]", "instructions"],
+        route: ["transactions", signature, "instructions"],
         },
     ],
     };
@@ -491,11 +491,11 @@ async (
     tabs: [
         {
         text: "Overview",
-        route: ["addresses", "[address]"],
+        route: ["transactions", signature],
         },
         {
         text: "Instructions",
-        route: ["addresses", "[address]", "instructions"],
+        route: ["transactions", signature, "instructions"],
         },
     ],
     };
@@ -588,11 +588,11 @@ async (
     tabs: [
         {
         text: "Overview",
-        route: ["blocks", "[slot]"],
+        route: ["blocks", slot],
         },
         {
         text: "Transactions",
-        route: ["blocks", "[slot]", "transactions"],
+        route: ["blocks", slot, "transactions"],
         },
     ],
     };
@@ -737,11 +737,11 @@ async (
     tabs: [
         {
         text: "Overview",
-        route: ["blocks", "[slot]"],
+        route: ["blocks", slot],
         },
         {
         text: "Transactions",
-        route: ["blocks", "[slot]", "transactions"],
+        route: ["blocks", slot, "transactions"],
         },
     ],
     };

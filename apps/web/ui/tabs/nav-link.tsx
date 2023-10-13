@@ -25,10 +25,10 @@ export function NavLink({
   children,
   isDummy = false,
 }: Props) {
-  const params = useParams() as FetchLoadArgs & { section?: string };
+  const params = useParams() as Pick<"network", FetchLoadArgs> & { path: string[] };
 
   let activeTabIndex = tabs.findIndex(
-    (tab) => slugify(tab) === slugify(params.section ?? ""),
+    (tab) => tab === params.path.join("/"),
   );
   // in case of not found
   if (activeTabIndex === -1) activeTabIndex = 0;
