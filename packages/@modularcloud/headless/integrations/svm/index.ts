@@ -3,6 +3,7 @@ import * as Sealevel from "@modularcloud-resolver/sealevel";
 import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
 import { addRoute, matchRoute, registerResolver } from "../../router";
+import { PaginationContext } from "../../schemas/context";
 
 export type IntegrationResponse = ResolutionResponse | null;
 
@@ -22,11 +23,11 @@ export function createSVMIntegration(context: PageContext) {
     addRoute(["blocks", "[slot]", "transactions"], "svm-block-transactions-0.0.0");
 
     return {
-        resolveRoute: async (path: string[]): Promise<IntegrationResponse> => {
+        resolveRoute: async (path: string[], additionalContext = {}): Promise<IntegrationResponse> => {
             const match = matchRoute(path);
             console.log("match", match);
             if (match) {
-                return match.resolve((params, resolver) => resolver({...params, context}));
+                return match.resolve((params, resolver) => resolver({...params, context: {...context, ...additionalContext}}));
             }
             return null;
         }
@@ -101,14 +102,14 @@ async (
 },
 [Sealevel.BalanceResolver],
 );
-
+  
 const addressTransactionsResolver = createResolver(
 {
     id: "svm-address-transactions-0.0.0",
     cache: false,
 },
 async (
-    { context, address }: { context: PageContext; address: string },
+    { context, address }: { context: PageContext & PaginationContext; address: string },
     getBalance: typeof Sealevel.BalanceResolver,
     getSignaturesForAddress: typeof Sealevel.SignaturesForAddressResolver,
     getTransaction: typeof Sealevel.TransactionResolver,
@@ -116,6 +117,8 @@ async (
     const [signaturesResponse, balanceResponse] = await Promise.all([getSignaturesForAddress({
     endpoint: context.rpcEndpoint,
     address,
+    limit: 30,
+    before: context.after, // its confusing because this RPC method calls it "before", but it is usually considered to be called "after"
     }), getBalance({ endpoint: context.rpcEndpoint, address })]);
 
     let balance: string | number = 0;
@@ -180,6 +183,7 @@ async (
         },
         body: {
         type: "collection",
+        refreshIntervalMS: 10000,
         tableColumns: ["Signature", "Type", "Status", "Slot"],
         entries: transactions.map((transaction) => {
             const properties: Record<string, Value> = {

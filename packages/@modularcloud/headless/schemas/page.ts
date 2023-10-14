@@ -45,6 +45,8 @@ const NotebookSchema = z.object({
 const CollectionSchema = z.object({
   type: z.literal("collection"),
   tableColumns: z.string().array(),
+  refreshIntervalMS: z.number().optional(),
+  nextToken: z.string().optional(),
   entries: z
     .object({
       properties: z.record(ValueSchema),
