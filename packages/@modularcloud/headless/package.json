@@ -1,0 +1,33 @@
+{
+    "name": "@modularcloud/headless",
+    "version": "0.0.0",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist"
+    },
+    "license": "MIT",
+    "scripts": {
+        "build": "tsup index.ts --format esm,cjs --dts --external react",
+        "dev": "tsup index.ts --format esm,cjs --dts --external react --watch",
+        "clean": "rm -rf dist",
+        "test": "jest",
+        "lint": "TIMING=1 eslint \"**/*.ts*\""
+    },
+    "dependencies": {
+        "@modularcloud-resolver/core": "*",
+        "@modularcloud-resolver/sealevel": "*",
+        "zod": "^3.22.2"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.3",
+        "eslint": "^7.32.0",
+        "eslint-config-custom": "*",
+        "jest": "^29.6.2",
+        "jest-environment-jsdom": "^29.6.2",
+        "ts-jest": "^29.1.1",
+        "tsconfig": "*",
+        "tsup": "^6.1.3",
+        "typescript": "^4.5.2"
+    }
+}

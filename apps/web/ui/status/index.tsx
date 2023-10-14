@@ -1,29 +1,39 @@
-import clsx from "clsx";
-import SvgGreenTick from "~/ui/icons/GreenTick";
-import SvgRedCross from "~/ui/icons/RedCross";
+import * as React from "react";
+import { CheckCircle, XCircle } from "~/ui/icons";
+import { cn } from "../shadcn/utils";
 
-type Props = {
-  children?: React.ReactNode;
+interface Props {
   status: boolean;
-  mode?: string;
-};
+  noBorders?: boolean;
+}
 
-export function Status({ children, status, mode }: Props) {
-  return mode === "icon" ? (
-    status ? (
-      <SvgGreenTick />
-    ) : (
-      <SvgRedCross />
-    )
-  ) : (
+export function Status({ status, noBorders = false }: Props) {
+  return (
     <div
-      className={clsx(
-        "flex items-center gap-2",
-        status ? "text-specialty-green" : "text-specialty-red",
+      className={cn(
+        "rounded-lg items-center gap-1 justify-center  inline-flex",
+        {
+          "px-4 py-2 border border-mid-dark-100": !noBorders,
+        },
       )}
     >
-      {status ? <SvgGreenTick /> : <SvgRedCross />}
-      {children ?? (status ? "Success" : "Failure")}
+      {status ? (
+        <>
+          <CheckCircle
+            className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-0.5"
+            aria-hidden="true"
+          />
+          <span className="text-teal-900">Success</span>
+        </>
+      ) : (
+        <>
+          <XCircle
+            className="h-5 w-5 flex-shrink-0 text-red-500 relative top-0.5"
+            aria-hidden="true"
+          />
+          <span className="text-red-900">Failed</span>
+        </>
+      )}
     </div>
   );
 }

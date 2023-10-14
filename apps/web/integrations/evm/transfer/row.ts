@@ -3,7 +3,7 @@ import Decimal from "decimal.js";
 import Web3 from "web3";
 import { TransferExtract } from ".";
 import { RowComponent } from "~/ecs/components/row";
-import { decodeEvmAddressParam } from "~/lib/utils";
+import { decodeEvmAddressParam } from "~/lib/shared-utils";
 
 export const RowTransform = {
   schema: RowComponent,

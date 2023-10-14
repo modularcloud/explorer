@@ -1,7 +1,7 @@
 import { createLoader, EngineConfigMetadata } from "@modularcloud/ecs";
 import Web3 from "web3";
 import { z } from "zod";
-import { getEventSignatureName } from "~/lib/utils";
+import { getEventSignatureName } from "~/lib/shared-utils";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 

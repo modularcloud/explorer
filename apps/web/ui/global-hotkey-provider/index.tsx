@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { OptionGroups } from "~/lib/utils";
+import type { OptionGroups } from "~/lib/shared-utils";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
@@ -14,8 +14,8 @@ export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   {
     isSearchModalOpen: false,
     searchValue: "",
-    setSearchModalOpen() {}, // dummy
-    setSearchValue() {}, // dummy
+    setSearchModalOpen() {},
+    setSearchValue() {},
   },
 );
 
@@ -27,10 +27,11 @@ export function GlobalHotkeyProvider({
   optionGroups: OptionGroups;
 }) {
   const [isSearchModalOpen, setSearchModalOpen] = React.useState(false);
+
   const [initialSearchValue, setInitialSearchValue] = React.useState("");
   const router = useRouter();
   const params = useParams();
-  const sequenceKeyPressedRef = React.useRef<boolean>(false);
+  const sequenceKeyPressedRef = React.useRef(false);
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
@@ -41,14 +42,12 @@ export function GlobalHotkeyProvider({
     const pasteEventListener = (event: ClipboardEvent) => {
       if (
         !isSearchModalOpen &&
-        !(document.activeElement instanceof HTMLInputElement) // if the input is not focused
+        !(document.activeElement instanceof HTMLInputElement)
       ) {
         const text = event.clipboardData?.getData("text/plain");
         if (text) {
-          // Push
           setSearchModalOpen(true);
           setInitialSearchValue(text);
-          // router.push(`/${network.id}/search/${encodeURIComponent(text)}`);
         }
       }
     };

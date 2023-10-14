@@ -1,8 +1,8 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 import { ContextSwitcher } from "./context-switcher";
-import Overview from "./overview";
+import OldOverview from "./old-overview";
 import { Raw } from "./raw";
 
 type Props = { resourcePath: FetchLoadArgs };
@@ -16,7 +16,7 @@ export async function Entity({ resourcePath }: Props) {
 
   return (
     <ContextSwitcher
-      overview={<Overview entity={entity} />}
+      overview={<OldOverview entity={entity} />}
       raw={<Raw entity={entity} />}
     />
   );

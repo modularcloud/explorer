@@ -1,72 +1,73 @@
-import Image from "next/image";
+import * as React from "react";
+// components
+import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
-import { Value } from "~/schemas/value";
-import clsx from "clsx";
-import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { AttributesArchetype } from "~/ecs/archetypes/attributes";
-import { Suspense } from "react";
-import { PageArchetype } from "~/ecs/archetypes/page";
-import { Entity } from "@modularcloud/ecs";
-import { CopyableValue } from "~/ui/copyable";
+import { Skeleton } from "~/ui/skeleton";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+// utils
+import { fetchEntity } from "~/ecs/lib/server";
+import { AttributesArchetype } from "~/ecs/archetypes/attributes";
+import { range } from "~/lib/shared-utils";
+
+// types
+import type { Value } from "~/schemas/value";
+import type { Entity } from "@modularcloud/ecs";
+import type { PageArchetype } from "~/ecs/archetypes/page";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
+
 type Props = {
-  entity: Entity<typeof PageArchetype>;
+  properties: Record<string, Value>;
 };
 
-function Entry({ label, value }: { label: string; value: Value }) {
+interface EntryProps {
+  label: string;
+  value: Value;
+  notCopyable?: boolean;
+}
+
+function Entry({ label, value, notCopyable = false }: EntryProps) {
   const { type, payload } = value;
   if (!payload) return null;
+
   return (
-    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-      <dt className="text-temp-900 text-sm font-medium leading-6">{label}</dt>
-      {type === "image" ? (
-        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-          <Image
-            src={payload.src}
-            alt={payload.alt}
-            width={payload.width}
-            height={payload.height}
-          />
+    <div className="border-b border-mid-dark-100 py-4 grid grid-cols-5 items-baseline gap-4 px-6">
+      <dt className="col-span-2 font-medium">{label}</dt>
+
+      {type === "standard" && (
+        <dd className="col-span-3">
+          {notCopyable ? (
+            <span>{payload.toString()}</span>
+          ) : (
+            <CopyableValue value={payload.toString()} />
+          )}
         </dd>
-      ) : null}
-      {type === "status" ? (
-        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+      )}
+
+      {type === "status" && (
+        <dd className="col-span-3">
           <Status status={payload} />
         </dd>
-      ) : null}
-      {type === "list" ? (
-        <dd
-          className={clsx(
-            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate",
-          )}
-        >
-          <ol>
+      )}
+
+      {type === "list" && (
+        <dd className="col-span-3">
+          <ol className="flex flex-col items-start gap-1 w-full">
             {payload.map((value) => (
-              <li key={value} className="truncate">
+              <li key={value} className="w-full">
                 <CopyableValue value={value} />
               </li>
             ))}
           </ol>
         </dd>
-      ) : null}
-      {type === "standard" ? (
-        <dd
-          className={clsx(
-            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate",
-          )}
-        >
-          <CopyableValue value={payload} />
-        </dd>
-      ) : null}
+      )}
+
+      {/* TODO : handle "image" type */}
     </div>
   );
 }
 
 async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
-  const entity = await asyncUseEntity({
+  const entity = await fetchEntity({
     resourcePath,
     archetype: AttributesArchetype,
   });
@@ -81,42 +82,73 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   );
 }
 
-export default function Overview({ entity }: Props) {
-  const { attributes, asyncAttributes, entityTypeName, entityId } =
-    entity.components.sidebar.data;
+export async function Overview({ properties }: Props) {
+
   return (
-    <div className="flex w-full justify-center p-6">
-      <div className="bg-translucent backdrop-blur-xs border-mid-dark-100 w-full max-w-7xl overflow-hidden rounded-xl border shadow-[0px_3px_6px_rgba(42,43,46,_0.07),0px_1px_2px_rgba(42,43,46,0.04)]">
-        <div className=" p-6">
-          <h3 className="text-temp-900 text-base font-semibold leading-7">
-            {`${entityTypeName} Information`}
-          </h3>
-          <p className="text-temp-500 mt-1 max-w-2xl truncate text-sm leading-6">
-            <CopyableValue value={entityId} />
-          </p>
+    <section className="pb-4">
+      <dl className="border-t border-mid-dark-100 w-full flex flex-col">
+        {/* <Entry
+          label="Entity Type"
+          notCopyable
+          value={{
+            type: "standard",
+            payload: entityTypeName,
+          }}
+        /> */}
+        {Object.entries(properties).map(([key, value]) => {
+          return <Entry key={key} label={key} value={value} />;
+        })}
+
+        {/* {(asyncAttributes ?? []).map((set) => (
+          <AsyncEntries resourcePath={set.src} />
+        ))} */}
+      </dl>
+    </section>
+  );
+}
+
+export function OverviewSkeleton() {
+  return (
+    <section className="pb-4">
+      <dl className="border-t border-mid-dark-100 w-full flex flex-col">
+        {/* Entity Type */}
+        <div className="border-b border-mid-dark-100 py-3.5 grid grid-cols-5 items-baseline gap-4 px-6">
+          <div className="col-span-2 font-medium">
+            <Skeleton className="h-[1.37rem] inline-flex w-40" />
+          </div>
+
+          <dd className="col-span-3">
+            <Skeleton className="h-[1.37rem] inline-flex w-32" />
+          </dd>
         </div>
-        <div className="mx-6">
-          <dl className="divide-temp-100 divide-y">
-            {Object.entries(attributes).map(([key, value]) => {
-              return <Entry key={key} label={key} value={value} />;
-            })}
-            {(asyncAttributes ?? []).map((set) => (
-              <Suspense
-                key={`${set.src.network}/${set.src.type}/${set.src.query}`}
-                fallback={
-                  <>
-                    {Object.entries(set.fallback).map(([key, value]) => {
-                      return <Entry key={key} label={key} value={value} />;
-                    })}
-                  </>
-                }
-              >
-                <AsyncEntries resourcePath={set.src} />
-              </Suspense>
-            ))}
-          </dl>
+
+        {/* Network */}
+        <div className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-5 items-baseline gap-4 px-6">
+          <div className="col-span-2 font-medium">
+            <Skeleton className="h-[1.37rem] inline-flex w-40" />
+          </div>
+
+          <dd className="col-span-3">
+            <Skeleton className="h-[1.37rem] inline-flex w-32" />
+          </dd>
         </div>
-      </div>
-    </div>
+
+        {/* Rest of the components */}
+        {range(1, 9).map((index) => (
+          <div
+            key={index}
+            className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-5 items-baseline gap-4 px-6"
+          >
+            <div className="col-span-2 font-medium">
+              <Skeleton className="h-[1.37rem] inline-flex w-40" />
+            </div>
+
+            <dd className="col-span-3">
+              <Skeleton className="h-[1.37rem] inline-flex w-full" />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

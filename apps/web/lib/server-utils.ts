@@ -4,7 +4,8 @@ import { cache } from "react";
 import { env } from "~/env.mjs";
 import Web3 from "web3";
 import { z } from "zod";
-import { fetchLoad, getEventSignatureName } from "./utils";
+import { fetchLoad, getEventSignatureName } from "./shared-utils";
+import { headers } from "next/headers";
 
 export const APICORSHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -181,4 +182,9 @@ export async function getLatestTransactions(
   }
 
   return [];
+}
+
+export function isMacLike() {
+  const userAgent = headers().get("user-agent");
+  return !!userAgent && /(Mac|iPhone|iPod|iPad)/i.test(userAgent);
 }

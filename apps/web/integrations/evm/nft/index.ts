@@ -3,7 +3,10 @@ import { createModularCloud } from "@modularcloud/sdk";
 import { uploadFile } from "@uploadcare/upload-client";
 import Web3 from "web3";
 import { z } from "zod";
-import { convertToHttpIfIpfs, convertToPublicHttpIfIpfs } from "~/lib/utils";
+import {
+  convertToHttpIfIpfs,
+  convertToPublicHttpIfIpfs,
+} from "~/lib/shared-utils";
 import { CardTransform } from "./card";
 import { RowTransform } from "./row";
 import { AbiItem } from "web3-utils";

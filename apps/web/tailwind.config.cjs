@@ -20,6 +20,10 @@ module.exports = {
           "2xl": "1200px",
         },
       },
+      spacing: {
+        header: `4.5rem`,
+        "header-tabs": `3rem`,
+      },
       colors: {
         ...config.theme.extend.colors,
         foreground: {

@@ -11,7 +11,7 @@ interface Props {
   alt?: string;
 }
 
-export async function RightPanel({ data, alt, className }: Props) {
+export async function OldRightPanel({ data, alt, className }: Props) {
   const { attributes, asyncAttributes, logo, entityTypeName, entityId } = data;
   return (
     <div

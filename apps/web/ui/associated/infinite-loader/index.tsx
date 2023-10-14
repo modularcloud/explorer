@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { PaginationArchetype } from "~/ecs/archetypes/pagination";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 import { InfiniteLoaderContext } from "./context";
 import useSWR from "swr";
 

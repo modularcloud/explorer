@@ -3,7 +3,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { useItemGrid } from "./use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
-import { capitalize, type SearchOption } from "~/lib/utils";
+import { capitalize, type SearchOption } from "~/lib/shared-utils";
 
 interface Props {
   query: string;
@@ -16,7 +16,7 @@ interface Props {
 
 type ListItemType = {
   id: string;
-  icon: () => React.ReactNode;
+  icon: React.ComponentType<{ className?: string }>;
   label: React.ReactNode;
   onSelect: () => void;
 };
@@ -61,7 +61,11 @@ export function IntegrationActionListView({
           {
             id: "search",
             icon: () => null,
-            label: <p className="text-muted">Search for&nbsp;{query}</p>,
+            label: (
+              <p className="text-muted">
+                Search for&nbsp;<span className="break-all">{query}</span>
+              </p>
+            ),
             onSelect: () => {
               onNavigate();
               router.push(
@@ -83,7 +87,7 @@ export function IntegrationActionListView({
                 {capitalize(type)}
               </strong>
               &nbsp;
-              {query}
+              <span className="break-all">{query}</span>
             </p>
           ),
           onSelect: () => {
@@ -101,7 +105,9 @@ export function IntegrationActionListView({
       Pages: [
         {
           id: "chain-homepage",
-          icon: () => <Home className="h-4 w-4" />,
+          icon: ({ className }) => (
+            <Home className={cn("h-4 w-4", className)} />
+          ),
           label: "Go to chain homepage",
           onSelect: () => {
             onNavigate();
@@ -110,7 +116,9 @@ export function IntegrationActionListView({
         },
         {
           id: "latest-blocks",
-          icon: () => <MenuHorizontal className="h-4 w-4" />,
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
           label: "Go to latest blocks",
           onSelect: () => {
             onNavigate();
@@ -119,7 +127,9 @@ export function IntegrationActionListView({
         },
         {
           id: "latest-transactions",
-          icon: () => <MenuHorizontal className="h-4 w-4" />,
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
           label: "Go to latest transactions",
           onSelect: () => {
             onNavigate();
@@ -190,8 +200,8 @@ export function IntegrationActionListView({
                     "flex items-center gap-4",
                   )}
                 >
-                  <ArrowRight aria-hidden="true" />
-                  <Icon />
+                  <ArrowRight aria-hidden="true" className="flex-shrink-0" />
+                  <Icon className="flex-shrink-0" />
                   <span>{item.label}</span>
                 </button>
               );

@@ -1,5 +1,5 @@
 import { getAllNetworksCached } from "./network";
-import type { OptionGroups, SearchOption } from "./utils";
+import type { OptionGroups, SearchOption } from "./shared-utils";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
@@ -19,6 +19,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       displayName: currentValue.chainName,
       id: currentValue.slug,
       brandName: currentValue.chainBrand,
+      logoURL: currentValue.config.logoUrl,
     } satisfies SearchOption;
     if (acc[brand]) {
       acc[brand].push(newOption);

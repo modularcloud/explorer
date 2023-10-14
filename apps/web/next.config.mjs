@@ -17,6 +17,7 @@ const config = {
     domains: [
       "nautchain.xyz",
       "mc-nft.s3.us-west-2.amazonaws.com",
+      "mc-config.s3.us-west-2.amazonaws.com",
       "ucarecdn.com",
     ],
   },

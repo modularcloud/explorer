@@ -3,7 +3,7 @@ import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import Image from "next/image";
 import SvgCardOff from "~/ui/icons/CardOff";
 
-import type { FetchLoadArgs } from "~/lib/utils";
+import type { FetchLoadArgs } from "~/lib/shared-utils";
 type Props = {
   resourcePath: FetchLoadArgs;
 };

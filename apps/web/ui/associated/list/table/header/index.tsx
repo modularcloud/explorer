@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { AssociatedArchetype } from "~/ecs/archetypes/associated";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 import { generateColumnStyle } from "~/ui/associated/list/table/column-styles";
 import HeadBox from "./head-box";
 

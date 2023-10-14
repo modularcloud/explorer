@@ -1,48 +1,62 @@
-import { Search } from "~/ui/old-search";
+import * as React from "react";
+// components
 import Link from "next/link";
-import { Suspense } from "react";
-import { HeaderMenu } from "./menu";
-import { MobileActions } from "~/ui/mobile-actions";
+import { Button } from "~/ui/button";
+import { Grid, List } from "~/ui/icons";
+import { HeaderSearchButton } from "./header-search-button";
+
+// utils
 import { getSearchOptionGroups } from "~/lib/search-options";
+import { cn } from "~/ui/shadcn/utils";
 
-import type { FetchLoadArgs } from "~/lib/utils";
-
+// types
 type Props = {
-  resourcePath: FetchLoadArgs;
+  networkSlug: string;
 };
 
-export async function Header({ resourcePath }: Props) {
-  const searchOptionGroups = await getSearchOptionGroups();
+export async function Header({ networkSlug }: Props) {
+  const optionGroups = await getSearchOptionGroups();
+
   return (
-    <div className="h-header bg-translucent backdrop-blur-xs sticky top-0 z-10 flex flex-col">
-      <div className="flex flex-grow items-center justify-between space-x-4 px-4 pb-px sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="font-logo flex items-center justify-between text-[1.125rem] font-[700]"
-        >
-          Modular
-          <span className="from-ocean to-royal bg-gradient-to-r bg-clip-text text-transparent">
-            Cloud
-          </span>
-        </Link>
-        <div className="hidden w-[23rem] lg:flex xl:w-[28rem]">
-          <Search
-            defaultValue={resourcePath.network}
-            optionGroups={searchOptionGroups}
-          />
-        </div>
-        <Suspense
-          fallback={
-            <MobileActions
-              searchOptions={searchOptionGroups}
-              rightPanelDisabled={true}
-            />
-          }
-        >
-          <HeaderMenu resourcePath={resourcePath} />
-        </Suspense>
+    <header
+      className={cn(
+        "bg-white flex justify-between items-center px-6 py-4 gap-4 h-header",
+        "fixed left-0 right-0 top-0 z-10",
+      )}
+    >
+      <Link
+        href={`/${networkSlug}`}
+        className="flex items-center gap-4 flex-shrink-0"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/mc-logo.svg"
+          alt="ModularCloud Logo"
+          className="h-5 w-5"
+        />
+
+        <h1 className="font-medium text-xl hidden lg:block">Modular Cloud</h1>
+      </Link>
+
+      <HeaderSearchButton optionGroups={optionGroups} />
+
+      {/* Mobile */}
+      <div className="tab:hidden flex-shrink-0">
+        <Button isSquared>
+          <List className="text-muted" />
+        </Button>
       </div>
-      <div className="bg-night h-px w-full opacity-[.04]"></div>
-    </div>
+
+      {/* Bigger screens */}
+      <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0">
+        <Button isSquared>
+          <Grid className="text-muted" />
+        </Button>
+        <div className="h-8 w-[1px] bg-muted/20" aria-hidden="true" />
+        <Button isSquared>
+          <List className="text-muted" />
+        </Button>
+      </div>
+    </header>
   );
 }

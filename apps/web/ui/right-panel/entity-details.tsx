@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import clsx from "clsx";
-import { CopyableValue } from "~/ui/copyable";
+import { OldCopyableValue } from "~/ui/old-copyable";
 
 interface Props {
   imageUrl: string;
@@ -23,7 +23,7 @@ export function EntityDetails({ imageUrl, label, value, alt }: Props) {
         <span className="shrink-0 font-semibold">{label}</span>
         <span>/</span>
         <span className="shrink overflow-hidden text-ellipsis">
-          <CopyableValue value={value} />
+          <OldCopyableValue value={value} />
         </span>
       </div>
     </div>

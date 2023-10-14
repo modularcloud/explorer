@@ -1,17 +1,6 @@
 import { Footer } from "~/ui/footer";
 import { Search } from "~/ui/search";
 import { getSearchOptionGroups } from "~/lib/search-options";
-import { EXPLORER_CONFIG } from "~/config/explorers";
-
-import type { Metadata } from "next";
-
-export function generateMetadata(): Metadata {
-  return {
-    title: EXPLORER_CONFIG.homepageTitle,
-    description: EXPLORER_CONFIG.homepageDescription,
-    keywords: EXPLORER_CONFIG.homepageKeywords,
-  };
-}
 
 export default async function HomeLayout({
   children,
@@ -24,6 +13,8 @@ export default async function HomeLayout({
 
   return (
     <main
+      id="main-content"
+      tabIndex={0}
       className="min-h-screen flex flex-col justify-between container mx-auto h-full gap-14"
       style={{
         backgroundImage: "url(/images/home-layout-vector.svg)",

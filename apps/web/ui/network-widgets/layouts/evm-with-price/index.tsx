@@ -19,7 +19,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { convertWeiToBestUnit, convertWeiToUSD } from "~/lib/evm";
 import { useWidgetData } from "./use-widget-data";
 
-import type { SearchOption } from "~/lib/utils";
+import type { SearchOption } from "~/lib/shared-utils";
 interface Props {
   network: SearchOption;
 }

@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import { fetchLoad } from "~/lib/utils";
+import { fetchLoad } from "~/lib/shared-utils";
 
 type UseSearcheableEntitiesArgs = {
   network: string;

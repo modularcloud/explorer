@@ -3,7 +3,7 @@
 import { KeyValueList } from ".";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
-import { FetchLoadArgs } from "~/lib/utils";
+import { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
   resourcePath: FetchLoadArgs;

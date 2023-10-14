@@ -1,5 +1,5 @@
 import { getSingleNetworkCached } from "~/lib/network";
-import { RightPanel } from "~/ui/right-panel/component";
+import { OldRightPanel } from "~/ui/right-panel/component";
 
 import type { Sidebar } from "~/ecs/components/sidebar";
 const VMDisplayNames = {
@@ -46,7 +46,7 @@ export default async function RightPanelPage({ params }: Props) {
   };
 
   return (
-    <RightPanel
+    <OldRightPanel
       data={data}
       className="sticky top-0 hidden w-80 shrink-0 lg:flex xl:w-[27.875rem]"
     />

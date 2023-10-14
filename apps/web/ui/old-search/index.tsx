@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Popover from "@radix-ui/react-popover";
-import { OptionGroups } from "~/lib/utils";
+import { OptionGroups } from "~/lib/shared-utils";
 import { useRouter } from "next/navigation";
 import SvgChevronDown from "~/ui/icons/ChevronDown";
 import SvgSearchOff from "~/ui/icons/SearchOff";
