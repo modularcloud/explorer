@@ -78,14 +78,7 @@ interface Props {
 export function RightPanel({ data, network }: Props) {
   const { attributes, entityTypeName, entityId } = data;
 
-  // TODO : directly change the attributes to show on the sidebar where the data is fetched
-  // so that we don't have to limit the size to only 7 items
-  const allAttributes = Object.entries(attributes)
-    .slice(0, 7)
-    .filter(
-      ([, entry]) => entry.payload !== null && entry.payload !== undefined,
-    );
-
+  const allAttributes = Object.entries(attributes);
   return (
     <div
       className="w-full grid h-full max-h-full auto-rows-min"
