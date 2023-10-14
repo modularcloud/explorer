@@ -16,7 +16,7 @@ import type { PageArchetype } from "~/ecs/archetypes/page";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
-  entity: Entity<typeof PageArchetype>;
+  properties: Record<string, Value>;
 };
 
 interface EntryProps {
@@ -82,28 +82,26 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   );
 }
 
-export async function Overview({ entity }: Props) {
-  const { attributes, asyncAttributes, entityTypeName } =
-    entity.components.sidebar.data;
+export async function Overview({ properties }: Props) {
 
   return (
     <section className="pb-4">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
-        <Entry
+        {/* <Entry
           label="Entity Type"
           notCopyable
           value={{
             type: "standard",
             payload: entityTypeName,
           }}
-        />
-        {Object.entries(attributes).map(([key, value]) => {
+        /> */}
+        {Object.entries(properties).map(([key, value]) => {
           return <Entry key={key} label={key} value={value} />;
         })}
 
-        {(asyncAttributes ?? []).map((set) => (
+        {/* {(asyncAttributes ?? []).map((set) => (
           <AsyncEntries resourcePath={set.src} />
-        ))}
+        ))} */}
       </dl>
     </section>
   );

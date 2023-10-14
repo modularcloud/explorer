@@ -6,10 +6,10 @@ import Link from "next/link";
 
 // utils
 import { useParams } from "next/navigation";
-import { slugify, type FetchLoadArgs } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
+import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
   href: string;
   currentIndex: number;
@@ -25,11 +25,9 @@ export function NavLink({
   children,
   isDummy = false,
 }: Props) {
-  const params = useParams() as FetchLoadArgs & { section?: string };
+  const params: HeadlessRoute = useParams();
 
-  let activeTabIndex = tabs.findIndex(
-    (tab) => slugify(tab) === slugify(params.section ?? ""),
-  );
+  let activeTabIndex = tabs.findIndex((tab) => tab === params.path.join("/"));
   // in case of not found
   if (activeTabIndex === -1) activeTabIndex = 0;
 
@@ -74,7 +72,6 @@ export function NavLinkSkeleton({
   isAfterOverview = false,
   isLast = false,
 }: NavLinkSkeletonProps) {
-  const params = useParams() as FetchLoadArgs & { section?: string };
 
   return (
     <div
@@ -84,7 +81,9 @@ export function NavLinkSkeleton({
         // compensate the 1px space caused by the selection gradient
         "pt-[1px]",
         {
-          "rounded-bl-lg": !params.section && isAfterOverview,
+          // TODO: I don't know fully what this logic is for, so we should figure out if this change is ok before merging
+          // "rounded-bl-lg": !params.section && isAfterOverview,
+          "rounded-bl-lg": isAfterOverview,
           "w-52": !isLast,
           "flex-grow flex-shrink": isLast,
         },
