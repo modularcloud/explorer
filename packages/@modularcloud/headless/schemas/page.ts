@@ -41,8 +41,6 @@ const PageContext = z.object({
   chainBrand: z.string(),
   chainName: z.string(),
   chainLogo: z.string(),
-  entityType: z.string(),
-  entityQuery: z.string(),
   rpcEndpoint: z.string(),
   nativeToken: z.string(),
 });
@@ -79,6 +77,8 @@ export type Column = z.infer<typeof ColumnSchema>;
 
 const CollectionSchema = z.object({
   type: z.literal("collection"),
+  refreshIntervalMS: z.number().optional(),
+  nextToken: z.string().optional(),
   tableColumns: ColumnSchema.array(),
   entries: z
     .object({

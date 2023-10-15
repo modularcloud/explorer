@@ -6,6 +6,7 @@ import * as Sealevel from "@modularcloud-resolver/sealevel";
 import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
 import { addRoute, matchRoute, registerResolver } from "../../router";
+import { PaginationContext } from "../../schemas/context";
 
 export type IntegrationResponse = ResolutionResponse | null;
 
@@ -34,12 +35,17 @@ export function createSVMIntegration(context: PageContext) {
   );
 
   return {
-    resolveRoute: async (path: string[]): Promise<IntegrationResponse> => {
+    resolveRoute: async (
+      path: string[],
+      additionalContext = {},
+    ): Promise<IntegrationResponse> => {
       const match = matchRoute(path);
-      console.log("match", match);
       if (match) {
         return match.resolve((params, resolver) =>
-          resolver({ ...params, context }),
+          resolver({
+            ...params,
+            context: { ...context, ...additionalContext },
+          }),
         );
       }
       return null;
@@ -68,7 +74,7 @@ const addressOverviewResolver = createResolver(
     let balance: string | number = 0;
     switch (balanceResponse.type) {
       case "success":
-        balance = balanceResponse.result;
+        balance = balanceResponse.result.value / 10 ** 9;
         break;
       case "error":
         balance = "Couldn't not retrieve balance. Refresh to try again.";
@@ -122,7 +128,10 @@ const addressTransactionsResolver = createResolver(
     cache: false,
   },
   async (
-    { context, address }: { context: PageContext; address: string },
+    {
+      context,
+      address,
+    }: { context: PageContext & PaginationContext; address: string },
     getBalance: typeof Sealevel.BalanceResolver,
     getSignaturesForAddress: typeof Sealevel.SignaturesForAddressResolver,
     getTransaction: typeof Sealevel.TransactionResolver,
@@ -131,6 +140,8 @@ const addressTransactionsResolver = createResolver(
       getSignaturesForAddress({
         endpoint: context.rpcEndpoint,
         address,
+        limit: 30,
+        before: context.after, // this is confusing because the rpc calls it before, but elsewhere it is usually called after
       }),
       getBalance({ endpoint: context.rpcEndpoint, address }),
     ]);
@@ -138,7 +149,7 @@ const addressTransactionsResolver = createResolver(
     let balance: string | number = 0;
     switch (balanceResponse.type) {
       case "success":
-        balance = balanceResponse.result;
+        balance = balanceResponse.result.value / 10 ** 9;
         break;
       case "error":
         balance = "Couldn't not retrieve balance. Refresh to try again.";
@@ -197,6 +208,9 @@ const addressTransactionsResolver = createResolver(
         },
         body: {
           type: "collection",
+          refreshIntervalMS: 10000,
+          nextToken:
+            transactions[transactions.length - 1].transaction.signatures[0],
           tableColumns: [
             {
               columnLabel: "Icon",
@@ -260,7 +274,7 @@ const addressTransactionsResolver = createResolver(
                 payload: "TODO",
               },
             };
-            const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
+            const link = `/${context.chainBrand}-${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
             const { Icon, ...card } = properties;
             return {
               row: {
@@ -504,7 +518,7 @@ const transactionInstructionsResolver = createResolver(
                 payload: instruction.data,
               },
             };
-            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}/instructions?index=${index}`;
+            const key = `/${context.chainBrand}-${context.chainName}/addresses/${signature}/instructions?index=${index}`;
             return {
               row: {
                 Program: properties.Program,
@@ -790,7 +804,7 @@ const blockTransactionsResolver = createResolver(
               payload: "TODO",
             },
           };
-          const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
+          const link = `/${context.chainBrand}-${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
           const { Icon, ...card } = properties;
           return {
             row: {
