@@ -82,8 +82,9 @@ const CollectionSchema = z.object({
   tableColumns: ColumnSchema.array(),
   entries: z
     .object({
-      row: ValueSchema.array(),
+      row: z.record(ValueSchema),
       card: z.record(ValueSchema),
+      key: z.string(),
       link: z.string().optional(),
     })
     .array(),

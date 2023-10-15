@@ -213,7 +213,7 @@ const addressTransactionsResolver = createResolver(
               columnLabel: "Status",
             },
             {
-              columnLabel: "Transactions",
+              columnLabel: "Slot",
             },
           ],
           entries: transactions.map((transaction) => {
@@ -260,16 +260,17 @@ const addressTransactionsResolver = createResolver(
                 payload: "TODO",
               },
             };
-            const link = "#TODO";
+            const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
             const { Icon, ...card } = properties;
             return {
-              row: [
+              row: {
                 Icon,
-                properties.Signature,
-                properties.Type,
-                properties.Status,
-                properties.Slot,
-              ],
+                Transactions: properties.Signature,
+                Type: properties.Type,
+                Status: properties.Status,
+                Slot: properties.Slot,
+              },
+              key: link,
               card,
               link,
             };
@@ -482,7 +483,7 @@ const transactionInstructionsResolver = createResolver(
         type: "collection",
         tableColumns: [{ columnLabel: "Program" }, { columnLabel: "Data" }],
         entries: transaction.transaction.message.instructions.map(
-          (instruction) => {
+          (instruction, index) => {
             const properties: Record<string, Value> = {
               Program: {
                 type: "standard",
@@ -503,11 +504,14 @@ const transactionInstructionsResolver = createResolver(
                 payload: instruction.data,
               },
             };
-            const link = "#TODO";
+            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}/instructions?index=${index}`;
             return {
-              row: [properties.Program, properties.Data],
+              row: {
+                Program: properties.Program,
+                Data: properties.Data,
+              },
               card: properties,
-              link,
+              key,
             };
           },
         ),
@@ -739,7 +743,7 @@ const blockTransactionsResolver = createResolver(
             columnLabel: "Status",
           },
           {
-            columnLabel: "Transactions",
+            columnLabel: "Slot",
           },
         ],
         entries: block.transactions.map((transaction) => {
@@ -786,16 +790,17 @@ const blockTransactionsResolver = createResolver(
               payload: "TODO",
             },
           };
-          const link = "#TODO";
+          const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
           const { Icon, ...card } = properties;
           return {
-            row: [
+            row: {
               Icon,
-              properties.Signature,
-              properties.Type,
-              properties.Status,
-              properties.Slot,
-            ],
+              Transactions: properties.Signature,
+              Type: properties.Type,
+              Status: properties.Status,
+              Slot: properties.Slot,
+            },
+            key: link,
             card,
             link,
           };

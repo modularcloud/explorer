@@ -85,9 +85,7 @@ type ResolveCallback = (
   resolver: AnyResolver,
 ) => Promise<any>;
 
-export function matchRoute(
-  path: string[],
-): {
+export function matchRoute(path: string[]): {
   resolver: string;
   params: { [key: string]: string };
   resolve: (cb: ResolveCallback) => Promise<any>;
