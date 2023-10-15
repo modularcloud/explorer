@@ -29,8 +29,6 @@ const PageContext = z.object({
   chainBrand: z.string(),
   chainName: z.string(),
   chainLogo: z.string(),
-  entityType: z.string(),
-  entityQuery: z.string(),
   rpcEndpoint: z.string(),
   nativeToken: z.string(),
 });

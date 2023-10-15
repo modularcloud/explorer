@@ -25,7 +25,6 @@ export function createSVMIntegration(context: PageContext) {
     return {
         resolveRoute: async (path: string[], additionalContext = {}): Promise<IntegrationResponse> => {
             const match = matchRoute(path);
-            console.log("match", match);
             if (match) {
                 return match.resolve((params, resolver) => resolver({...params, context: {...context, ...additionalContext}}));
             }

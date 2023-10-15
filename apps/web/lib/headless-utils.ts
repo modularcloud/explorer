@@ -31,8 +31,6 @@ export async function loadPage(route: HeadlessRoute, context?: PaginationContext
     chainBrand: network.chainBrand,
     chainName: network.chainName,
     chainLogo: network.config.logoUrl,
-    entityType: "placeholder1",
-    entityQuery: "placeholder2",
     rpcEndpoint: network.config.rpcUrls["svm"],
     nativeToken: network.config.token.name,
   });
