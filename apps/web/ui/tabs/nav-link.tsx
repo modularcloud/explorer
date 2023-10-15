@@ -72,7 +72,6 @@ export function NavLinkSkeleton({
   isAfterOverview = false,
   isLast = false,
 }: NavLinkSkeletonProps) {
-
   return (
     <div
       className={cn(
