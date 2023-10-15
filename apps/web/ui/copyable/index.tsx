@@ -3,7 +3,9 @@
 import { FetchLoadArgs } from "~/lib/utils";
 import { useToast } from "~/ui/shadcn/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { CopyOff as CopyIcon } from "../icons";
 import clsx from "clsx";
+import { useState } from "react";
 
 type Props = {
   value: string | number;
@@ -15,6 +17,9 @@ export function CopyableValue({ value, link, children }: Props) {
   // Use hooks for toast notifications and routing
   const { toast } = useToast();
   const router = useRouter();
+
+  // State for hover
+  const [hover, setHover] = useState(false);
 
   // Function to copy the value to the clipboard
   const copy = async () => {
@@ -40,33 +45,39 @@ export function CopyableValue({ value, link, children }: Props) {
   };
 
   // Handler for onClick event
-  const onClickHandler = async (e: React.MouseEvent<HTMLSpanElement>) => {
+  const onClickHandler = async (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation();
 
-    if (e.ctrlKey || e.metaKey) {
-      open();
-    } else {
-      const copied = await copy();
+    const copied = await copy();
 
-      if (copied) {
-        const val =
-          String(value).length > 20
-            ? `${String(value).slice(0, 20)}...`
-            : value;
-        toast({
-          title: "Copied",
-          description: `"${val}" copied to clipboard`,
-        });
-      }
+    if (copied) {
+      const val =
+        String(value).length > 20
+          ? `${String(value).slice(0, 20)}...`
+          : value;
+      toast({
+        title: "Copied",
+        description: `"${val}" copied to clipboard`,
+      });
     }
   };
 
   return (
     <span
-      onClick={onClickHandler}
-      className={clsx("cursor-pointer", link && "underline")}
+      className={clsx("cursor-pointer", link && "underline", "flex items-center")}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
       {children ?? value}
+      {hover && (
+        <CopyIcon
+          onClick={(e) => {
+            e.stopPropagation();
+            onClickHandler(e);
+          }}
+          className="ml-1"
+        />
+      )}
     </span>
   );
 }
