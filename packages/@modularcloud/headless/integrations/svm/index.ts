@@ -140,6 +140,8 @@ const addressTransactionsResolver = createResolver(
       getSignaturesForAddress({
         endpoint: context.rpcEndpoint,
         address,
+        limit: 30,
+        before: context.after, // this is confusing because the rpc calls it before, but elsewhere it is usually called after
       }),
       getBalance({ endpoint: context.rpcEndpoint, address }),
     ]);
