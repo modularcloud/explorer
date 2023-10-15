@@ -3,27 +3,71 @@ import type { Value } from "@modularcloud/headless";
 import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
+import { LongVal } from "~/ui/long-val";
+import { CheckCircle, XCircle } from "~/ui/icons";
 
 interface Props {
   value: Value;
-  index: number;
+  className?: string;
 }
 
-export function TableCell({ value, index }: Props) {
+export function TableCell({ value, className }: Props) {
   if (value.payload === undefined || value.payload === null) return null;
 
   switch (value.type) {
+    case "icon":
+      return (
+        <td className={cn("flex items-center px-4", className)}>
+          {value.payload === "SUCCESS" ? (
+            <>
+              <CheckCircle
+                className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-0.5"
+                aria-hidden="true"
+              />
+            </>
+          ) : (
+            <>
+              <XCircle
+                className="h-5 w-5 flex-shrink-0 text-red-500 relative top-0.5"
+                aria-hidden="true"
+              />
+            </>
+          )}
+        </td>
+      );
+    case "longval":
+      return (
+        <td
+          className={cn(
+            "items-center flex col-span-2 py-4",
+            "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
+            className,
+          )}
+        >
+          {LongVal({
+            max: value.payload.maxLength ?? 25,
+            step: value.payload.stepDown ?? 1,
+            ...value.payload,
+          })}
+        </td>
+      );
     case "standard":
       return (
-        <div className={cn("text-ellipsis", index === 0 && "col-span-2")}>
-          <CopyableValue value={value.payload.toString()} hideCopyIcon />
-        </div>
+        <td
+          className={cn(
+            "flex items-center",
+            "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
+            className,
+          )}
+        >
+          {value.payload.toString()}
+        </td>
       );
     case "status":
       return (
-        <div className="flex-1">
+        <td className="flex items-center">
           <Status status={value.payload} />
-        </div>
+        </td>
       );
     default:
       return null;

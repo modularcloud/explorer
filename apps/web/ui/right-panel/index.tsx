@@ -78,7 +78,7 @@ interface Props {
 export function RightPanel({ data, network }: Props) {
   const { properties, headerKey, headerValue } = data;
 
-  const allAttributes = Object.entries(attributes);
+  const allAttributes = Object.entries(properties);
   return (
     <div
       className="w-full grid h-full max-h-full auto-rows-min"
