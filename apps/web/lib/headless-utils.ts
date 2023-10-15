@@ -1,4 +1,8 @@
-import { Page, createSVMIntegration, PaginationContext } from "@modularcloud/headless";
+import {
+  Page,
+  createSVMIntegration,
+  PaginationContext,
+} from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
 
@@ -12,7 +16,10 @@ export type HeadlessRoute = {
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
  */
-export async function loadPage(route: HeadlessRoute, context?: PaginationContext): Promise<Page> {
+export async function loadPage(
+  route: HeadlessRoute,
+  context?: PaginationContext,
+): Promise<Page> {
   // Load network configuration
   const network = await getSingleNetworkCached(route.network);
 
