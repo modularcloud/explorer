@@ -209,6 +209,8 @@ const addressTransactionsResolver = createResolver(
         body: {
           type: "collection",
           refreshIntervalMS: 10000,
+          nextToken:
+            transactions[transactions.length - 1].transaction.signatures[0],
           tableColumns: [
             {
               columnLabel: "Icon",
