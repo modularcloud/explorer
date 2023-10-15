@@ -74,7 +74,7 @@ const addressOverviewResolver = createResolver(
     let balance: string | number = 0;
     switch (balanceResponse.type) {
       case "success":
-        balance = balanceResponse.result;
+        balance = balanceResponse.result.value/10**9;
         break;
       case "error":
         balance = "Couldn't not retrieve balance. Refresh to try again.";
@@ -147,7 +147,7 @@ const addressTransactionsResolver = createResolver(
     let balance: string | number = 0;
     switch (balanceResponse.type) {
       case "success":
-        balance = balanceResponse.result;
+        balance = balanceResponse.result.value/10**9;
         break;
       case "error":
         balance = "Couldn't not retrieve balance. Refresh to try again.";
