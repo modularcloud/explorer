@@ -184,8 +184,10 @@ async (
         entries: transactions.map((transaction) => {
             const properties: Record<string, Value> = {
             Signature: {
-                type: "standard",
-                payload: transaction.transaction.signatures[0],
+                type: "longval",
+                payload: {
+                    value: transaction.transaction.signatures[0],
+                }
             },
             Slot: {
                 type: "standard",
@@ -664,8 +666,10 @@ async (
         entries: block.transactions.map((transaction) => {
         const properties: Record<string, Value> = {
             Signature: {
-            type: "standard",
-            payload: transaction.transaction.signatures[0],
+            type: "longval",
+            payload: {
+                value: transaction.transaction.signatures[0],
+            }
             },
             Slot: {
             type: "standard",

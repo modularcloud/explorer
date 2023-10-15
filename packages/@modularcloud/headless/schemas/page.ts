@@ -21,6 +21,15 @@ export const ValueSchema = z.discriminatedUnion("type", [
       })
       .nullish(),
   }),
+  z.object({
+    type: z.literal("longval"),
+    payload: z.object({
+      value: z.string(),
+      strategy: z.enum(["middle", "end"]).optional(),
+      maxLength: z.number().optional(),
+      stepDown: z.number().optional(),
+    }),
+  }),
 ]);
 
 export type Value = z.infer<typeof ValueSchema>;
