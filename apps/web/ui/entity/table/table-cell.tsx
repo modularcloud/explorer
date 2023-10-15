@@ -37,13 +37,7 @@ export function TableCell({ value, className }: Props) {
       );
     case "longval":
       return (
-        <td
-          className={cn(
-            "items-center flex col-span-2 py-4",
-            "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
-            className,
-          )}
-        >
+        <td className={cn("items-center flex col-span-2 py-4", className)}>
           {LongVal({
             max: value.payload.maxLength ?? 25,
             step: value.payload.stepDown ?? 1,

@@ -24,9 +24,16 @@ export function Table({ columns, entries }: Props) {
   }
 
   let totalLongValues = 0;
-  for (const col of Object.values(firstEntry.row)) {
-    if (col.type === "longval") {
+  for (const value of Object.values(firstEntry.row)) {
+    if (value.type === "longval") {
       totalLongValues++;
+    }
+  }
+
+  let totalHiddenColumns = 0;
+  for (const col of columns) {
+    if (col.hideColumnLabel) {
+      totalHiddenColumns++;
     }
   }
 
@@ -40,23 +47,26 @@ export function Table({ columns, entries }: Props) {
           )}
           style={{
             gridTemplateColumns: `repeat(${
-              columns.length + totalLongValues
+              columns.length + totalLongValues - totalHiddenColumns
             }, minmax(0, 1fr))`,
+            gridAutoColumns: "1fr",
           }}
         >
-          {columns.map((col) => (
-            <th
-              key={col.columnLabel}
-              className={cn(
-                "font-medium text-start",
-                firstEntry.row[col.columnLabel].type === "longval" &&
-                  "col-span-2",
-                col.breakpoint && generateColumnStyle(col),
-              )}
-            >
-              {capitalize(col.columnLabel)}
-            </th>
-          ))}
+          {columns
+            .filter((col) => !col.hideColumnLabel)
+            .map((col) => (
+              <th
+                key={col.columnLabel}
+                className={cn(
+                  "font-medium text-start",
+                  firstEntry.row[col.columnLabel].type === "longval" &&
+                    "col-span-2",
+                  col.breakpoint && generateColumnStyle(col),
+                )}
+              >
+                {capitalize(col.columnLabel)}
+              </th>
+            ))}
         </tr>
       </thead>
 
