@@ -77,13 +77,24 @@ export const ColumnSchema = z.object({
 });
 export type Column = z.infer<typeof ColumnSchema>;
 
+export const ValueListSchema = z
+  .intersection(
+    z.object({
+      key: z.string(),
+    }),
+    ValueSchema,
+  )
+  .array();
+export type ValueList = z.infer<typeof ValueListSchema>;
+
 const CollectionSchema = z.object({
   type: z.literal("collection"),
   tableColumns: ColumnSchema.array(),
   entries: z
     .object({
-      row: ValueSchema.array(),
+      row: ValueListSchema,
       card: z.record(ValueSchema),
+      key: z.string(),
       link: z.string().optional(),
     })
     .array(),

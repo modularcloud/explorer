@@ -260,16 +260,17 @@ const addressTransactionsResolver = createResolver(
                 payload: "TODO",
               },
             };
-            const link = "#TODO";
+            const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
             const { Icon, ...card } = properties;
             return {
               row: [
-                Icon,
-                properties.Signature,
-                properties.Type,
-                properties.Status,
-                properties.Slot,
+                { ...Icon, key: `${link}?property=Icon` },
+                { ...properties.Signature, key: `${link}?property=Signature` },
+                { ...properties.Type, key: `${link}?property=Type` },
+                { ...properties.Status, key: `${link}?property=Status` },
+                { ...properties.Slot, key: `${link}?property=Slot` },
               ],
+              key: link,
               card,
               link,
             };
@@ -482,7 +483,7 @@ const transactionInstructionsResolver = createResolver(
         type: "collection",
         tableColumns: [{ columnLabel: "Program" }, { columnLabel: "Data" }],
         entries: transaction.transaction.message.instructions.map(
-          (instruction) => {
+          (instruction, index) => {
             const properties: Record<string, Value> = {
               Program: {
                 type: "standard",
@@ -503,11 +504,17 @@ const transactionInstructionsResolver = createResolver(
                 payload: instruction.data,
               },
             };
-            const link = "#TODO";
+            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}?instruction=${index}`;
             return {
-              row: [properties.Program, properties.Data],
+              row: [
+                {
+                  ...properties.Program,
+                  key: `${key}&property=Program`,
+                },
+                { ...properties.Data, key: `${key}&property=Data` },
+              ],
               card: properties,
-              link,
+              key,
             };
           },
         ),
@@ -786,16 +793,17 @@ const blockTransactionsResolver = createResolver(
               payload: "TODO",
             },
           };
-          const link = "#TODO";
+          const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
           const { Icon, ...card } = properties;
           return {
             row: [
-              Icon,
-              properties.Signature,
-              properties.Type,
-              properties.Status,
-              properties.Slot,
+              { ...Icon, key: `${link}?property=Icon` },
+              { ...properties.Signature, key: `${link}?property=Signature` },
+              { ...properties.Type, key: `${link}?property=Type` },
+              { ...properties.Status, key: `${link}?property=Status` },
+              { ...properties.Slot, key: `${link}?property=Slot` },
             ],
+            key: link,
             card,
             link,
           };
