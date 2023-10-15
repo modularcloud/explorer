@@ -10,16 +10,15 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Value } from "~/schemas/value";
-import type { Sidebar } from "~/ecs/components/sidebar";
+import type { Page, Value } from "@modularcloud/headless";
 
-type Props = Pick<Sidebar, "entityId" | "entityTypeName"> & {
+type Props = Pick<Page["sidebar"], "headerValue" | "headerKey"> & {
   defaultAttributes: Array<[string, Value]>;
 };
 
 export function AssociatedComponentList({
-  entityId,
-  entityTypeName,
+  headerValue,
+  headerKey,
   defaultAttributes,
 }: Props) {
   return (
@@ -27,12 +26,12 @@ export function AssociatedComponentList({
       <div className="grid gap-4 text-lg w-full grid-cols-5">
         <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
           <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
-          {entityTypeName}
+          {headerKey}
         </dt>
         <dd className="font-normal col-span-3">
           <CopyableValue
             tooltipPosition="left"
-            value={entityId}
+            value={headerValue}
             hideCopyIcon
             className="[&>button]:uppercase justify-end"
           />

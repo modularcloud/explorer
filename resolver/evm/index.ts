@@ -71,4 +71,4 @@ export const TransactionReceiptResolver = createResolver(
     });
   },
   [JSONRPCResolver],
-); 
+);

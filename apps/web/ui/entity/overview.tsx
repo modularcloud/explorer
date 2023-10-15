@@ -10,9 +10,7 @@ import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { range } from "~/lib/shared-utils";
 
 // types
-import type { Value } from "~/schemas/value";
-import type { Entity } from "@modularcloud/ecs";
-import type { PageArchetype } from "~/ecs/archetypes/page";
+import type { Value } from "@modularcloud/headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
@@ -83,7 +81,6 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
 }
 
 export async function Overview({ properties }: Props) {
-
   return (
     <section className="pb-4">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
