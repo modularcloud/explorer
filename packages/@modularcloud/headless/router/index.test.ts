@@ -65,8 +65,8 @@ describe("Testing addRoute and matchRoute functions", () => {
       addRoute(["entity", "[id]"], "1");
     }).toThrow();
     expect(() => {
-        addRoute(["entity", "[id2]"], "1");
-      }).toThrow();
+      addRoute(["entity", "[id2]"], "1");
+    }).toThrow();
     expect(() => {
       addRoute(["[test]", "[example]", "hello", "2"], "4");
     }).toThrow();
@@ -76,5 +76,4 @@ describe("Testing addRoute and matchRoute functions", () => {
     const result = matchRoute(["my", "nonexistent", "route"]);
     expect(result).toBeNull();
   });
-  
 });

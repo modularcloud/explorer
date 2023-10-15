@@ -80,11 +80,18 @@ export function registerResolver(resolver: AnyResolver) {
   resolvers[resolver.__config.id] = resolver;
 }
 
-type ResolveCallback = (params: { [key: string]: string }, resolver: AnyResolver) => Promise<any>;
+type ResolveCallback = (
+  params: { [key: string]: string },
+  resolver: AnyResolver,
+) => Promise<any>;
 
 export function matchRoute(
   path: string[],
-): ({ resolver: string, params: { [key: string]: string } , resolve: (cb: ResolveCallback) => Promise<any>} ) | null {
+): {
+  resolver: string;
+  params: { [key: string]: string };
+  resolve: (cb: ResolveCallback) => Promise<any>;
+} | null {
   let currentNode = root;
   const dynamicSegmentValues: string[] = [];
 
@@ -105,7 +112,7 @@ export function matchRoute(
 
   const params = Object.fromEntries(
     zip(currentNode.dynamicSegmentKeys, dynamicSegmentValues),
-  )
+  );
   const resolver = currentNode.resolver;
 
   return {
@@ -118,4 +125,3 @@ export function matchRoute(
     params,
   };
 }
-

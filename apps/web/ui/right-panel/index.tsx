@@ -22,8 +22,8 @@ import { isMacLike } from "~/lib/server-utils";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
-import type { Sidebar } from "~/ecs/components/sidebar";
 import type { SingleNetwork } from "~/lib/network";
+import type { Page } from "@modularcloud/headless";
 
 interface HotkeyEntryProps {
   label: string;
@@ -71,12 +71,12 @@ function HotkeyEntry({ label, keys, isLast, isFirst }: HotkeyEntryProps) {
 }
 
 interface Props {
-  data: Sidebar;
+  data: Page["sidebar"];
   network: SingleNetwork;
 }
 
 export function RightPanel({ data, network }: Props) {
-  const { attributes, entityTypeName, entityId } = data;
+  const { properties, headerKey, headerValue } = data;
 
   const allAttributes = Object.entries(attributes);
   return (
@@ -120,8 +120,8 @@ export function RightPanel({ data, network }: Props) {
         className="pt-4 pb-12 px-8 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
       >
         <AssociatedComponentList
-          entityId={entityId}
-          entityTypeName={entityTypeName}
+          headerValue={headerValue}
+          headerKey={headerKey}
           defaultAttributes={allAttributes}
         />
 

@@ -43,16 +43,20 @@ function addRoute(path: string[], config: PageConfig) {
   currentNode.config = config;
 }
 
-function handleDynamicSegment(
-  node: RouteNode,
-) {
-  node.dynamicChild = node.dynamicChild || { staticChildren: {}, dynamicSegmentKeys: [] };
+function handleDynamicSegment(node: RouteNode) {
+  node.dynamicChild = node.dynamicChild || {
+    staticChildren: {},
+    dynamicSegmentKeys: [],
+  };
   return node.dynamicChild;
 }
 
 function handleStaticSegment(node: RouteNode, segment: string) {
   if (!node.staticChildren[segment]) {
-    node.staticChildren[segment] = { staticChildren: {}, dynamicSegmentKeys: [] };
+    node.staticChildren[segment] = {
+      staticChildren: {},
+      dynamicSegmentKeys: [],
+    };
   }
   return node.staticChildren[segment];
 }
@@ -70,7 +74,7 @@ function checkForDuplicateRoute(
 }
 
 function zip(a: string[], b: string[]): [string, string][] {
-    return a.map((value, index) => [value, b[index]]);
+  return a.map((value, index) => [value, b[index]]);
 }
 
 function matchRoute(
@@ -94,7 +98,12 @@ function matchRoute(
     return null;
   }
 
-  return { ...currentNode.config, params: Object.fromEntries(zip(currentNode.dynamicSegmentKeys, dynamicSegmentValues)) };
+  return {
+    ...currentNode.config,
+    params: Object.fromEntries(
+      zip(currentNode.dynamicSegmentKeys, dynamicSegmentValues),
+    ),
+  };
 }
 
 export default function RoutingExample({
@@ -102,22 +111,28 @@ export default function RoutingExample({
 }: {
   params: { segments: string[] };
 }) {
-    try {
+  try {
     addRoute(["test1", "[id]"], { type: "test1", payload: "1" });
     addRoute(["test2", "[id]"], { type: "test2", payload: "2" });
     addRoute(["[test]", "[id]"], { type: "test1", payload: "3" });
-    addRoute(["[test]", "[example]", "hello", "[world]"], { type: "test2", payload: "4" });
-    } catch (e) {
-        console.log(e);
-    }
-    const match = matchRoute(params.segments);
-    switch (match?.type) {
-      case "test1":
-        return <div>{`Test 1: ${JSON.stringify(match.params)}, ${match.payload}`}</div>;
-      case "test2":
-        return <div>{`Test 2: ${JSON.stringify(match.params)}, ${match.payload}`}</div>;
-      default:
-        return <div>Not found</div>;
-
-    }
+    addRoute(["[test]", "[example]", "hello", "[world]"], {
+      type: "test2",
+      payload: "4",
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  const match = matchRoute(params.segments);
+  switch (match?.type) {
+    case "test1":
+      return (
+        <div>{`Test 1: ${JSON.stringify(match.params)}, ${match.payload}`}</div>
+      );
+    case "test2":
+      return (
+        <div>{`Test 2: ${JSON.stringify(match.params)}, ${match.payload}`}</div>
+      );
+    default:
+      return <div>Not found</div>;
+  }
 }

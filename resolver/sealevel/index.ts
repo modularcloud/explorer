@@ -25,8 +25,8 @@ export const BlockResolver = createResolver(
     jsonRpcResolver,
   ) => {
     const parsedSlot = Number(slot);
-    if(isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
-    
+    if (isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
+
     const rpcResponse = await jsonRpcResolver({
       endpoint: endpoint,
       method: "getBlock",
@@ -40,8 +40,8 @@ export const BlockResolver = createResolver(
         },
       ],
     });
-    if(rpcResponse.type === "success") return rpcResponse.result;
-    if(rpcResponse.type === "error") throw rpcResponse.error;
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -79,8 +79,8 @@ export const TransactionResolver = createResolver(
         },
       ],
     });
-    if(rpcResponse.type === "success") return rpcResponse.result;
-    if(rpcResponse.type === "error") throw rpcResponse.error;
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -118,8 +118,8 @@ export const BalanceResolver = createResolver(
         },
       ],
     });
-    if(rpcResponse.type === "success") return rpcResponse.result;
-    if(rpcResponse.type === "error") throw rpcResponse.error;
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );
@@ -163,8 +163,8 @@ export const SignaturesForAddressResolver = createResolver(
         },
       ],
     });
-    if(rpcResponse.type === "success") return rpcResponse.result;
-    if(rpcResponse.type === "error") throw rpcResponse.error;
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
   },
   [JSONRPCResolver],
 );

@@ -10,7 +10,7 @@ import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { range } from "~/lib/shared-utils";
 
 // types
-import type { Value } from "~/schemas/value";
+import type { Value } from "@modularcloud/headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
