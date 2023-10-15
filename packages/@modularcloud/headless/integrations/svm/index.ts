@@ -270,7 +270,7 @@ const addressTransactionsResolver = createResolver(
                 payload: "TODO",
               },
             };
-            const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
+            const link = `/${context.chainBrand}-${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
             const { Icon, ...card } = properties;
             return {
               row: {
@@ -514,7 +514,7 @@ const transactionInstructionsResolver = createResolver(
                 payload: instruction.data,
               },
             };
-            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}/instructions?index=${index}`;
+            const key = `/${context.chainBrand}-${context.chainName}/addresses/${signature}/instructions?index=${index}`;
             return {
               row: {
                 Program: properties.Program,
@@ -800,7 +800,7 @@ const blockTransactionsResolver = createResolver(
               payload: "TODO",
             },
           };
-          const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
+          const link = `/${context.chainBrand}-${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
           const { Icon, ...card } = properties;
           return {
             row: {
