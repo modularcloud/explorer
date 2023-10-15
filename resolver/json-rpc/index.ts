@@ -6,15 +6,18 @@ export const JSONRPCResolver = createResolver(
     id: "json-rpc-0.0.0", // we need to come up with a better id scheme
     cache: false, // cache is always false for now
   },
-  async ({
-    endpoint,
-    method,
-   params,
-  }: {
-    endpoint: string;
-    method: string;
-    params?: any[];
-  }, fetchResolver) => {
+  async (
+    {
+      endpoint,
+      method,
+      params,
+    }: {
+      endpoint: string;
+      method: string;
+      params?: any[];
+    },
+    fetchResolver,
+  ) => {
     const response = await fetchResolver({
       url: endpoint,
       options: {
@@ -28,9 +31,8 @@ export const JSONRPCResolver = createResolver(
           method,
           params,
         }),
-      }
-
-    })
+      },
+    });
     if (response.type === "success") {
       return response.result.result;
     }

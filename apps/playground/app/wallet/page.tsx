@@ -407,38 +407,49 @@ const metadata = {
 };
 
 export default function Contract() {
-    return (
-      <div className="p-6 bg-white rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Contract Interface</h1>
-        <h2 className="text-xl font-semibold mb-2">Functions</h2>
-        {metadata.output.abi.map((item, index) => {
-          if (item.type === 'function') {
-            return (
-              <div key={index} className="mb-4">
-                <h3 className="text-lg font-semibold">{item.name}</h3>
-                <form>
-                  {item.inputs.map((input, i) => (
-                    <div key={i} className="mb-2">
-                      <label className="font-medium">
-                        {input.name} ({input.type}):
-                        <input type="text" name={input.name} className="ml-2 p-1 border rounded" />
-                      </label>
-                    </div>
-                  ))}
-                  <button type="submit" className="mt-2 px-4 py-2 bg-blue-600 text-white rounded">Submit</button>
-                </form>
-                <p className="font-medium">Outputs:</p>
-                {item.outputs ? item.outputs.map((output, i) => (
-                  <p key={i} className="ml-2">
-                    {output.name} ({output.type})
-                  </p>
-                )) : null}
-              </div>
-            );
-          }
-          return null;
-        })}
-        {/* <h2 className="text-xl font-semibold mb-2">Events</h2>
+  return (
+    <div className="p-6 bg-white rounded shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Contract Interface</h1>
+      <h2 className="text-xl font-semibold mb-2">Functions</h2>
+      {metadata.output.abi.map((item, index) => {
+        if (item.type === "function") {
+          return (
+            <div key={index} className="mb-4">
+              <h3 className="text-lg font-semibold">{item.name}</h3>
+              <form>
+                {item.inputs.map((input, i) => (
+                  <div key={i} className="mb-2">
+                    <label className="font-medium">
+                      {input.name} ({input.type}):
+                      <input
+                        type="text"
+                        name={input.name}
+                        className="ml-2 p-1 border rounded"
+                      />
+                    </label>
+                  </div>
+                ))}
+                <button
+                  type="submit"
+                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Submit
+                </button>
+              </form>
+              <p className="font-medium">Outputs:</p>
+              {item.outputs
+                ? item.outputs.map((output, i) => (
+                    <p key={i} className="ml-2">
+                      {output.name} ({output.type})
+                    </p>
+                  ))
+                : null}
+            </div>
+          );
+        }
+        return null;
+      })}
+      {/* <h2 className="text-xl font-semibold mb-2">Events</h2>
         {metadata.output.abi.map((item, index) => {
           if (item.type === 'event') {
             return (
@@ -460,7 +471,6 @@ export default function Contract() {
           }
           return null;
         })} */}
-      </div>
-    );
-    
+    </div>
+  );
 }
