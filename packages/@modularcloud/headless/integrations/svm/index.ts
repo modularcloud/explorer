@@ -213,7 +213,7 @@ const addressTransactionsResolver = createResolver(
               columnLabel: "Status",
             },
             {
-              columnLabel: "Transactions",
+              columnLabel: "Slot",
             },
           ],
           entries: transactions.map((transaction) => {
@@ -263,13 +263,13 @@ const addressTransactionsResolver = createResolver(
             const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
             const { Icon, ...card } = properties;
             return {
-              row: [
-                { ...Icon, key: `${link}?property=Icon` },
-                { ...properties.Signature, key: `${link}?property=Signature` },
-                { ...properties.Type, key: `${link}?property=Type` },
-                { ...properties.Status, key: `${link}?property=Status` },
-                { ...properties.Slot, key: `${link}?property=Slot` },
-              ],
+              row: {
+                Icon,
+                Transactions: properties.Signature,
+                Type: properties.Type,
+                Status: properties.Status,
+                Slot: properties.Slot,
+              },
               key: link,
               card,
               link,
@@ -504,15 +504,12 @@ const transactionInstructionsResolver = createResolver(
                 payload: instruction.data,
               },
             };
-            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}?instruction=${index}`;
+            const key = `/${context.chainBrand}/${context.chainName}/addresses/${signature}/instructions?index=${index}`;
             return {
-              row: [
-                {
-                  ...properties.Program,
-                  key: `${key}&property=Program`,
-                },
-                { ...properties.Data, key: `${key}&property=Data` },
-              ],
+              row: {
+                Program: properties.Program,
+                Data: properties.Data,
+              },
               card: properties,
               key,
             };
@@ -746,7 +743,7 @@ const blockTransactionsResolver = createResolver(
             columnLabel: "Status",
           },
           {
-            columnLabel: "Transactions",
+            columnLabel: "Slot",
           },
         ],
         entries: block.transactions.map((transaction) => {
@@ -796,13 +793,13 @@ const blockTransactionsResolver = createResolver(
           const link = `/${context.chainBrand}/${context.chainName}/transactions/${transaction.transaction.signatures[0]}`;
           const { Icon, ...card } = properties;
           return {
-            row: [
-              { ...Icon, key: `${link}?property=Icon` },
-              { ...properties.Signature, key: `${link}?property=Signature` },
-              { ...properties.Type, key: `${link}?property=Type` },
-              { ...properties.Status, key: `${link}?property=Status` },
-              { ...properties.Slot, key: `${link}?property=Slot` },
-            ],
+            row: {
+              Icon,
+              Transactions: properties.Signature,
+              Type: properties.Type,
+              Status: properties.Status,
+              Slot: properties.Slot,
+            },
             key: link,
             card,
             link,
