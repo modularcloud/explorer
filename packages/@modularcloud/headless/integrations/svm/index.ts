@@ -180,9 +180,26 @@ async (
         },
         body: {
         type: "collection",
-        tableColumns: ["Signature", "Type", "Status", "Slot"],
+        tableColumns: [
+        {
+            columnLabel: "Icon",
+            hideColumnLabel: true,
+            breakpoint: "max-sm",
+        }, {
+            columnLabel: "Transactions"
+        }, {
+            columnLabel: "Type"
+        }, {
+            columnLabel: "Status"
+        }, {
+            columnLabel: "Transactions"
+        }],
         entries: transactions.map((transaction) => {
             const properties: Record<string, Value> = {
+            Icon: {
+                type: "icon",
+                payload: !transaction.meta.err ? "SUCCESS" : "FAILURE",
+            },
             Signature: {
                 type: "longval",
                 payload: {
@@ -222,8 +239,10 @@ async (
             }
             };
             const link = "#TODO"
+            const { Icon, ...card } = properties
             return {
-            properties,
+            row: [Icon, properties.Signature, properties.Type, properties.Status, properties.Slot],
+            card,
             link
             }
         }),
@@ -425,7 +444,7 @@ async (
     },
     body: {
         type: "collection",
-        tableColumns: ["Program", "Data"],
+        tableColumns: [{columnLabel: "Program"}, {columnLabel: "Data"}],
         entries: transaction.transaction.message.instructions.map((instruction) => {
         const properties: Record<string, Value> = {
             Program: {
@@ -446,7 +465,8 @@ async (
         };
         const link = "#TODO"
         return {
-            properties,
+            row: [properties.Program, properties.Data],
+            card: properties,
             link
         }
         }),
@@ -662,54 +682,73 @@ async (
     },
     body: {
         type: "collection",
-        tableColumns: ["Signature", "Type", "Status", "Slot"],
+        tableColumns: [
+        {
+            columnLabel: "Icon",
+            hideColumnLabel: true,
+            breakpoint: "max-sm",
+        }, {
+            columnLabel: "Transactions"
+        }, {
+            columnLabel: "Type"
+        }, {
+            columnLabel: "Status"
+        }, {
+            columnLabel: "Transactions"
+        }],
         entries: block.transactions.map((transaction) => {
-        const properties: Record<string, Value> = {
+            const properties: Record<string, Value> = {
+            Icon: {
+                type: "icon",
+                payload: !transaction.meta.err ? "SUCCESS" : "FAILURE",
+            },
             Signature: {
-            type: "longval",
-            payload: {
-                value: transaction.transaction.signatures[0],
-            }
+                type: "longval",
+                payload: {
+                    value: transaction.transaction.signatures[0],
+                }
             },
             Slot: {
-            type: "standard",
-            payload: slot,
+                type: "standard",
+                payload: slot,
             },
             Status: {
-            type: "status",
-            payload: !transaction.meta.err,
+                type: "status",
+                payload: !transaction.meta.err,
             },
             Fee: {
-            type: "standard",
-            payload:
+                type: "standard",
+                payload:
                 (transaction.meta.fee / Math.pow(10, 9)).toFixed(2) +
                 " " +
                 context.nativeToken,
             },
             Signer: {
-            type: "standard",
-            payload: transaction.transaction.message.accountKeys[0]
+                type: "standard",
+                payload: transaction.transaction.message.accountKeys[0]
             },
             "Recent Block Hash": {
-            type: "standard",
-            payload: transaction.transaction.message.recentBlockhash,
+                type: "standard",
+                payload: transaction.transaction.message.recentBlockhash,
             },
             "Compute Units": {
-            type: "standard",
-            payload: transaction.meta.computeUnitsConsumed,
+                type: "standard",
+                payload: transaction.meta.computeUnitsConsumed,
             }, 
             Type: {
-            type: "standard",
-            payload: "TODO"
+                type: "standard",
+                payload: "TODO"
             }
-        };
-        const link = "#TODO"
-        return {
-            properties,
+            };
+            const link = "#TODO"
+            const { Icon, ...card } = properties
+            return {
+            row: [Icon, properties.Signature, properties.Type, properties.Status, properties.Slot],
+            card,
             link
-        }
+            }
         }),
-    },
+        },
     sidebar: {
         headerKey: "Block",
         headerValue: slot,
