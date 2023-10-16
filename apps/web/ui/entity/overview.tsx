@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
 import { CopyableValue } from "~/ui/copyable";
+import { EntityRef } from "../entity-ref";
 
 type Props = {
   entity: Entity<typeof PageArchetype>;
@@ -59,6 +60,13 @@ function Entry({ label, value }: { label: string; value: Value }) {
           )}
         >
           <CopyableValue value={payload} />
+        </dd>
+      ) : null}
+      {type === "ref" ? (
+        <dd className="truncate">
+          <CopyableValue isBodyClickable={false} value={payload.query}>
+            <EntityRef entity={payload} />
+          </CopyableValue>
         </dd>
       ) : null}
     </div>

@@ -3,6 +3,7 @@ import { Status } from "~/ui/status";
 import { Value } from "~/schemas/value";
 import Image from "next/image";
 import { CopyableValue } from "~/ui/copyable";
+import { EntityRef } from "../entity-ref";
 
 interface Props {
   attributes: Record<string, Value>;
@@ -45,6 +46,13 @@ function Entry({ label, value }: { label: string; value: Value }) {
       {type === "standard" ? (
         <dd className="truncate">
           <CopyableValue value={payload} />
+        </dd>
+      ) : null}
+      {type === "ref" ? (
+        <dd className="truncate">
+          <CopyableValue isBodyClickable={false} value={payload.query}>
+            <EntityRef entity={payload} />
+          </CopyableValue>
         </dd>
       ) : null}
     </>

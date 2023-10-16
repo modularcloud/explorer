@@ -21,6 +21,14 @@ export const ValueSchema = z.discriminatedUnion("type", [
       })
       .nullish(),
   }),
+  z.object({
+    type: z.literal("ref"),
+    payload: z.object({
+      network: z.string(),
+      type: z.string(),
+      query: z.string(),
+    }),
+  }),
 ]);
 
 export type Value = z.infer<typeof ValueSchema>;

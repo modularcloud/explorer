@@ -1,5 +1,9 @@
 import { TransformInput, TransformOutput } from "@modularcloud/ecs";
-import { convertWeiToBestUnit, convertWeiToNativeToken, convertWeiToUSD } from "lib/evm";
+import {
+  convertWeiToBestUnit,
+  convertWeiToNativeToken,
+  convertWeiToUSD,
+} from "lib/evm";
 import { TransactionExtract } from ".";
 import { SidebarComponent } from "~/ecs/components/sidebar";
 
@@ -31,28 +35,68 @@ export const SidebarTransform = {
           payload: data.transactionIndex,
         },
         "From Address": {
-          type: "standard",
-          payload: data.from,
+          type: "ref",
+          payload: {
+            network: metadata.network.id,
+            type: "address",
+            query: data.from,
+          },
         },
-        "To Address": {
-          type: "standard",
-          payload: data.to,
-        },
-        "Contract Address": {
-          type: "standard",
-          payload: data.receipt.contractAddress,
-        },
+        ...(data.to
+          ? {
+              "To Address": {
+                type: "ref",
+                payload: {
+                  network: metadata.network.id,
+                  type: "address",
+                  query: data.to,
+                },
+              },
+            }
+          : {}),
+        ...(data.receipt.contractAddress
+          ? {
+              "Contract Address": {
+                type: "ref",
+                payload: {
+                  network: metadata.network.id,
+                  type: "address",
+                  query: data.receipt.contractAddress,
+                },
+              },
+            }
+          : {}),
         "Transaction Value": {
           type: "standard",
-          payload: `${convertWeiToNativeToken(data.value, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(data.value, data.nativeTokenValue)})` : ""}`,
+          payload: `${convertWeiToNativeToken(
+            data.value,
+            metadata.network.nativeToken,
+          )}${
+            data.nativeTokenValue
+              ? ` (${convertWeiToUSD(data.value, data.nativeTokenValue)})`
+              : ""
+          }`,
         },
         "Transaction Cost": {
           type: "standard",
-          payload: `${convertWeiToNativeToken(Number(data.gasPrice) * data.receipt.gasUsed, metadata.network.nativeToken)}${data.nativeTokenValue ? ` (${convertWeiToUSD(Number(data.gasPrice) * data.receipt.gasUsed, data.nativeTokenValue)})` : ""}`,
+          payload: `${convertWeiToNativeToken(
+            Number(data.gasPrice) * data.receipt.gasUsed,
+            metadata.network.nativeToken,
+          )}${
+            data.nativeTokenValue
+              ? ` (${convertWeiToUSD(
+                  Number(data.gasPrice) * data.receipt.gasUsed,
+                  data.nativeTokenValue,
+                )})`
+              : ""
+          }`,
         },
         "Gas Price": {
           type: "standard",
-          payload: convertWeiToBestUnit(data.gasPrice, metadata.network.nativeToken),
+          payload: convertWeiToBestUnit(
+            data.gasPrice,
+            metadata.network.nativeToken,
+          ),
         },
         "Gas Used": {
           type: "standard",
@@ -62,18 +106,34 @@ export const SidebarTransform = {
           type: "standard",
           payload: data.gas,
         },
-        "Block Number": {
-          type: "standard",
-          payload: data.blockNumber,
-        },
         Timestamp: {
           type: "standard",
           payload: new Date(Number(data.timestamp) * 1000).toUTCString(),
         },
-        "Block Hash": {
-          type: "standard",
-          payload: data.blockHash,
-        },
+        ...(data.blockNumber
+          ? {
+              "Block Number": {
+                type: "ref",
+                payload: {
+                  network: metadata.network.id,
+                  type: "block",
+                  query: data.blockNumber.toString(),
+                },
+              },
+            }
+          : {}),
+        ...(data.blockHash
+          ? {
+              "Block Hash": {
+                type: "ref",
+                payload: {
+                  network: metadata.network.id,
+                  type: "block",
+                  query: data.blockHash.toString(),
+                },
+              },
+            }
+          : {}),
         "Cumulative Gas Used": {
           type: "standard",
           payload: data.receipt.cumulativeGasUsed,
@@ -118,4 +178,3 @@ export const SidebarTransform = {
     },
   }),
 };
-
