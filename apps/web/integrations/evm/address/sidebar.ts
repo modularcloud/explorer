@@ -66,6 +66,10 @@ export const SidebarTransform = {
           ...erc20Metadata,
           ...contractMetadata,
           ...nftInventoryMetadata,
+          "Total Transactions": {
+            type: "standard",
+            payload: data.totalTransactions,
+          }
         },
         asyncAttributes: [
           {

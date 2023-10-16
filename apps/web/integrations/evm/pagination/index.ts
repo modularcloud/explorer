@@ -102,6 +102,7 @@ export async function PaginationExtract(
     const transactions = await mc.evm.getTransactionsByAddress(
       metadata.network.id,
       value,
+      false,
       30,
       nextToken,
     );

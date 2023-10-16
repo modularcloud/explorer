@@ -9,6 +9,9 @@ export type TxRef = z.infer<typeof TxRefSchema>;
 export const TxResponseSchema = z.object({
   txs: TxRefSchema.array(),
   nextToken: z.string().optional(),
+  summary: z.object({
+    totalCount: z.number(),
+  }).optional(),
 });
 export type TxResponse = z.infer<typeof TxResponseSchema>;
 

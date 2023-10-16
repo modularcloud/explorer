@@ -31,7 +31,7 @@ export async function AddressExtract(
   }
   const web3 = new Web3(metadata.endpoint);
   const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
-  const [code, verified, solidity, contract, nftBalances, erc20Token] =
+  const [code, verified, solidity, contract, nftBalances, erc20Token, transactions] =
     await Promise.all([
       web3.eth.getCode(address),
       safePromise(mc.evm.isContractVerified(metadata.network.id, address)),
@@ -39,9 +39,10 @@ export async function AddressExtract(
       safePromise(mc.evm.describeContract(metadata.network.id, address)),
       safePromise(mc.evm.getNFTBalancesByAddress(metadata.network.id, address)),
       safePromise(mc.evm.getTokenByAddress(metadata.network.id, address)),
+      safePromise(mc.evm.getTransactionsByAddress(metadata.network.id, address, true)),
     ]);
 
-  return {
+    return {
     address,
     code,
     verified,
@@ -50,6 +51,7 @@ export async function AddressExtract(
     nftBalances,
     erc20Token,
     balance,
+    totalTransactions: transactions?.summary?.totalCount
   };
 }
 
