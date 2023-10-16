@@ -35,18 +35,18 @@ const ChooseContractPopup: FC<props> = ({
   return (
     <div>
       {showContractPopUp && files && (
-        <div className="fixed top-0 left-0 h-screen  w-screen backdrop-blur-md overflow-auto z-20 ">
-          <div className="absolute  top-[20%] h-[70%]  left-1/4 w-1/2 z-10  ">
-            <div className="absolute     p-3 pb-4  h-full flex  overflow-auto flex-col bg-white rounded-md w-full  items-center ">
-              <p className="pt-2 font-bold text-2xl">
+        <div className="fixed left-0 top-0 z-20  h-screen w-screen overflow-auto backdrop-blur-md ">
+          <div className="absolute  left-1/4 top-[20%]  z-10 h-[70%] w-1/2  ">
+            <div className="absolute     flex h-full  w-full flex-col  items-center overflow-auto rounded-md bg-white p-3  pb-4 ">
+              <p className="pt-2 text-2xl font-bold">
                 Please choose the main contract to verify
               </p>
               {Object.keys(files).map((contractName, index) => (
                 <div
                   key={index}
-                  className="flex    justify-between p-4 items-center mt-7  border-2 border-gray-100 rounded-lg  w-3/4 "
+                  className="mt-7    flex w-3/4 items-center justify-between  rounded-lg border-2 border-gray-100  p-4 "
                 >
-                  <div className="flex gap-x-3 items-center justify-center ">
+                  <div className="flex items-center justify-center gap-x-3 ">
                     <div>
                       <input
                         type="checkbox"
@@ -57,23 +57,18 @@ const ChooseContractPopup: FC<props> = ({
                         }}
                       ></input>
                     </div>
-                    <div className="bg-[#F4EBFF] rounded-full h-[40px] w-[40px] flex justify-center items-center">
+                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#F4EBFF]">
                       <SvgFile />
                     </div>
-                    <div className="text-[#101828] break-all pl-1  ">
+                    <div className="break-all pl-1 text-[#101828]  ">
                       <p className="pr-1 ">{contractName}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-x-4">
-                    <div className="text-[#6941C6] text-lg cursor-pointer">
-                      View
                     </div>
                   </div>
                 </div>
               ))}
               <div
                 onClick={submit}
-                className="sticky  bottom-[1%] z-20 mt-4  rounded-lg bg-[#7B6FE7] cursor-pointer  px-4 py-2 text-white w-1/5 text-center "
+                className="sticky  bottom-[1%] z-20 mt-4  w-1/5 cursor-pointer rounded-lg  bg-[#7B6FE7] px-4 py-2 text-center text-white "
               >
                 Submit
               </div>

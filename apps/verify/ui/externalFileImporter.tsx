@@ -68,9 +68,9 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
   };
   return (
     <div className="">
-      <div className="flex flex-col md:flex-row gap-x-6 my-2 text-[#7B6FE7]">
+      <div className="tab:flex-row my-2 flex flex-col gap-x-6 text-[#7B6FE7]">
         <div
-          className={` bg-[#FCFAFF]  flex  gap-x-2  mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] cursor-pointer ${
+          className={` mb-3  mt-1  flex  cursor-pointer items-center justify-center  gap-x-2 rounded-lg border-2 border-solid border-[#7B6FE7] bg-[#FCFAFF] p-1.5 ${
             !showImportFromGithub && showImportFromRemote ? "blur-[0.5px]" : ""
           }`}
           onClick={() => {
@@ -79,19 +79,12 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
             setUrl("");
           }}
         >
-          {isLoading && (
-            <div className="absolute top-0 left-0 h-full  min-w-[100%] overflow-hidden backdrop-blur-md  z-40  m-0 ">
-              <div className="absolute top-[40%]  left-1/2 w-full m-0   ">
-                <PuffLoader color="#7B6FE7" size={200} />
-              </div>
-            </div>
-          )}
           <SvgGithub />
           <p className="pr-2">Import from GitHub</p>
         </div>
 
         <div
-          className={`bg-[#FCFAFF] cursor-pointer flex gap-x-2 mb-3 mt-1 p-1.5  rounded-lg justify-center items-center border-2 border-solid border-[#7B6FE7] ${
+          className={`mb-3 mt-1 flex cursor-pointer items-center justify-center gap-x-2  rounded-lg border-2 border-solid border-[#7B6FE7] bg-[#FCFAFF] p-1.5 ${
             !showImportFromRemote && showImportFromGithub ? "blur-[0.5px]" : ""
           }`}
           onClick={() => {
@@ -103,6 +96,13 @@ const ExternalFileImporter: React.FC<props> = ({ setFiles }) => {
           <SvgPlus />
           <p className="pr-2">Import from remote</p>
         </div>
+        {isLoading && (
+          <div className="absolute left-0 top-0 z-40  m-0 h-full min-w-[100%]  overflow-hidden  backdrop-blur-md ">
+            <div className="absolute left-1/2  top-[40%] m-0 w-full   ">
+              <PuffLoader color="#7B6FE7" size={200} />
+            </div>
+          </div>
+        )}
       </div>
       {showImportFromGithub && (
         <ImportFileComponent

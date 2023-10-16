@@ -4,7 +4,6 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Inter } from "next/font/google";
 
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -50,7 +49,6 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
     },
   ];
 
-
   const handleSelection = (selectedValue: string) => {
     onSelectionChange(selectedValue);
     const selectedChain = chainList.find(
@@ -68,7 +66,7 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
           className={
             loading
               ? "hidden"
-              : "rounded-md mt-2 w-full p-2  flex justify-between items-center border-2  md:w-3/5"
+              : "tab:w-3/5 mt-2 flex w-full  items-center justify-between rounded-md border-2  p-2"
           }
         >
           <Select.Value>{selectedChainName}</Select.Value>
@@ -78,10 +76,10 @@ const SelectableComponent: React.FC<SelectableComponentProps> = ({
         </Select.Trigger>
         <Select.Portal>
           <Select.Content>
-            <Select.Viewport className="px-2 overflow-hidden max-h-80 cursor-pointer absolute top-10 w-full    ">
+            <Select.Viewport className="absolute top-10 max-h-80 w-full cursor-pointer overflow-hidden px-2    ">
               {data.map((item, index) => (
                 <Select.Item
-                  className={`z-10  bg-white p-2 relative w-full  rounded-md mx-2 hover:bg-gray-50 !border-none !outline-none ${inter.variable} font-sans `} 
+                  className={`relative  z-10 mx-2 w-full rounded-md  !border-none bg-white p-2 !outline-none hover:bg-gray-50 ${inter.variable} font-sans `}
                   key={index}
                   value={item.chainId.toString()}
                 >
