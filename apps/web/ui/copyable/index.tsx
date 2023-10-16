@@ -33,7 +33,7 @@ export function CopyableValue({
   };
 
   // Handler for onClick event
-  const onClickHandler = async (e: React.MouseEvent<HTMLElement>) => {
+  const onClickHandler = async (e: React.MouseEvent<HTMLElement | SVGSVGElement, MouseEvent>) => {
     e.stopPropagation();
 
     const copied = await copy();
