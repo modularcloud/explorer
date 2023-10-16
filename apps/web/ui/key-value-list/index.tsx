@@ -48,6 +48,15 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <CopyableValue value={payload} />
         </dd>
       ) : null}
+      {type === "verified" ? (
+        <dd>
+          {payload === "verified"
+            ? "Verified"
+            : payload === "unverified"
+            ? "Not Verified"
+            : "Partially Verified"}
+        </dd>
+      ) : null}
       {type === "ref" ? (
         <dd className="truncate">
           <CopyableValue isBodyClickable={false} value={payload.query}>

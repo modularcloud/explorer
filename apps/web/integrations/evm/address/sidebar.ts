@@ -32,14 +32,14 @@ export const SidebarTransform = {
     }
     const contractMetadata: Record<string, Value> = {};
     if (data.contract) {
-      let status = "Not Verified";
+      let status: "unverified" | "verified" | "partial" = "unverified";
       if (data.verified?.verificationStatus === "FULL") {
-        status = "Verified";
+        status = "verified";
       } else if (data.verified?.verificationStatus === "PARTIAL") {
-        status = "Partially Verified";
+        status = "partial";
       }
       contractMetadata["Contract Status"] = {
-        type: "standard",
+        type: "verified",
         payload: status,
       };
     }

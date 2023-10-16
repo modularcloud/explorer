@@ -29,6 +29,10 @@ export const ValueSchema = z.discriminatedUnion("type", [
       query: z.string(),
     }),
   }),
+  z.object({
+    type: z.literal("verified"),
+    payload: z.enum(["verified", "unverified", "partial"]),
+  }),
 ]);
 
 export type Value = z.infer<typeof ValueSchema>;

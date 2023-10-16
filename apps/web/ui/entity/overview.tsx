@@ -10,6 +10,7 @@ import { PageArchetype } from "~/ecs/archetypes/page";
 import { Entity } from "@modularcloud/ecs";
 import { CopyableValue } from "~/ui/copyable";
 import { EntityRef } from "../entity-ref";
+import Link from "next/link";
 
 type Props = {
   entity: Entity<typeof PageArchetype>;
@@ -67,6 +68,25 @@ function Entry({ label, value }: { label: string; value: Value }) {
           <CopyableValue isBodyClickable={false} value={payload.query}>
             <EntityRef entity={payload} />
           </CopyableValue>
+        </dd>
+      ) : null}
+      {type === "verified" ? (
+        <dd>
+          {payload === "verified" ? (
+            "Verified"
+          ) : payload === "unverified" ? (
+            <>
+              Not Verified.{" "}
+              <Link
+                className="underline ml-1"
+                href="https://docs.modular.cloud/verification"
+              >
+                How to verify?
+              </Link>
+            </>
+          ) : (
+            "Partially Verified"
+          )}
         </dd>
       ) : null}
     </div>
