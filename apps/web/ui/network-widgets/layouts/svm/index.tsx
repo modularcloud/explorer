@@ -16,7 +16,6 @@ import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transact
 import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 
 import { cn } from "~/ui/shadcn/utils";
-import { convertWeiToBestUnit, convertWeiToUSD } from "~/lib/evm";
 import { useWidgetData } from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
@@ -26,31 +25,46 @@ interface Props {
 
 // TODO : transform this into a client component
 export function SVMWidgetLayout({ network }: Props) {
-  console.log("network", network)
-  // const { data: apiResult, isLoading, error } = useWidgetData(network.id);
-  const apiResult = useWidgetData(network.id);
-  // if (error) {
-  //   return <EvmWithPriceSkeleton error={error.toString()} />;
-  // }
+  console.log("network", network);
+  const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
-  // if (!apiResult || isLoading) {
-  //   return <EvmWithPriceSkeleton />;
-  // }
+  const latestTransactions = [
+    {
+      hash: "0x123",
+      success: true,
+      type: "standard",
+    },
+    {
+      hash: "0x456",
+      success: false,
+      type: "standard",
+    },
+  ];
 
-  // if ("error" in apiResult) {
-  //   return <EvmWithPriceSkeleton error={apiResult.error} />;
-  // }
+  const latestBlocks = [
+    {
+      number: 1,
+      noOfTransactions: 10,
+      timestamp: 1633027582,
+    },
+    {
+      number: 2,
+      noOfTransactions: 20,
+      timestamp: 1633027583,
+    },
+  ];
+
+  if (error) {
+    return <EvmWithPriceSkeleton error={error.toString()} />;
+  }
+
+  if (!apiResult || isLoading) {
+    return <EvmWithPriceSkeleton />;
+  }
 
   const {
-    data: {
-      zbcPrice,
-      gasPrice,
-      blockMetrics,
-      realTimeMetrics,
-      transactionHistory,
-      latestBlocks,
-      latestTransactions,
-    },
+    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
+    slotNumber,
   } = apiResult;
 
   const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -68,7 +82,7 @@ export function SVMWidgetLayout({ network }: Props) {
       style={{
         // temporarily adding this here
         // @ts-expect-error this is a CSS variable
-        "--color-primary": "236 15%, 18%" //network.brandColor,
+        "--color-primary": "236 15%, 18%", //network.brandColor,
       }}
       className={cn(
         "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",
@@ -80,7 +94,7 @@ export function SVMWidgetLayout({ network }: Props) {
         className="lg:row-start-1 lg:col-start-3"
         label="WALLET ADRESSES"
         icon={Folder}
-        value={realTimeMetrics.walletAddresses.toLocaleString("en-US")}
+        value={UNIQUE_ADDRESS.toLocaleString("en-US")}
       />
 
       <LatestTransactions
@@ -93,21 +107,21 @@ export function SVMWidgetLayout({ network }: Props) {
         className="lg:row-start-2 lg:col-start-3"
         label="TOTAL BLOCKS"
         icon={Disabled}
-        value={blockMetrics.latestBlock.toLocaleString("en-US")}
+        value={parseInt(slotNumber).toLocaleString("en-US")}
       />
 
       <IconCard
         className="lg:row-start-3 lg:col-start-1"
         label="CONTRACTS DEPLOYED"
         icon={Document}
-        value={realTimeMetrics.contractsDeployed.toLocaleString("en-US")}
+        value={CONTRACT.toLocaleString("en-US")}
       />
 
       <IconCard
         label="TOTAL TRANSACTIONS"
         className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
         icon={BarChart}
-        value={realTimeMetrics.totalTransactions.toLocaleString("en-US")}
+        value={TRANSACTION.toLocaleString("en-US")}
       />
 
       <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
@@ -151,68 +165,21 @@ export function EvmWithPriceSkeleton(props: { error?: string }) {
         </div>
       )}
 
-      <Placeholder
-        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="lg:row-start-1 lg:col-start-3" />
 
-      <Placeholder
-        className="lg:row-start-1 lg:col-start-1"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
-      <Placeholder
-        className="lg:row-start-1 lg:col-start-2"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
-      <Placeholder
-        className="col-span-2 row-span-2 lg:row-start-2"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="col-span-2 row-span-2" />
 
-      <Placeholder
-        className="lg:row-start-1 lg:col-start-3"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="lg:row-start-2 lg:col-start-3" />
 
-      <Placeholder
-        className="col-span-1 row-span-1 hidden lg:block lg:row-start-2"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="lg:row-start-3 lg:col-start-1" />
 
-      <Placeholder
-        className="lg:col-span-2 lg:row-start-3 lg:col-start-3"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2" />
 
-      <Placeholder isLoading={!props.error} isError={!!props.error} />
+      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
+      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
+      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
 
-      <Placeholder isLoading={!props.error} isError={!!props.error} />
-
-      <Placeholder
-        className="lg:col-span-2 row-span-1 hidden lg:block"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
-      <Placeholder
-        className="col-span-1 row-span-1 hidden lg:block"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
-
-      <Placeholder isLoading={!props.error} isError={!!props.error} />
-      <Placeholder isLoading={!props.error} isError={!!props.error} />
-      <Placeholder
-        className="col-span-2 row-span-2 md:row-start-4 lg:col-start-4"
-        isLoading={!props.error}
-        isError={!!props.error}
-      />
+      <Placeholder className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4" />
     </div>
   );
 }
