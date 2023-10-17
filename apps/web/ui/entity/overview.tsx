@@ -54,17 +54,12 @@ function Entry({ label, value }: { label: string; value: Value }) {
         </dd>
       ) : null}
       {type === "standard" ? (
-        <dd
-          className={clsx(
-            "text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0",
-            "truncate",
-          )}
-        >
+        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0 truncate">
           <CopyableValue value={payload} />
         </dd>
       ) : null}
       {type === "ref" ? (
-        <dd className="truncate">
+        <dd className="text-temp-700 mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0 truncate">
           <CopyableValue isBodyClickable={false} value={payload.query}>
             <EntityRef entity={payload} />
           </CopyableValue>
