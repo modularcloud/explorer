@@ -99,7 +99,7 @@ export function Search({ optionGroups }: Props) {
         <input
           type="text"
           name="search"
-          placeholder="Go to hash"
+          placeholder="Explore"
           className="focus:outline-none placeholder:text-muted font-medium bg-transparent flex-grow py-2 pl-4 h-full"
           onChange={(e) => {
             if (e.target.value) {
