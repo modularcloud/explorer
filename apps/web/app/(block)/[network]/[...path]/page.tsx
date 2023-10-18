@@ -3,6 +3,7 @@ import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
 import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
 
 async function AyncPageContent({ params }: { params: HeadlessRoute }) {
+  console.log("params 2", params);
   const page = await loadPage(params);
 
   if (page.body.type === "notebook") {
@@ -17,6 +18,7 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
 }
 
 export default function Page({ params }: { params: HeadlessRoute }) {
+  console.log("params", params);
   return (
     <React.Suspense fallback={<OverviewSkeleton />}>
       <AyncPageContent params={params} />
