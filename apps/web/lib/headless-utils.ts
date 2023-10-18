@@ -44,31 +44,35 @@ export async function loadPage(
     nativeToken: network.config.token.name,
   });
 
+  // this is the most ridiculous thing ever
+  // a production only bug on vercel where the path is provided like this: [ 'blocks%2F10000009' ]
+  const fixedPath = route.path.reduce((acc, curr) => [...acc, ...curr.split("/")], [] as string[])
+
   // Resolve the route
-  console.log("route", route)
-  const resolution = await integration.resolveRoute(route.path);
-  throw new Error(JSON.stringify(resolution));
-  // // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
-  // if (!resolution) {
-  //   throw new Error("Resolution not found")
-  //   //notFound();
-  // }
+  console.log("route", route, fixedPath)
+  const resolution = await integration.resolveRoute(fixedPath);
+  console.log("resolution", resolution)
+  // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
+  if (!resolution) {
+    throw new Error("Resolution not found")
+    //notFound();
+  }
 
-  // if (resolution.type === "pending") {
-  //   /**
-  //    * Pending responses are for items that cannot be found, but may exist in the future.
-  //    * For example, if the latest block is 100, and we request block 101, we will get a pending response.
-  //    * Therefore, in the short-term we will treat this as any other page that is not found.
-  //    * However, we will have a special treatment for this in the future.
-  //    */
-  //   throw new Error("Pending")
-  //   //notFound();
-  // }
+  if (resolution.type === "pending") {
+    /**
+     * Pending responses are for items that cannot be found, but may exist in the future.
+     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+     * Therefore, in the short-term we will treat this as any other page that is not found.
+     * However, we will have a special treatment for this in the future.
+     */
+    throw new Error("Pending")
+    //notFound();
+  }
 
-  // if (resolution.type === "error") {
-  //   throw new Error(resolution.error);
-  // }
+  if (resolution.type === "error") {
+    throw new Error(resolution.error);
+  }
 
-  // // We could parse the response with the Zod Page Schema, however, we will trust it is in the right format as a small speed optimization.
-  // return resolution.result as Page;
+  // We could parse the response with the Zod Page Schema, however, we will trust it is in the right format as a small speed optimization.
+  return resolution.result as Page;
 }
