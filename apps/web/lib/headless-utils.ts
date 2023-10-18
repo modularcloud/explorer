@@ -46,7 +46,7 @@ export async function loadPage(
 
   // this is the most ridiculous thing ever
   // a production only bug on vercel where the path is provided like this: [ 'blocks%2F10000009' ]
-  const fixedPath = route.path.reduce((acc, curr) => [...acc, ...curr.split("/")], [] as string[])
+  const fixedPath = route.path.reduce((acc, curr) => [...acc, ...curr.split("%2F")], [] as string[])
 
   // Resolve the route
   console.log("route", route, fixedPath)
