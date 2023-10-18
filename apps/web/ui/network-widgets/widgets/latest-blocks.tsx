@@ -63,7 +63,7 @@ function BlockRow(props: TransactionRowProps) {
 
   return (
     <Link
-      href={`/${props.network}/block/${props.number}`}
+      href={`/${props.network}/blocks/${props.number}`}
       className={cn(
         props.className,
         "h-full",
