@@ -42,9 +42,15 @@ export async function loadPage(
     nativeToken: network.config.token.name,
   });
 
-  // Resolve the route
-  const resolution = await integration.resolveRoute(route.path);
+  // this is the most ridiculous thing ever
+  // a production only bug on vercel where the path is provided like this: [ 'blocks%2F10000009' ]
+  const fixedPath = route.path.reduce(
+    (acc, curr) => [...acc, ...curr.split("%2F")],
+    [] as string[],
+  );
 
+  // Resolve the route
+  const resolution = await integration.resolveRoute(fixedPath);
   // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
   if (!resolution) {
     notFound();
