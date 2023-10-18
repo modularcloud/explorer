@@ -90,7 +90,6 @@ export function matchRoute(path: string[]): {
   params: { [key: string]: string };
   resolve: (cb: ResolveCallback) => Promise<any>;
 } | null {
-  console.log("matching", path, resolvers, root)
   let currentNode = root;
   const dynamicSegmentValues: string[] = [];
 
@@ -116,7 +115,6 @@ export function matchRoute(path: string[]): {
 
   return {
     resolve: async (cb) => {
-      console.log("resolving", resolver, params);
       const result = await cb(params, resolvers[resolver]);
       return result;
     },

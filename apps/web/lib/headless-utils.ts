@@ -25,14 +25,12 @@ export async function loadPage(
 
   // If the network does not exists, then this page cannot be found
   if (!network) {
-    throw new Error("Network not found")
-    //notFound();
+    notFound();
   }
 
   // Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
   if (!network.config.rpcUrls["svm"]) {
-    throw new Error("SVM not found")
-    // notFound();
+    notFound();
   }
 
   // Create the integration
@@ -46,16 +44,16 @@ export async function loadPage(
 
   // this is the most ridiculous thing ever
   // a production only bug on vercel where the path is provided like this: [ 'blocks%2F10000009' ]
-  const fixedPath = route.path.reduce((acc, curr) => [...acc, ...curr.split("%2F")], [] as string[])
+  const fixedPath = route.path.reduce(
+    (acc, curr) => [...acc, ...curr.split("%2F")],
+    [] as string[],
+  );
 
   // Resolve the route
-  console.log("route", route, fixedPath)
   const resolution = await integration.resolveRoute(fixedPath);
-  console.log("resolution", resolution)
   // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
   if (!resolution) {
-    throw new Error("Resolution not found")
-    //notFound();
+    notFound();
   }
 
   if (resolution.type === "pending") {
@@ -65,8 +63,7 @@ export async function loadPage(
      * Therefore, in the short-term we will treat this as any other page that is not found.
      * However, we will have a special treatment for this in the future.
      */
-    throw new Error("Pending")
-    //notFound();
+    notFound();
   }
 
   if (resolution.type === "error") {
