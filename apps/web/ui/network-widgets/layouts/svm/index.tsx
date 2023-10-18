@@ -16,7 +16,11 @@ import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transact
 import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 
 import { cn } from "~/ui/shadcn/utils";
-import { useWidgetData } from "./use-widget-data";
+import {
+  useLatestBlocks,
+  useLatestTransactions,
+  useWidgetData,
+} from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
 interface Props {
@@ -28,38 +32,26 @@ export function SVMWidgetLayout({ network }: Props) {
   console.log("network", network);
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
-  const latestTransactions = [
-    {
-      hash: "0x123",
-      success: true,
-      type: "standard",
+  const latestBlocks = useLatestBlocks({
+    context: {
+      limit: 5,
+      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
     },
-    {
-      hash: "0x456",
-      success: false,
-      type: "standard",
-    },
-  ];
+  } as any);
 
-  const latestBlocks = [
-    {
-      number: 1,
-      noOfTransactions: 10,
-      timestamp: 1633027582,
+  const latestTransactions = useLatestTransactions({
+    context: {
+      limit: 5,
+      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
     },
-    {
-      number: 2,
-      noOfTransactions: 20,
-      timestamp: 1633027583,
-    },
-  ];
+  } as any);
 
   if (error) {
-    return <EvmWithPriceSkeleton error={error.toString()} />;
+    return <SvmSkeleton error={error.toString()} />;
   }
 
   if (!apiResult || isLoading) {
-    return <EvmWithPriceSkeleton />;
+    return <SvmSkeleton />;
   }
 
   const {
@@ -100,7 +92,19 @@ export function SVMWidgetLayout({ network }: Props) {
       <LatestTransactions
         networkSlug={network.id}
         className="col-span-2 row-span-2"
-        data={latestTransactions}
+        data={
+          latestTransactions?.data?.result
+            ? latestTransactions.data.result.map((transaction: any) => {
+              console.log("transaction", transaction);
+                return {
+                  hash: transaction.transaction.signatures[0],
+                  success: !transaction.meta.err,
+                  // temporary!!
+                  type: "Vote",
+                };
+              })
+            : []
+        }
       />
 
       <IconCard
@@ -131,7 +135,15 @@ export function SVMWidgetLayout({ network }: Props) {
       <LatestBlocks
         networkSlug={network.id}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-        data={latestBlocks}
+        data={
+          latestBlocks.data
+            ? latestBlocks.data.result.map((block: any) => ({
+                number: block.parentSlot + 1,
+                noOfTransactions: block.transactions.length,
+                timestamp: block.blockTime * 1000,
+              }))
+            : []
+        }
       />
     </div>
   );
@@ -153,7 +165,7 @@ function Placeholder(props: {
   );
 }
 
-export function EvmWithPriceSkeleton(props: { error?: string }) {
+export function SvmSkeleton(props: { error?: string }) {
   return (
     <div className="w-full grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px] relative">
       {props.error && (

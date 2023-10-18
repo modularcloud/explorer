@@ -80,6 +80,14 @@ export function registerResolver(resolver: AnyResolver) {
   resolvers[resolver.__config.id] = resolver;
 }
 
+export async function resolve(resolverId: string, input: any) {
+  const resolver = resolvers[resolverId];
+  if (!resolver) {
+    throw new Error(`Resolver ${resolverId} not found`);
+  }
+  return await resolver(input);
+}
+
 type ResolveCallback = (
   params: { [key: string]: string },
   resolver: AnyResolver,

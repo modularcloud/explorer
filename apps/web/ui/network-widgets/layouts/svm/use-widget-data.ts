@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import { z } from "zod";
+import { PageContext } from "@modularcloud/headless";
 
 const widgetDataSchema = z.object({
   metrics: z.object({
@@ -9,6 +10,58 @@ const widgetDataSchema = z.object({
   }),
   slotNumber: z.string(),
 });
+
+export function useLatestBlocks(context: PageContext) {
+  return useSWR(
+    "blocks",
+    async () => {
+      const response = await fetch("/api/resolve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resolverId: "sealevel-latest-blocks-0.0.0",
+          input: context,
+        }),
+      });
+      const data = await response.json();
+      return data;
+    },
+    {
+      refreshInterval: 30 * 1000, // each 30 seconds
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
+}
+
+export function useLatestTransactions(context: PageContext) {
+  return useSWR(
+    "transactions",
+    async () => {
+      const response = await fetch("/api/resolve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resolverId: "sealevel-latest-transactions-0.0.0",
+          input: context,
+        }),
+      });
+      const data = await response.json();
+      return data;
+    },
+    {
+      refreshInterval: 30 * 1000, // each 30 seconds
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
+}
 
 export function useWidgetData(networkSlug: string) {
   return useSWR(
