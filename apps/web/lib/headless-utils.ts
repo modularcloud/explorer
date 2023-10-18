@@ -45,9 +45,9 @@ export async function loadPage(
   });
 
   // Resolve the route
-  throw new Error(JSON.stringify({ route, network, integration }));
-  // const resolution = await integration.resolveRoute(route.path);
-
+  console.log(integration)
+  const resolution = await integration.resolveRoute(route.path);
+  throw new Error(JSON.stringify(resolution));
   // // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
   // if (!resolution) {
   //   throw new Error("Resolution not found")
