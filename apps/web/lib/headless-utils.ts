@@ -25,12 +25,14 @@ export async function loadPage(
 
   // If the network does not exists, then this page cannot be found
   if (!network) {
-    notFound();
+    throw new Error("Network not found")
+    //notFound();
   }
 
   // Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
   if (!network.config.rpcUrls["svm"]) {
-    notFound();
+    throw new Error("SVM not found")
+    // notFound();
   }
 
   // Create the integration
@@ -43,27 +45,30 @@ export async function loadPage(
   });
 
   // Resolve the route
-  const resolution = await integration.resolveRoute(route.path);
+  throw new Error(JSON.stringify({ route, network, integration }));
+  // const resolution = await integration.resolveRoute(route.path);
 
-  // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
-  if (!resolution) {
-    notFound();
-  }
+  // // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
+  // if (!resolution) {
+  //   throw new Error("Resolution not found")
+  //   //notFound();
+  // }
 
-  if (resolution.type === "pending") {
-    /**
-     * Pending responses are for items that cannot be found, but may exist in the future.
-     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
-     * Therefore, in the short-term we will treat this as any other page that is not found.
-     * However, we will have a special treatment for this in the future.
-     */
-    notFound();
-  }
+  // if (resolution.type === "pending") {
+  //   /**
+  //    * Pending responses are for items that cannot be found, but may exist in the future.
+  //    * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+  //    * Therefore, in the short-term we will treat this as any other page that is not found.
+  //    * However, we will have a special treatment for this in the future.
+  //    */
+  //   throw new Error("Pending")
+  //   //notFound();
+  // }
 
-  if (resolution.type === "error") {
-    throw new Error(resolution.error);
-  }
+  // if (resolution.type === "error") {
+  //   throw new Error(resolution.error);
+  // }
 
-  // We could parse the response with the Zod Page Schema, however, we will trust it is in the right format as a small speed optimization.
-  return resolution.result as Page;
+  // // We could parse the response with the Zod Page Schema, however, we will trust it is in the right format as a small speed optimization.
+  // return resolution.result as Page;
 }
