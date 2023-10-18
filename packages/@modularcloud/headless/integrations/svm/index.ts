@@ -40,15 +40,16 @@ export function createSVMIntegration(context: PageContext) {
       additionalContext = {},
     ): Promise<IntegrationResponse> => {
       const match = matchRoute(path);
-      if (match) {
-        return match.resolve((params, resolver) =>
-          resolver({
-            ...params,
-            context: { ...context, ...additionalContext },
-          }),
-        );
-      }
-      return null;
+      throw Error(JSON.stringify({ match, path, additionalContext }))
+      // if (match) {
+      //   return match.resolve((params, resolver) =>
+      //     resolver({
+      //       ...params,
+      //       context: { ...context, ...additionalContext },
+      //     }),
+      //   );
+      // }
+      // return null;
     },
   };
 }
