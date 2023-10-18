@@ -616,7 +616,6 @@ const blockOverviewResolver = createResolver(
       previousBlockhash: z.string(),
       rewards: z.object({ lamports: z.number() }).array(),
     });
-    console.log(blockResponse);
     const block = MinimalBlockSchema.parse(blockResponse.result);
 
     const PageResponse: Page = {
