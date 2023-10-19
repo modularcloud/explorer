@@ -69,7 +69,7 @@ export function IntegrationActionListView({
             onSelect: () => {
               onNavigate();
               router.push(
-                `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
+                `/${selectedNetwork.id}/search?q=${encodeURIComponent(query)}`,
               );
             },
           },

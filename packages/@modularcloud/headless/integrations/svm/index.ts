@@ -25,17 +25,32 @@ export function registerResolvers() {
 export function createSVMIntegration(context: PageContext) {
   registerResolvers();
 
-  addRoute(["addresses", "[address]"], "svm-address-0.0.0");
+  addRoute(["addresses", "[address]"], "svm-address-0.0.0", {
+    enabled: true,
+    regex: /[1-9A-HJ-NP-Za-km-z]{32,44}/,
+    key: "address",
+    name: "Address",
+  });
   addRoute(
     ["addresses", "[address]", "transactions"],
     "svm-address-transactions-0.0.0",
   );
-  addRoute(["transactions", "[signature]"], "svm-transaction-0.0.0");
+  addRoute(["transactions", "[signature]"], "svm-transaction-0.0.0", {
+    enabled: true,
+    regex: /[1-9A-HJ-NP-Za-km-z]{64}/,
+    key: "signature",
+    name: "Transaction",
+  });
   addRoute(
     ["transactions", "[signature]", "instructions"],
     "svm-transaction-instructions-0.0.0",
   );
-  addRoute(["blocks", "[slot]"], "svm-block-0.0.0");
+  addRoute(["blocks", "[slot]"], "svm-block-0.0.0", {
+    enabled: true,
+    regex: /\d+/,
+    key: "slot",
+    name: "Block",
+  });
   addRoute(
     ["blocks", "[slot]", "transactions"],
     "svm-block-transactions-0.0.0",

@@ -19,9 +19,50 @@ function extractDynamicSegment(segment: string): string | null {
   return match ? match[1] : null;
 }
 
-export function addRoute(path: string[], resolver: string) {
+type SearchConfig = {
+  // is search enabled? this should always be true if config is included
+  enabled: boolean;
+
+  // a regex that matches the query, if any query is allow then use /.*/
+  regex: RegExp;
+
+  // the name of the field to use based on the path, i.e. path: ["blocks", "[signature]"] would be "signature"
+  key: string;
+
+  // the name of the type that will be returned by this search, for the above it would be "Block"
+  name: string;
+};
+
+// TODO: since this is an array, sometimes the builders can be added more than once
+export const SearchBuilders: {
+  getPath: (query: string) => string[] | null;
+  name: string;
+}[] = [];
+
+export function addRoute(
+  path: string[],
+  resolver: string,
+  searchConfig?: SearchConfig,
+) {
   let currentNode = root;
   let dynamicSegmentNames: string[] = [];
+
+  if (searchConfig?.enabled) {
+    SearchBuilders.push({
+      getPath: (query: string) => {
+        if (!query.match(searchConfig.regex)) {
+          return null;
+        }
+        return path.map((segment) => {
+          if (segment === `[${searchConfig.key}]`) {
+            return query;
+          }
+          return segment;
+        });
+      },
+      name: searchConfig.name,
+    });
+  }
 
   for (const segment of path) {
     const dynamicSegment = extractDynamicSegment(segment);
