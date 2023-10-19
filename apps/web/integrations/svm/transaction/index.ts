@@ -15,18 +15,19 @@ export async function TransactionExtract(
   metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
-  const response = await fetch(metadata.endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "getTransaction",
-      params: [query, "json"],
-    }),
-  });
+  // const response = await fetch(metadata.endpoint, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     jsonrpc: "2.0",
+  //     id: 1,
+  //     method: "getTransaction",
+  //     params: [query, "json"],
+  //   }),
+  // });
+  const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/tx?signature=${query}`)
 
   const data = await response.json();
 

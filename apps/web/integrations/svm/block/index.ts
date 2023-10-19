@@ -15,26 +15,27 @@ export async function BlockExtract(
   metadata: EngineConfigMetadata,
 ) {
   const query = z.string().parse(_q);
-  const response = await fetch(metadata.endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "getBlock",
-      params: [
-        Number(query),
-        {
-          encoding: "json",
-          maxSupportedTransactionVersion: 0,
-          transactionDetails: "full",
-          rewards: true,
-        },
-      ],
-    }),
-  });
+  // const response = await fetch(metadata.endpoint, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     jsonrpc: "2.0",
+  //     id: 1,
+  //     method: "getBlock",
+  //     params: [
+  //       Number(query),
+  //       {
+  //         encoding: "json",
+  //         maxSupportedTransactionVersion: 0,
+  //         transactionDetails: "full",
+  //         rewards: true,
+  //       },
+  //     ],
+  //   }),
+  // });
+  const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/block?slotNumber=${query}`)
 
   const data = await response.json();
   console.log(data);
