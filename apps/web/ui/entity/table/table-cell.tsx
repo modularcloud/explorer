@@ -6,63 +6,45 @@ import { cn } from "~/ui/shadcn/utils";
 import { LongVal } from "~/ui/long-val";
 import { CheckCircle, XCircle } from "~/ui/icons";
 
-interface Props {
-  value: Value;
-  className?: string;
-}
 
-export function TableCell({ value, className }: Props) {
-  if (value.payload === undefined || value.payload === null) return null;
-
-  switch (value.type) {
+export function Value({ payload, type }: Value) {
+  switch (type) {
     case "icon":
       return (
-        <td className={cn("flex items-center px-4", className)}>
-          {value.payload === "SUCCESS" ? (
+          payload === "SUCCESS" ? (
             <>
               <CheckCircle
-                className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-0.5"
+                className="text-teal-500"
                 aria-hidden="true"
               />
             </>
           ) : (
             <>
               <XCircle
-                className="h-5 w-5 flex-shrink-0 text-red-500 relative top-0.5"
+                className="text-red-500"
                 aria-hidden="true"
               />
             </>
-          )}
-        </td>
+          )
       );
     case "longval":
       return (
-        <td className={cn("items-center flex col-span-2 py-4", className)}>
-          {LongVal({
-            max: value.payload.maxLength ?? 25,
-            step: value.payload.stepDown ?? 1,
-            ...value.payload,
-          })}
-        </td>
+          LongVal({
+            max: payload.maxLength ?? 60,
+            step: payload.stepDown ?? 10,
+            ...payload,
+          })
       );
     case "standard":
       return (
-        <td
-          className={cn(
-            "flex items-center",
-            "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
-            className,
-          )}
+        <span
+          className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full"
         >
-          {value.payload.toString()}
-        </td>
+          {payload}
+        </span>
       );
     case "status":
-      return (
-        <td className="flex items-center">
-          <Status status={value.payload} />
-        </td>
-      );
+      return <Status status={!!payload} />
     default:
       return null;
   }

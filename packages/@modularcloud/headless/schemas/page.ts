@@ -89,6 +89,7 @@ const CollectionSchema = z.object({
     })
     .array(),
 });
+export type Collection = z.infer<typeof CollectionSchema>;
 
 // Schema for entire page
 export const PageSchema = z.object({
