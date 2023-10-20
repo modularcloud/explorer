@@ -82,7 +82,7 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
 
 export async function Overview({ properties }: Props) {
   return (
-    <section className="pb-4">
+    <section className="pb-4 pt-8">
       <dl className="border-t border-mid-dark-100 w-full flex flex-col">
         {/* <Entry
           label="Entity Type"
