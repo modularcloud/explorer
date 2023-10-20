@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
 import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
+import { Table } from "~/ui/entity/table";
 
 async function AyncPageContent({ params }: { params: HeadlessRoute }) {
   const page = await loadPage(params);
@@ -8,12 +9,8 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
   if (page.body.type === "notebook") {
     return <Overview properties={page.body.properties} />;
   }
-  // table is not implemented yet so we will just print the response
-  return (
-    <pre className="overflow-scroll h-screen">
-      {JSON.stringify(page, null, 2)}
-    </pre>
-  );
+
+  return <Table columns={page.body.tableColumns} entries={page.body.entries} />;
 }
 
 export default function Page({ params }: { params: HeadlessRoute }) {

@@ -225,6 +225,7 @@ const addressTransactionsResolver = createResolver(
             },
             {
               columnLabel: "Status",
+              breakpoint: "sm",
             },
             {
               columnLabel: "Slot",
@@ -754,10 +755,8 @@ const blockTransactionsResolver = createResolver(
           },
           {
             columnLabel: "Status",
-          },
-          {
-            columnLabel: "Slot",
-          },
+            breakpoint: "sm",
+          }
         ],
         entries: block.transactions.map((transaction) => {
           const properties: Record<string, Value> = {
@@ -769,6 +768,8 @@ const blockTransactionsResolver = createResolver(
               type: "longval",
               payload: {
                 value: transaction.transaction.signatures[0],
+                maxLength: 60,
+                stepDown: 10,
               },
             },
             Slot: {
