@@ -4,10 +4,57 @@ import { Value } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { Collection, Column } from "@modularcloud/headless";
+import { useRouter } from "next/navigation";
 
 interface Props {
   columns: Collection["tableColumns"];
   entries: Collection["entries"];
+}
+
+// I am breaking this into its own component so I can easily prefetch the data
+function TableRow({
+  columns,
+  entry,
+}: {
+  columns: Collection["tableColumns"];
+  entry: Collection["entries"][0];
+}) {
+  const route = useRouter();
+
+  React.useEffect(() => {
+    if (entry.link) {
+      route.prefetch(entry.link);
+    }
+  }, [entry]);
+  return (
+    <tr
+      onClick={(e) => {
+        if (entry.link) {
+          e.stopPropagation();
+          route.push(entry.link);
+        }
+      }}
+      className={cn(
+        "h-16 border-b border-[#ECEFF3]",
+        entry.link && "cursor-pointer",
+      )}
+    >
+      <td className="px-1 sm:px-3" aria-hidden={true}>
+        {/* For spacing purposes only */}
+      </td>
+      {columns.map((col) => (
+        <td
+          key={col.columnLabel}
+          className={cn("px-2", generateClassname(col.breakpoint))}
+        >
+          <Value {...entry.row[col.columnLabel]} />
+        </td>
+      ))}
+      <td className="px-1 sm:px-3" aria-hidden={true}>
+        {/* For spacing purposes only */}
+      </td>
+    </tr>
+  );
 }
 
 const generateClassname = (breakpoint: Column["breakpoint"]) => {
@@ -44,7 +91,10 @@ export function Table({ columns, entries }: Props) {
     <table className="w-full overflow-y-auto max-w-full">
       <thead className="sticky top-0 bg-white z-10">
         <tr className="h-12 text-left hidden sm:table-row">
-          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+          <th
+            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+            aria-hidden={true}
+          >
             {/* For spacing purposes only */}
           </th>
           {columns.map((col) => (
@@ -63,12 +113,18 @@ export function Table({ columns, entries }: Props) {
               </span>
             </th>
           ))}
-          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+          <th
+            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+            aria-hidden={true}
+          >
             {/* For spacing purposes only */}
           </th>
         </tr>
         <tr className="h-12 text-left table-row sm:hidden">
-          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+          <th
+            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+            aria-hidden={true}
+          >
             {/* For spacing purposes only */}
           </th>
 
@@ -82,29 +138,17 @@ export function Table({ columns, entries }: Props) {
           >
             Transactions
           </th>
-          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+          <th
+            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+            aria-hidden={true}
+          >
             {/* For spacing purposes only */}
           </th>
         </tr>
       </thead>
       <tbody>
         {entries.map((entry) => (
-          <tr key={entry.key} className="h-16 border-b border-[#ECEFF3]">
-            <td className="px-1 sm:px-3" aria-hidden={true}>
-              {/* For spacing purposes only */}
-            </td>
-            {columns.map((col) => (
-              <td
-                key={col.columnLabel}
-                className={cn("px-2", generateClassname(col.breakpoint))}
-              >
-                <Value {...entry.row[col.columnLabel]} />
-              </td>
-            ))}
-            <td className="px-1 sm:px-3" aria-hidden={true}>
-              {/* For spacing purposes only */}
-            </td>
-          </tr>
+          <TableRow key={entry.key} columns={columns} entry={entry} />
         ))}
       </tbody>
     </table>
