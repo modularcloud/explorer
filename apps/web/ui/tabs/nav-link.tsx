@@ -27,6 +27,10 @@ export function NavLink({
 }: Props) {
   const params: HeadlessRoute = useParams();
 
+  console.log({
+    params,
+  });
+
   let activeTabIndex = tabs.findIndex((tab) => tab === params.path.join("/"));
   // in case of not found
   if (activeTabIndex === -1) activeTabIndex = 0;
