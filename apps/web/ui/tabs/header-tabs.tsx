@@ -16,7 +16,7 @@ interface Props {
   params: HeadlessRoute;
 }
 
-type Tabs = {
+type Tab = {
   Icon?: React.ComponentType<{
     className?: string;
     "aria-hidden"?: boolean | "true" | "false";
@@ -32,8 +32,8 @@ export async function HeaderTabs({ params }: Props) {
   // TODO: use this schema directly without modification
   const resolvedTabs = page.tabs;
 
-  const tabs: Tabs[] = resolvedTabs.map((tab) => {
-    // FIXME: this should use a global map somewhere (i think)
+  const tabs: Tab[] = resolvedTabs.map((tab) => {
+    // TODO: We should have a map of icons for each type of tab
     let Icon = tab.text === "Transactions" ? ArrowLeftRight : ArrowRight;
     if (tab.text === "Overview") Icon = Stars;
 
@@ -45,12 +45,12 @@ export async function HeaderTabs({ params }: Props) {
     };
   });
 
-  // add dummy tab at the end to fill space
-  tabs.push({
+  const DUMMY_TAB_TO_FILL_SPACE: Tab = {
     text: null,
     totalCount: null,
     route: null,
-  });
+  };
+  tabs.push(DUMMY_TAB_TO_FILL_SPACE);
 
   return (
     <nav
