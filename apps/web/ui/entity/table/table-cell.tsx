@@ -30,8 +30,8 @@ export function Value({ payload, type }: Value) {
     case "longval":
       return (
           LongVal({
-            max: payload.maxLength ?? 25,
-            step: payload.stepDown ?? 1,
+            max: payload.maxLength ?? 60,
+            step: payload.stepDown ?? 10,
             ...payload,
           })
       );

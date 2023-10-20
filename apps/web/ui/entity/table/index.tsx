@@ -1,20 +1,13 @@
 "use client";
 import * as React from "react";
-import { Value as ValueElement } from "./table-cell";
+import { Value } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
-import type { Value, Page, Column } from "@modularcloud/headless";
-import { capitalize } from "~/lib/shared-utils";
-import { generateColumnStyle } from "~/ui/associated/list/table/column-styles";
+import type { Collection, Column } from "@modularcloud/headless";
 
 interface Props {
-  columns: Column[];
-  entries: Array<{
-    link?: string;
-    row: Record<string, Value>;
-    key: string;
-    card: Record<string, Value>;
-  }>;
+  columns: Collection["tableColumns"];
+  entries: Collection["entries"];
 }
 
 const generateClassname = (breakpoint: Column["breakpoint"]) => {
@@ -47,37 +40,20 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
 };
 
 export function Table({ columns, entries }: Props) {
-  const firstEntry = entries[0];
-
-  if (!firstEntry) {
-    return null;
-  }
-
-  let totalLongValues = 0;
-  for (const value of Object.values(firstEntry.row)) {
-    if (value.type === "longval") {
-      totalLongValues++;
-    }
-  }
-
-  let totalHiddenColumns = 0;
-  for (const col of columns) {
-    if (col.hideColumnLabel) {
-      totalHiddenColumns++;
-    }
-  }
-
   return (
     <table className="w-full overflow-y-auto max-w-full">
       <thead className="sticky top-0 bg-white z-10">
         <tr className="h-12 text-left hidden sm:table-row">
+          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+            {/* For spacing purposes only */}
+          </th>
           {columns.map((col) => (
             <th
               key={col.columnLabel}
               className={cn(
                 // bottom border disapears when scrolling, so using a shadow instead
                 "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                "px-4 md:px-8",
+                "px-2",
                 // breakpoints
                 generateClassname(col.breakpoint),
               )}
@@ -87,36 +63,47 @@ export function Table({ columns, entries }: Props) {
               </span>
             </th>
           ))}
+          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+            {/* For spacing purposes only */}
+          </th>
         </tr>
         <tr className="h-12 text-left table-row sm:hidden">
-            <th
-              colSpan={columns.length}
-              className={cn(
-                // bottom border disapears when scrolling, so using a shadow instead
-                "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                "px-4 md:px-8",
-                // breakpoints
-                //generateClassname(col.breakpoint),
-              )}
-            >
-              Transactions
-            </th>
+          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+            {/* For spacing purposes only */}
+          </th>
+
+          <th
+            colSpan={columns.length}
+            className={cn(
+              // bottom border disapears when scrolling, so using a shadow instead
+              "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+              "px-2",
+            )}
+          >
+            Transactions
+          </th>
+          <th className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]" aria-hidden={true}>
+            {/* For spacing purposes only */}
+          </th>
         </tr>
       </thead>
       <tbody>
         {entries.map((entry) => (
           <tr key={entry.key} className="h-16 border-b border-[#ECEFF3]">
+            <td className="px-1 sm:px-3" aria-hidden={true}>
+              {/* For spacing purposes only */}
+            </td>
             {columns.map((col) => (
               <td
                 key={col.columnLabel}
-                className={cn(
-                  "px-4 md:px-8",
-                  generateClassname(col.breakpoint),
-                )}
+                className={cn("px-2", generateClassname(col.breakpoint))}
               >
-                <ValueElement {...entry.row[col.columnLabel]} />
+                <Value {...entry.row[col.columnLabel]} />
               </td>
             ))}
+            <td className="px-1 sm:px-3" aria-hidden={true}>
+              {/* For spacing purposes only */}
+            </td>
           </tr>
         ))}
       </tbody>
