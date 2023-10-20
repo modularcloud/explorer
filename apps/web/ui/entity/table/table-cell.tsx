@@ -17,7 +17,7 @@ export function TableCell({ value, className }: Props) {
   switch (value.type) {
     case "icon":
       return (
-        <td className={cn("flex items-center px-4", className)}>
+        <span className={cn("flex items-center px-4", className)}>
           {value.payload === "SUCCESS" ? (
             <>
               <CheckCircle
@@ -33,21 +33,21 @@ export function TableCell({ value, className }: Props) {
               />
             </>
           )}
-        </td>
+        </span>
       );
     case "longval":
       return (
-        <td className={cn("items-center flex col-span-2 py-4", className)}>
+        <span className={cn("items-center flex col-span-2 py-4", className)}>
           {LongVal({
             max: value.payload.maxLength ?? 25,
             step: value.payload.stepDown ?? 1,
             ...value.payload,
           })}
-        </td>
+        </span>
       );
     case "standard":
       return (
-        <td
+        <span
           className={cn(
             "flex items-center",
             "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
@@ -55,13 +55,13 @@ export function TableCell({ value, className }: Props) {
           )}
         >
           {value.payload.toString()}
-        </td>
+        </span>
       );
     case "status":
       return (
-        <td className="flex items-center">
+        <span className="flex items-center">
           <Status status={value.payload} />
-        </td>
+        </span>
       );
     default:
       return null;

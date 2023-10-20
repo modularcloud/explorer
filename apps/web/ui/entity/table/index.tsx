@@ -12,9 +12,39 @@ interface Props {
   entries: Array<{
     link?: string;
     row: Record<string, Value>;
+    key: string;
     card: Record<string, Value>;
   }>;
 }
+
+const generateClassname = (breakpoint: Column.breakpoint) => {
+  switch (breakpoint) {
+    case "xs":
+      return "max-xs:hidden";
+    case "sm":
+      return "max-sm:hidden";
+    case "md":
+      return "max-md:hidden";
+    case "lg":
+      return "max-lg:hidden";
+    case "xl":
+      return "max-xl:hidden";
+    case "2xl":
+      return "max-2xl:hidden";
+    case "max-xs":
+      return "xs:hidden";
+    case "max-sm":
+      return "sm:hidden";
+    case "max-md":
+      return "md:hidden";
+    case "max-lg":
+      return "lg:hidden";
+    case "max-xl":
+      return "xl:hidden";
+    case "max-2xl":
+      return "2xl:hidden";
+  }
+};
 
 export function Table({ columns, entries }: Props) {
   const firstEntry = entries[0];
@@ -39,66 +69,42 @@ export function Table({ columns, entries }: Props) {
 
   return (
     <table className="w-full overflow-y-auto max-w-full">
-      <thead className="sticky top-0 filter backdrop-blur-sm">
-        <tr
-          className={cn(
-            "flex items-center justify-between border-b border-mid-dark-100",
-            "py-4 px-10 grid",
-          )}
-          style={{
-            gridTemplateColumns: `repeat(${
-              columns.length + totalLongValues - totalHiddenColumns
-            }, minmax(0, 1fr))`,
-            gridAutoColumns: "1fr",
-          }}
-        >
-          {columns
-            .filter((col) => !col.hideColumnLabel)
-            .map((col) => (
-              <th
-                key={col.columnLabel}
-                className={cn(
-                  "font-medium text-start",
-                  firstEntry.row[col.columnLabel].type === "longval" &&
-                    "col-span-2",
-                  col.breakpoint && generateColumnStyle(col),
-                )}
-              >
-                {capitalize(col.columnLabel)}
-              </th>
-            ))}
+      <thead className="sticky top-0 bg-white z-10">
+        <tr className="h-12 text-left padded-row">
+          {columns.map((col) => (
+            <th
+              key={col.columnLabel}
+              className={cn(
+                // bottom border disapears when scrolling, so using a shadow instead
+                "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                "px-4 md:px-8",
+                // breakpoints
+                generateClassname(col.breakpoint),
+              )}
+            >
+              <span className={cn(col.hideColumnLabel && "invisible")}>
+                {col.columnLabel}
+              </span>
+            </th>
+          ))}
         </tr>
       </thead>
-
-      <tbody className="h-full w-full max-w-full overflow-x-clip">
-        {entries.map((entry, index) => {
-          const selectedProperties = columns.map(
-            (col) => [col, entry.row[col.columnLabel]] as const,
-          );
-
-          return (
-            <tr
-              key={index}
-              className={cn(
-                "py-4 px-10 gap-4 w-full max-w-full",
-                "grid border-b border-mid-dark-100",
-              )}
-              style={{
-                gridTemplateColumns: `repeat(${
-                  columns.length + totalLongValues
-                }, minmax(0, 1fr))`,
-              }}
-            >
-              {selectedProperties.map(([column, value], index) => (
-                <TableCell
-                  value={value}
-                  key={column.columnLabel}
-                  className={column.breakpoint && generateColumnStyle(column)}
-                />
-              ))}
-            </tr>
-          );
-        })}
+      <tbody>
+        {entries.map((entry) => (
+          <tr key={entry.key} className="h-16 border-b border-[#ECEFF3]">
+            {columns.map((col) => (
+              <td
+                key={col.columnLabel}
+                className={cn(
+                  "px-4 md:px-8",
+                  generateClassname(col.breakpoint),
+                )}
+              >
+                <TableCell value={entry.row[col.columnLabel]} />
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
