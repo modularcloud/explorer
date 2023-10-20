@@ -11,7 +11,6 @@ interface Props {
   entries: Collection["entries"];
 }
 
-// I am breaking this into its own component so I can easily prefetch the data
 function TableRow({
   columns,
   entry,
@@ -19,19 +18,19 @@ function TableRow({
   columns: Collection["tableColumns"];
   entry: Collection["entries"][0];
 }) {
-  const route = useRouter();
+  const router = useRouter();
 
   React.useEffect(() => {
     if (entry.link) {
-      route.prefetch(entry.link);
+      router.prefetch(entry.link);
     }
-  }, [entry]);
+  }, [entry, router]);
   return (
     <tr
       onClick={(e) => {
         if (entry.link) {
           e.stopPropagation();
-          route.push(entry.link);
+          router.push(entry.link);
         }
       }}
       className={cn(
@@ -87,6 +86,9 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
 };
 
 export function Table({ columns, entries }: Props) {
+  const firstVisibleColumnName = columns.filter(
+    (col) => !col.hideColumnLabel,
+  )[0].columnLabel;
   return (
     <table className="w-full overflow-y-auto max-w-full">
       <thead className="sticky top-0 bg-white z-10">
@@ -103,7 +105,7 @@ export function Table({ columns, entries }: Props) {
               className={cn(
                 // bottom border disapears when scrolling, so using a shadow instead
                 "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                "px-2",
+                "px-2 font-semibold",
                 // breakpoints
                 generateClassname(col.breakpoint),
               )}
@@ -133,10 +135,10 @@ export function Table({ columns, entries }: Props) {
             className={cn(
               // bottom border disapears when scrolling, so using a shadow instead
               "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-              "px-2",
+              "px-2 font-semibold",
             )}
           >
-            Transactions
+            {firstVisibleColumnName}
           </th>
           <th
             className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
