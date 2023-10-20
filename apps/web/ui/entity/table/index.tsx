@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Value } from "./table-cell";
+import { TableCell } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { Collection, Column } from "@modularcloud/headless";
@@ -46,7 +46,7 @@ function TableRow({
           key={col.columnLabel}
           className={cn("px-2", generateClassname(col.breakpoint))}
         >
-          <Value {...entry.row[col.columnLabel]} />
+          <TableCell {...entry.row[col.columnLabel]} />
         </td>
       ))}
       <td className="px-1 sm:px-3" aria-hidden={true}>
