@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { TableCell } from "./table-cell";
+import { Value as ValueElement } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { Value, Page, Column } from "@modularcloud/headless";
@@ -70,7 +70,7 @@ export function Table({ columns, entries }: Props) {
   return (
     <table className="w-full overflow-y-auto max-w-full">
       <thead className="sticky top-0 bg-white z-10">
-        <tr className="h-12 text-left padded-row">
+        <tr className="h-12 text-left hidden sm:table-row">
           {columns.map((col) => (
             <th
               key={col.columnLabel}
@@ -88,6 +88,20 @@ export function Table({ columns, entries }: Props) {
             </th>
           ))}
         </tr>
+        <tr className="h-12 text-left table-row sm:hidden">
+            <th
+              colSpan={columns.length}
+              className={cn(
+                // bottom border disapears when scrolling, so using a shadow instead
+                "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                "px-4 md:px-8",
+                // breakpoints
+                //generateClassname(col.breakpoint),
+              )}
+            >
+              Transactions
+            </th>
+        </tr>
       </thead>
       <tbody>
         {entries.map((entry) => (
@@ -100,7 +114,7 @@ export function Table({ columns, entries }: Props) {
                   generateClassname(col.breakpoint),
                 )}
               >
-                <TableCell value={entry.row[col.columnLabel]} />
+                <ValueElement {...entry.row[col.columnLabel]} />
               </td>
             ))}
           </tr>
