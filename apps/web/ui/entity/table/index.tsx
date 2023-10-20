@@ -17,7 +17,7 @@ interface Props {
   }>;
 }
 
-const generateClassname = (breakpoint: Column.breakpoint) => {
+const generateClassname = (breakpoint: Column["breakpoint"]) => {
   switch (breakpoint) {
     case "xs":
       return "max-xs:hidden";
