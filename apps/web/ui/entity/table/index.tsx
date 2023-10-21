@@ -5,6 +5,7 @@ import { cn } from "~/ui/shadcn/utils";
 
 import type { Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface Props {
   columns: Collection["tableColumns"];
@@ -14,9 +15,11 @@ interface Props {
 function TableRow({
   columns,
   entry,
+  style
 }: {
   columns: Collection["tableColumns"];
   entry: Collection["entries"][0];
+  style: any
 }) {
   const router = useRouter();
 
@@ -37,6 +40,7 @@ function TableRow({
         "h-16 border-b border-[#ECEFF3]",
         entry.link && "cursor-pointer",
       )}
+      style={style}
     >
       <td className="px-1 sm:px-3" aria-hidden={true}>
         {/* For spacing purposes only */}
@@ -86,73 +90,102 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
 };
 
 export function Table({ columns, entries }: Props) {
+  const parentRef = React.useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: entries.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 64,
+    overscan: 20,
+  });
+
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
   )[0].columnLabel;
-  return (
-    <table className="w-full overflow-y-auto max-w-full">
-      <thead className="sticky top-0 bg-white z-10">
-        <tr className="h-12 text-left hidden sm:table-row">
-          <th
-            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-            aria-hidden={true}
-          >
-            {/* For spacing purposes only */}
-          </th>
-          {columns.map((col) => (
-            <th
-              key={col.columnLabel}
-              className={cn(
-                // bottom border disapears when scrolling, so using a shadow instead
-                "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                "px-2 font-semibold",
-                // breakpoints
-                generateClassname(col.breakpoint),
-              )}
-            >
-              <span className={cn(col.hideColumnLabel && "invisible")}>
-                {col.columnLabel}
-              </span>
-            </th>
-          ))}
-          <th
-            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-            aria-hidden={true}
-          >
-            {/* For spacing purposes only */}
-          </th>
-        </tr>
-        <tr className="h-12 text-left table-row sm:hidden">
-          <th
-            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-            aria-hidden={true}
-          >
-            {/* For spacing purposes only */}
-          </th>
 
-          <th
-            colSpan={columns.length}
-            className={cn(
-              // bottom border disapears when scrolling, so using a shadow instead
-              "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-              "px-2 font-semibold",
-            )}
-          >
-            {firstVisibleColumnName}
-          </th>
-          <th
-            className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-            aria-hidden={true}
-          >
-            {/* For spacing purposes only */}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {entries.map((entry) => (
-          <TableRow key={entry.key} columns={columns} entry={entry} />
-        ))}
-      </tbody>
-    </table>
+  return (
+    <div ref={parentRef}>
+      <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+        <table className="w-full overflow-y-auto max-w-full">
+          <thead className="sticky top-0 bg-white z-10">
+            <tr className="h-12 text-left hidden sm:table-row">
+              <th
+                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                aria-hidden={true}
+              >
+                {/* For spacing purposes only */}
+              </th>
+              {columns.map((col) => (
+                <th
+                  key={col.columnLabel}
+                  className={cn(
+                    // bottom border disapears when scrolling, so using a shadow instead
+                    "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                    "px-2 font-semibold",
+                    // breakpoints
+                    generateClassname(col.breakpoint),
+                  )}
+                >
+                  <span className={cn(col.hideColumnLabel && "invisible")}>
+                    {col.columnLabel}
+                  </span>
+                </th>
+              ))}
+              <th
+                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                aria-hidden={true}
+              >
+                {/* For spacing purposes only */}
+              </th>
+            </tr>
+            <tr className="h-12 text-left table-row sm:hidden">
+              <th
+                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                aria-hidden={true}
+              >
+                {/* For spacing purposes only */}
+              </th>
+
+              <th
+                colSpan={columns.length}
+                className={cn(
+                  // bottom border disapears when scrolling, so using a shadow instead
+                  "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                  "px-2 font-semibold",
+                )}
+              >
+                {firstVisibleColumnName}
+              </th>
+              <th
+                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                aria-hidden={true}
+              >
+                {/* For spacing purposes only */}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          {virtualizer.getVirtualItems().map((virtualRow, index) => {
+            const entry = entries[virtualRow.index];
+            return (
+              <TableRow
+               key={entry.key} 
+               columns={columns} 
+               entry={entry}
+               style={{
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${
+                  virtualRow.start - index * virtualRow.size
+                }px)`}}
+               />
+            );
+          })}
+            {entries.map((entry) => (
+              <TableRow key={entry.key} columns={columns} entry={entry} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
