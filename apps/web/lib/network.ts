@@ -90,7 +90,7 @@ export async function getSingleNetwork(
     }
     if (integration.slug === "eclipse-devnet") {
       integration.config.widgetLayout = "SVM";
-      integration.config.primaryColor = "236 15%, 18%";
+      integration.config.primaryColor = "236 15% 18%";
       integration.config.cssGradient = `linear-gradient(97deg, #000 -5.89%, #1E1E1E 83.12%, #000 103.23%)`;
     }
 
