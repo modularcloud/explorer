@@ -11,6 +11,8 @@ const widgetDataSchema = z.object({
   slotNumber: z.string(),
 });
 
+const THIRTY_SECONDS = 30 * 1000;
+
 export function useLatestBlocks(context: PageContext) {
   return useSWR(
     "blocks",
@@ -29,7 +31,7 @@ export function useLatestBlocks(context: PageContext) {
       return data;
     },
     {
-      refreshInterval: 30 * 1000, // each 30 seconds
+      refreshInterval: THIRTY_SECONDS,
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
@@ -55,7 +57,7 @@ export function useLatestTransactions(context: PageContext) {
       return data;
     },
     {
-      refreshInterval: 30 * 1000, // each 30 seconds
+      refreshInterval: THIRTY_SECONDS,
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
@@ -72,7 +74,7 @@ export function useWidgetData(networkSlug: string) {
       return widgetDataSchema.parse(data.result);
     },
     {
-      refreshInterval: 30 * 1000, // each 30 seconds
+      refreshInterval: THIRTY_SECONDS,
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors

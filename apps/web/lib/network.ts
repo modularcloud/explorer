@@ -84,7 +84,7 @@ export async function getSingleNetwork(
       result: { integration },
     } = describeIntegrationBySlugAPISchema.parse(await response.json());
 
-    // FIXME : this is hardcoded because widgets are not supported yet on other networks other than nautilus mainnet
+    // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
     }

@@ -42,6 +42,8 @@ const widgetAPIResponseSchema = z.union([
   z.object({ error: z.string() }),
 ]);
 
+const THIRTY_SECONDS = 30 * 1000;
+
 export function useWidgetData(networkSlug: string) {
   return useSWR(
     CACHE_KEYS.widgets.evmWithPrice(networkSlug),
@@ -53,7 +55,7 @@ export function useWidgetData(networkSlug: string) {
       return widgetAPIResponseSchema.parse(await response.json());
     },
     {
-      refreshInterval: 30 * 1000, // each 30 seconds
+      refreshInterval: THIRTY_SECONDS,
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
