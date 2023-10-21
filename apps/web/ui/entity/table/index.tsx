@@ -104,9 +104,9 @@ export function Table({ columns, entries }: Props) {
   )[0].columnLabel;
 
   return (
-    <div ref={parentRef}>
+    <div ref={parentRef} className="overflow-y-auto">
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-        <table className="w-full overflow-y-auto max-w-full">
+        <table className="w-full max-w-full">
           <thead className="sticky top-0 bg-white z-10">
             <tr className="h-12 text-left hidden sm:table-row">
               <th
