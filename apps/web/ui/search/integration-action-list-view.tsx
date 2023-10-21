@@ -62,7 +62,7 @@ export function IntegrationActionListView({
             id: "search",
             icon: () => null,
             label: (
-              <p className="text-muted">
+              <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
                 Search for&nbsp;<span className="break-all">{query}</span>
               </p>
             ),
@@ -81,7 +81,7 @@ export function IntegrationActionListView({
           id: type,
           icon: () => null,
           label: (
-            <p className="text-muted">
+            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
               Go to&nbsp;
               <strong className="font-medium text-foreground">
                 {capitalize(type)}
@@ -202,7 +202,7 @@ export function IntegrationActionListView({
                 >
                   <ArrowRight aria-hidden="true" className="flex-shrink-0" />
                   <Icon className="flex-shrink-0" />
-                  <span>{item.label}</span>
+                  <span className="w-[97%]">{item.label}</span>
                 </button>
               );
             })}
