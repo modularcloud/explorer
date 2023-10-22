@@ -15,11 +15,11 @@ interface Props {
 function TableRow({
   columns,
   entry,
-  style
+  style,
 }: {
   columns: Collection["tableColumns"];
   entry: Collection["entries"][0];
-  style: any
+  style: any,
 }) {
   const router = useRouter();
 
@@ -37,7 +37,7 @@ function TableRow({
         }
       }}
       className={cn(
-        "h-16 border-b border-[#ECEFF3]",
+        "border-b border-[#ECEFF3]",
         entry.link && "cursor-pointer",
       )}
       style={style}
@@ -97,14 +97,30 @@ export function Table({ columns, entries }: Props) {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 64,
     overscan: 20,
+    paddingEnd: 160,
   });
+
+  // React.useEffect(() => {
+  //   const handleKeyPress = (event: KeyboardEvent) => {
+  //     if (event.key === "a") {
+  //       console.log(event.key);
+  //       virtualizer.scrollToIndex(2)
+  //     }
+  //   };
+
+  //   window.addEventListener("keydown", handleKeyPress);
+
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyPress);
+  //   };
+  // }, [virtualizer]);
 
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
   )[0].columnLabel;
 
   return (
-    <div ref={parentRef} className="overflow-y-auto">
+    <div ref={parentRef} className="overflow-y-auto h-screen">
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
         <table className="w-full max-w-full">
           <thead className="sticky top-0 bg-white z-10">
@@ -180,9 +196,6 @@ export function Table({ columns, entries }: Props) {
                />
             );
           })}
-            {entries.map((entry) => (
-              <TableRow key={entry.key} columns={columns} entry={entry} />
-            ))}
           </tbody>
         </table>
       </div>
