@@ -7,6 +7,7 @@ import Link from "next/link";
 // utils
 import { useParams } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
+import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
@@ -27,19 +28,11 @@ export function NavLink({
 }: Props) {
   const params: HeadlessRoute = useParams();
 
-  let path = params.path;
+  const pathParams = parseHeadlessRouteVercelFix(params);
 
-  /**
-   * this is fix for a bug that only happens on vercel,
-   * when you are on a page like : "blocks/9923161/transactions", instead of parsing the path
-   * as path: ["blocks", "9923161", "transactions"] it parses it as : [ "blocks%2F9923161%2Ftransactions" ]
-   */
-  if (path.length === 1 && path[0].includes("%2F")) {
-    path = path[0].split("%2F");
-  }
-
-  let activeTabIndex = tabs.findIndex((tab) => tab === path.join("/"));
-  // in case of not found
+  let activeTabIndex = tabs.findIndex(
+    (tab) => tab === pathParams.path.join("/"),
+  );
   if (activeTabIndex === -1) activeTabIndex = 0;
 
   const isSelected = currentIndex === activeTabIndex;

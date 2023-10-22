@@ -33,7 +33,11 @@ type SearchConfig = {
   name: string;
 };
 
-// TODO: since this is an array, sometimes the builders can be added more than once
+/**
+ * Search builders contains a function that maps search input to a page path
+ *
+ * *TODO* : since this is an array, sometimes the builders can be added more than once
+ */
 export const SearchBuilders: {
   getPath: (query: string) => string[] | null;
   name: string;
