@@ -91,7 +91,7 @@ export function Search({ optionGroups }: Props) {
           // this makes sure we don't navigate to an empty search route (which would throw a 404)
           if (searchQuery) {
             router.push(
-              `/${network.id}/search?q=${encodeURIComponent(searchQuery)}`,
+              `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
             );
           }
         }}
@@ -105,7 +105,7 @@ export function Search({ optionGroups }: Props) {
             if (e.target.value) {
               // prefetch on search to make the navigation faster
               router.prefetch(
-                `/${network.id}/search?q=${encodeURIComponent(e.target.value)}`,
+                `/${network.id}/search/${encodeURIComponent(e.target.value)}`,
               );
             }
           }}

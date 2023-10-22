@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import { search } from "~/lib/headless-utils";
 
 export default async function SearchRedirectPage({
   searchParams,
@@ -11,12 +10,6 @@ export default async function SearchRedirectPage({
   if (!searchParams?.q) {
     notFound();
   }
-  const redirectPath = await search(params.network, searchParams?.q);
-
-  if (redirectPath) {
-    redirect(`/${params.network}/${redirectPath.join("/")}`);
-  } else {
-    notFound();
-  }
+  redirect(`./search/${searchParams.q}`);
 }
 export const runtime = "edge";
