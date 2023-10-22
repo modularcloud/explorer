@@ -8,7 +8,8 @@ import {
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
 import { parseHeadlessRouteVercelFix } from "./shared-utils";
-import { cache } from "react";
+import { nextCache } from "./server-utils";
+import { CACHE_KEYS } from "./cache-keys";
 
 export type HeadlessRoute = {
   network: string;
@@ -27,20 +28,48 @@ async function loadIntegration(networkSlug: string) {
     notFound();
   }
 
-  return createSVMIntegration({
+  const integration = createSVMIntegration({
     chainBrand: network.chainBrand,
     chainName: network.chainName,
     chainLogo: network.config.logoUrl,
     rpcEndpoint: network.config.rpcUrls["svm"],
     nativeToken: network.config.token.name,
   });
+
+  return {
+    resolveRoute: async (
+      path: string[],
+      additionalContext?: PaginationContext | undefined,
+    ) => {
+      const resolveRouteFn = nextCache(
+        function cachedResolveRoute(
+          path: string[],
+          additionalContext?: PaginationContext | undefined,
+        ) {
+          return integration.resolveRoute(path, additionalContext);
+        },
+        {
+          tags: CACHE_KEYS.resolvers.route(
+            {
+              network: networkSlug,
+              path,
+            },
+            additionalContext,
+          ),
+          revalidateTimeInSeconds: 2,
+        },
+      );
+
+      return await resolveRouteFn(path, additionalContext);
+    },
+  };
 }
 
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
  */
-export const loadPage = cache(async function loadPage(
+export async function loadPage(
   route: HeadlessRoute,
   context?: PaginationContext,
 ): Promise<Page> {
@@ -69,7 +98,7 @@ export const loadPage = cache(async function loadPage(
   }
 
   return resolution.result as Page;
-});
+}
 
 export async function search(networkSlug: string, query: string) {
   const integration = await loadIntegration(networkSlug);

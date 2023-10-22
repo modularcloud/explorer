@@ -29,7 +29,6 @@ interface Props {
 
 // TODO : transform this into a client component
 export function SVMWidgetLayout({ network }: Props) {
-  console.log("network", network);
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
   const latestBlocks = useLatestBlocks({
@@ -95,7 +94,7 @@ export function SVMWidgetLayout({ network }: Props) {
         data={
           latestTransactions?.data?.result
             ? latestTransactions.data.result.map((transaction: any) => {
-              console.log("transaction", transaction);
+                console.log("transaction", transaction);
                 return {
                   hash: transaction.transaction.signatures[0],
                   success: !transaction.meta.err,
