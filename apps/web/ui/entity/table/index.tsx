@@ -3,13 +3,15 @@ import * as React from "react";
 import { TableCell } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
-import type { Collection, Column } from "@modularcloud/headless";
+import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { QueryClient, QueryClientProvider, useInfiniteQuery } from "@tanstack/react-query";
+import { HeadlessRoute, loadPage } from "~/lib/headless-utils";
 
 interface Props {
-  columns: Collection["tableColumns"];
-  entries: Collection["entries"];
+  initialData: Page;
+  route: HeadlessRoute;
 }
 
 function TableRow({
@@ -19,7 +21,7 @@ function TableRow({
 }: {
   columns: Collection["tableColumns"];
   entry: Collection["entries"][0];
-  style: any,
+  style: any;
 }) {
   const router = useRouter();
 
@@ -89,8 +91,59 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
   }
 };
 
-export function Table({ columns, entries }: Props) {
+const queryClient = new QueryClient();
+
+export function Table(props: Props) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <_table {...props} />
+    </QueryClientProvider>
+  );
+}
+
+function _table({ initialData, route }: Props) {
+  if(initialData.body.type !== "collection") {
+    throw new Error("Table component can only be used with a collection");
+  }
+  const { tableColumns: columns, entries } = initialData.body;
+
   const parentRef = React.useRef<HTMLDivElement>(null);
+
+  type PageResponse = {
+    page: Page;
+    pageParam: string | undefined;
+  }
+
+  const { data, fetchNextPage, isFetching, isLoading } =
+  useInfiniteQuery<PageResponse>(
+    {
+      queryKey: ["table", route],
+      queryFn: async ({ pageParam }) => {
+        const page = await (pageParam ? loadPage(route) : loadPage(route, { after: pageParam as string }));
+        return { page, pageParam: pageParam as string };
+      },
+      getNextPageParam: (lastGroup) => "nextToken" in lastGroup.page.body ? lastGroup.page.body.nextToken : undefined,
+      refetchOnWindowFocus: false,
+      initialData: {
+        pages: [{ page: initialData, pageParam: undefined }],
+        pageParams: [undefined],
+      },
+      initialPageParam: undefined, // Add this line
+    }
+  )
+
+  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+  const fetchMoreOnBottomReached = React.useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+        if (scrollHeight - scrollTop - clientHeight < 300) {
+          console.log("bottom reached");
+        }
+      }
+    },
+    [],
+  );
 
   const virtualizer = useVirtualizer({
     count: entries.length,
@@ -120,7 +173,11 @@ export function Table({ columns, entries }: Props) {
   )[0].columnLabel;
 
   return (
-    <div ref={parentRef} className="overflow-y-auto h-screen">
+    <div
+      ref={parentRef}
+      onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
+      className="overflow-y-auto h-screen"
+    >
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
         <table className="w-full max-w-full">
           <thead className="sticky top-0 bg-white z-10">
@@ -181,21 +238,22 @@ export function Table({ columns, entries }: Props) {
             </tr>
           </thead>
           <tbody>
-          {virtualizer.getVirtualItems().map((virtualRow, index) => {
-            const entry = entries[virtualRow.index];
-            return (
-              <TableRow
-               key={entry.key} 
-               columns={columns} 
-               entry={entry}
-               style={{
-                height: `${virtualRow.size}px`,
-                transform: `translateY(${
-                  virtualRow.start - index * virtualRow.size
-                }px)`}}
-               />
-            );
-          })}
+            {virtualizer.getVirtualItems().map((virtualRow, index) => {
+              const entry = entries[virtualRow.index];
+              return (
+                <TableRow
+                  key={entry.key}
+                  columns={columns}
+                  entry={entry}
+                  style={{
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${
+                      virtualRow.start - index * virtualRow.size
+                    }px)`,
+                  }}
+                />
+              );
+            })}
           </tbody>
         </table>
       </div>

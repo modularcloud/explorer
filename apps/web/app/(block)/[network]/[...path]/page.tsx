@@ -10,7 +10,7 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
     return <Overview properties={page.body.properties} />;
   }
 
-  return <Table columns={page.body.tableColumns} entries={page.body.entries} />;
+  return <Table initialData={page} route={params} />;
 }
 
 export default function Page({ params }: { params: HeadlessRoute }) {
