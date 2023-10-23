@@ -6,10 +6,19 @@ import { cn } from "~/ui/shadcn/utils";
 import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { QueryClient, QueryClientProvider, useInfiniteQuery } from "@tanstack/react-query";
-import { HeadlessRoute, loadPage } from "~/lib/headless-utils";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+import type { HeadlessRoute } from "~/lib/headless-utils";
+import { isomorphicLoadPage } from "~/lib/isomorphic-headless-utils";
+import { SingleNetwork } from "~/lib/network";
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 interface Props {
+  network: SingleNetwork;
   initialData: Page;
   route: HeadlessRoute;
 }
@@ -97,58 +106,77 @@ export function Table(props: Props) {
   return (
     <QueryClientProvider client={queryClient}>
       <_table {...props} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
 
-function _table({ initialData, route }: Props) {
-  if(initialData.body.type !== "collection") {
+function _table({ initialData, route, network }: Props) {
+  if (initialData.body.type !== "collection") {
     throw new Error("Table component can only be used with a collection");
   }
-  const { tableColumns: columns, entries } = initialData.body;
+  const { tableColumns: columns } = initialData.body;
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 
-  type PageResponse = {
-    page: Page;
-    pageParam: string | undefined;
-  }
-
-  const { data, fetchNextPage, isFetching, isLoading } =
-  useInfiniteQuery<PageResponse>(
-    {
+  const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
+    useInfiniteQuery<Page>({
       queryKey: ["table", route],
       queryFn: async ({ pageParam }) => {
-        const page = await (pageParam ? loadPage(route) : loadPage(route, { after: pageParam as string }));
-        return { page, pageParam: pageParam as string };
-      },
-      getNextPageParam: (lastGroup) => "nextToken" in lastGroup.page.body ? lastGroup.page.body.nextToken : undefined,
+        const ret = await (pageParam
+          ? isomorphicLoadPage(network, route.path)
+          : isomorphicLoadPage(network, route.path, {
+              after: pageParam as string,
+            }));
+        return ret;
+          },
+      getNextPageParam: (lastGroup) =>
+        "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
       initialData: {
-        pages: [{ page: initialData, pageParam: undefined }],
+        pages: [initialData],
         pageParams: [undefined],
       },
-      initialPageParam: undefined, // Add this line
-    }
-  )
+      initialPageParam: undefined,
+    });
 
-  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+  const flatData = React.useMemo(
+    () =>
+      data?.pages?.flatMap((page) => {
+        if (page.body.type !== "collection") {
+          return [];
+        }
+        return page.body.entries;
+      }) ?? [],
+    [data],
+  );
+
   const fetchMoreOnBottomReached = React.useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
       if (containerRefElement) {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        if (scrollHeight - scrollTop - clientHeight < 300) {
-          console.log("bottom reached");
+        //once the user has scrolled within 300px of the bottom of the table, fetch more data if there is any
+        if (
+          scrollHeight - scrollTop - clientHeight < 300 &&
+          !isFetching &&
+          hasNextPage
+        ) {
+          fetchNextPage();
         }
       }
     },
-    [],
+    [fetchNextPage, isFetching, hasNextPage],
   );
 
+  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
+  React.useEffect(() => {
+    fetchMoreOnBottomReached(parentRef.current);
+  }, [fetchMoreOnBottomReached]);
+
   const virtualizer = useVirtualizer({
-    count: entries.length,
+    count: flatData.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 64,
+    estimateSize: () => 65,
     overscan: 20,
     paddingEnd: 160,
   });
@@ -171,6 +199,10 @@ function _table({ initialData, route }: Props) {
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
   )[0].columnLabel;
+
+  if (isLoading) {
+    return <>Loading...</>
+  }
 
   return (
     <div
@@ -239,10 +271,10 @@ function _table({ initialData, route }: Props) {
           </thead>
           <tbody>
             {virtualizer.getVirtualItems().map((virtualRow, index) => {
-              const entry = entries[virtualRow.index];
+              const entry = flatData[virtualRow.index];
               return (
                 <TableRow
-                  key={entry.key}
+                  key={index}
                   columns={columns}
                   entry={entry}
                   style={{
