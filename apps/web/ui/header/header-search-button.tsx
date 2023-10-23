@@ -9,26 +9,31 @@ import { Button } from "~/ui/button";
 // utils
 import { useParams } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
-import { capitalize, truncateHash } from "~/lib/shared-utils";
+import {
+  capitalize,
+  parseHeadlessRouteVercelFix,
+  truncateHash,
+} from "~/lib/shared-utils";
 
 // types
-import type { FetchLoadArgs, OptionGroups } from "~/lib/shared-utils";
+import type { HeadlessRoute } from "~/lib/headless-utils";
+import type { OptionGroups } from "~/lib/shared-utils";
 interface Props {
   optionGroups: OptionGroups;
 }
 
 export function HeaderSearchButton({ optionGroups }: Props) {
-  const params = useParams() as Partial<FetchLoadArgs>;
+  const routeParams = useParams() as HeadlessRoute;
+
+  const params = parseHeadlessRouteVercelFix(routeParams);
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
-  let entityType = "Search";
-  if (params.type && params.type !== "search") {
-    entityType = capitalize(params.type);
-  }
+  const entityType = capitalize(params.path[0]);
+  const query = params.path[1];
 
   return (
     <SearchModal
@@ -90,17 +95,17 @@ export function HeaderSearchButton({ optionGroups }: Props) {
             <span>{entityType}&nbsp;</span>
             {/* For accessibility */}
             <span className="sr-only">
-              {entityType}&nbsp;{params.query}
+              {entityType}&nbsp;{query}
             </span>
 
             {/* mobile */}
             <span className="md:hidden" aria-hidden="true">
-              {params.query ? params.query : ""}
+              {query ? query : ""}
             </span>
 
             {/* bigger screens */}
             <span className="hidden md:inline" aria-hidden="true">
-              {params.query ? truncateHash(params.query, 25) : ""}
+              {query ? truncateHash(query, 25) : ""}
             </span>
           </span>
         </span>
