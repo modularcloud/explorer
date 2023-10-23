@@ -87,7 +87,7 @@ export function Search({ optionGroups }: Props) {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
 
-          const searchQuery = formData.get("search")?.toString();
+          const searchQuery = formData.get("q")?.toString();
           // this makes sure we don't navigate to an empty search route (which would throw a 404)
           if (searchQuery) {
             router.push(
@@ -98,8 +98,8 @@ export function Search({ optionGroups }: Props) {
       >
         <input
           type="text"
-          name="search"
-          placeholder="Go to hash"
+          name="q"
+          placeholder="Explore"
           className="focus:outline-none placeholder:text-muted font-medium bg-transparent flex-grow py-2 pl-4 h-full"
           onChange={(e) => {
             if (e.target.value) {

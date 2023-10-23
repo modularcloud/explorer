@@ -1,4 +1,8 @@
-import { createResolver } from "@modularcloud-resolver/core";
+import {
+  createResolver,
+  PendingException,
+  ResolutionResponse,
+} from "@modularcloud-resolver/core";
 import { JSONRPCResolver } from "@modularcloud-resolver/json-rpc";
 
 export const BlockResolver = createResolver(
@@ -160,6 +164,75 @@ export const SignaturesForAddressResolver = createResolver(
           limit,
           before,
           until,
+        },
+      ],
+    });
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
+  },
+  [JSONRPCResolver],
+);
+
+export const BlocksResolver = createResolver(
+  {
+    id: "sealevel-blocks-0.0.0",
+    cache: false, // all cache is disabled for now
+  },
+  async (
+    {
+      endpoint,
+      start_slot,
+      end_slot,
+      commitment = "finalized",
+    }: {
+      endpoint: string;
+      start_slot: number;
+      end_slot?: number;
+      commitment?: "confirmed" | "finalized";
+    },
+    jsonRpcResolver,
+  ) => {
+    const rpcResponse: ResolutionResponse = await jsonRpcResolver({
+      endpoint: endpoint,
+      method: "getBlocks",
+      params: [
+        start_slot,
+        end_slot,
+        {
+          commitment,
+        },
+      ],
+    });
+    if (rpcResponse.type === "success") return rpcResponse.result;
+    if (rpcResponse.type === "error") throw rpcResponse.error;
+  },
+  [JSONRPCResolver],
+);
+
+export const SlotResolver = createResolver(
+  {
+    id: "sealevel-slot-0.0.0",
+    cache: false, // all cache is disabled for now
+  },
+  async (
+    {
+      endpoint,
+      commitment = "finalized",
+      minContextSlot,
+    }: {
+      endpoint: string;
+      commitment?: "confirmed" | "finalized";
+      minContextSlot?: number;
+    },
+    jsonRpcResolver,
+  ) => {
+    const rpcResponse = await jsonRpcResolver({
+      endpoint: endpoint,
+      method: "getSlot",
+      params: [
+        {
+          commitment,
+          minContextSlot,
         },
       ],
     });

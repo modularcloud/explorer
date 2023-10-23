@@ -8,7 +8,6 @@ const config = {
   experimental: {
     logging: {
       level: "verbose",
-      // @ts-expect-error this is normally a boolean but nextjs types thing wrong
       fullUrl: true,
     },
     useDeploymentId: true,
