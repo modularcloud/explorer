@@ -14,7 +14,7 @@ export const singleNetworkSchema = z.object({
     }),
     platform: z.string().max(64).optional(),
     // TODO : These are defaulted for now, but it should be returned by the API
-    widgetLayout: z.enum(["EvmWithPrice", "EvmWithoutPrice"]).optional(),
+    widgetLayout: z.enum(["EvmWithPrice", "EvmWithoutPrice", "SVM"]).optional(),
     // This is in HSL format, and is used like this : hsl("224 94% 51%")
     primaryColor: z.string().optional().default("224 94% 51%"),
     cssGradient: z
@@ -84,9 +84,14 @@ export async function getSingleNetwork(
       result: { integration },
     } = describeIntegrationBySlugAPISchema.parse(await response.json());
 
-    // FIXME : this is hardcoded because widgets are not supported yet on other networks other than nautilus mainnet
+    // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
+    }
+    if (integration.slug === "eclipse-devnet") {
+      integration.config.widgetLayout = "SVM";
+      integration.config.primaryColor = "236 15% 18%";
+      integration.config.cssGradient = `linear-gradient(97deg, #000 -5.89%, #1E1E1E 83.12%, #000 103.23%)`;
     }
 
     return integration;

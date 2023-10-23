@@ -1,16 +1,69 @@
+import "server-only";
 import {
   Page,
   createSVMIntegration,
   PaginationContext,
+  SearchBuilders,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
+import { parseHeadlessRouteVercelFix } from "./shared-utils";
+import { nextCache } from "./server-utils";
+import { CACHE_KEYS } from "./cache-keys";
 
-// This is the props for every page in the explorer (except for the home pages)
 export type HeadlessRoute = {
   network: string;
   path: string[];
 };
+
+async function loadIntegration(networkSlug: string) {
+  const network = await getSingleNetworkCached(networkSlug);
+
+  if (!network) {
+    notFound();
+  }
+
+  // TODO: Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
+  if (!network.config.rpcUrls["svm"]) {
+    notFound();
+  }
+
+  const integration = createSVMIntegration({
+    chainBrand: network.chainBrand,
+    chainName: network.chainName,
+    chainLogo: network.config.logoUrl,
+    rpcEndpoint: network.config.rpcUrls["svm"],
+    nativeToken: network.config.token.name,
+  });
+
+  return {
+    resolveRoute: async (
+      path: string[],
+      additionalContext?: PaginationContext | undefined,
+    ) => {
+      const resolveRouteFn = nextCache(
+        function cachedResolveRoute(
+          path: string[],
+          additionalContext?: PaginationContext | undefined,
+        ) {
+          return integration.resolveRoute(path, additionalContext);
+        },
+        {
+          tags: CACHE_KEYS.resolvers.route(
+            {
+              network: networkSlug,
+              path,
+            },
+            additionalContext,
+          ),
+          revalidateTimeInSeconds: 2,
+        },
+      );
+
+      return await resolveRouteFn(path, additionalContext);
+    },
+  };
+}
 
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
@@ -20,38 +73,12 @@ export async function loadPage(
   route: HeadlessRoute,
   context?: PaginationContext,
 ): Promise<Page> {
-  // Load network configuration
-  const network = await getSingleNetworkCached(route.network);
+  const integration = await loadIntegration(route.network);
 
-  // If the network does not exists, then this page cannot be found
-  if (!network) {
-    notFound();
-  }
+  const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  // Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
-  if (!network.config.rpcUrls["svm"]) {
-    notFound();
-  }
-
-  // Create the integration
-  const integration = createSVMIntegration({
-    chainBrand: network.chainBrand,
-    chainName: network.chainName,
-    chainLogo: network.config.logoUrl,
-    rpcEndpoint: network.config.rpcUrls["svm"],
-    nativeToken: network.config.token.name,
-  });
-
-  // this is the most ridiculous thing ever
-  // a production only bug on vercel where the path is provided like this: [ 'blocks%2F10000009' ]
-  const fixedPath = route.path.reduce(
-    (acc, curr) => [...acc, ...curr.split("%2F")],
-    [] as string[],
-  );
-
-  // Resolve the route
   const resolution = await integration.resolveRoute(fixedPath);
-  // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
+
   if (!resolution) {
     notFound();
   }
@@ -70,6 +97,29 @@ export async function loadPage(
     throw new Error(resolution.error);
   }
 
-  // We could parse the response with the Zod Page Schema, however, we will trust it is in the right format as a small speed optimization.
   return resolution.result as Page;
+}
+
+export async function search(networkSlug: string, query: string) {
+  const integration = await loadIntegration(networkSlug);
+
+  const queries = SearchBuilders.map(
+    (searchBuilder) => searchBuilder.getPath(query)!,
+  ).filter(Boolean);
+
+  try {
+    const redirectPath = await Promise.any(
+      queries.map((query) =>
+        integration.resolveRoute(query).then((resolution) => {
+          if (resolution?.type === "success") {
+            return query;
+          }
+          throw new Error(`Could not resolve ${query.join("/")}`);
+        }),
+      ),
+    );
+    return redirectPath;
+  } catch (e) {
+    return null;
+  }
 }
