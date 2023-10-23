@@ -48,23 +48,22 @@ function TableRow({
         }
       }}
       className={cn(
-        "border-b border-[#ECEFF3]",
         entry.link && "cursor-pointer",
       )}
       style={style}
     >
-      <td className="px-1 sm:px-3" aria-hidden={true}>
+      <td className="px-1 sm:px-3 border-b border-[#ECEFF3]" aria-hidden={true}>
         {/* For spacing purposes only */}
       </td>
       {columns.map((col) => (
         <td
           key={col.columnLabel}
-          className={cn("px-2", generateClassname(col.breakpoint))}
+          className={cn("px-2 border-b border-[#ECEFF3]", generateClassname(col.breakpoint))}
         >
           <TableCell {...entry.row[col.columnLabel]} />
         </td>
       ))}
-      <td className="px-1 sm:px-3" aria-hidden={true}>
+      <td className="px-1 sm:px-3 border-b border-[#ECEFF3]" aria-hidden={true}>
         {/* For spacing purposes only */}
       </td>
     </tr>
@@ -211,7 +210,7 @@ function _table({ initialData, route, network }: Props) {
       className="overflow-y-auto h-screen"
     >
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-        <table className="w-full max-w-full">
+        <table className="w-full max-w-full border-separate" style={{ borderSpacing: "0 1px"}}>
           <thead className="sticky top-0 bg-white z-10">
             <tr className="h-12 text-left hidden sm:table-row">
               <th
