@@ -655,14 +655,14 @@ export const CelestiaLatestBlocksResolver = createResolver(
     blockResolver,
   ) => {
     let limit = context.limit ?? 30;
-    let after = context.after;
+    let after = context.after ? (parseInt(context.after) - 1).toString() : undefined;
     let latestBlockResponse;
     if(!after) {
       latestBlockResponse = await blockResolver({ endpoint: context.rpcEndpoint });
       if (latestBlockResponse.type !== "success") throw new Error("Failed to resolve latest block");
       const latestBlock = latestBlockResponse.result;
       try {
-      after = latestBlock.result.block.header.height;
+      after = (parseInt(latestBlock.result.block.header.height) - 1).toString();
       } catch (e) {
         console.log("missing header?", JSON.stringify(latestBlock))
         throw e;
@@ -671,8 +671,8 @@ export const CelestiaLatestBlocksResolver = createResolver(
     }
     if(!after) throw new Error("Failed to parse latest block");
     const blockResolutions = [];
-    for(let i = 0; i < limit; i++) {
-      blockResolutions.push(blockResolver({ endpoint: context.rpcEndpoint, height: after }));
+    for(let i = latestBlockResponse ? 1 : 0; i < limit; i++) {
+      blockResolutions.push(blockResolver({ endpoint: context.rpcEndpoint, height: after}));
       after = (parseInt(after) - 1).toString();
     }
     const blocks = await Promise.all(blockResolutions);

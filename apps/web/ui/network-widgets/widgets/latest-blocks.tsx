@@ -19,7 +19,8 @@ interface Props {
 }
 
 export function LatestBlocks({ className, data, networkSlug: network }: Props) {
-  const allData = data.slice(0, 5);
+  const allData = React.useMemo(() => data.slice(0, 5), [data]);
+  console.log("allData block", allData);
   return (
     <Card className={cn(className, "p-0")}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
@@ -38,7 +39,7 @@ export function LatestBlocks({ className, data, networkSlug: network }: Props) {
         </Link>
       </header>
       <ul className="flex flex-col">
-        {allData.slice(0, 5).map((tr, index) => (
+        {allData.map((tr, index) => (
           <li key={tr.number} className="flex-1">
             <BlockRow
               {...tr}

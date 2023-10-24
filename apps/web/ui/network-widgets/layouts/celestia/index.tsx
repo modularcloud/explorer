@@ -68,18 +68,18 @@ export function CelestiaWidgetLayout({ network }: Props) {
       )}
     >
       <IconCard
-        className="lg:row-start-1 lg:col-start-3"
+        className="lg:col-span-1 row-span-1 lg:row-start-3"
         label="NAMESPACES"
         icon={Folder}
         value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
       />
 
-      <IconCard
+      {/* <IconCard
         className="lg:row-start-3 lg:col-start-3"
         label="BANDWIDTH"
         icon={Folder}
         value={apiResult.metrics.AVG_BlOCK_BLOB_SIZE.toLocaleString("en-US")}
-      />
+      /> */}
 
       <LatestTransactions
         networkSlug={network.id}
@@ -87,7 +87,6 @@ export function CelestiaWidgetLayout({ network }: Props) {
         data={
           latestTransactions?.data?.body?.type === "collection"
             ? latestTransactions?.data?.body?.entries.map((entry: any) => {
-                console.log("transaction", entry);
                 return {
                   hash: entry.row.Transactions.payload.value,
                   success: entry.row.Status.payload,
@@ -98,11 +97,6 @@ export function CelestiaWidgetLayout({ network }: Props) {
             : []
         }
       />
-      <LatestTransactions
-        networkSlug={network.id}
-        className="col-span-2 row-span-2 row-start-4 col-start-1"
-        data={[]}
-      />
 
       <IconCard
         className="lg:row-start-2 lg:col-start-3 sm:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-6"
@@ -112,14 +106,14 @@ export function CelestiaWidgetLayout({ network }: Props) {
       />
 
       <IconCard
-        className="lg:row-start-3 lg:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-4 sm:col-start-3 row-start-3 col-start-1"
+        className="lg:row-start-3 lg:col-start-1 lg:col-span-2 sm:row-start-1 sm:col-start-3 row-start-3 col-start-1"
         label="TOTAL BLOBS"
         icon={Document}
         value={apiResult.metrics.BLOB.toLocaleString("en-US")}
       />
 
       <IconCard
-        className="lg:row-start-5 lg:col-start-3 sm:col-start-3 sm:row-start-1"
+        className="lg:row-start-1 lg:col-start-3 col-span-2 sm:col-span-1"
         label="GAS PRICE"
         icon={Document}
         value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
@@ -129,23 +123,19 @@ export function CelestiaWidgetLayout({ network }: Props) {
 
       <IconCard
         label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
+        className="lg:row-start-3 lg:col-start-4 lg:col-span-2 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
         icon={BarChart}
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
 
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-4" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-
-      <Treemap
+      {/* <Treemap
         data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
-        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-      />
+        className="h-[20.5rem] col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+      /> */}
 
       <LatestBlocks
         networkSlug={network.id}
-        className="col-span-2 row-span-2 lg:row-start-4 lg:col-start-4 sm:col-start-3 sm:row-start-5"
+        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
         data={
           latestBlocks?.data?.body?.type === "collection"
             ? latestBlocks?.data?.body?.entries.map((block) => {
