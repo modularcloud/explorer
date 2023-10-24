@@ -17,18 +17,36 @@ const widgetDataSchema = z.object({
 
 const THIRTY_SECONDS = 30 * 1000;
 
-export function useLatestBlocks(context: PageContext) {
-  return {
-    data: {
-      result: [
-        {
-          parentSlot: 123,
-          transactions: [],
-          blockTime: Date.now(),
+export function useLatestBlocks(network: string) {
+  return useSWR<Page>(
+    [
+      "/api/load-page",
+      {
+        route: { network, path: ["blocks"] },
+        context: { limit: 5 },
+      }
+    ],
+    async () => {
+      const response = await fetch("/api/load-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ],
+        body: JSON.stringify({
+          route: { network: network, path: ["blocks"] },
+          context: { limit: 5 },
+        }),
+      });
+      const data = await response.json();
+      return data;
     },
-  };
+    {
+      refreshInterval: THIRTY_SECONDS,
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
 }
 
 export function useLatestTransactions(network: string) {

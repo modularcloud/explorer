@@ -25,7 +25,7 @@ export function LatestBlocks({ className, data, networkSlug: network }: Props) {
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Latest Blocks</p>
         <Link
-          href={`/${network}/latest/blocks`}
+          href={`/${network}/blocks`}
           className={cn(
             "rounded-md border border-mid-dark-100 py-2 px-3",
             "focus:border-primary outline-none",

@@ -715,6 +715,10 @@ export const CelestiaLatestBlocksResolver = createResolver(
                   type: "standard",
                   payload: block.result.block_id.hash,
                 },
+                Timestamp: {
+                  type: "standard",
+                  payload: block.result.block.header.time,
+                }
               },
               link,
               key: link,

@@ -32,12 +32,7 @@ interface Props {
 export function CelestiaWidgetLayout({ network }: Props) {
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
-  const latestBlocks = useLatestBlocks({
-    context: {
-      limit: 5,
-      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
-    },
-  } as any);
+  const latestBlocks = useLatestBlocks(network.id);
 
   const latestTransactions = useLatestTransactions(network.id);
 
@@ -106,9 +101,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
       <LatestTransactions
         networkSlug={network.id}
         className="col-span-2 row-span-2 row-start-4 col-start-1"
-        data={
-          []
-        }
+        data={[]}
       />
 
       <IconCard
@@ -129,7 +122,9 @@ export function CelestiaWidgetLayout({ network }: Props) {
         className="lg:row-start-5 lg:col-start-3 sm:col-start-3 sm:row-start-1"
         label="GAS PRICE"
         icon={Document}
-        value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString("en-US")}
+        value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
+          "en-US",
+        )}
       />
 
       <IconCard
@@ -152,12 +147,18 @@ export function CelestiaWidgetLayout({ network }: Props) {
         networkSlug={network.id}
         className="col-span-2 row-span-2 lg:row-start-4 lg:col-start-4 sm:col-start-3 sm:row-start-5"
         data={
-          latestBlocks.data
-            ? latestBlocks.data.result.map((block: any) => ({
-                number: block.parentSlot + 1,
-                noOfTransactions: 2,
-                timestamp: block.blockTime * 1000,
-              }))
+          latestBlocks?.data?.body?.type === "collection"
+            ? latestBlocks?.data?.body?.entries.map((block) => {
+                console.log("block", block);
+                return {
+                  number: Number(block.row.Height.payload),
+                  noOfTransactions: Number(block.row.Txs.payload),
+                  timestamp:
+                    typeof block.card.Timestamp.payload === "string"
+                      ? new Date(block.card.Timestamp.payload).getTime()
+                      : new Date().getTime(),
+                };
+              })
             : []
         }
       />
