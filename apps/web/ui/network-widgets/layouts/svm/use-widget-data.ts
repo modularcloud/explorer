@@ -15,7 +15,13 @@ const THIRTY_SECONDS = 30 * 1000;
 
 export function useLatestBlocks(context: PageContext) {
   return useSWR(
-    "blocks",
+    [
+      "/api/resolve/blocks",
+      {
+        resolverId: "sealevel-latest-blocks-0.0.0",
+        input: context,
+      },
+    ],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
@@ -41,7 +47,13 @@ export function useLatestBlocks(context: PageContext) {
 
 export function useLatestTransactions(context: PageContext) {
   return useSWR(
-    "transactions",
+    [
+      "/api/resolve/transactions",
+      {
+        resolverId: "sealevel-latest-transactions-0.0.0",
+        input: context,
+      },
+    ],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
