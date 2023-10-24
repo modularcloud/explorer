@@ -3,9 +3,10 @@ import {
   createSVMIntegration,
   PaginationContext,
 } from "@modularcloud/headless";
-import { notFound } from "next/navigation";
 import type { SingleNetwork } from "./network";
 import type { HeadlessRoute } from "./headless-utils";
+
+export const IsomorphicNotFoundError = new Error("Client could not find page");
 
 export async function isomorphicLoadPage(
   network: SingleNetwork,
@@ -14,7 +15,7 @@ export async function isomorphicLoadPage(
 ): Promise<Page> {
   // Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
   if (!network.config.rpcUrls["svm"]) {
-    notFound();
+    throw IsomorphicNotFoundError;
   }
 
   // Create the integration
@@ -37,7 +38,7 @@ export async function isomorphicLoadPage(
   const resolution = await integration.resolveRoute(fixedPath, context);
   // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
   if (!resolution) {
-    notFound();
+    throw IsomorphicNotFoundError; 
   }
 
   if (resolution.type === "pending") {
@@ -47,7 +48,7 @@ export async function isomorphicLoadPage(
      * Therefore, in the short-term we will treat this as any other page that is not found.
      * However, we will have a special treatment for this in the future.
      */
-    notFound();
+    throw IsomorphicNotFoundError;
   }
 
   if (resolution.type === "error") {

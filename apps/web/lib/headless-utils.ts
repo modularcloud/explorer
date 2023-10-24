@@ -24,10 +24,14 @@ export async function loadPage(
   // Load network configuration
   const network = await getSingleNetworkCached(route.network);
 
-    // If the network does not exists, then this page cannot be found
-    if (!network) {
-      notFound();
-    }
+  // If the network does not exists, then this page cannot be found
+  if (!network) {
+    notFound();
+  }
 
-  return isomorphicLoadPage(network, route.path, context);
+  try {
+    return isomorphicLoadPage(network, route.path, context);
+  } catch (IsomorphicNotFoundError) {
+    notFound();
+  }
 }

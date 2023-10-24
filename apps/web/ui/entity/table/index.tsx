@@ -104,13 +104,13 @@ const queryClient = new QueryClient();
 export function Table(props: Props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <_table {...props} />
+      <TableContent {...props} />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
 
-function _table({ initialData, route, network }: Props) {
+function TableContent({ initialData, route, network }: Props) {
   if (initialData.body.type !== "collection") {
     throw new Error("Table component can only be used with a collection");
   }
