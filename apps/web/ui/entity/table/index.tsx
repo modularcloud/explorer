@@ -15,7 +15,7 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 import { isomorphicLoadPage } from "~/lib/isomorphic-headless-utils";
 import { SingleNetwork } from "~/lib/network";
 
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 interface Props {
   network: SingleNetwork;
@@ -47,9 +47,7 @@ function TableRow({
           router.push(entry.link);
         }
       }}
-      className={cn(
-        entry.link && "cursor-pointer",
-      )}
+      className={cn(entry.link && "cursor-pointer")}
       style={style}
     >
       <td className="px-1 sm:px-3 border-b border-[#ECEFF3]" aria-hidden={true}>
@@ -58,7 +56,10 @@ function TableRow({
       {columns.map((col) => (
         <td
           key={col.columnLabel}
-          className={cn("px-2 border-b border-[#ECEFF3]", generateClassname(col.breakpoint))}
+          className={cn(
+            "px-2 border-b border-[#ECEFF3]",
+            generateClassname(col.breakpoint),
+          )}
         >
           <TableCell {...entry.row[col.columnLabel]} />
         </td>
@@ -122,13 +123,16 @@ function TableContent({ initialData, route, network }: Props) {
     useInfiniteQuery<Page>({
       queryKey: ["table", route],
       queryFn: async ({ pageParam }) => {
-        const ret = await (pageParam
-          ? isomorphicLoadPage(network, route.path)
-          : isomorphicLoadPage(network, route.path, {
-              after: pageParam as string,
-            }));
-        return ret;
+        const response = await fetch("/api/load-page", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({ route, context: { after: pageParam } }),
+        });
+        const data = await response.json();
+        return data;
+      },
       getNextPageParam: (lastGroup) =>
         "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
@@ -200,7 +204,7 @@ function TableContent({ initialData, route, network }: Props) {
   )[0].columnLabel;
 
   if (isLoading) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   return (
@@ -210,7 +214,10 @@ function TableContent({ initialData, route, network }: Props) {
       className="overflow-y-auto h-screen"
     >
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-        <table className="w-full max-w-full border-separate" style={{ borderSpacing: "0 1px"}}>
+        <table
+          className="w-full max-w-full border-separate"
+          style={{ borderSpacing: "0 1px" }}
+        >
           <thead className="sticky top-0 bg-white z-10">
             <tr className="h-12 text-left hidden sm:table-row">
               <th
