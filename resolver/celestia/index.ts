@@ -7,7 +7,6 @@ export const BlockHashResolver = createResolver(
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; hash: string }, fetchResolver) => {
-    // Check if the hash is valid (with or without 0x) and provide a version of the hash without the 0x if it's included
     const match = input.hash.match(/^(?:0x)?([a-fA-F0-9]{64})$/);
     if (!match) {
       throw new Error("Invalid hash");
@@ -68,9 +67,9 @@ const publicRPCMap = {
 };
 
 
-export const BalanceResolver = createResolver({
-    id: "celestia-balance-0.0.0",
-    cache: false
-}, async (input: { address: string; network: string }, fetchResolver) => {
+// export const BalanceResolver = createResolver({
+//     id: "celestia-balance-0.0.0",
+//     cache: false
+// }, async (input: { address: string; network: string }, fetchResolver) => {
     
-}, [FetchResolver]);
+// }, [FetchResolver]);
