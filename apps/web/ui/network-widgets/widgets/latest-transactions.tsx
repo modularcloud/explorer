@@ -63,7 +63,7 @@ interface TransactionRowProps extends TransactionRow {
 function TransactionRow(props: TransactionRowProps) {
   return (
     <Link
-      href={`/${props.network}/transaction/${props.hash}`}
+      href={`/${props.network}/transactions/${props.hash}`}
       className={cn(
         props.className,
         "p-4 bg-white border-mid-dark-100 flex items-center gap-14 justify-between",

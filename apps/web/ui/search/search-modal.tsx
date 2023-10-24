@@ -16,7 +16,7 @@ import { IntegrationGridView } from "./integration-grid-view";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
-import { isAddress, isHash, isHeight } from "~/lib/search";
+import { useFilteredOptionGroup } from "./use-filtered-option-group";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
@@ -62,34 +62,19 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const isTransactionOrBlockQuery = isHash(inputValue);
-  const isAddressOnlyQuery = isAddress(inputValue);
-  const isBlockOnlyQuery = isHeight(inputValue);
-  const isEntity =
-    isTransactionOrBlockQuery || isAddressOnlyQuery || isBlockOnlyQuery;
+  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  const isNetworkQuery =
+    !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
 
-  const currentNetwork = selectedNetwork
-    ? selectedNetwork
-    : isEntity
-    ? defaultNetwork.value
-    : selectedNetwork;
-
-  let typesToCheck: string[] = [];
-  if (isTransactionOrBlockQuery) {
-    typesToCheck = ["transaction", "block"];
-  }
-  if (isAddressOnlyQuery) {
-    typesToCheck = ["address"];
-  }
-  if (isBlockOnlyQuery) {
-    typesToCheck = ["block"];
+  let currentNetwork = selectedNetwork;
+  if (!selectedNetwork && !isNetworkQuery) {
+    currentNetwork = defaultNetwork.value;
   }
 
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
     network: defaultNetwork.value.id,
     query: inputValue,
-    typesToCheck,
-    enabled: typesToCheck.length > 0,
+    enabled: inputValue.length > 0,
   });
 
   return (
@@ -162,9 +147,9 @@ export function SearchModal({
             </div>
           </DialogHeader>
 
-          {!currentNetwork && !isEntity && (
+          {!currentNetwork && isNetworkQuery && (
             <IntegrationGridView
-              optionGroups={optionGroups}
+              optionGroups={filteredOptionGroup}
               defaultChainBrand={defaultNetwork.value.brandName}
               filter={inputValue}
               onSelectOption={onSelectOption}
@@ -172,7 +157,7 @@ export function SearchModal({
             />
           )}
 
-          {currentNetwork && (
+          {currentNetwork && !isNetworkQuery && (
             <IntegrationActionListView
               query={inputValue}
               searcheableTypes={searcheableTypes ?? []}

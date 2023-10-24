@@ -7,17 +7,25 @@ import { cn } from "~/ui/shadcn/utils";
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
+import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 interface Props {
   children: React.ReactNode;
   params: HeadlessRoute;
 }
 
 export default function EntityLayout({ children, params }: Props) {
+  const pathParams = parseHeadlessRouteVercelFix(params);
+  const entityType = pathParams.path[0];
+
   return (
     <>
-      <React.Suspense fallback={<HeaderTabsSkeleton params={params} />}>
-        <HeaderTabs params={params} />
-      </React.Suspense>
+      {entityType === "search" ? (
+        <HeaderTabsSkeleton />
+      ) : (
+        <React.Suspense fallback={<HeaderTabsSkeleton />}>
+          <HeaderTabs params={params} />
+        </React.Suspense>
+      )}
       <section
         className={cn(
           "overflow-x-clip fixed left-0 w-full lg:w-2/3 bottom-0",

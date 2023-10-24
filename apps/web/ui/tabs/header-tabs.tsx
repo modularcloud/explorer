@@ -27,11 +27,9 @@ type Tab = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const page = await loadPage(params);
+  const { tabs: resolvedTabs } = await loadPage(params);
 
-  // TODO: use this schema directly without modification
-  const resolvedTabs = page.tabs;
-
+  // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
     // TODO: We should have a map of icons for each type of tab
     let Icon = tab.text === "Transactions" ? ArrowLeftRight : ArrowRight;
@@ -129,7 +127,7 @@ export async function HeaderTabs({ params }: Props) {
   );
 }
 
-export function HeaderTabsSkeleton({ params }: Pick<Props, "params">) {
+export function HeaderTabsSkeleton() {
   return (
     <nav
       className={cn(

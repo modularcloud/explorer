@@ -1,17 +1,69 @@
+import "server-only";
 import {
   Page,
   createSVMIntegration,
   PaginationContext,
+  SearchBuilders,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
-import { isomorphicLoadPage } from "./isomorphic-headless-utils";
+import { parseHeadlessRouteVercelFix } from "./shared-utils";
+import { nextCache } from "./server-utils";
+import { CACHE_KEYS } from "./cache-keys";
 
-// This is the props for every page in the explorer (except for the home pages)
 export type HeadlessRoute = {
   network: string;
   path: string[];
 };
+
+export async function loadIntegration(networkSlug: string) {
+  const network = await getSingleNetworkCached(networkSlug);
+
+  if (!network) {
+    notFound();
+  }
+
+  // TODO: Right now, we only can resolve SVM chains. So we are requiring that it has an SVM RPC URL. This will change very soon,
+  if (!network.config.rpcUrls["svm"]) {
+    notFound();
+  }
+
+  const integration = createSVMIntegration({
+    chainBrand: network.chainBrand,
+    chainName: network.chainName,
+    chainLogo: network.config.logoUrl,
+    rpcEndpoint: network.config.rpcUrls["svm"],
+    nativeToken: network.config.token.name,
+  });
+
+  return {
+    resolveRoute: async (
+      path: string[],
+      additionalContext?: PaginationContext | undefined,
+    ) => {
+      const resolveRouteFn = nextCache(
+        function cachedResolveRoute(
+          path: string[],
+          additionalContext?: PaginationContext | undefined,
+        ) {
+          return integration.resolveRoute(path, additionalContext);
+        },
+        {
+          tags: CACHE_KEYS.resolvers.route(
+            {
+              network: networkSlug,
+              path,
+            },
+            additionalContext,
+          ),
+          revalidateTimeInSeconds: 2,
+        },
+      );
+
+      return await resolveRouteFn(path, additionalContext);
+    },
+  };
+}
 
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
@@ -21,17 +73,53 @@ export async function loadPage(
   route: HeadlessRoute,
   context?: PaginationContext,
 ): Promise<Page> {
-  // Load network configuration
-  const network = await getSingleNetworkCached(route.network);
+  const integration = await loadIntegration(route.network);
 
-  // If the network does not exists, then this page cannot be found
-  if (!network) {
+  const fixedPath = parseHeadlessRouteVercelFix(route).path;
+
+  const resolution = await integration.resolveRoute(fixedPath);
+
+  if (!resolution) {
     notFound();
   }
 
-  try {
-    return isomorphicLoadPage(network, route.path, context);
-  } catch (IsomorphicNotFoundError) {
+  if (resolution.type === "pending") {
+    /**
+     * Pending responses are for items that cannot be found, but may exist in the future.
+     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+     * Therefore, in the short-term we will treat this as any other page that is not found.
+     * However, we will have a special treatment for this in the future.
+     */
     notFound();
+  }
+
+  if (resolution.type === "error") {
+    throw new Error(resolution.error);
+  }
+
+  return resolution.result as Page;
+}
+
+export async function search(networkSlug: string, query: string) {
+  const integration = await loadIntegration(networkSlug);
+
+  const queries = SearchBuilders.map(
+    (searchBuilder) => searchBuilder.getPath(query)!,
+  ).filter(Boolean);
+
+  try {
+    const redirectPath = await Promise.any(
+      queries.map((query) =>
+        integration.resolveRoute(query).then((resolution) => {
+          if (resolution?.type === "success") {
+            return query;
+          }
+          throw new Error(`Could not resolve ${query.join("/")}`);
+        }),
+      ),
+    );
+    return redirectPath;
+  } catch (e) {
+    return null;
   }
 }

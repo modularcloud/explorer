@@ -5,7 +5,6 @@ import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
 import { capitalize } from "~/lib/shared-utils";
 import { useItemGrid } from "./use-item-grid";
-import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {
@@ -16,11 +15,6 @@ interface Props {
   defaultChainBrand?: string;
 }
 
-/**
- *  - the grid view is navigable with up/down/left/right arrows,
- *  - the grid should be navigable with mouse
- *  - the grid should be navigable with tab key (?)
- */
 export function IntegrationGridView({
   filter,
   onSelectOption,
@@ -28,8 +22,6 @@ export function IntegrationGridView({
   className,
   defaultChainBrand,
 }: Props) {
-  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, filter);
-
   const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
     "(min-width: 595px) and (max-width: 800px)",
@@ -42,7 +34,7 @@ export function IntegrationGridView({
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
     parentRef: gridRef.current,
-    optionGroups: filteredOptionGroup,
+    optionGroups,
     onSelectOption,
     defaultOptionGroupKey: defaultChainBrand,
     selectFirstItem: !!filter,

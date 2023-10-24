@@ -2,6 +2,7 @@ import { EntityBaseSchema } from "@modularcloud/ecs";
 import { z } from "zod";
 import _slugify from "slugify";
 import type { SingleNetwork } from "./network";
+import { HeadlessRoute } from "./headless-utils";
 
 export function convertToHttpIfIpfs(url: string) {
   if (url.startsWith("ipfs://")) {
@@ -232,4 +233,21 @@ export function range(start: number, end: number): number[] {
  */
 export function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * this is a fix for a bug that only happens on vercel,
+ * when you are on a page like : "blocks/9923161/transactions", instead of parsing the path
+ * as path: ["blocks", "9923161", "transactions"] it parses it as : [ "blocks%2F9923161%2Ftransactions" ]
+ */
+export function parseHeadlessRouteVercelFix(params: HeadlessRoute) {
+  let path = params.path;
+  if (path.length === 1 && path[0].includes("%2F")) {
+    path = path[0].split("%2F");
+  }
+
+  return {
+    ...params,
+    path,
+  };
 }

@@ -20,9 +20,15 @@ export function nextCache<T extends Callback>(
   cb: T,
   options: {
     tags: string[];
+    revalidateTimeInSeconds?: number;
   },
 ) {
-  return cache(unstable_cache(cb, options.tags, options));
+  return cache(
+    unstable_cache(cb, options.tags, {
+      tags: options.tags,
+      revalidate: options.revalidateTimeInSeconds,
+    }),
+  );
 }
 
 export async function getZbcPrice() {
