@@ -39,7 +39,7 @@ export function createCelestiaIntegration(context: PageContext) {
   addRoute(["blocks", "[hashOrHeight]"], "celestia-page-block-0.0.0", {
     enabled: true,
     regex: /^\d+$|^(?:0x)?[a-fA-F0-9]{64}$/,
-    key: "heightOrHash",
+    key: "hashOrHeight",
     name: "Block",
   });
   // addRoute(
