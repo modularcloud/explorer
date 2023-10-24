@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { z } from "zod";
 import { PageContext } from "@modularcloud/headless";
+import type { Page } from "@modularcloud/headless";
 
 const widgetDataSchema = z.object({
   metrics: z.object({
@@ -30,21 +31,36 @@ export function useLatestBlocks(context: PageContext) {
   };
 }
 
-export function useLatestTransactions(context: PageContext) {
-  return {
-    data: {
-      result: [
-        {
-          transaction: {
-            signatures: ["dummy_signature"],
-          },
-          meta: {
-            err: null,
-          },
+export function useLatestTransactions(network: string) {
+  return useSWR<Page>(
+    [
+      "/api/load-page",
+      {
+        route: { network, path: ["transactions"] },
+        context: { limit: 5 },
+      }
+    ],
+    async () => {
+      const response = await fetch("/api/load-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ],
+        body: JSON.stringify({
+          route: { network: network, path: ["transactions"] },
+          context: { limit: 5 },
+        }),
+      });
+      const data = await response.json();
+      return data;
     },
-  };
+    {
+      refreshInterval: THIRTY_SECONDS,
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
 }
 
 export function useWidgetData(networkSlug: string) {

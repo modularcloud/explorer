@@ -39,12 +39,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
     },
   } as any);
 
-  const latestTransactions = useLatestTransactions({
-    context: {
-      limit: 5,
-      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
-    },
-  } as any);
+  const latestTransactions = useLatestTransactions(network.id);
 
   if (error) {
     return <SvmSkeleton error={"".toString()} />;
@@ -95,14 +90,14 @@ export function CelestiaWidgetLayout({ network }: Props) {
         networkSlug={network.id}
         className="col-span-2 row-span-2 row-start-1 col-start-1"
         data={
-          latestTransactions?.data?.result
-            ? latestTransactions.data.result.map((transaction: any) => {
-                console.log("transaction", transaction);
+          latestTransactions?.data?.body?.type === "collection"
+            ? latestTransactions?.data?.body?.entries.map((entry: any) => {
+                console.log("transaction", entry);
                 return {
-                  hash: transaction.transaction.signatures[0],
-                  success: !transaction.meta.err,
+                  hash: entry.row.Transactions.payload.value,
+                  success: entry.row.Status.payload,
                   // temporary!!
-                  type: "Vote",
+                  type: entry.row.Type.payload,
                 };
               })
             : []
@@ -112,17 +107,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
         networkSlug={network.id}
         className="col-span-2 row-span-2 row-start-4 col-start-1"
         data={
-          latestTransactions?.data?.result
-            ? latestTransactions.data.result.map((transaction: any) => {
-                console.log("transaction", transaction);
-                return {
-                  hash: transaction.transaction.signatures[0],
-                  success: !transaction.meta.err,
-                  // temporary!!
-                  type: "Vote",
-                };
-              })
-            : []
+          []
         }
       />
 

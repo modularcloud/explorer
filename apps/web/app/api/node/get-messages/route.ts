@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseBalance } from "service-manager";
+import { getMessages } from "service-manager";
 
 export async function POST(req: NextRequest) {
   const { str } = await req.json();
 
-  const result = parseBalance(str);
+  const result = getMessages(str);
 
   return NextResponse.json(result);
 }

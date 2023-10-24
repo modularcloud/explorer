@@ -14,4 +14,5 @@ export function registerResolvers() {
 
     registerResolver(Celestia.CelestiaTransactionResolver);
     registerResolver(Celestia.CelestiaBlockResolver);
+    registerResolver(Celestia.CelestiaLatestTransactionsResolver);
   }

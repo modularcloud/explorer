@@ -26,6 +26,8 @@ export function createCelestiaIntegration(context: PageContext) {
   //   ["addresses", "[address]", "transactions"],
   //   "svm-address-transactions-0.0.0",
   // );
+  addRoute(["transactions"], "celestia-latest-transactions-0.0.0");
+
   addRoute(["transactions", "[hash]"], "celestia-page-transaction-0.0.0", {
     enabled: true,
     regex: /^(?:0x)?([a-fA-F0-9]{64})$/,
@@ -189,7 +191,7 @@ export const CelestiaTransactionResolver = createResolver(
     if (response.type === "pending") throw PendingException;
 
     const properties: Record<string, Value> = {
-      "Type": {
+      Type: {
         type: "standard",
         payload: "Transaction",
       },
@@ -339,13 +341,13 @@ export const CelestiaBlockResolver = createResolver(
     getBlockByHash: typeof Celestia.BlockHashResolver,
   ) => {
     let type: "hash" | "height" | undefined;
-    if(hashOrHeight.match(/^\d+$/)) {
+    if (hashOrHeight.match(/^\d+$/)) {
       type = "height";
     }
-    if(hashOrHeight.match(/^(?:0x)?([a-fA-F0-9]{64})$/)) {
+    if (hashOrHeight.match(/^(?:0x)?([a-fA-F0-9]{64})$/)) {
       type = "hash";
     }
-    if(!type) {
+    if (!type) {
       throw new Error("Invalid hash or height");
     }
     const fn = type === "hash" ? getBlockByHash : getBlock;
@@ -360,7 +362,7 @@ export const CelestiaBlockResolver = createResolver(
     const data: BlockResponse = response.result;
 
     const properties: Record<string, Value> = {
-      "Type": {
+      Type: {
         type: "standard",
         payload: "Block",
       },
@@ -382,18 +384,15 @@ export const CelestiaBlockResolver = createResolver(
       properties["Timestamp"] = {
         type: "standard",
         payload:
-          new Date(data.result.block.header.time).toLocaleDateString(
-            "en-US",
-            {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              timeZone: "UTC",
-            },
-          ) + " UTC",
+          new Date(data.result.block.header.time).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            timeZone: "UTC",
+          }) + " UTC",
       };
     } catch {}
     try {
@@ -429,7 +428,9 @@ export const CelestiaBlockResolver = createResolver(
     try {
       properties["Next Validators Hash"] = {
         type: "standard",
-        payload: z.string().parse(data.result.block.header.next_validators_hash),
+        payload: z
+          .string()
+          .parse(data.result.block.header.next_validators_hash),
       };
     } catch {}
     try {
@@ -493,4 +494,152 @@ export const CelestiaBlockResolver = createResolver(
       ],
     };
     return page;
-  }, [Celestia.BlockHeightResolver, Celestia.BlockHashResolver]);
+  },
+  [Celestia.BlockHeightResolver, Celestia.BlockHashResolver],
+);
+
+export const CelestiaLatestTransactionsResolver = createResolver(
+  {
+    id: "celestia-latest-transactions-0.0.0",
+    cache: false, // all cache is disabled for now
+  },
+  async (
+    { context }: { context: PageContext & PaginationContext },
+    transactionResolver,
+  ) => {
+    // using modular cloud custom endpoint
+    const response = await fetch(
+      `${context.rpcEndpoint}/txs${context.limit || context.after ? "?" : ""}${
+        context.limit ? `limit=${context.limit}` : ""
+      }${context.after ? `&nextToken=${context.after}` : ""}`,
+    );
+    const data = await response.json();
+    const list = await Promise.all(
+      data.result.txs.map((tx: any) =>
+        transactionResolver({
+          endpoint: context.rpcEndpoint,
+          hash: tx.txHash,
+        }),
+      ),
+    );
+    const transactions: TransactionResonse[] = list.map((resolution) => {
+      if (resolution.type === "success") {
+        return resolution.result;
+      }
+      throw new Error("Failed to resolve one or more transactions");
+    });
+    const page: Page = {
+      context,
+      metadata: {
+        title: `Latest Transactions`,
+        description: `See the latest transactions on ${context.chainBrand} ${context.chainName}`,
+      },
+      body: {
+        type: "collection",
+        refreshIntervalMS: 10000,
+        nextToken: data.result.nextToken,
+        tableColumns: [
+          {
+            columnLabel: "Icon",
+            hideColumnLabel: true,
+            breakpoint: "max-sm",
+          },
+          {
+            columnLabel: "Transactions",
+          },
+          {
+            columnLabel: "Type",
+          },
+          {
+            columnLabel: "Status",
+            breakpoint: "sm",
+          },
+          {
+            columnLabel: "Height",
+          },
+        ],
+        entries: await Promise.all(
+          transactions.map(async (tx) => {
+            let baseUrl = "http://localhost:3000";
+            if (process.env.VERCEL_URL) {
+              baseUrl = `https://${process.env.VERCEL_URL}`;
+            }
+            if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+              baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+            }
+            
+            const response = await fetch(baseUrl +"/api/node/get-messages", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ str: tx.result.tx }),
+            });
+            const messages = await response.json();
+            const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
+            return {
+              card: {
+                Hash: {
+                  type: "standard",
+                  payload: tx.result.hash,
+                },
+              },
+              link,
+              key: link,
+              row: {
+                Icon: {
+                  type: "icon",
+                  payload: tx.result.tx_result.code ? "FAILURE" : "SUCCESS",
+                },
+                Transactions: {
+                  type: "longval",
+                  payload: {
+                    value: tx.result.hash,
+                  },
+                },
+                Height: {
+                  type: "standard",
+                  payload: tx.result.height,
+                },
+                Status: {
+                  type: "status",
+                  payload: !tx.result.tx_result.code,
+                },
+                Type: {
+                  type: "standard",
+                  payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                },
+              },
+            };
+          }),
+        ),
+      },
+      sidebar: {
+        headerKey: "Network",
+        headerValue: context.chainName,
+        properties: {
+          Layer: {
+            type: "standard",
+            payload: "Data Availability",
+          },
+          Execution: {
+            type: "standard",
+            payload: "Cosmos SDK",
+          },
+        },
+      },
+      tabs: [
+        {
+          text: "Latest Transactions",
+          route: ["transactions"],
+        },
+        {
+          text: "Latest Blocks",
+          route: ["blocks"],
+        },
+      ],
+    };
+    return page;
+  },
+  [Celestia.TransactionResolver],
+);
