@@ -63,13 +63,13 @@ export function SearchModal({
   );
 
   const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
-  const isNetworkQuery = Object.keys(filteredOptionGroup).length > 0;
+  const isNetworkQuery =
+    !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
 
-  const currentNetwork = selectedNetwork
-    ? selectedNetwork
-    : !isNetworkQuery
-    ? defaultNetwork.value
-    : selectedNetwork;
+  let currentNetwork = selectedNetwork;
+  if (!selectedNetwork && !isNetworkQuery) {
+    currentNetwork = defaultNetwork.value;
+  }
 
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
     network: defaultNetwork.value.id,
