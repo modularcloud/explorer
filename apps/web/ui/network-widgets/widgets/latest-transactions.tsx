@@ -15,13 +15,14 @@ export function LatestTransactions({
   data,
   networkSlug: network,
 }: Props) {
-  const allData = data.slice(0, 5);
+  const allData = React.useMemo(() => data.slice(0, 5), [data]);
+  console.log("allData", allData);
   return (
     <Card className={cn(className, "p-0")}>
       <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Latest Transactions</p>
         <Link
-          href={`/${network}/latest/transactions`}
+          href={`/${network}/transactions`}
           className={cn(
             "rounded-md border border-mid-dark-100 py-2 px-3",
             "focus:border-primary outline-none",
@@ -34,7 +35,7 @@ export function LatestTransactions({
         </Link>
       </header>
       <ul className="flex flex-col max-h-full overflow-auto">
-        {allData.slice(0, 5).map((tr, index) => (
+        {allData.map((tr, index) => (
           <li key={tr.hash}>
             <TransactionRow
               {...tr}

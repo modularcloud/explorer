@@ -6,21 +6,11 @@ import {
 import * as Sealevel from "@modularcloud-resolver/sealevel";
 import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
-import { addRoute, matchRoute, registerResolver } from "../../router";
+import { addRoute, matchRoute } from "../../router";
 import { PaginationContext } from "../../schemas/context";
+import { registerResolvers } from "..";
 
 export type IntegrationResponse = ResolutionResponse | null;
-
-export function registerResolvers() {
-  registerResolver(addressOverviewResolver);
-  registerResolver(addressTransactionsResolver);
-  registerResolver(transactionOverviewResolver);
-  registerResolver(transactionInstructionsResolver);
-  registerResolver(blockOverviewResolver);
-  registerResolver(blockTransactionsResolver);
-  registerResolver(latestBlocksResolver);
-  registerResolver(latestTransactionsResolver);
-}
 
 export function createSVMIntegration(context: PageContext) {
   registerResolvers();
@@ -79,7 +69,7 @@ export function createSVMIntegration(context: PageContext) {
  * Register addresses
  * pages (overview, transactions), sidebar, entry
  */
-const addressOverviewResolver = createResolver(
+export const addressOverviewResolver = createResolver(
   {
     id: "svm-address-0.0.0",
     cache: false,
@@ -144,7 +134,7 @@ const addressOverviewResolver = createResolver(
   [Sealevel.BalanceResolver],
 );
 
-const addressTransactionsResolver = createResolver(
+export const addressTransactionsResolver = createResolver(
   {
     id: "svm-address-transactions-0.0.0",
     cache: false,
@@ -353,7 +343,7 @@ const addressTransactionsResolver = createResolver(
  * Register instructions
  * sidebar, entry
  */
-const transactionOverviewResolver = createResolver(
+export const transactionOverviewResolver = createResolver(
   {
     id: "svm-transaction-0.0.0",
     cache: false,
@@ -466,7 +456,7 @@ const transactionOverviewResolver = createResolver(
   },
   [Sealevel.TransactionResolver],
 );
-const transactionInstructionsResolver = createResolver(
+export const transactionInstructionsResolver = createResolver(
   {
     id: "svm-transaction-instructions-0.0.0",
     cache: false,
@@ -613,7 +603,7 @@ const transactionInstructionsResolver = createResolver(
  * Register blocks
  * pages (overview, transactions), sidebar, entry
  */
-const blockOverviewResolver = createResolver(
+export const blockOverviewResolver = createResolver(
   {
     id: "svm-block-0.0.0",
     cache: false,
@@ -706,7 +696,7 @@ const blockOverviewResolver = createResolver(
   [Sealevel.BlockResolver],
 );
 
-const blockTransactionsResolver = createResolver(
+export const blockTransactionsResolver = createResolver(
   {
     id: "svm-block-transactions-0.0.0",
     cache: false,

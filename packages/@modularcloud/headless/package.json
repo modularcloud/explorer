@@ -15,8 +15,10 @@
         "lint": "TIMING=1 eslint \"**/*.ts*\""
     },
     "dependencies": {
+        "@modularcloud-resolver/celestia": "*",
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/sealevel": "*",
+        "type-fest": "^4.5.0",
         "zod": "^3.22.2"
     },
     "devDependencies": {
