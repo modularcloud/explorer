@@ -23,6 +23,7 @@ import {
 } from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
+import { Treemap } from "../../widgets/treemap";
 interface Props {
   network: SearchOption;
 }
@@ -53,11 +54,6 @@ export function CelestiaWidgetLayout({ network }: Props) {
     return <SvmSkeleton />;
   }
 
-  const {
-    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
-    slotNumber,
-  } = apiResult;
-
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -85,14 +81,14 @@ export function CelestiaWidgetLayout({ network }: Props) {
         className="lg:row-start-1 lg:col-start-3"
         label="NAMESPACES"
         icon={Folder}
-        value={UNIQUE_ADDRESS.toLocaleString("en-US")}
+        value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
       />
 
       <IconCard
         className="lg:row-start-3 lg:col-start-3"
         label="BANDWIDTH"
         icon={Folder}
-        value={UNIQUE_ADDRESS.toLocaleString("en-US")}
+        value={apiResult.metrics.AVG_BlOCK_BLOB_SIZE.toLocaleString("en-US")}
       />
 
       <LatestTransactions
@@ -134,46 +130,37 @@ export function CelestiaWidgetLayout({ network }: Props) {
         className="lg:row-start-2 lg:col-start-3 sm:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-6"
         label="TOTAL BLOCKS"
         icon={Disabled}
-        value={parseInt(slotNumber).toLocaleString("en-US")}
+        value={parseInt(apiResult.blockHeight).toLocaleString("en-US")}
       />
 
       <IconCard
         className="lg:row-start-3 lg:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-4 sm:col-start-3 row-start-3 col-start-1"
         label="TOTAL BLOBS"
         icon={Document}
-        value={CONTRACT.toLocaleString("en-US")}
+        value={apiResult.metrics.BLOB.toLocaleString("en-US")}
       />
 
       <IconCard
         className="lg:row-start-5 lg:col-start-3 sm:col-start-3 sm:row-start-1"
         label="GAS PRICE"
         icon={Document}
-        value={CONTRACT.toLocaleString("en-US")}
+        value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString("en-US")}
       />
 
       <IconCard
         label="TOTAL TRANSACTIONS"
         className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
         icon={BarChart}
-        value={TRANSACTION.toLocaleString("en-US")}
+        value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
 
       <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
       <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-4" />
       <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
 
-      <LatestBlocks
-        networkSlug={network.id}
+      <Treemap
+        data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-        data={
-          latestBlocks.data
-            ? latestBlocks.data.result.map((block: any) => ({
-                number: block.parentSlot + 1,
-                noOfTransactions: block.transactions.length,
-                timestamp: block.blockTime * 1000,
-              }))
-            : []
-        }
       />
 
       <LatestBlocks

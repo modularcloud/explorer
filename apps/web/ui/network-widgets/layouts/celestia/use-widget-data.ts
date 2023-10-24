@@ -4,11 +4,14 @@ import { PageContext } from "@modularcloud/headless";
 
 const widgetDataSchema = z.object({
   metrics: z.object({
-    CONTRACT: z.number(),
     TRANSACTION: z.number(),
-    UNIQUE_ADDRESS: z.number(),
+    NAMESPACE: z.number(),
+    BLOB: z.number(),
+    AVG_BlOCK_BLOB_SIZE: z.number(),
+    LAST_10_BLOCKS_BLOB_SIZES: z.record(z.number()),
+    LAST_10_BLOCKS_AVG_GAS_PRICE: z.number(),
   }),
-  slotNumber: z.string(),
+  blockHeight: z.string(),
 });
 
 const THIRTY_SECONDS = 30 * 1000;
@@ -45,17 +48,18 @@ export function useLatestTransactions(context: PageContext) {
 }
 
 export function useWidgetData(networkSlug: string) {
-  return {
-    data: {
-      metrics: {
-        CONTRACT: 100,
-        TRANSACTION: 200,
-        UNIQUE_ADDRESS: 300,
-      },
-      slotNumber: "400",
+  return useSWR(
+    `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/3/metrics`,
+    async (url) => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return widgetDataSchema.parse(data.result);
     },
-    isLoading: false,
-    error: null,
-  };
+    {
+      refreshInterval: THIRTY_SECONDS,
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
 }
-
