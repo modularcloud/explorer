@@ -74,22 +74,10 @@ export function SearchModal({
     ? defaultNetwork.value
     : selectedNetwork;
 
-  let typesToCheck: string[] = [];
-  if (isTransactionOrBlockQuery) {
-    typesToCheck = ["transaction", "block"];
-  }
-  if (isAddressOnlyQuery) {
-    typesToCheck = ["address"];
-  }
-  if (isBlockOnlyQuery) {
-    typesToCheck = ["block"];
-  }
-
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
     network: defaultNetwork.value.id,
     query: inputValue,
-    typesToCheck,
-    enabled: typesToCheck.length > 0,
+    enabled: inputValue.length > 0,
   });
 
   return (

@@ -14,12 +14,7 @@ export const CACHE_KEYS = {
     evmWithPrice: (networkSlug: string) => ["EVM_WITH_PRICE", networkSlug],
   },
   search: {
-    query: (network: string, query: string, types: string[]) => [
-      "SEARCH_QUERY",
-      network,
-      ...types,
-      query,
-    ],
+    query: (network: string, query: string) => ["SEARCH_QUERY", network, query],
   },
   resolvers: {
     route: (route: HeadlessRoute, context?: PaginationContext) => [

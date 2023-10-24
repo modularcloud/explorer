@@ -1,44 +1,38 @@
 import useSWR from "swr";
+import { z } from "zod";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import { fetchLoad } from "~/lib/shared-utils";
 
 type UseSearcheableEntitiesArgs = {
   network: string;
   query: string;
-  typesToCheck: string[];
   enabled: boolean;
 };
+
+const searhableEntitiesResponseSchema = z.object({
+  data: z.array(z.tuple([z.string(), z.string()])),
+});
 export function useSearcheableEntities({
   network,
   query,
-  typesToCheck,
   enabled,
 }: UseSearcheableEntitiesArgs) {
   return useSWR(
-    enabled ? CACHE_KEYS.search.query(network, query, typesToCheck) : null,
+    enabled ? CACHE_KEYS.search.query(network, query) : null,
     async () => {
-      const entities = await Promise.all(
-        typesToCheck.map((type) =>
-          fetchLoad({
-            network,
-            type,
-            query,
-          }),
-        ),
-      );
-
-      const availableTypes: string[] = [];
-
-      for (let i = 0; i < entities.length; i++) {
-        const entity = entities[i];
-
-        if (entity) {
-          // the types & results are of the same length and in the same order
-          availableTypes.push(typesToCheck[i]);
-        }
-      }
-
-      return availableTypes;
+      const sp = new URLSearchParams({
+        networkSlug: network,
+        query,
+      });
+      return fetch("/api/search?" + sp.toString())
+        .then((r) => r.json())
+        .then(searhableEntitiesResponseSchema.parse)
+        .then((res) => res.data);
+    },
+    {
+      errorRetryCount: 2,
+      revalidateOnFocus: false,
+      keepPreviousData: true,
+      revalidateIfStale: false,
     },
   );
 }

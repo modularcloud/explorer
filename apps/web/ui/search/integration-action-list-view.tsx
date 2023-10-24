@@ -11,7 +11,7 @@ interface Props {
   className?: string;
   onNavigate: () => void;
   onChangeChainClicked: () => void;
-  searcheableTypes: string[];
+  searcheableTypes: [string, string][];
 }
 
 type ListItemType = {
@@ -76,7 +76,7 @@ export function IntegrationActionListView({
         ],
       };
 
-      for (const type of searcheableTypes) {
+      for (const [type, query] of searcheableTypes) {
         items["Types"].push({
           id: type,
           icon: () => null,
