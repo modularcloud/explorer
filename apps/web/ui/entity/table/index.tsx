@@ -6,14 +6,8 @@ import { cn } from "~/ui/shadcn/utils";
 import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RQTableProvider } from "./table-provider";
 
 interface Props {
   initialData: Page;
