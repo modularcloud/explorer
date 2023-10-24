@@ -16,7 +16,7 @@ export type HeadlessRoute = {
   path: string[];
 };
 
-async function loadIntegration(networkSlug: string) {
+export async function loadIntegration(networkSlug: string) {
   const network = await getSingleNetworkCached(networkSlug);
 
   if (!network) {
