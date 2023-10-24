@@ -10,6 +10,7 @@ import { getSearchOptionGroups } from "~/lib/search-options";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
+import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 
 interface Props {
   params: Pick<FetchLoadArgs, "network">;
@@ -37,6 +38,8 @@ export default async function NetworkWidgetPage({ params }: Props) {
       return <EvmWithPriceWidgetLayout network={searchOption!} />;
     case "SVM":
       return <SVMWidgetLayout network={searchOption!} />;
+    case "Celestia":
+      return <CelestiaWidgetLayout network={searchOption!} />;
     default:
       return null;
   }
