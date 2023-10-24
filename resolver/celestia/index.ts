@@ -26,12 +26,12 @@ export const BlockHeightResolver = createResolver(
     id: "celestia-block-height-0.0.0",
     cache: false, // all cache is disabled for now
   },
-  async (input: { endpoint: string; height: string }, fetchResolver) => {
+  async (input: { endpoint: string; height?: string }, fetchResolver) => {
     const response = await fetchResolver({
-      url: `${input.endpoint}/block?height=${input.height}`,
+      url: input.height ? `${input.endpoint}/block?height=${input.height}` : `${input.endpoint}/block`,
     });
     if (response.type === "success") return response.result;
-    if (!input.height.match(/^\d+$/)) {
+    if (input.height && !input.height.match(/^\d+$/)) {
       throw new Error("Invalid height");
     }
     NotFound();
