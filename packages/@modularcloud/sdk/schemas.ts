@@ -145,7 +145,6 @@ export const VerificationResponseSchema = z.object({
   isVerified: z.boolean(),
   uploadedUrl: z.string(),
 });
-
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
 
 export const VerifiedSourceSchema = z.record(z.string());
