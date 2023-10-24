@@ -40,7 +40,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
     return <SvmSkeleton error={"".toString()} />;
   }
 
-  if (!apiResult || isLoading) {
+  if (!apiResult || isLoading || latestBlocks.isLoading || latestTransactions.isLoading) {
     return <SvmSkeleton />;
   }
 
