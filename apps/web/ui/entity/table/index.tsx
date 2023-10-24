@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { RQTableProvider } from "./table-provider";
 
 interface Props {
   initialData: Page;
@@ -96,15 +97,8 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
   }
 };
 
-const queryClient = new QueryClient();
-
 export function Table(props: Props) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TableContent {...props} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  );
+  return <TableContent {...props} />;
 }
 
 function TableContent({ initialData, route }: Props) {
