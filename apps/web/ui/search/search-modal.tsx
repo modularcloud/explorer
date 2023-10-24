@@ -16,7 +16,7 @@ import { IntegrationGridView } from "./integration-grid-view";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
-import { isAddress, isHash, isHeight } from "~/lib/search";
+import { useFilteredOptionGroup } from "./use-filtered-option-group";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
@@ -62,15 +62,12 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const isTransactionOrBlockQuery = isHash(inputValue);
-  const isAddressOnlyQuery = isAddress(inputValue);
-  const isBlockOnlyQuery = isHeight(inputValue);
-  const isEntity =
-    isTransactionOrBlockQuery || isAddressOnlyQuery || isBlockOnlyQuery;
+  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  const isNetworkQuery = Object.keys(filteredOptionGroup).length > 0;
 
   const currentNetwork = selectedNetwork
     ? selectedNetwork
-    : isEntity
+    : !isNetworkQuery
     ? defaultNetwork.value
     : selectedNetwork;
 
@@ -150,9 +147,9 @@ export function SearchModal({
             </div>
           </DialogHeader>
 
-          {!currentNetwork && !isEntity && (
+          {!currentNetwork && isNetworkQuery && (
             <IntegrationGridView
-              optionGroups={optionGroups}
+              optionGroups={filteredOptionGroup}
               defaultChainBrand={defaultNetwork.value.brandName}
               filter={inputValue}
               onSelectOption={onSelectOption}
@@ -160,7 +157,7 @@ export function SearchModal({
             />
           )}
 
-          {currentNetwork && (
+          {currentNetwork && !isNetworkQuery && (
             <IntegrationActionListView
               query={inputValue}
               searcheableTypes={searcheableTypes ?? []}

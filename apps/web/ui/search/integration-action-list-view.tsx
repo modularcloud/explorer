@@ -43,7 +43,7 @@ export function IntegrationActionListView({
       );
     }
 
-    for (const type of searcheableTypes) {
+    for (const [type, query] of searcheableTypes) {
       router.prefetch(
         `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
       );
@@ -77,6 +77,9 @@ export function IntegrationActionListView({
       };
 
       for (const [type, query] of searcheableTypes) {
+        const typeName = type.endsWith("s")
+          ? type.substring(0, type.length - 1)
+          : type;
         items["Types"].push({
           id: type,
           icon: () => null,
@@ -84,7 +87,7 @@ export function IntegrationActionListView({
             <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
               Go to&nbsp;
               <strong className="font-medium text-foreground">
-                {capitalize(type)}
+                {capitalize(typeName)}
               </strong>
               &nbsp;
               <span className="break-all">{query}</span>
