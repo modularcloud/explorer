@@ -12,13 +12,9 @@ import {
   useInfiniteQuery,
 } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import { isomorphicLoadPage } from "~/lib/isomorphic-headless-utils";
-import { SingleNetwork } from "~/lib/network";
-
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 interface Props {
-  network: SingleNetwork;
   initialData: Page;
   route: HeadlessRoute;
 }
@@ -111,7 +107,7 @@ export function Table(props: Props) {
   );
 }
 
-function TableContent({ initialData, route, network }: Props) {
+function TableContent({ initialData, route }: Props) {
   if (initialData.body.type !== "collection") {
     throw new Error("Table component can only be used with a collection");
   }
