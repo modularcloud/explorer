@@ -372,6 +372,10 @@ export function useItemGrid<
         id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
         onClick: () => onSelectOption?.(option),
         onMouseEnter: () => {
+          const element = document.getElementById(
+            `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+          );
+          element?.focus();
           selectOption({ option, rowIndex, colIndex });
         },
         onFocus: () => {
