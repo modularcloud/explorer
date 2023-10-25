@@ -32,7 +32,7 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
 
 export async function Overview({ properties }: Props) {
   return (
-    <section className="pb-4 pt-8">
+    <section className="pb-4 pt-8 h-full overflow-y-auto">
       <OverviewEntryList entries={Object.entries(properties)} />
 
       {/* {(asyncAttributes ?? []).map((set) => (

@@ -40,7 +40,7 @@ export function OverviewEntryList({ entries }: Props) {
   return (
     <dl
       ref={listRef}
-      className="border-t border-mid-dark-100 w-full flex flex-col bg-muted-100"
+      className="border-t border-mid-dark-100 w-full flex flex-col"
     >
       {groupedItems.map((group, rowIndex) => {
         const [, items] = group[0];
@@ -60,6 +60,7 @@ export function OverviewEntryList({ entries }: Props) {
           />
         ));
       })}
+      <div className="w-full bg-white h-20"></div>
     </dl>
   );
 }
