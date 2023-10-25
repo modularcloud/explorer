@@ -1,68 +1,18 @@
 import * as React from "react";
-// components
-import { CopyableValue } from "~/ui/copyable-value";
-import { Status } from "~/ui/status";
-import { Skeleton } from "~/ui/skeleton";
 
-// utils
+import { Skeleton } from "~/ui/skeleton";
+import { OverviewEntryList, OverviewEntry } from "./entry";
+
 import { fetchEntity } from "~/ecs/lib/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { range } from "~/lib/shared-utils";
 
-// types
 import type { Value } from "@modularcloud/headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 
 type Props = {
   properties: Record<string, Value>;
 };
-
-interface EntryProps {
-  label: string;
-  value: Value;
-  notCopyable?: boolean;
-}
-
-function Entry({ label, value, notCopyable = false }: EntryProps) {
-  const { type, payload } = value;
-  if (!payload) return null;
-
-  return (
-    <div className="border-b border-mid-dark-100 py-4 grid grid-cols-5 items-baseline gap-4 px-6">
-      <dt className="col-span-2 font-medium">{label}</dt>
-
-      {type === "standard" && (
-        <dd className="col-span-3">
-          {notCopyable ? (
-            <span>{payload.toString()}</span>
-          ) : (
-            <CopyableValue value={payload.toString()} />
-          )}
-        </dd>
-      )}
-
-      {type === "status" && (
-        <dd className="col-span-3">
-          <Status status={payload} />
-        </dd>
-      )}
-
-      {type === "list" && (
-        <dd className="col-span-3">
-          <ol className="flex flex-col items-start gap-1 w-full">
-            {payload.map((value) => (
-              <li key={value} className="w-full">
-                <CopyableValue value={value} />
-              </li>
-            ))}
-          </ol>
-        </dd>
-      )}
-
-      {/* TODO : handle "image" type */}
-    </div>
-  );
-}
 
 async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   const entity = await fetchEntity({
@@ -74,7 +24,7 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   return (
     <>
       {Object.entries(attributes).map(([key, value]) => {
-        return <Entry key={key} label={key} value={value} />;
+        return <OverviewEntry key={key} label={key} value={value} />;
       })}
     </>
   );
@@ -83,23 +33,11 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
 export async function Overview({ properties }: Props) {
   return (
     <section className="pb-4 pt-8">
-      <dl className="border-t border-mid-dark-100 w-full flex flex-col">
-        {/* <Entry
-          label="Entity Type"
-          notCopyable
-          value={{
-            type: "standard",
-            payload: entityTypeName,
-          }}
-        /> */}
-        {Object.entries(properties).map(([key, value]) => {
-          return <Entry key={key} label={key} value={value} />;
-        })}
+      <OverviewEntryList entries={Object.entries(properties)} />
 
-        {/* {(asyncAttributes ?? []).map((set) => (
+      {/* {(asyncAttributes ?? []).map((set) => (
           <AsyncEntries resourcePath={set.src} />
         ))} */}
-      </dl>
     </section>
   );
 }

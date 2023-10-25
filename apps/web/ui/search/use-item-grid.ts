@@ -3,7 +3,7 @@ import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;
-  parentRef?: React.ElementRef<"div"> | null;
+  parentRef?: React.ElementRef<"div" | "ul" | "ol" | "dl"> | null;
   onSelectOption?: (option: T) => void;
   optionGroups: { [groupDisplayName: string]: T[] };
   defaultOptionGroupKey?: string; // the default key to show first in the list

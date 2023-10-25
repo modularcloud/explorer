@@ -41,11 +41,13 @@ export function NavLink({
     <Link
       href={href}
       tabIndex={isDummy ? -1 : 0}
+      aria-hidden={isDummy}
       className={cn(
         "flex text-center flex-col group h-full items-center group outline-none",
         {
           "text-foreground bg-white": isSelected,
           "text-muted  bg-muted-100": !isSelected,
+          "pointer-events-none": isDummy,
           "rounded-bl-lg": currentIndex === activeTabIndex + 1,
           "rounded-br-lg": currentIndex === activeTabIndex - 1,
           "w-52": !isDummy,

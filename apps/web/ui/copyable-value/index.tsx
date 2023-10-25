@@ -17,6 +17,7 @@ interface Props {
   hideCopyIcon?: boolean;
   className?: string;
   tooltipPosition?: TooltipPosition;
+  copyIconAppearOnHover?: boolean;
 }
 
 export function CopyableValue({
@@ -24,6 +25,7 @@ export function CopyableValue({
   className,
   hideCopyIcon = false,
   tooltipPosition,
+  copyIconAppearOnHover = false,
 }: Props) {
   const { toast } = useToast();
   return (
@@ -44,7 +46,10 @@ export function CopyableValue({
           <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
             <Button
               isSquared
-              className="bg-transparent"
+              className={cn("bg-transparent", {
+                "opacity-0 group-hover/copyable:opacity-100 focus:opacity-100":
+                  copyIconAppearOnHover,
+              })}
               onClick={async () => {
                 const copied = await copyValueToClipboard(value);
 
