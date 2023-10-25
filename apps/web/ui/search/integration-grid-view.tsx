@@ -4,7 +4,7 @@ import { GlobeCyber } from "~/ui/icons";
 import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
 import { capitalize } from "~/lib/shared-utils";
-import { useItemGrid } from "./use-item-grid";
+import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {

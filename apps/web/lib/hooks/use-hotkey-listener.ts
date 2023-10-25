@@ -1,10 +1,11 @@
 import * as React from "react";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
+import { isMacLike } from "~/lib/shared-utils";
 
 type HotkeyListener = (keyPressed: string) => void;
 type UseHotkeyListenerArgs = {
   keys: string[];
-  modifier?: "CTRL" | "CMD" | "ALT";
+  modifier?: "CTRL" | "META" | "ALT";
   listener: HotkeyListener;
 };
 
@@ -24,8 +25,16 @@ export function useHotkeyListener({
 
       if (event.ctrlKey) {
         keysPressedRef.current["CTRL"] = true;
+
+        /**
+         * On windows, we consider the meta key as CTRL because
+         * if we don't do this the meta key will never be detected on windows
+         */
+        if (!isMacLike(navigator.userAgent)) {
+          keysPressedRef.current["META"] = true;
+        }
       } else if (event.metaKey) {
-        keysPressedRef.current["CMD"] = true;
+        keysPressedRef.current["META"] = true;
       } else if (event.altKey) {
         keysPressedRef.current["ALT"] = true;
       } else {
