@@ -5,9 +5,11 @@ import { Status } from "~/ui/status";
 import { CopyableValue } from "~/ui/copyable-value";
 
 import { useItemGrid } from "~/ui/search/use-item-grid";
+import { cn } from "~/ui/shadcn/utils";
+import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
+import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
-import { cn } from "~/ui/shadcn/utils";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
@@ -126,6 +128,20 @@ export function OverviewEntry({
         },
       )}
       {...optionProps}
+      onCopy={async () => {
+        if (type === "standard" || type === "longval") {
+          const value =
+            type === "standard" ? payload.toString() : payload.value.toString();
+          const copied = await copyValueToClipboard(value);
+
+          if (copied) {
+            toast({
+              title: "Copied",
+              description: `"${truncateHash(value)}" copied to clipboard`,
+            });
+          }
+        }
+      }}
     >
       <dt className="col-span-2 font-medium">{label}</dt>
 
@@ -139,6 +155,20 @@ export function OverviewEntry({
               value={payload.toString()}
             >
               {getChildrenForStringPayload(payload.toString())}
+            </CopyableValue>
+          )}
+        </dd>
+      )}
+      {type === "longval" && (
+        <dd className="col-span-3">
+          {notCopyable ? (
+            <span>{payload.value.toString()}</span>
+          ) : (
+            <CopyableValue
+              copyIconAppearOnlyIfSelected
+              value={payload.value.toString()}
+            >
+              {getChildrenForStringPayload(payload.value.toString())}
             </CopyableValue>
           )}
         </dd>
