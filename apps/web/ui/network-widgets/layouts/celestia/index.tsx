@@ -1,17 +1,7 @@
 "use client";
 import * as React from "react";
-import {
-  BarChart,
-  Clock,
-  Disabled,
-  Document,
-  Folder,
-  Gas,
-  Globe,
-  UsdCoin,
-} from "~/ui/icons";
+import { BarChart, Disabled, Document, Folder } from "~/ui/icons";
 import { IconCard } from "~/ui/network-widgets/widgets/icon-card";
-import { TransactionHistory } from "~/ui/network-widgets/widgets/transaction-history";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 
@@ -23,7 +13,6 @@ import {
 } from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
-import { Treemap } from "../../widgets/treemap";
 interface Props {
   network: SearchOption;
 }
@@ -40,26 +29,20 @@ export function CelestiaWidgetLayout({ network }: Props) {
     return <SvmSkeleton error={"".toString()} />;
   }
 
-  if (!apiResult || isLoading || latestBlocks.isLoading || latestTransactions.isLoading) {
+  if (
+    !apiResult ||
+    isLoading ||
+    latestBlocks.isLoading ||
+    latestTransactions.isLoading
+  ) {
     return <SvmSkeleton />;
   }
 
-  const currencyFormatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-
-  const subPennyCurrencyFormatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 4,
-  });
   return (
     <div
       style={{
-        // temporarily adding this here
         // @ts-expect-error this is a CSS variable
-        "--color-primary": "236 15%, 18%", //network.brandColor,
+        "--color-primary": network.brandColor,
       }}
       className={cn(
         "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",

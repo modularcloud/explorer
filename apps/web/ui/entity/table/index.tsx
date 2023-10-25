@@ -6,13 +6,8 @@ import { cn } from "~/ui/shadcn/utils";
 import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 interface Props {
   initialData: Page;
@@ -96,15 +91,8 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
   }
 };
 
-const queryClient = new QueryClient();
-
 export function Table(props: Props) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TableContent {...props} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  );
+  return <TableContent {...props} />;
 }
 
 function TableContent({ initialData, route }: Props) {

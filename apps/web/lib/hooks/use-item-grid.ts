@@ -3,11 +3,10 @@ import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;
-  parentRef?: React.ElementRef<"div"> | null;
+  parentRef?: React.ElementRef<"div" | "ul" | "ol" | "dl"> | null;
   onSelectOption?: (option: T) => void;
   optionGroups: { [groupDisplayName: string]: T[] };
   defaultOptionGroupKey?: string; // the default key to show first in the list
-  selectFirstItem?: boolean;
 };
 
 /**
@@ -22,7 +21,6 @@ export function useItemGrid<
   parentRef,
   defaultOptionGroupKey,
   onSelectOption,
-  selectFirstItem = false,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
@@ -260,6 +258,13 @@ export function useItemGrid<
     }
   }, [parentRef, itemRootId]);
 
+  const getOptionId = React.useCallback(
+    (rowIndex: number, colIndex: number, option: T) => {
+      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
+    },
+    [itemRootId],
+  );
+
   // Listen for keyboard events
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
@@ -268,6 +273,7 @@ export function useItemGrid<
         event.preventDefault();
       }
 
+      let eventIgnored = false;
       switch (event.key) {
         case "ArrowUp":
           moveSelectionUp();
@@ -284,8 +290,17 @@ export function useItemGrid<
           moveSelectionRight();
           break;
         default:
+          eventIgnored = true;
           // we don't care for other key events
           break;
+      }
+
+      const { option, rowIndex, colIndex } = selectedItemPositionRef.current;
+      if (!eventIgnored && option) {
+        const element = document.getElementById(
+          `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+        );
+        element?.focus();
       }
     };
 
@@ -312,6 +327,7 @@ export function useItemGrid<
     moveSelectionRight,
     scrollOptionIntoView,
     onSelectOption,
+    itemRootId,
   ]);
 
   React.useEffect(() => {
@@ -322,22 +338,13 @@ export function useItemGrid<
      *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
      *      to fix it, we just reset the selected column to 0
      */
-    const defaultSelectedItem = selectFirstItem
-      ? groupedByLines[0]?.[0]?.[1]?.[0]
-      : null;
+    const defaultSelectedItem = groupedByLines[0]?.[0]?.[1]?.[0];
     selectOption({
       option: defaultSelectedItem ?? null,
       rowIndex: 0,
       colIndex: 0,
     });
-  }, [selectOption, groupedByLines, selectFirstItem]);
-
-  const getOptionId = React.useCallback(
-    (rowIndex: number, colIndex: number, option: T) => {
-      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
-    },
-    [itemRootId],
-  );
+  }, [selectOption, groupedByLines]);
 
   const isOptionSelected = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
@@ -360,20 +367,17 @@ export function useItemGrid<
       return {
         id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
         onClick: () => onSelectOption?.(option),
-        onMouseEnter: () => {
+        onMouseMove: () => {
+          const element = document.getElementById(
+            `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+          );
+          element?.focus();
           selectOption({ option, rowIndex, colIndex });
         },
         onFocus: () => {
           selectOption({ option, rowIndex, colIndex });
         },
         onBlur: () => {
-          selectOption({
-            option: null,
-            rowIndex: 0,
-            colIndex: 0,
-          });
-        },
-        onMouseLeave: () => {
           selectOption({
             option: null,
             rowIndex: 0,

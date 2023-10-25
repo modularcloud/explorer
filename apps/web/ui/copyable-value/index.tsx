@@ -14,9 +14,11 @@ import { cn } from "~/ui/shadcn/utils";
 import type { TooltipPosition } from "~/ui/tooltip";
 interface Props {
   value: string;
+  children: React.ReactNode;
   hideCopyIcon?: boolean;
   className?: string;
   tooltipPosition?: TooltipPosition;
+  copyIconAppearOnlyIfSelected?: boolean;
 }
 
 export function CopyableValue({
@@ -24,6 +26,8 @@ export function CopyableValue({
   className,
   hideCopyIcon = false,
   tooltipPosition,
+  copyIconAppearOnlyIfSelected = false,
+  children,
 }: Props) {
   const { toast } = useToast();
   return (
@@ -36,15 +40,20 @@ export function CopyableValue({
       {!hideCopyIcon ? (
         <>
           <p
-            className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full"
+            className={cn(
+              "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
+            )}
             tabIndex={-1}
           >
-            {value}
+            {children}
           </p>
           <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
             <Button
               isSquared
-              className="bg-transparent"
+              className={cn("bg-transparent", {
+                "opacity-0 group-aria-[selected=true]/copyable:opacity-100 focus:opacity-100":
+                  copyIconAppearOnlyIfSelected,
+              })}
               onClick={async () => {
                 const copied = await copyValueToClipboard(value);
 
@@ -80,7 +89,7 @@ export function CopyableValue({
               className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full"
               tabIndex={-1}
             >
-              {value}
+              {children}
             </span>
 
             <span className="sr-only">Copy value to clipboard</span>

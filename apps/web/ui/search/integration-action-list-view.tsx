@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "~/ui/shadcn/utils";
-import { useItemGrid } from "./use-item-grid";
+import { useItemGrid } from "~/lib/hooks/use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize, type SearchOption } from "~/lib/shared-utils";
@@ -167,7 +167,6 @@ export function IntegrationActionListView({
     optionGroups: items,
     parentRef: listRef.current,
     onSelectOption: (option) => option.onSelect(),
-    selectFirstItem: query.length > 0,
   });
 
   return (

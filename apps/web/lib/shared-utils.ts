@@ -251,3 +251,13 @@ export function parseHeadlessRouteVercelFix(params: HeadlessRoute) {
     path,
   };
 }
+
+/**
+ * check if the current user is on a mac or PC,
+ * this is used to display or listen to `ctrl` or `cmd`
+ * @param userAgent
+ * @returns
+ */
+export function isMacLike(userAgent: string | null) {
+  return !!userAgent && /(Mac|iPhone|iPod|iPad)/i.test(userAgent);
+}

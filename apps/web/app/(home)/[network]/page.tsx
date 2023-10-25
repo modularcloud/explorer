@@ -9,6 +9,7 @@ import { getSearchOptionGroups } from "~/lib/search-options";
 
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
+
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 

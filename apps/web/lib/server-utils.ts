@@ -189,8 +189,3 @@ export async function getLatestTransactions(
 
   return [];
 }
-
-export function isMacLike() {
-  const userAgent = headers().get("user-agent");
-  return !!userAgent && /(Mac|iPhone|iPod|iPad)/i.test(userAgent);
-}

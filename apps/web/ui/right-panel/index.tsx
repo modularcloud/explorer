@@ -18,7 +18,8 @@ import { AssociatedComponentList } from "./associated";
 // utils
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
-import { isMacLike } from "~/lib/server-utils";
+import { isMacLike } from "~/lib/shared-utils";
+import { headers } from "next/headers";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
@@ -174,7 +175,7 @@ export function RightPanel({ data, network }: Props) {
             <HotkeyEntry
               label="Copy"
               keys={[
-                isMacLike()
+                isMacLike(headers().get("user-agent"))
                   ? {
                       cmd: "⌘",
                       label: "Command",
