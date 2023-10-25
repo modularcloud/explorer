@@ -153,20 +153,6 @@ export function OverviewEntry({
         },
       )}
       {...optionProps}
-      // onCopy={async () => {
-      //   if (type === "standard" || type === "longval") {
-      //     const value =
-      //       type === "standard" ? payload.toString() : payload.value.toString();
-      //     const copied = await copyValueToClipboard(value);
-
-      //     if (copied) {
-      //       toast({
-      //         title: "Copied",
-      //         description: `"${truncateHash(value)}" copied to clipboard`,
-      //       });
-      //     }
-      //   }
-      // }}
     >
       <dt className="col-span-2 font-medium">{label}</dt>
 
