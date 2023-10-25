@@ -42,10 +42,6 @@ export function CopyableValue({
           <p
             className={cn(
               "text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full",
-              {
-                "group-aria-[selected=true]/copyable:bg-muted/10 px-2 py-1 rounded-lg":
-                  copyIconAppearOnlyIfSelected,
-              },
             )}
             tabIndex={-1}
           >
