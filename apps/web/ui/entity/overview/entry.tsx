@@ -107,8 +107,8 @@ export function OverviewEntry({
         {
           "border-b":
             currentIndex !== selectedIndex || currentIndex === lasItemIndex,
-          "rounded-br-xl": isNextSelected,
-          "rounded-tr-xl border-t": isPreviousSelected,
+          "lg:rounded-br-xl": isNextSelected,
+          "lg:rounded-tr-xl border-t": isPreviousSelected,
         },
       )}
       {...optionProps}
