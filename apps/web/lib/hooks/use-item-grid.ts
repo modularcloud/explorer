@@ -384,13 +384,6 @@ export function useItemGrid<
             colIndex: 0,
           });
         },
-        onMouseLeave: () => {
-          selectOption({
-            option: null,
-            rowIndex: 0,
-            colIndex: 0,
-          });
-        },
         role: "option",
         "aria-selected": isSelected,
         tabIndex: isSelected ? -1 : 0,
