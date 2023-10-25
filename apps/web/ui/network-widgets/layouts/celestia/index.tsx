@@ -127,8 +127,8 @@ export function CelestiaWidgetLayout({ network }: Props) {
                   number: Number(block.row.Height.payload),
                   noOfTransactions: Number(block.row.Txs.payload),
                   timestamp:
-                    typeof block.card.Timestamp.payload === "string"
-                      ? new Date(block.card.Timestamp.payload).getTime()
+                    typeof block.sidebar.properties.Timestamp.payload === "string"
+                      ? new Date(block.sidebar.properties.Timestamp.payload).getTime()
                       : new Date().getTime(),
                 };
               })

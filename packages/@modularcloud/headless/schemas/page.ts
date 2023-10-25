@@ -75,6 +75,13 @@ export const ColumnSchema = z.object({
 });
 export type Column = z.infer<typeof ColumnSchema>;
 
+export const SidebarSchema = z.object({
+  headerKey: z.string(),
+  headerValue: z.string(),
+  properties: z.record(ValueSchema),
+});
+export type Sidebar = z.infer<typeof SidebarSchema>;
+
 const CollectionSchema = z.object({
   type: z.literal("collection"),
   refreshIntervalMS: z.number().optional(),
@@ -83,7 +90,7 @@ const CollectionSchema = z.object({
   entries: z
     .object({
       row: z.record(ValueSchema),
-      card: z.record(ValueSchema),
+      sidebar: SidebarSchema,
       key: z.string(),
       link: z.string().optional(),
     })
@@ -99,11 +106,7 @@ export const PageSchema = z.object({
     description: z.string(),
   }),
   body: z.discriminatedUnion("type", [NotebookSchema, CollectionSchema]),
-  sidebar: z.object({
-    headerKey: z.string(),
-    headerValue: z.string(),
-    properties: z.record(ValueSchema),
-  }),
+  sidebar: SidebarSchema,
   tabs: z
     .object({
       text: z.string(),
