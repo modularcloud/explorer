@@ -167,7 +167,6 @@ export function IntegrationActionListView({
     optionGroups: items,
     parentRef: listRef.current,
     onSelectOption: (option) => option.onSelect(),
-    selectFirstItem: query.length > 0,
   });
 
   return (

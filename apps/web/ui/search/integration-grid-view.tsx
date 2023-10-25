@@ -37,7 +37,6 @@ export function IntegrationGridView({
     optionGroups,
     onSelectOption,
     defaultOptionGroupKey: defaultChainBrand,
-    selectFirstItem: !!filter,
   });
 
   return (

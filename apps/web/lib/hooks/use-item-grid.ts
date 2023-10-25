@@ -7,7 +7,6 @@ type UseItemGridArgs<T> = {
   onSelectOption?: (option: T) => void;
   optionGroups: { [groupDisplayName: string]: T[] };
   defaultOptionGroupKey?: string; // the default key to show first in the list
-  selectFirstItem?: boolean;
 };
 
 /**
@@ -22,7 +21,6 @@ export function useItemGrid<
   parentRef,
   defaultOptionGroupKey,
   onSelectOption,
-  selectFirstItem = false,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
@@ -340,15 +338,13 @@ export function useItemGrid<
      *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
      *      to fix it, we just reset the selected column to 0
      */
-    const defaultSelectedItem = selectFirstItem
-      ? groupedByLines[0]?.[0]?.[1]?.[0]
-      : null;
+    const defaultSelectedItem = groupedByLines[0]?.[0]?.[1]?.[0];
     selectOption({
       option: defaultSelectedItem ?? null,
       rowIndex: 0,
       colIndex: 0,
     });
-  }, [selectOption, groupedByLines, selectFirstItem]);
+  }, [selectOption, groupedByLines]);
 
   const isOptionSelected = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
@@ -371,7 +367,7 @@ export function useItemGrid<
       return {
         id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
         onClick: () => onSelectOption?.(option),
-        onMouseEnter: () => {
+        onMouseMove: () => {
           const element = document.getElementById(
             `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
           );
