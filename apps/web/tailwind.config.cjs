@@ -32,7 +32,11 @@ module.exports = {
         neutral: {
           DEFAULT: "hsl(var(--color-neutral))",
         },
-        muted: { DEFAULT: "hsl(var(--color-muted))", 100: "#F6F8FA" },
+        muted: {
+          DEFAULT: "hsl(var(--color-muted))",
+          100: "#F6F8FA",
+          50: "#FCFDFD",
+        },
         primary: "hsl(var(--color-primary))",
       },
       // borderRadius: {

@@ -260,6 +260,13 @@ export function useItemGrid<
     }
   }, [parentRef, itemRootId]);
 
+  const getOptionId = React.useCallback(
+    (rowIndex: number, colIndex: number, option: T) => {
+      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
+    },
+    [itemRootId],
+  );
+
   // Listen for keyboard events
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
@@ -268,6 +275,7 @@ export function useItemGrid<
         event.preventDefault();
       }
 
+      let eventIgnored = false;
       switch (event.key) {
         case "ArrowUp":
           moveSelectionUp();
@@ -284,8 +292,17 @@ export function useItemGrid<
           moveSelectionRight();
           break;
         default:
+          eventIgnored = true;
           // we don't care for other key events
           break;
+      }
+
+      const { option, rowIndex, colIndex } = selectedItemPositionRef.current;
+      if (!eventIgnored && option) {
+        const element = document.getElementById(
+          `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+        );
+        element?.focus();
       }
     };
 
@@ -312,6 +329,7 @@ export function useItemGrid<
     moveSelectionRight,
     scrollOptionIntoView,
     onSelectOption,
+    itemRootId,
   ]);
 
   React.useEffect(() => {
@@ -331,13 +349,6 @@ export function useItemGrid<
       colIndex: 0,
     });
   }, [selectOption, groupedByLines, selectFirstItem]);
-
-  const getOptionId = React.useCallback(
-    (rowIndex: number, colIndex: number, option: T) => {
-      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
-    },
-    [itemRootId],
-  );
 
   const isOptionSelected = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {

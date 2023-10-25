@@ -34,7 +34,9 @@ export function AssociatedComponentList({
             value={headerValue}
             hideCopyIcon
             className="[&>button]:uppercase justify-end"
-          />
+          >
+            {headerValue}
+          </CopyableValue>
         </dd>
       </div>
 
@@ -88,9 +90,19 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
             value={payload!.toString()}
             hideCopyIcon
             className="justify-end"
-          />
+          >
+            {getChildrenForStringPayload(payload!.toString())}
+          </CopyableValue>
         </dd>
       )}
     </div>
   );
+}
+
+function getChildrenForStringPayload(payload: string) {
+  if (payload.length > 0) {
+    return <>{payload}</>;
+  }
+
+  return <code className="text-muted/80 text-sm">&lt;Empty&gt;</code>;
 }

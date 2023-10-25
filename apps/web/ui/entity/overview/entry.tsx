@@ -72,6 +72,14 @@ interface EntryProps {
   registerOptionProps?: () => {};
 }
 
+function getChildrenForStringPayload(payload: string) {
+  if (payload.length > 0) {
+    return <>{payload}</>;
+  }
+
+  return <code className="text-muted/80 text-sm">&lt;Empty&gt;</code>;
+}
+
 export function OverviewEntry({
   label,
   value,
@@ -85,6 +93,7 @@ export function OverviewEntry({
   if (payload === null || payload === undefined) return null;
 
   const optionProps = registerOptionProps?.() ?? {};
+  // TODO : this is for links types
   const isPreviousSelected =
     selectedIndex !== undefined &&
     selectedIndex !== -1 &&
@@ -100,15 +109,20 @@ export function OverviewEntry({
       className={cn(
         "group/copyable border-mid-dark-100 bg-white",
         "grid grid-cols-5 items-baseline gap-4 py-4 px-6",
-        "border-l-2 border-l-transparent",
         "transition-none duration-0",
-        "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
+        "aria-[selected=true]:text-foreground",
         "aria-[selected=true]:border-l-primary",
+        "border-l-2 border-l-transparent",
+        "border-b border-r focus:outline-none",
         {
-          "border-b":
-            currentIndex !== selectedIndex || currentIndex === lasItemIndex,
-          "lg:rounded-br-xl": isNextSelected,
-          "lg:rounded-tr-xl border-t": isPreviousSelected,
+          "aria-[selected=true]:bg-muted-50": true,
+          //   // TODO : this is only for links
+          // "border-r": currentIndex === selectedIndex,
+          // "aria-[selected=true]:bg-muted-100": true,
+          // "border-b":
+          //   currentIndex !== selectedIndex || currentIndex === lasItemIndex,
+          // "lg:rounded-br-xl": isNextSelected,
+          // "lg:rounded-tr-xl border-t": isPreviousSelected,
         },
       )}
       {...optionProps}
@@ -120,7 +134,12 @@ export function OverviewEntry({
           {notCopyable ? (
             <span>{payload.toString()}</span>
           ) : (
-            <CopyableValue copyIconAppearOnHover value={payload.toString()} />
+            <CopyableValue
+              copyIconAppearOnlyIfSelected
+              value={payload.toString()}
+            >
+              {getChildrenForStringPayload(payload.toString())}
+            </CopyableValue>
           )}
         </dd>
       )}
@@ -136,7 +155,9 @@ export function OverviewEntry({
           <ol className="flex flex-col items-start gap-1 w-full">
             {payload.map((value) => (
               <li key={value} className="w-full">
-                <CopyableValue value={value} />
+                <CopyableValue value={value}>
+                  {getChildrenForStringPayload(payload.toString())}
+                </CopyableValue>
               </li>
             ))}
           </ol>
