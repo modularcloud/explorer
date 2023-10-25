@@ -40,7 +40,7 @@ export function OverviewEntryList({ entries }: Props) {
   return (
     <dl
       ref={listRef}
-      className="border-t border-mid-dark-100 w-full flex flex-col"
+      className="border-t border-mid-dark-100 w-full flex flex-col h-full mb-20 bg-muted-100"
     >
       {groupedItems.map((group, rowIndex) => {
         const [, items] = group[0];
@@ -60,7 +60,6 @@ export function OverviewEntryList({ entries }: Props) {
           />
         ));
       })}
-      <div className="w-full bg-white h-20"></div>
     </dl>
   );
 }
@@ -117,6 +116,7 @@ export function OverviewEntry({
         "aria-[selected=true]:border-l-primary",
         "border-l-2 border-l-transparent",
         "border-b border-r focus:outline-none",
+        "scroll-m-10",
         {
           "aria-[selected=true]:bg-muted-50": true,
           //   // TODO : this is only for links
