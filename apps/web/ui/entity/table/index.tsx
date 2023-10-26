@@ -352,7 +352,7 @@ function TableRow({
       <td
         className={cn("px-1 sm:px-3 border-[#ECEFF3]", {
           "border-b": currentItemIndex !== selectedItemIndex,
-          // "lg:rounded-br-xl": isNextSelected,
+          "lg:rounded-br-xl": isNextSelected,
           "lg:rounded-r-xl": isPreviousSelected,
         })}
         aria-hidden={true}
