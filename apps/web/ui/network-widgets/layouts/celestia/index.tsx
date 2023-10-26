@@ -20,6 +20,7 @@ interface Props {
 
 // TODO : transform this into a client component
 export function CelestiaWidgetLayout({ network }: Props) {
+  if (!("id" in network)) return null;
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
   const latestBlocks = useLatestBlocks(network.id);
