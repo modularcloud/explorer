@@ -13,6 +13,7 @@ import {
 } from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
+import { Treemap } from "../../widgets/treemap";
 interface Props {
   network: SearchOption;
 }
@@ -111,12 +112,12 @@ export function CelestiaWidgetLayout({ network }: Props) {
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
 
-      {/* <Treemap
+      <Treemap
         data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
-        className="h-[20.5rem] col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-      /> */}
+        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+      />
 
-      <LatestBlocks
+      {/* <LatestBlocks
         networkSlug={network.id}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
         data={
@@ -134,7 +135,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
               })
             : []
         }
-      />
+      /> */}
     </div>
   );
 }
