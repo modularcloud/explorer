@@ -11,11 +11,14 @@ import { getSingleNetworkCached } from "./network";
 import { parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
+import { z } from "zod";
 
-export type HeadlessRoute = {
-  network: string;
-  path: string[];
-};
+export const HeadlessRouteSchema = z.object({
+  network: z.string(),
+  path: z.array(z.string()),
+});
+
+export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
 export async function loadIntegration(networkSlug: string) {
   const network = await getSingleNetworkCached(networkSlug);
@@ -49,7 +52,13 @@ export async function loadIntegration(networkSlug: string) {
     resolveRoute: async (
       path: string[],
       additionalContext?: PaginationContext | undefined,
+      skipCache: boolean = false,
     ) => {
+      // bypass `unstable_cache` if `cache` is false
+      if (skipCache) {
+        return integration.resolveRoute(path, additionalContext);
+      }
+
       const resolveRouteFn = nextCache(
         function cachedResolveRoute(
           path: string[],
@@ -78,15 +87,24 @@ export async function loadIntegration(networkSlug: string) {
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
  */
-export async function loadPage(
-  route: HeadlessRoute,
-  context?: PaginationContext,
-): Promise<Page> {
+export async function loadPage({
+  route,
+  context,
+  skipCache = false,
+}: {
+  route: HeadlessRoute;
+  context?: PaginationContext;
+  skipCache?: boolean;
+}): Promise<Page> {
   const integration = await loadIntegration(route.network);
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath);
+  const resolution = await integration.resolveRoute(
+    fixedPath,
+    context,
+    skipCache,
+  );
 
   if (!resolution) {
     notFound();

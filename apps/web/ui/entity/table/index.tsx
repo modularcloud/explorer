@@ -112,7 +112,11 @@ function TableContent({ initialData, route }: Props) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ route, context: { after: pageParam } }),
+          body: JSON.stringify({
+            route,
+            context: { after: pageParam },
+            skipCache: true,
+          }),
         });
         const data = await response.json();
         return data;
