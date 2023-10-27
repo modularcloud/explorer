@@ -27,7 +27,9 @@ type Tab = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const { tabs: resolvedTabs } = await loadPage(params);
+  const { tabs: resolvedTabs } = await loadPage({
+    route: params,
+  });
 
   // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
