@@ -8,59 +8,18 @@ import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
+import {
+  OnSelectItemArgs,
+  useItemListNavigation,
+} from "~/lib/hooks/use-item-list-navigation";
 
 interface Props {
   initialData: Page;
   route: HeadlessRoute;
 }
 
-function TableRow({
-  columns,
-  entry,
-  style,
-}: {
-  columns: Collection["tableColumns"];
-  entry: Collection["entries"][0];
-  style: any;
-}) {
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (entry.link) {
-      router.prefetch(entry.link);
-    }
-  }, [entry, router]);
-  return (
-    <tr
-      onClick={(e) => {
-        if (entry.link) {
-          e.stopPropagation();
-          router.push(entry.link);
-        }
-      }}
-      className={cn(entry.link && "cursor-pointer")}
-      style={style}
-    >
-      <td className="px-1 sm:px-3 border-b border-[#ECEFF3]" aria-hidden={true}>
-        {/* For spacing purposes only */}
-      </td>
-      {columns.map((col) => (
-        <td
-          key={col.columnLabel}
-          className={cn(
-            "px-2 border-b border-[#ECEFF3]",
-            generateClassname(col.breakpoint),
-          )}
-        >
-          <TableCell {...entry.row[col.columnLabel]} />
-        </td>
-      ))}
-      <td className="px-1 sm:px-3 border-b border-[#ECEFF3]" aria-hidden={true}>
-        {/* For spacing purposes only */}
-      </td>
-    </tr>
-  );
-}
+type TableEntry = Collection["entries"][0];
+type TableColumns = Collection["tableColumns"];
 
 const generateClassname = (breakpoint: Column["breakpoint"]) => {
   switch (breakpoint) {
@@ -106,7 +65,7 @@ function TableContent({ initialData, route }: Props) {
   const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
     useInfiniteQuery<Page>({
       queryKey: ["table", route],
-      queryFn: async ({ pageParam }) => {
+      queryFn: async ({ pageParam, signal }) => {
         const response = await fetch("/api/load-page", {
           method: "POST",
           headers: {
@@ -117,6 +76,7 @@ function TableContent({ initialData, route }: Props) {
             context: { after: pageParam },
             skipCache: true,
           }),
+          signal,
         });
         const data = await response.json();
         return data;
@@ -125,10 +85,12 @@ function TableContent({ initialData, route }: Props) {
         "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
       initialData: {
+        // TODO : remove and replace later with a fallback
         pages: [initialData],
         pageParams: [undefined],
       },
       initialPageParam: undefined,
+      staleTime: Infinity,
     });
 
   const flatData = React.useMemo(
@@ -164,28 +126,57 @@ function TableContent({ initialData, route }: Props) {
     fetchMoreOnBottomReached(parentRef.current);
   }, [fetchMoreOnBottomReached]);
 
+  const PADDING_END = 160;
+  const ITEM_SIZE = 65;
   const virtualizer = useVirtualizer({
     count: flatData.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 65,
+    estimateSize: () => ITEM_SIZE,
     overscan: 20,
-    paddingEnd: 160,
+    paddingEnd: PADDING_END,
+    scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
+    scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
   });
 
-  // React.useEffect(() => {
-  //   const handleKeyPress = (event: KeyboardEvent) => {
-  //     if (event.key === "a") {
-  //       console.log(event.key);
-  //       virtualizer.scrollToIndex(2)
-  //     }
-  //   };
+  const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
 
-  //   window.addEventListener("keydown", handleKeyPress);
+  const router = useRouter();
 
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyPress);
-  //   };
-  // }, [virtualizer]);
+  const onSelectItem = React.useCallback(
+    ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
+      if (entry.link && inputMethod === "keyboard") {
+        virtualizer.scrollToIndex(index);
+      }
+    },
+    [virtualizer],
+  );
+
+  const { registerItemProps, selectedItemIndex, selectItem } =
+    useItemListNavigation({
+      getItemId,
+      onSelectItem,
+      items: flatData,
+      scrollOnSelection: false,
+      parentRef: parentRef.current,
+      onClickItem(entry) {
+        if (entry.link) {
+          router.push(entry.link);
+        }
+      },
+    });
+
+  const hasAlreadyFocusedFirstItem = React.useRef(false);
+  /**
+   * We force the selection on the first item when they become available
+   * the ref is here because we don't want this to rerun whenever we fetch more data,
+   * but only when the first batch of data is available
+   */
+  React.useEffect(() => {
+    if (flatData.length > 0 && !hasAlreadyFocusedFirstItem.current) {
+      selectItem({ index: 0, item: flatData[0] });
+      hasAlreadyFocusedFirstItem.current = true;
+    }
+  }, [flatData, selectItem]);
 
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
@@ -203,7 +194,7 @@ function TableContent({ initialData, route }: Props) {
     >
       <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
         <table
-          className="w-full max-w-full border-separate"
+          className="w-full max-w-full border-separate bg-muted-100"
           style={{ borderSpacing: "0 1px" }}
         >
           <thead className="sticky top-0 bg-white z-10">
@@ -271,6 +262,11 @@ function TableContent({ initialData, route }: Props) {
                   key={index}
                   columns={columns}
                   entry={entry}
+                  registerOptionProps={() =>
+                    registerItemProps(virtualRow.index, entry)
+                  }
+                  currentItemIndex={virtualRow.index}
+                  selectedItemIndex={selectedItemIndex}
                   style={{
                     height: `${virtualRow.size}px`,
                     transform: `translateY(${
@@ -284,5 +280,97 @@ function TableContent({ initialData, route }: Props) {
         </table>
       </div>
     </div>
+  );
+}
+
+type TableRowProps = {
+  columns: TableColumns;
+  entry: TableEntry;
+  style: any;
+  currentItemIndex: number;
+  selectedItemIndex: number;
+  registerOptionProps?: () => {};
+};
+function TableRow({
+  columns,
+  entry,
+  style,
+  registerOptionProps,
+  selectedItemIndex,
+  currentItemIndex,
+}: TableRowProps) {
+  const router = useRouter();
+  const optionProps = registerOptionProps?.() ?? {};
+
+  const isPreviousSelected =
+    selectedItemIndex !== undefined &&
+    selectedItemIndex !== -1 &&
+    currentItemIndex === selectedItemIndex + 1;
+  const isNextSelected =
+    selectedItemIndex !== undefined &&
+    selectedItemIndex !== -1 &&
+    currentItemIndex === selectedItemIndex - 1;
+
+  React.useEffect(() => {
+    if (entry.link) {
+      router.prefetch(entry.link);
+    }
+  }, [entry, router]);
+  return (
+    <tr
+      onClick={(e) => {
+        if (entry.link) {
+          e.stopPropagation();
+          router.push(entry.link);
+        }
+      }}
+      className={cn("group focus:outline-none", {
+        "cursor-pointer": entry.link,
+        "aria-[selected=true]:bg-muted-100": entry.link,
+        "aria-[selected=true]:bg-muted-50": !entry.link,
+      })}
+      style={style}
+      {...optionProps}
+    >
+      <td
+        className={cn(
+          "px-1 sm:px-3 border-[#ECEFF3] border-b",
+          "border-l-2 border-l-transparent",
+          "group-aria-[selected=true]:border-l-primary",
+          "group-aria-[selected=true]:border-b-transparent",
+          `group-aria-[selected="false"]:bg-white`,
+        )}
+        aria-hidden={true}
+      >
+        {/* For spacing purposes only */}
+      </td>
+      {columns.map((col) => (
+        <td
+          key={col.columnLabel}
+          className={cn(
+            "px-2 border-[#ECEFF3] border-b",
+            "group-aria-[selected=true]:border-b-transparent",
+            `group-aria-[selected="false"]:bg-white`,
+            generateClassname(col.breakpoint),
+          )}
+        >
+          <TableCell {...entry.row[col.columnLabel]} />
+        </td>
+      ))}
+      <td
+        className={cn(
+          "px-1 sm:px-3 border-[#ECEFF3] border-b",
+          "group-aria-[selected=true]:border-b-transparent",
+          `group-aria-[selected="false"]:bg-white`,
+          {
+            "lg:rounded-br-xl": entry.link && isNextSelected,
+            "lg:rounded-tr-xl": entry.link && isPreviousSelected,
+          },
+        )}
+        aria-hidden={true}
+      >
+        {/* For spacing purposes only */}
+      </td>
+    </tr>
   );
 }
