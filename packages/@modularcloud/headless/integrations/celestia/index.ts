@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Page, PageContext, Value } from "../../schemas/page";
 import { addRoute, matchRoute, registerResolver } from "../../router";
 import { PaginationContext } from "../../schemas/context";
-import type { PartialDeep } from "type-fest";
 import { registerResolvers } from "..";
 
 type IntegrationResponse = ResolutionResponse | null;
