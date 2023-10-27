@@ -1,4 +1,4 @@
-import type { Value } from "../../schemas/page";
+import type { PageContext, Sidebar, Value } from "../../schemas/page";
 import { BlockResponse, TransactionResponse } from "./types";
 import * as Values from "./utils/values";
 
@@ -158,4 +158,21 @@ export function getBlockProperties(block: any) {
       }
     }),
   ) as Record<BlockPropertyKeys, Value>;
+}
+
+export function getDefaultCelestiaSidebar(context: PageContext): Sidebar {
+  return {
+    headerKey: "Network",
+    headerValue: context.chainName,
+    properties: {
+      Layer: {
+        type: "standard",
+        payload: "Data Availability",
+      },
+      Execution: {
+        type: "standard",
+        payload: "Cosmos SDK",
+      },
+    },
+  };
 }

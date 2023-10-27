@@ -1,8 +1,8 @@
 import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import { z } from "zod";
-import { Page, PageContext, Value } from "../../../../../schemas/page";
-import { BlockResponse } from "../../../types";
+import { getBlockProperties, getDefaultCelestiaSidebar } from "../../../helpers";
+
+import type { Page, PageContext } from "../../../../../schemas/page";
 
 export const CelestiaBlockResolver = createResolver(
     {
@@ -33,32 +33,13 @@ export const CelestiaBlockResolver = createResolver(
       if (response.type === "error") throw response.error;
       if (response.type === "pending") throw PendingException;
   
-      const data: BlockResponse = response.result;
-  
-      const properties: Record<string, Value> = {
-        Type: {
-          type: "standard",
-          payload: "Block",
-        },
-      };
-  
-      try {
-        properties["Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block_id.hash),
-        };
-      } catch {}
-      try {
-        properties["Height"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.height),
-        };
-      } catch {}
-      try {
-        properties["Timestamp"] = {
-          type: "standard",
-          payload:
-            new Date(data.result.block.header.time).toLocaleDateString("en-US", {
+      const properties = getBlockProperties(response.result);
+
+      // Adjusting timestamp format for displaying on block page
+      if(properties.Timestamp.type === "standard") {
+        properties.Timestamp.payload = new Date(properties.Timestamp.payload).toLocaleDateString(
+            "en-US",
+            {
               month: "long",
               day: "numeric",
               year: "numeric",
@@ -66,72 +47,10 @@ export const CelestiaBlockResolver = createResolver(
               minute: "2-digit",
               second: "2-digit",
               timeZone: "UTC",
-            }) + " UTC",
-        };
-      } catch {}
-      try {
-        properties["Proposer"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.proposer_address),
-        };
-      } catch {}
-      try {
-        properties["Transactions"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.data.txs.length),
-        };
-      } catch {}
-      try {
-        properties["Last Commit Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.last_commit_hash),
-        };
-      } catch {}
-      try {
-        properties["Data Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.data_hash),
-        };
-      } catch {}
-      try {
-        properties["Validators Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.validators_hash),
-        };
-      } catch {}
-      try {
-        properties["Next Validators Hash"] = {
-          type: "standard",
-          payload: z
-            .string()
-            .parse(data.result.block.header.next_validators_hash),
-        };
-      } catch {}
-      try {
-        properties["Consensus Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.consensus_hash),
-        };
-      } catch {}
-      try {
-        properties["App Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.app_hash),
-        };
-      } catch {}
-      try {
-        properties["Last Results Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.last_results_hash),
-        };
-      } catch {}
-      try {
-        properties["Evidence Hash"] = {
-          type: "standard",
-          payload: z.string().parse(data.result.block.header.evidence_hash),
-        };
-      } catch {}
-  
+            },
+          ) + " UTC";
+      }
+
       const page: Page = {
         context,
         metadata: {
@@ -142,20 +61,7 @@ export const CelestiaBlockResolver = createResolver(
           type: "notebook",
           properties,
         },
-        sidebar: {
-          headerKey: "Network",
-          headerValue: context.chainName,
-          properties: {
-            Layer: {
-              type: "standard",
-              payload: "Data Availability",
-            },
-            Execution: {
-              type: "standard",
-              payload: "Cosmos SDK",
-            },
-          },
-        },
+        sidebar: getDefaultCelestiaSidebar(context),
         tabs: [
           {
             text: "Overview",
