@@ -22,7 +22,7 @@ export default async function RightPanelPage({ params }: Props) {
     notFound();
   }
 
-  const { sidebar } = await loadPage(params);
+  const { sidebar } = await loadPage({ route: params });
 
   return <RightPanel network={network} data={sidebar} />;
 }
