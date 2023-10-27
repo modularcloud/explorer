@@ -81,6 +81,7 @@ function TableContent({ initialData, route }: Props) {
         "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
       initialData: {
+        // TODO : remove and replace later with a fallback
         pages: [initialData],
         pageParams: [undefined],
       },
@@ -300,11 +301,6 @@ function TableRow({
     selectedItemIndex !== -1 &&
     currentItemIndex === selectedItemIndex - 1;
 
-  console.log({
-    currentItemIndex,
-    isNextSelected,
-    isPreviousSelected,
-  });
   React.useEffect(() => {
     if (entry.link) {
       router.prefetch(entry.link);
@@ -320,7 +316,6 @@ function TableRow({
       }}
       className={cn("group focus:outline-none", {
         "cursor-pointer": entry.link,
-        "bg-white": currentItemIndex !== selectedItemIndex,
         "aria-[selected=true]:bg-muted-100": entry.link,
         "aria-[selected=true]:bg-muted-50": !entry.link,
       })}
@@ -329,10 +324,11 @@ function TableRow({
     >
       <td
         className={cn(
-          "px-1 sm:px-3 border-[#ECEFF3]",
+          "px-1 sm:px-3 border-[#ECEFF3] border-b",
           "group-aria-[selected=true]:border-l-primary border-l-2 border-l-transparent",
           {
-            "border-b": currentItemIndex !== selectedItemIndex,
+            "bg-white": currentItemIndex !== selectedItemIndex,
+            "border-b-transparent": currentItemIndex === selectedItemIndex,
           },
         )}
         aria-hidden={true}
@@ -343,10 +339,11 @@ function TableRow({
         <td
           key={col.columnLabel}
           className={cn(
-            "px-2 border-[#ECEFF3]",
+            "px-2 border-[#ECEFF3] border-b",
             generateClassname(col.breakpoint),
             {
-              "border-b": currentItemIndex !== selectedItemIndex,
+              "bg-white": currentItemIndex !== selectedItemIndex,
+              "border-b-transparent": currentItemIndex === selectedItemIndex,
             },
           )}
         >
@@ -354,11 +351,11 @@ function TableRow({
         </td>
       ))}
       <td
-        className={cn("px-1 sm:px-3 border-[#ECEFF3]", {
-          "border-b": currentItemIndex !== selectedItemIndex,
-          // TODO : fix the styling here
-          // "lg:rounded-br-xl": isNextSelected,
-          // "lg:rounded-r-xl": isPreviousSelected,
+        className={cn("px-1 sm:px-3 border-[#ECEFF3] border-b", {
+          "bg-white": currentItemIndex !== selectedItemIndex,
+          "border-b-transparent": currentItemIndex === selectedItemIndex,
+          "lg:rounded-br-xl": entry.link && isNextSelected,
+          "lg:rounded-tr-xl": entry.link && isPreviousSelected,
         })}
         aria-hidden={true}
       >
