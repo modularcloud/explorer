@@ -34,8 +34,8 @@ export function IntegrationActionListView({
   // prefetch these routes for faster navigation
   React.useEffect(() => {
     router.prefetch(`/${selectedNetwork.id}`);
-    router.prefetch(`/${selectedNetwork.id}/latest/blocks`);
-    router.prefetch(`/${selectedNetwork.id}/latest/transactions`);
+    router.prefetch(`/${selectedNetwork.id}/blocks`);
+    router.prefetch(`/${selectedNetwork.id}/transactions`);
 
     if (query) {
       router.prefetch(
@@ -125,7 +125,7 @@ export function IntegrationActionListView({
           label: "Go to latest blocks",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/latest/blocks`);
+            router.push(`/${selectedNetwork.id}/blocks`);
           },
         },
         {
@@ -136,7 +136,7 @@ export function IntegrationActionListView({
           label: "Go to latest transactions",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/latest/transactions`);
+            router.push(`/${selectedNetwork.id}/transactions`);
           },
         },
       ],

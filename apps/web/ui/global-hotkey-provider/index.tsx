@@ -67,9 +67,9 @@ export function GlobalHotkeyProvider({
         if (sequenceKeyPressedRef.current) {
           sequenceKeyPressedRef.current = false;
           if (key === "b") {
-            router.push(`/${network.id}/latest/blocks`);
+            router.push(`/${network.id}/blocks`);
           } else {
-            router.push(`/${network.id}/latest/transactions`);
+            router.push(`/${network.id}/transactions`);
           }
         }
       } else {
