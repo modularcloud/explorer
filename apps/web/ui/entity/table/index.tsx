@@ -8,7 +8,10 @@ import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
+import {
+  OnSelectItemArgs,
+  useItemListNavigation,
+} from "~/lib/hooks/use-item-list-navigation";
 
 interface Props {
   initialData: Page;
@@ -136,18 +139,23 @@ function TableContent({ initialData, route }: Props) {
   const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
 
   const router = useRouter();
+
+  const onSelectItem = React.useCallback(
+    ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
+      if (entry.link && inputMethod === "keyboard") {
+        virtualizer.scrollToIndex(index);
+      }
+    },
+    [virtualizer],
+  );
+
   const { registerItemProps, selectedItemIndex, selectItem } =
     useItemListNavigation({
-      items: flatData,
       getItemId,
+      onSelectItem,
+      items: flatData,
       scrollOnSelection: false,
       parentRef: parentRef.current,
-      onSelectItem(entry, index) {
-        if (entry.link) {
-          // virtualizer.scrollToOffset(index * 65 + 50);
-          virtualizer.scrollToIndex(index);
-        }
-      },
       onClickItem(entry) {
         if (entry.link) {
           router.push(entry.link);

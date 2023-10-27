@@ -1,11 +1,20 @@
 import * as React from "react";
 import { isElementOverflowing } from "~/lib/shared-utils";
 
+export type OnSelectItemArgs<T> = {
+  item: T;
+  index: number;
+  inputMethod: "keyboard" | "mouse";
+};
+
 type UseItemListNavigationArgs<T> = {
   parentRef?: React.ElementRef<"div" | "ul" | "ol" | "dl" | "table"> | null;
-  onSelectItem?: (item: T, index: number) => void;
-  onClickItem?: (item: T, index: number) => void;
   scrollOnSelection?: boolean;
+  onClickItem?: (item: T, index: number) => void;
+  /**
+   * This function should be memoized, because it is passed to our `useEffect`
+   */
+  onSelectItem?: (arg: OnSelectItemArgs<T>) => void;
   /**
    * These items should be memoized to avoid breaking up
    * the memo inside this hook
@@ -77,8 +86,13 @@ export function useItemListNavigation<T>({
         item: items[index + 1],
         index: index + 1,
       });
+      onSelectItem?.({
+        item: items[index + 1],
+        index: index + 1,
+        inputMethod: "keyboard",
+      });
     }
-  }, [items, selectItem]);
+  }, [selectItem, onSelectItem, items]);
 
   const moveSelectionUp = React.useCallback(() => {
     const { index } = selectedItemPositionRef.current;
@@ -90,9 +104,13 @@ export function useItemListNavigation<T>({
         item: items[index - 1],
         index: index - 1,
       });
-      setSelectedIndex(index - 1);
+      onSelectItem?.({
+        item: items[index - 1],
+        index: index - 1,
+        inputMethod: "keyboard",
+      });
     }
-  }, [selectItem, items]);
+  }, [selectItem, onSelectItem, items]);
 
   const getOptionId = React.useCallback(
     (index: number, item: T) => {
@@ -155,7 +173,7 @@ export function useItemListNavigation<T>({
       if (event.key === "Enter") {
         const { item, index } = selectedItemPositionRef.current;
         if (item) {
-          onSelectItem?.(item, index);
+          onClickItem?.(item, index);
         }
       }
     };
@@ -170,7 +188,7 @@ export function useItemListNavigation<T>({
     moveSelectionDown,
     moveSelectionUp,
     scrollItemIntoView,
-    onSelectItem,
+    onClickItem,
     getOptionId,
   ]);
 
@@ -198,10 +216,14 @@ export function useItemListNavigation<T>({
           const element = document.getElementById(itemId);
           element?.focus();
           selectItem({ item, index });
+          onSelectItem?.({
+            item: item,
+            index: index,
+            inputMethod: "mouse",
+          });
         },
         onFocus: () => {
           selectItem({ item, index });
-          onSelectItem?.(item, index);
         },
         onBlur: () => {
           selectItem({
