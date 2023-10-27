@@ -1,6 +1,9 @@
 import { registerResolver } from "../router";
 import * as SVM from "./svm";
-import * as Celestia from "./celestia";
+import { CelestiaTransactionResolver } from "./celestia/routes/transactions/[hash]/page";
+import { CelestiaBlockResolver } from "./celestia/routes/blocks/[hashOrHeight]/page";
+import { CelestiaLatestTransactionsResolver } from "./celestia/routes/transactions/page";
+import { CelestiaLatestBlocksResolver } from "./celestia/routes/blocks/page";
 
 export function registerResolvers() {
     registerResolver(SVM.addressOverviewResolver);
@@ -12,9 +15,9 @@ export function registerResolvers() {
     registerResolver(SVM.latestBlocksResolver);
     registerResolver(SVM.latestTransactionsResolver);
 
-    registerResolver(Celestia.CelestiaTransactionResolver);
-    registerResolver(Celestia.CelestiaBlockResolver);
-    registerResolver(Celestia.CelestiaLatestTransactionsResolver);
-    registerResolver(Celestia.CelestiaLatestBlocksResolver);
+    registerResolver(CelestiaTransactionResolver);
+    registerResolver(CelestiaBlockResolver);
+    registerResolver(CelestiaLatestTransactionsResolver);
+    registerResolver(CelestiaLatestBlocksResolver);
 
   }

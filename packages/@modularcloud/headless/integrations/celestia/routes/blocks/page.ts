@@ -1,144 +1,153 @@
+import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver } from "@modularcloud-resolver/core";
 import { PaginationContext } from "../../../../schemas/context";
 import { Page, PageContext } from "../../../../schemas/page";
-import { TransactionResponse } from "../../types";
-import * as Celestia from "@modularcloud-resolver/celestia";
+import { BlockResponse } from "../../types";
 
-export const CelestiaLatestTransactionsResolver = createResolver(
+export const CelestiaLatestBlocksResolver = createResolver(
     {
-      id: "celestia-latest-transactions-0.0.0",
+      id: "celestia-latest-blocks-0.0.0",
       cache: false, // all cache is disabled for now
     },
     async (
       { context }: { context: PageContext & PaginationContext },
-      transactionResolver,
+      blockResolver,
     ) => {
-      // using modular cloud custom endpoint
-      const response = await fetch(
-        `${context.rpcEndpoint}/txs${context.limit || context.after ? "?" : ""}${
-          context.limit ? `limit=${context.limit}` : ""
-        }${context.after ? `&nextToken=${context.after}` : ""}`,
-      );
-      const data = await response.json();
-      const list = await Promise.all(
-        data.result.txs.map((tx: any) =>
-          transactionResolver({
-            endpoint: context.rpcEndpoint,
-            hash: tx.txHash,
-          }),
-        ),
-      );
-      const transactions: TransactionResponse[] = list.map((resolution) => {
-        if (resolution.type === "success") {
-          return resolution.result;
+      let limit = context.limit ?? 30;
+      let after = context.after
+        ? (parseInt(context.after) - 1).toString()
+        : undefined;
+      let latestBlockResponse;
+      if (!after) {
+        latestBlockResponse = await blockResolver({
+          endpoint: context.rpcEndpoint,
+        });
+        if (latestBlockResponse.type !== "success")
+          throw new Error("Failed to resolve latest block");
+        const latestBlock = latestBlockResponse.result;
+        try {
+          after = (
+            parseInt(latestBlock.result.block.header.height) - 1
+          ).toString();
+        } catch (e) {
+          console.log("missing header?", JSON.stringify(latestBlock));
+          throw e;
         }
-        throw new Error("Failed to resolve one or more transactions");
-      });
+        limit--;
+      }
+      if (!after) throw new Error("Failed to parse latest block");
+      const blockResolutions = [];
+      for (let i = latestBlockResponse ? 1 : 0; i < limit; i++) {
+        blockResolutions.push(
+          blockResolver({ endpoint: context.rpcEndpoint, height: after }),
+        );
+        after = (parseInt(after) - 1).toString();
+      }
+      const blocks = await Promise.all(blockResolutions);
       const page: Page = {
         context,
         metadata: {
-          title: `Latest Transactions`,
-          description: `See the latest transactions on ${context.chainBrand} ${context.chainName}`,
+          title: `Latest Blocks`,
+          description: `See the latest blocks on ${context.chainBrand} ${context.chainName}`,
         },
         body: {
           type: "collection",
           refreshIntervalMS: 10000,
-          nextToken: data.result.nextToken,
+          nextToken: after,
           tableColumns: [
             {
-              columnLabel: "Icon",
-              hideColumnLabel: true,
-              breakpoint: "max-sm",
-            },
-            {
-              columnLabel: "Transactions",
-            },
-            {
-              columnLabel: "Type",
-            },
-            {
-              columnLabel: "Status",
-              breakpoint: "sm",
+              columnLabel: "Block",
             },
             {
               columnLabel: "Height",
             },
+            {
+              columnLabel: "Txs",
+              breakpoint: "sm",
+            },
+            {
+              columnLabel: "Timestamp",
+            },
+            {
+              columnLabel: "Proposer",
+              breakpoint: "sm",
+            },
           ],
-          entries: await Promise.all(
-            transactions.map(async (tx) => {
-              let baseUrl = "http://localhost:3000";
-              if (process.env.VERCEL_URL) {
-                baseUrl = `https://${process.env.VERCEL_URL}`;
-              }
-              if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-                baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-              }
-  
-              const response = await fetch(baseUrl + "/api/node/get-messages", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ str: tx.result.tx }),
-              });
-              const messages = await response.json();
-              const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
-              return {
-                sidebar: {
-                  headerKey: "Transaction",
-                  headerValue: tx.result.hash,
-                  properties: {
-                    Height: {
-                      type: "standard",
-                      payload: tx.result.height,
-                    },
-                    Status: {
-                      type: "status",
-                      payload: !tx.result.tx_result.code,
-                    },
-                    Type: {
-                      type: "standard",
-                      payload: messages[0]?.uniqueIdentifier ?? "Unknown",
-                    },
-                    Index: {
-                      type: "standard",
-                      payload: tx.result.index,
-                    },
-                    "Gas Used": {
-                      type: "standard",
-                      payload: tx.result.tx_result.gas_used,
-                    },
+          entries: (latestBlockResponse
+            ? [latestBlockResponse, ...blocks]
+            : blocks
+          ).map((resolution) => {
+            if (resolution.type !== "success")
+              throw new Error("Failed to resolve one or more blocks");
+            const block: BlockResponse = resolution.result;
+            const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
+            return {
+              sidebar: {
+                headerKey: "Block",
+                headerValue: block.result.block.header.height,
+                properties: {
+                  Hash: {
+                    type: "standard",
+                    payload: block.result.block_id.hash,
                   },
-                },
-                link,
-                key: link,
-                row: {
-                  Icon: {
-                    type: "icon",
-                    payload: tx.result.tx_result.code ? "FAILURE" : "SUCCESS",
+                  Timestamp: {
+                    type: "standard",
+                    payload: block.result.block.header.time,
+                  },
+                  Proposer: {
+                    type: "standard",
+                    payload: block.result.block.header.proposer_address,
                   },
                   Transactions: {
-                    type: "longval",
-                    payload: {
-                      value: tx.result.hash,
-                    },
-                  },
-                  Height: {
                     type: "standard",
-                    payload: tx.result.height,
-                  },
-                  Status: {
-                    type: "status",
-                    payload: !tx.result.tx_result.code,
-                  },
-                  Type: {
-                    type: "standard",
-                    payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                    payload: block.result.block.data.txs.length,
                   },
                 },
-              };
-            }),
-          ),
+              },
+              link,
+              key: link,
+              row: {
+                Block: {
+                  type: "longval",
+                  payload: {
+                    maxLength: 30,
+                    stepDown: 5,
+                    value: block.result.block_id.hash,
+                  },
+                },
+                Height: {
+                  type: "standard",
+                  payload: block.result.block.header.height,
+                },
+                Txs: {
+                  type: "standard",
+                  payload: block.result.block.data.txs.length,
+                },
+                Timestamp: {
+                  type: "standard",
+                  payload: new Date(
+                    block.result.block.header.time,
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    // year: "numeric",
+                    // hour: "2-digit",
+                    // minute: "2-digit",
+                    // second: "2-digit",
+                    // timeZone: "UTC",
+                  }), // + " UTC",
+                },
+                Proposer: {
+                  type: "longval",
+                  payload: {
+                    maxLength: 20,
+                    stepDown: 3,
+                    value: block.result.block.header.proposer_address,
+                  },
+                },
+              },
+            };
+          }),
         },
         sidebar: {
           headerKey: "Network",
@@ -167,5 +176,5 @@ export const CelestiaLatestTransactionsResolver = createResolver(
       };
       return page;
     },
-    [Celestia.TransactionResolver],
+    [Celestia.BlockHeightResolver],
   );

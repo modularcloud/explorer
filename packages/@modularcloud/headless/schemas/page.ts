@@ -1,39 +1,50 @@
 import { z } from "zod";
 
-export const ValueSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("standard"),
-    payload: z.union([z.string(), z.number()]).nullish(),
-  }),
-  z.object({
-    type: z.literal("status"),
-    payload: z.coerce.boolean().nullish(),
-  }),
-  z.object({ type: z.literal("list"), payload: z.string().array().nullish() }),
-  z.object({
-    type: z.literal("image"),
-    payload: z
-      .object({
-        src: z.string(),
-        alt: z.string(),
-        height: z.number(),
-        width: z.number(),
-      })
-      .nullish(),
-  }),
-  z.object({
-    type: z.literal("longval"),
-    payload: z.object({
-      value: z.string(),
-      strategy: z.enum(["middle", "end"]).optional(),
-      maxLength: z.number().optional(),
-      stepDown: z.number().optional(),
+
+export const StandardSchema = z.object({
+  type: z.literal("standard"),
+  payload: z.union([z.string(), z.number()]),
+}); 
+export const StatusSchema = z.object({
+  type: z.literal("status"),
+  payload: z.coerce.boolean(),
+});
+export const ListSchema = z.object({ type: z.literal("list"), payload: z.string().array() });
+export const ImageSchema = z.object({
+  type: z.literal("image"),
+  payload: z
+    .object({
+      src: z.string(),
+      alt: z.string(),
+      height: z.number(),
+      width: z.number(),
     }),
+});
+export const LongvalSchema = z.object({
+  type: z.literal("longval"),
+  payload: z.object({
+    value: z.string(),
+    strategy: z.enum(["middle", "end"]).optional(),
+    maxLength: z.number().optional(),
+    stepDown: z.number().optional(),
   }),
-  z.object({
-    type: z.literal("icon"),
-    payload: z.enum(["SUCCESS", "FAILURE"]),
-  }),
+});
+export const IconSchema = z.object({
+  type: z.literal("icon"),
+  payload: z.enum(["SUCCESS", "FAILURE"]),
+});
+export const ErrorSchema = z.object({
+  type: z.literal("error"),
+});
+
+export const ValueSchema = z.discriminatedUnion("type", [
+  StandardSchema,
+  StatusSchema,
+  ListSchema,
+  ImageSchema,
+  LongvalSchema,
+  IconSchema,
+  ErrorSchema,
 ]);
 export type Value = z.infer<typeof ValueSchema>;
 
