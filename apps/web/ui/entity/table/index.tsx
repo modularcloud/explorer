@@ -65,7 +65,7 @@ function TableContent({ initialData, route }: Props) {
   const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
     useInfiniteQuery<Page>({
       queryKey: ["table", route],
-      queryFn: async ({ pageParam }) => {
+      queryFn: async ({ pageParam, signal }) => {
         const response = await fetch("/api/load-page", {
           method: "POST",
           headers: {
@@ -76,6 +76,7 @@ function TableContent({ initialData, route }: Props) {
             context: { after: pageParam },
             skipCache: true,
           }),
+          signal,
         });
         const data = await response.json();
         return data;
@@ -89,6 +90,7 @@ function TableContent({ initialData, route }: Props) {
         pageParams: [undefined],
       },
       initialPageParam: undefined,
+      staleTime: Infinity,
     });
 
   const flatData = React.useMemo(
@@ -333,11 +335,10 @@ function TableRow({
       <td
         className={cn(
           "px-1 sm:px-3 border-[#ECEFF3] border-b",
-          "group-aria-[selected=true]:border-l-primary border-l-2 border-l-transparent",
-          {
-            "bg-white": currentItemIndex !== selectedItemIndex,
-            "border-b-transparent": currentItemIndex === selectedItemIndex,
-          },
+          "border-l-2 border-l-transparent",
+          "group-aria-[selected=true]:border-l-primary",
+          "group-aria-[selected=true]:border-b-transparent",
+          `group-aria-[selected="false"]:bg-white`,
         )}
         aria-hidden={true}
       >
@@ -348,23 +349,24 @@ function TableRow({
           key={col.columnLabel}
           className={cn(
             "px-2 border-[#ECEFF3] border-b",
+            "group-aria-[selected=true]:border-b-transparent",
+            `group-aria-[selected="false"]:bg-white`,
             generateClassname(col.breakpoint),
-            {
-              "bg-white": currentItemIndex !== selectedItemIndex,
-              "border-b-transparent": currentItemIndex === selectedItemIndex,
-            },
           )}
         >
           <TableCell {...entry.row[col.columnLabel]} />
         </td>
       ))}
       <td
-        className={cn("px-1 sm:px-3 border-[#ECEFF3] border-b", {
-          "bg-white": currentItemIndex !== selectedItemIndex,
-          "border-b-transparent": currentItemIndex === selectedItemIndex,
-          "lg:rounded-br-xl": entry.link && isNextSelected,
-          "lg:rounded-tr-xl": entry.link && isPreviousSelected,
-        })}
+        className={cn(
+          "px-1 sm:px-3 border-[#ECEFF3] border-b",
+          "group-aria-[selected=true]:border-b-transparent",
+          `group-aria-[selected="false"]:bg-white`,
+          {
+            "lg:rounded-br-xl": entry.link && isNextSelected,
+            "lg:rounded-tr-xl": entry.link && isPreviousSelected,
+          },
+        )}
         aria-hidden={true}
       >
         {/* For spacing purposes only */}
