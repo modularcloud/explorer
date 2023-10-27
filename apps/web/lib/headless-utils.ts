@@ -103,11 +103,7 @@ export async function loadPage({
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(
-    fixedPath,
-    context,
-    skipCache,
-  );
+  const resolution = await integration.resolveRoute(fixedPath, context, true);
 
   if (!resolution) {
     notFound();
