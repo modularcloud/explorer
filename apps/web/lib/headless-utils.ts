@@ -55,19 +55,22 @@ export async function loadIntegration(networkSlug: string) {
     resolveRoute: async (
       path: string[],
       additionalContext?: PaginationContext | undefined,
-      skipCache: boolean = false,
+      includeTrace: boolean = false,
     ) => {
-      // bypass `unstable_cache` if `cache` is false
-      if (skipCache) {
-        return integration.resolveRoute(path, additionalContext);
-      }
-
       const resolveRouteFn = nextCache(
-        function cachedResolveRoute(
+        async function cachedResolveRoute(
           path: string[],
           additionalContext?: PaginationContext | undefined,
         ) {
-          return integration.resolveRoute(path, additionalContext);
+          const response = await integration.resolveRoute(
+            path,
+            additionalContext,
+          );
+          if (!includeTrace && response !== null) {
+            const { trace, ...rest } = response;
+            return rest;
+          }
+          return response;
         },
         {
           tags: CACHE_KEYS.resolvers.route(
@@ -93,17 +96,15 @@ export async function loadIntegration(networkSlug: string) {
 export async function loadPage({
   route,
   context,
-  skipCache = false,
 }: {
   route: HeadlessRoute;
   context?: PaginationContext;
-  skipCache?: boolean;
 }): Promise<Page> {
   const integration = await loadIntegration(route.network);
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath, context, true);
+  const resolution = await integration.resolveRoute(fixedPath, context);
 
   if (!resolution) {
     notFound();

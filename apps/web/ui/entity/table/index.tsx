@@ -74,7 +74,6 @@ function TableContent({ initialData, route }: Props) {
           body: JSON.stringify({
             route,
             context: { after: pageParam },
-            skipCache: true,
           }),
           signal,
         });

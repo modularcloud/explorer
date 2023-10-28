@@ -8,7 +8,6 @@ const loadPageSchema = z.object({
     after: z.string().optional(),
     limit: z.number().optional(),
   }),
-  skipCache: z.boolean().optional().default(false),
 });
 
 export async function POST(req: NextRequest) {
