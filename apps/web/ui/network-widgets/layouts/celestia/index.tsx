@@ -122,7 +122,6 @@ export function CelestiaWidgetLayout({ network }: Props) {
         data={
           latestBlocks?.data?.body?.type === "collection"
             ? latestBlocks?.data?.body?.entries.map((block) => {
-                console.log("block", block);
                 return {
                   number: Number(block.row.Height.payload),
                   noOfTransactions: Number(block.row.Txs.payload),

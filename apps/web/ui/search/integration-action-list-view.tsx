@@ -12,6 +12,7 @@ interface Props {
   onNavigate: () => void;
   onChangeChainClicked: () => void;
   searcheableTypes: [string, string][];
+  parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
 
 type ListItemType = {
@@ -28,14 +29,15 @@ export function IntegrationActionListView({
   onChangeChainClicked,
   selectedNetwork,
   searcheableTypes,
+  parentDialogRef,
 }: Props) {
   const router = useRouter();
 
   // prefetch these routes for faster navigation
   React.useEffect(() => {
     router.prefetch(`/${selectedNetwork.id}`);
-    router.prefetch(`/${selectedNetwork.id}/latest/blocks`);
-    router.prefetch(`/${selectedNetwork.id}/latest/transactions`);
+    router.prefetch(`/${selectedNetwork.id}/blocks`);
+    router.prefetch(`/${selectedNetwork.id}/transactions`);
 
     if (query) {
       router.prefetch(
@@ -125,7 +127,7 @@ export function IntegrationActionListView({
           label: "Go to latest blocks",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/latest/blocks`);
+            router.push(`/${selectedNetwork.id}/blocks`);
           },
         },
         {
@@ -136,7 +138,7 @@ export function IntegrationActionListView({
           label: "Go to latest transactions",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/latest/transactions`);
+            router.push(`/${selectedNetwork.id}/transactions`);
           },
         },
       ],
@@ -165,8 +167,9 @@ export function IntegrationActionListView({
   const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
     noOfColumns: 1,
     optionGroups: items,
-    parentRef: listRef.current,
+    parentRef: listRef,
     onSelectOption: (option) => option.onSelect(),
+    scopeRef: parentDialogRef,
   });
 
   return (
@@ -192,7 +195,7 @@ export function IntegrationActionListView({
             {items.map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <div
                   key={item.id}
                   {...registerOptionProps(rowIndex, 0, item)}
                   className={cn(
@@ -205,7 +208,7 @@ export function IntegrationActionListView({
                   <ArrowRight aria-hidden="true" className="flex-shrink-0" />
                   <Icon className="flex-shrink-0" />
                   <span className="w-[97%]">{item.label}</span>
-                </button>
+                </div>
               );
             })}
           </div>

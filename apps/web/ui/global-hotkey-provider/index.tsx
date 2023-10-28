@@ -19,6 +19,7 @@ export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   },
 );
 
+// TODO : refactor to use `useHotkeyListener`
 export function GlobalHotkeyProvider({
   children,
   optionGroups,
@@ -53,6 +54,9 @@ export function GlobalHotkeyProvider({
     };
 
     const keyDownListener = (event: KeyboardEvent) => {
+      // Ignore held down keys & don't listen for them if the search modal is open
+      if (event.repeat || isSearchModalOpen) return;
+
       if (event.key === "/" && !isSearchModalOpen) {
         setSearchModalOpen(true);
         event.preventDefault();
@@ -67,9 +71,9 @@ export function GlobalHotkeyProvider({
         if (sequenceKeyPressedRef.current) {
           sequenceKeyPressedRef.current = false;
           if (key === "b") {
-            router.push(`/${network.id}/latest/blocks`);
+            router.push(`/${network.id}/blocks`);
           } else {
-            router.push(`/${network.id}/latest/transactions`);
+            router.push(`/${network.id}/transactions`);
           }
         }
       } else {

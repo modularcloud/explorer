@@ -6,18 +6,31 @@ const config = {
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
   experimental: {
-    logging: {
-      level: "verbose",
-      fullUrl: true,
-    },
     useDeploymentId: true,
   },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   images: {
-    domains: [
-      "nautchain.xyz",
-      "mc-nft.s3.us-west-2.amazonaws.com",
-      "mc-config.s3.us-west-2.amazonaws.com",
-      "ucarecdn.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "nautchain.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "mc-nft.s3.us-west-2.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "mc-config.s3.us-west-2.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ucarecdn.com",
+      },
     ],
   },
 };

@@ -18,24 +18,20 @@ const widgetDataSchema = z.object({
 const THIRTY_SECONDS = 30 * 1000;
 
 export function useLatestBlocks(network: string) {
+  const loadPageArgs = {
+    route: { network: network, path: ["blocks"] },
+    context: { limit: 5 },
+    skipCache: true,
+  };
   return useSWR<Page>(
-    [
-      "/api/load-page",
-      {
-        route: { network, path: ["blocks"] },
-        context: { limit: 5 },
-      }
-    ],
+    ["/api/load-page", loadPageArgs],
     async () => {
       const response = await fetch("/api/load-page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          route: { network: network, path: ["blocks"] },
-          context: { limit: 5 },
-        }),
+        body: JSON.stringify(loadPageArgs),
       });
       const data = await response.json();
       return data;
@@ -50,24 +46,20 @@ export function useLatestBlocks(network: string) {
 }
 
 export function useLatestTransactions(network: string) {
+  const loadPageArgs = {
+    route: { network: network, path: ["transactions"] },
+    context: { limit: 5 },
+    skipCache: true,
+  };
   return useSWR<Page>(
-    [
-      "/api/load-page",
-      {
-        route: { network, path: ["transactions"] },
-        context: { limit: 5 },
-      }
-    ],
+    ["/api/load-page", loadPageArgs],
     async () => {
       const response = await fetch("/api/load-page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          route: { network: network, path: ["transactions"] },
-          context: { limit: 5 },
-        }),
+        body: JSON.stringify(loadPageArgs),
       });
       const data = await response.json();
       return data;

@@ -4,13 +4,13 @@ import * as React from "react";
 import { Status } from "~/ui/status";
 import { CopyableValue } from "~/ui/copyable-value";
 
-import { useItemGrid } from "~/lib/hooks/use-item-grid";
 import { cn } from "~/ui/shadcn/utils";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
+import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
@@ -19,44 +19,50 @@ interface Props {
 export function OverviewEntryList({ entries }: Props) {
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
 
-  const optionGroups = React.useMemo(() => {
-    return {
-      attributes: entries.flatMap(([key, value]) => ({ value, id: key })),
-    };
+  const items = React.useMemo(() => {
+    return entries.flatMap(([key, value]) => ({ value, id: key }));
   }, [entries]);
 
-  const {
-    registerOptionProps,
-    groupedByLines: groupedItems,
-    selectedOption,
-  } = useItemGrid({
-    noOfColumns: 1,
-    optionGroups,
-    parentRef: listRef.current,
-    onSelectOption: ({ value }) => {
-      /** TODO: should navigate to link if value type is `link` */
-    },
-  });
+  const getItemId = React.useCallback(
+    (item: (typeof items)[number]) => item.id,
+    [],
+  );
+  const { registerItemProps, selectedItem, selectedItemIndex } =
+    useItemListNavigation({
+      items: items,
+      getItemId,
+      parentRef: listRef,
+      onClickItem: ({ value }) => {
+        /** TODO: should navigate to link if value type is `link` */
+      },
+    });
 
   useHotkeyListener({
     keys: ["c"],
-    listener: async () => {
-      if (!selectedOption) return;
-      const { type, payload } = selectedOption.value;
-      if (payload === null || payload === undefined) return;
+    listener: () => {
+      if (!selectedItem) return false;
+      const { type, payload } = selectedItem.value;
+      if (payload === null || payload === undefined) return false;
 
       if (type === "standard" || type === "longval") {
         const value =
           type === "standard" ? payload.toString() : payload.value.toString();
-        const copied = await copyValueToClipboard(value);
-
-        if (copied) {
-          toast({
-            title: "Copied",
-            description: `"${truncateHash(value)}" copied to clipboard`,
-          });
-        }
+        copyValueToClipboard(value).then((copied) => {
+          if (copied) {
+            toast({
+              title: "Copied",
+              description: `"${truncateHash(value)}" copied to clipboard`,
+            });
+          } else {
+            toast({
+              title: "Failed to copy",
+              description: `An`,
+            });
+          }
+        });
+        return true;
       }
+      return false;
     },
     modifier: "META",
   });
@@ -66,24 +72,17 @@ export function OverviewEntryList({ entries }: Props) {
       ref={listRef}
       className="border-t border-mid-dark-100 w-full flex flex-col h-full mb-20 bg-muted-100"
     >
-      {groupedItems.map((group, rowIndex) => {
-        const [, items] = group[0];
-        const selectedItemIndex = items.findIndex(
-          (item) => item === selectedOption,
-        );
-
-        return items.map((item, index) => (
-          <OverviewEntry
-            key={item.id}
-            label={item.id}
-            value={item.value}
-            currentIndex={index}
-            selectedIndex={selectedItemIndex}
-            lasItemIndex={items.length - 1}
-            registerOptionProps={() => registerOptionProps(rowIndex, 0, item)}
-          />
-        ));
-      })}
+      {items.map((item, index) => (
+        <OverviewEntry
+          key={item.id}
+          label={item.id}
+          value={item.value}
+          currentIndex={index}
+          selectedIndex={selectedItemIndex}
+          lasItemIndex={items.length - 1}
+          registerOptionProps={() => registerItemProps(index, item)}
+        />
+      ))}
     </dl>
   );
 }

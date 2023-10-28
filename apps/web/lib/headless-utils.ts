@@ -11,11 +11,17 @@ import { getSingleNetworkCached } from "./network";
 import { parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
+import { z } from "zod";
 
-export type HeadlessRoute = {
-  network: string;
-  path: string[];
-};
+/**
+ * This is reused on the `api/load-page/route.ts` file
+ */
+export const HeadlessRouteSchema = z.object({
+  network: z.string(),
+  path: z.array(z.string()),
+});
+
+export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
 export async function loadIntegration(networkSlug: string) {
   const network = await getSingleNetworkCached(networkSlug);
@@ -49,13 +55,22 @@ export async function loadIntegration(networkSlug: string) {
     resolveRoute: async (
       path: string[],
       additionalContext?: PaginationContext | undefined,
+      includeTrace: boolean = false,
     ) => {
       const resolveRouteFn = nextCache(
-        function cachedResolveRoute(
+        async function cachedResolveRoute(
           path: string[],
           additionalContext?: PaginationContext | undefined,
         ) {
-          return integration.resolveRoute(path, additionalContext);
+          const response = await integration.resolveRoute(
+            path,
+            additionalContext,
+          );
+          if (!includeTrace && response !== null) {
+            const { trace, ...rest } = response;
+            return rest;
+          }
+          return response;
         },
         {
           tags: CACHE_KEYS.resolvers.route(
@@ -78,15 +93,18 @@ export async function loadIntegration(networkSlug: string) {
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
  */
-export async function loadPage(
-  route: HeadlessRoute,
-  context?: PaginationContext,
-): Promise<Page> {
+export async function loadPage({
+  route,
+  context,
+}: {
+  route: HeadlessRoute;
+  context?: PaginationContext;
+}): Promise<Page> {
   const integration = await loadIntegration(route.network);
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath);
+  const resolution = await integration.resolveRoute(fixedPath, context);
 
   if (!resolution) {
     notFound();
