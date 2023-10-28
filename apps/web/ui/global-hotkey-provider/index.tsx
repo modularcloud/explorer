@@ -19,6 +19,7 @@ export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   },
 );
 
+// TODO : refactor to use `useHotkeyListener`
 export function GlobalHotkeyProvider({
   children,
   optionGroups,

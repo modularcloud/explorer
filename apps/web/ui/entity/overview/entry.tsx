@@ -39,23 +39,30 @@ export function OverviewEntryList({ entries }: Props) {
 
   useHotkeyListener({
     keys: ["c"],
-    listener: async () => {
-      if (!selectedItem) return;
+    listener: () => {
+      if (!selectedItem) return false;
       const { type, payload } = selectedItem.value;
-      if (payload === null || payload === undefined) return;
+      if (payload === null || payload === undefined) return false;
 
       if (type === "standard" || type === "longval") {
         const value =
           type === "standard" ? payload.toString() : payload.value.toString();
-        const copied = await copyValueToClipboard(value);
-
-        if (copied) {
-          toast({
-            title: "Copied",
-            description: `"${truncateHash(value)}" copied to clipboard`,
-          });
-        }
+        copyValueToClipboard(value).then((copied) => {
+          if (copied) {
+            toast({
+              title: "Copied",
+              description: `"${truncateHash(value)}" copied to clipboard`,
+            });
+          } else {
+            toast({
+              title: "Failed to copy",
+              description: `An`,
+            });
+          }
+        });
+        return true;
       }
+      return false;
     },
     modifier: "META",
   });
