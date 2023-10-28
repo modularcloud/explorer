@@ -52,44 +52,26 @@ export async function loadIntegration(networkSlug: string) {
         nativeToken: network.config.token.name,
       });
 
-  // We cannot cache traces right now due to the 2MB limit!
-  type ResolveRouteSettings = {
-    skipCache?: boolean;
-    includeTrace?: boolean;
-  } extends { skipCache: true; includeTrace?: true }
-    ? never
-    : { skipCache?: boolean; includeTrace?: boolean };
   return {
     resolveRoute: async (
       path: string[],
       additionalContext?: PaginationContext | undefined,
-      { skipCache, includeTrace }: ResolveRouteSettings = {},
+      includeTrace: boolean = false,
     ) => {
-      const applyTraceSettings = async (
-        resolvedRoute: Promise<IntegrationResponse>,
-      ) => {
-        const response = await resolvedRoute;
-        if (!includeTrace && response !== null) {
-          const { trace, ...rest } = response;
-          return rest;
-        }
-      };
-
-      // bypass `unstable_cache` if `cache` is false
-      if (skipCache) {
-        return applyTraceSettings(
-          integration.resolveRoute(path, additionalContext),
-        );
-      }
-
       const resolveRouteFn = nextCache(
-        function cachedResolveRoute(
+        async function cachedResolveRoute(
           path: string[],
           additionalContext?: PaginationContext | undefined,
         ) {
-          return applyTraceSettings(
-            integration.resolveRoute(path, additionalContext),
+          const response = await integration.resolveRoute(
+            path,
+            additionalContext,
           );
+          if (!includeTrace && response !== null) {
+            const { trace, ...rest } = response;
+            return rest;
+          }
+          return response;
         },
         {
           tags: CACHE_KEYS.resolvers.route(
@@ -123,9 +105,7 @@ export async function loadPage({
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath, context, {
-    skipCache: true,
-  });
+  const resolution = await integration.resolveRoute(fixedPath, context);
 
   if (!resolution) {
     notFound();
