@@ -36,7 +36,7 @@ export function IntegrationGridView({
     parentRef: gridRef,
     optionGroups,
     onSelectOption,
-    defaultOptionGroupKey: defaultChainBrand,
+    defaultOptionGroupKeyToSortFirst: defaultChainBrand,
   });
 
   return (

@@ -4,13 +4,24 @@ import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 type UseItemGridArgs<T> = {
   noOfColumns: number;
   parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
+  /**
+   * Callback for when the item is clicked, either with the mouse
+   * or with Enter key
+   */
   onSelectOption?: (option: T) => void;
+  /**
+   * The list of groups to display into grids, this should be memoized or else
+   *  it could cause too many rerenders
+   */
   optionGroups: { [groupDisplayName: string]: T[] };
-  defaultOptionGroupKey?: string; // the default key to show first in the list
+  /**
+   * The default key to show first in the list
+   */
+  defaultOptionGroupKeyToSortFirst?: string;
 };
 
 /**
- * Hook to make navigable menus with grid/list (a list is just a grid with one column)
+ * Hook to make navigable menus with grid/list (a list is just a grid with one column) in groups
  * @returns
  */
 export function useItemGrid<
@@ -19,18 +30,21 @@ export function useItemGrid<
   noOfColumns,
   optionGroups,
   parentRef,
-  defaultOptionGroupKey,
+  defaultOptionGroupKeyToSortFirst,
   onSelectOption,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
     let groups = Object.entries(optionGroups);
-    if (defaultOptionGroupKey && optionGroups[defaultOptionGroupKey]) {
+    if (
+      defaultOptionGroupKeyToSortFirst &&
+      optionGroups[defaultOptionGroupKeyToSortFirst]
+    ) {
       groups = groups.sort((a, b) => {
-        if (a[0] === defaultOptionGroupKey) {
+        if (a[0] === defaultOptionGroupKeyToSortFirst) {
           return -1;
         }
-        if (b[0] === defaultOptionGroupKey) {
+        if (b[0] === defaultOptionGroupKeyToSortFirst) {
           return 1;
         }
         return 0;
@@ -38,7 +52,7 @@ export function useItemGrid<
     }
 
     return chunkArray(groups, noOfColumns);
-  }, [noOfColumns, optionGroups, defaultOptionGroupKey]);
+  }, [noOfColumns, optionGroups, defaultOptionGroupKeyToSortFirst]);
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
   const [selectedColIndex, setSelectedColIndex] = React.useState(0);

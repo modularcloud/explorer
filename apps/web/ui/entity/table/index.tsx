@@ -157,7 +157,7 @@ function TableContent({ initialData, route }: Props) {
       onSelectItem,
       items: flatData,
       scrollOnSelection: false,
-      parentRef: parentRef.current,
+      parentRef: parentRef,
       onClickItem(entry) {
         if (entry.link) {
           router.push(entry.link);
