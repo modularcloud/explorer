@@ -73,7 +73,6 @@ export function SVMWidgetLayout({ network }: Props) {
         data={
           latestTransactions?.data?.result
             ? latestTransactions.data.result.map((transaction: any) => {
-                console.log("transaction", transaction);
                 return {
                   hash: transaction.transaction.signatures[0],
                   success: !transaction.meta.err,
