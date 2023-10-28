@@ -12,6 +12,7 @@ interface Props {
   onNavigate: () => void;
   onChangeChainClicked: () => void;
   searcheableTypes: [string, string][];
+  parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
 
 type ListItemType = {
@@ -28,6 +29,7 @@ export function IntegrationActionListView({
   onChangeChainClicked,
   selectedNetwork,
   searcheableTypes,
+  parentDialogRef,
 }: Props) {
   const router = useRouter();
 
@@ -167,6 +169,7 @@ export function IntegrationActionListView({
     optionGroups: items,
     parentRef: listRef,
     onSelectOption: (option) => option.onSelect(),
+    scopeRef: parentDialogRef,
   });
 
   return (

@@ -77,6 +77,8 @@ export function SearchModal({
     enabled: inputValue.length > 0,
   });
 
+  const dialogRef = React.useRef<React.ElementRef<"div">>(null);
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -92,6 +94,7 @@ export function SearchModal({
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
+        ref={dialogRef}
         style={{
           // @ts-expect-error this is a CSS variable
           "--color-primary": brandColor,
@@ -149,9 +152,9 @@ export function SearchModal({
 
           {!currentNetwork && isNetworkQuery && (
             <IntegrationGridView
+              parentDialogRef={dialogRef}
               optionGroups={filteredOptionGroup}
               defaultChainBrand={defaultNetwork.value.brandName}
-              filter={inputValue}
               onSelectOption={onSelectOption}
               className="max-h-[calc(100%-60px)] overflow-y-auto"
             />
@@ -160,6 +163,7 @@ export function SearchModal({
           {currentNetwork && !isNetworkQuery && (
             <IntegrationActionListView
               query={inputValue}
+              parentDialogRef={dialogRef}
               searcheableTypes={searcheableTypes ?? []}
               selectedNetwork={currentNetwork}
               onChangeChainClicked={() => {

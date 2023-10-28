@@ -10,6 +10,11 @@ export type OnSelectItemArgs<T> = {
 type UseItemListNavigationArgs<T> = {
   parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
+   * The ref of the parent to attach keyboard events to,
+   * defaults to window
+   */
+  scopeRef?: React.RefObject<HTMLElement | null>;
+  /**
    * Wether or not to scroll to the item when we navigate with the up/down arrows
    */
   scrollOnSelection?: boolean;
@@ -49,6 +54,7 @@ export function useItemListNavigation<T>({
   onClickItem,
   getItemId,
   scrollOnSelection = true,
+  scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
   const [selectedItemIndex, setSelectedIndex] = React.useState(0);
@@ -166,6 +172,9 @@ export function useItemListNavigation<T>({
         selectedItemPositionRef.current;
       if (event.key === "Enter" && !event.repeat && currentItem) {
         onClickItem?.(currentItem, currentIndex);
+        // we don't want this event to be propagated to the whole page
+        // so that element that listen globally (for hotkey for ex.) don't react accordingly
+        event.stopPropagation();
         return;
       }
 
@@ -190,11 +199,25 @@ export function useItemListNavigation<T>({
         const element = document.getElementById(getOptionId(index, item));
         element?.focus();
       }
+
+      // we don't want this event to be propagated to the whole page
+      // so that element that listen globally (for hotkey for ex.) don't react accordingly,
+      if (!eventIgnored) {
+        event.stopPropagation();
+      }
     };
 
-    window.addEventListener("keydown", navigationListener);
+    const scope = scopeRef?.current ?? window;
+
+    if (!scope) return;
+
+    // @ts-expect-error TS complain because event listeners to get automatically inferred,
+    // if the type of the caller is a union
+    scope.addEventListener("keydown", navigationListener);
     return () => {
-      window.removeEventListener("keydown", navigationListener);
+      // @ts-expect-error TS complain because event listeners to get automatically inferred,
+      // if the type of the caller is a union
+      scope.removeEventListener("keydown", navigationListener);
     };
   }, [
     moveSelectionDown,
@@ -202,6 +225,7 @@ export function useItemListNavigation<T>({
     scrollItemIntoView,
     onClickItem,
     getOptionId,
+    scopeRef,
   ]);
 
   const isOptionSelected = React.useCallback(

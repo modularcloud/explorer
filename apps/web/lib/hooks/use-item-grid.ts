@@ -5,6 +5,10 @@ type UseItemGridArgs<T> = {
   noOfColumns: number;
   parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
+   * The ref of the parent to attach keyboard events
+   */
+  scopeRef: React.RefObject<HTMLElement | null>;
+  /**
    * Callback for when the item is clicked, either with the mouse
    * or with Enter key
    */
@@ -32,6 +36,7 @@ export function useItemGrid<
   parentRef,
   defaultOptionGroupKeyToSortFirst,
   onSelectOption,
+  scopeRef,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
@@ -298,8 +303,13 @@ export function useItemGrid<
       const { option: currentOption } = selectedItemPositionRef.current;
       if (event.key === "Enter" && !event.repeat && currentOption) {
         onSelectOption?.(currentOption);
+        // we don't want this event to be propagated to the whole page
+        // so that element that listen globally (for hotkey for ex.) don't react accordingly
+        event.stopPropagation();
         return;
       }
+
+      let eventHandled = true;
 
       switch (event.key) {
         case "ArrowUp":
@@ -317,14 +327,25 @@ export function useItemGrid<
           moveSelectionRight();
           break;
         default:
+          eventHandled = false;
           // we don't care for other key events
           break;
       }
+
+      // we don't want this event to be propagated to the whole page
+      // so that element that listen globally (for hotkey for ex.) don't react accordingly,
+      if (eventHandled) {
+        event.stopPropagation();
+      }
     };
 
-    window.addEventListener("keydown", navigationListener);
+    const scope = scopeRef?.current;
+
+    if (!scope) return;
+
+    scope.addEventListener("keydown", navigationListener);
     return () => {
-      window.removeEventListener("keydown", navigationListener);
+      scope.removeEventListener("keydown", navigationListener);
     };
   }, [
     groupedByLines,
@@ -335,6 +356,7 @@ export function useItemGrid<
     scrollOptionIntoView,
     onSelectOption,
     itemRootId,
+    scopeRef,
   ]);
 
   React.useEffect(() => {
