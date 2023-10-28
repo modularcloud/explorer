@@ -5,7 +5,6 @@ import {
   PaginationContext,
   SearchBuilders,
   createCelestiaIntegration,
-  IntegrationResponse,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
