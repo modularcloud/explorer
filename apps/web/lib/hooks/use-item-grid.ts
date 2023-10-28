@@ -321,7 +321,6 @@ export function useItemGrid<
     scrollOptionIntoView,
     onSelectOption,
     itemRootId,
-    parentRef,
   ]);
 
   React.useEffect(() => {
