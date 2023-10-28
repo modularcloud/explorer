@@ -165,7 +165,7 @@ export function IntegrationActionListView({
   const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
     noOfColumns: 1,
     optionGroups: items,
-    parentRef: listRef.current,
+    parentRef: listRef,
     onSelectOption: (option) => option.onSelect(),
   });
 
@@ -192,7 +192,7 @@ export function IntegrationActionListView({
             {items.map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <div
                   key={item.id}
                   {...registerOptionProps(rowIndex, 0, item)}
                   className={cn(
@@ -205,7 +205,7 @@ export function IntegrationActionListView({
                   <ArrowRight aria-hidden="true" className="flex-shrink-0" />
                   <Icon className="flex-shrink-0" />
                   <span className="w-[97%]">{item.label}</span>
-                </button>
+                </div>
               );
             })}
           </div>

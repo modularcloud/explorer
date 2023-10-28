@@ -1,5 +1,5 @@
 import { Footer } from "~/ui/footer";
-import { Search } from "~/ui/search";
+import { SearchForm } from "~/ui/search/search-form";
 import { getSearchOptionGroups } from "~/lib/search-options";
 
 export default async function HomeLayout({
@@ -24,7 +24,7 @@ export default async function HomeLayout({
       <div className="flex flex-col justify-center h-full w-full flex-1 gap-24">
         <section className="flex flex-col gap-8">
           {logo}
-          <Search optionGroups={searchOptionGroups} />
+          <SearchForm optionGroups={searchOptionGroups} />
         </section>
         <section>{children}</section>
       </div>

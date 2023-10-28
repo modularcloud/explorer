@@ -8,19 +8,29 @@ export type OnSelectItemArgs<T> = {
 };
 
 type UseItemListNavigationArgs<T> = {
-  parentRef?: React.ElementRef<"div" | "ul" | "ol" | "dl" | "table"> | null;
+  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
+  /**
+   * Wether or not to scroll to the item when we navigate with the up/down arrows
+   */
   scrollOnSelection?: boolean;
+  /**
+   * Callback for when the item is clicked, either with the mouse
+   * or with Enter key
+   */
   onClickItem?: (item: T, index: number) => void;
   /**
+   * Callback for when the item is hovered or navigated to with the up/down arrows
    * This function should be memoized, because it is passed to our `useEffect`
    */
   onSelectItem?: (arg: OnSelectItemArgs<T>) => void;
   /**
-   * These items should be memoized to avoid breaking up
-   * the memo inside this hook
+   * The list of items, `items` should be memoized or
+   * they can cause too many rerenders
    */
   items: T[];
   /**
+   * function to compute the item's ID, this is used by this hook to
+   * distinguish selected items, it should return a unique value.
    * This function should be memoized with `useCallback` because it could break
    * the memoization in this hook
    */
@@ -28,7 +38,7 @@ type UseItemListNavigationArgs<T> = {
 };
 
 /**
- * Handle navigation with keyboard in a list of items
+ * Hook to make navigable lists, supports virtualization
  * @param param0
  * @returns
  */
@@ -127,8 +137,8 @@ export function useItemListNavigation<T>({
         getOptionId(index, item),
       ) as HTMLDivElement | null;
 
-      if (element && parentRef) {
-        if (isElementOverflowing(parentRef, element)) {
+      if (element && parentRef?.current) {
+        if (isElementOverflowing(parentRef.current, element)) {
           element?.scrollIntoView({
             behavior: "smooth",
             block: "end",
@@ -144,6 +154,19 @@ export function useItemListNavigation<T>({
       // Prevent scrolling
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
+      }
+
+      /**
+       * we want to listen on `Enter` key to select an item,
+       * but only once and not listen for repeated presses.
+       * This fixes a bug with the search modal, where if you
+       * clicked on `Enter` it would skip one step, Enter was detected & repeated
+       */
+      const { item: currentItem, index: currentIndex } =
+        selectedItemPositionRef.current;
+      if (event.key === "Enter" && !event.repeat && currentItem) {
+        onClickItem?.(currentItem, currentIndex);
+        return;
       }
 
       let eventIgnored = false;
@@ -169,19 +192,8 @@ export function useItemListNavigation<T>({
       }
     };
 
-    const keyUpListener = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        const { item, index } = selectedItemPositionRef.current;
-        if (item) {
-          onClickItem?.(item, index);
-        }
-      }
-    };
-
     window.addEventListener("keydown", navigationListener);
-    window.addEventListener("keyup", keyUpListener);
     return () => {
-      window.removeEventListener("keyup", keyUpListener);
       window.removeEventListener("keydown", navigationListener);
     };
   }, [

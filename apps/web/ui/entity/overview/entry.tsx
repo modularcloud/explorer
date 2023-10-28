@@ -31,7 +31,7 @@ export function OverviewEntryList({ entries }: Props) {
     useItemListNavigation({
       items: items,
       getItemId,
-      parentRef: listRef.current,
+      parentRef: listRef,
       onClickItem: ({ value }) => {
         /** TODO: should navigate to link if value type is `link` */
       },

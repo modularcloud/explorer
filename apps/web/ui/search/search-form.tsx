@@ -19,7 +19,7 @@ interface Props {
   optionGroups: OptionGroups;
 }
 
-export function Search({ optionGroups }: Props) {
+export function SearchForm({ optionGroups }: Props) {
   const params = useParams();
   const router = useRouter();
 
@@ -28,7 +28,6 @@ export function Search({ optionGroups }: Props) {
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
-  // OUR DEFAULT BRAND COLOR is this ONE
   const primaryColor = !!params.network
     ? network.brandColor!
     : DEFAULT_BRAND_COLOR;

@@ -33,10 +33,10 @@ export function IntegrationGridView({
 
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
-    parentRef: gridRef.current,
+    parentRef: gridRef,
     optionGroups,
     onSelectOption,
-    defaultOptionGroupKey: defaultChainBrand,
+    defaultOptionGroupKeyToSortFirst: defaultChainBrand,
   });
 
   return (
@@ -91,7 +91,7 @@ export function IntegrationGridView({
                     {options.map((option) => {
                       const optionId = getOptionId(rowIndex, colIndex, option);
                       return (
-                        <button
+                        <div
                           key={optionId}
                           {...registerOptionProps(rowIndex, colIndex, option)}
                           className={cn(
@@ -118,7 +118,7 @@ export function IntegrationGridView({
                           >
                             Select
                           </div>
-                        </button>
+                        </div>
                       );
                     })}
                   </div>
