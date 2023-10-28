@@ -5,6 +5,7 @@ import {
   PaginationContext,
   SearchBuilders,
   createCelestiaIntegration,
+  IntegrationResponse,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
@@ -51,15 +52,34 @@ export async function loadIntegration(networkSlug: string) {
         nativeToken: network.config.token.name,
       });
 
+  // We cannot cache traces right now due to the 2MB limit!
+  type ResolveRouteSettings = {
+    skipCache?: boolean;
+    includeTrace?: boolean;
+  } extends { skipCache: true; includeTrace?: true }
+    ? never
+    : { skipCache?: boolean; includeTrace?: boolean };
   return {
     resolveRoute: async (
       path: string[],
       additionalContext?: PaginationContext | undefined,
-      skipCache: boolean = false,
+      { skipCache, includeTrace }: ResolveRouteSettings = {},
     ) => {
+      const applyTraceSettings = async (
+        resolvedRoute: Promise<IntegrationResponse>,
+      ) => {
+        const response = await resolvedRoute;
+        if (!includeTrace && response !== null) {
+          const { trace, ...rest } = response;
+          return rest;
+        }
+      };
+
       // bypass `unstable_cache` if `cache` is false
       if (skipCache) {
-        return integration.resolveRoute(path, additionalContext);
+        return applyTraceSettings(
+          integration.resolveRoute(path, additionalContext),
+        );
       }
 
       const resolveRouteFn = nextCache(
@@ -67,7 +87,9 @@ export async function loadIntegration(networkSlug: string) {
           path: string[],
           additionalContext?: PaginationContext | undefined,
         ) {
-          return integration.resolveRoute(path, additionalContext);
+          return applyTraceSettings(
+            integration.resolveRoute(path, additionalContext),
+          );
         },
         {
           tags: CACHE_KEYS.resolvers.route(
@@ -93,17 +115,17 @@ export async function loadIntegration(networkSlug: string) {
 export async function loadPage({
   route,
   context,
-  skipCache = false,
 }: {
   route: HeadlessRoute;
   context?: PaginationContext;
-  skipCache?: boolean;
 }): Promise<Page> {
   const integration = await loadIntegration(route.network);
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath, context, true);
+  const resolution = await integration.resolveRoute(fixedPath, context, {
+    skipCache: true,
+  });
 
   if (!resolution) {
     notFound();
