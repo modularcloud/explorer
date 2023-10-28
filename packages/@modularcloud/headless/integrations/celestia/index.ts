@@ -510,9 +510,9 @@ export const CelestiaLatestTransactionsResolver = createResolver(
   ) => {
     // using modular cloud custom endpoint
     const response = await fetch(
-      `${context.rpcEndpoint}/txs${context.limit || context.after ? "?" : ""}${
-        context.limit ? `limit=${context.limit}` : ""
-      }${context.after ? `&nextToken=${context.after}` : ""}`,
+      `${context.rpcEndpoint}/txs?maxResults=${context.limit ?? "15"}${
+        context.after ? `&nextToken=${context.after}` : ""
+      }`,
     );
     const data = await response.json();
     const list = await Promise.all(
@@ -568,8 +568,8 @@ export const CelestiaLatestTransactionsResolver = createResolver(
             if (process.env.NEXT_PUBLIC_VERCEL_URL) {
               baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
             }
-            
-            const response = await fetch(baseUrl +"/api/node/get-messages", {
+
+            const response = await fetch(baseUrl + "/api/node/get-messages", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -655,24 +655,33 @@ export const CelestiaLatestBlocksResolver = createResolver(
     blockResolver,
   ) => {
     let limit = context.limit ?? 30;
-    let after = context.after ? (parseInt(context.after) - 1).toString() : undefined;
+    let after = context.after
+      ? (parseInt(context.after) - 1).toString()
+      : undefined;
     let latestBlockResponse;
-    if(!after) {
-      latestBlockResponse = await blockResolver({ endpoint: context.rpcEndpoint });
-      if (latestBlockResponse.type !== "success") throw new Error("Failed to resolve latest block");
+    if (!after) {
+      latestBlockResponse = await blockResolver({
+        endpoint: context.rpcEndpoint,
+      });
+      if (latestBlockResponse.type !== "success")
+        throw new Error("Failed to resolve latest block");
       const latestBlock = latestBlockResponse.result;
       try {
-      after = (parseInt(latestBlock.result.block.header.height) - 1).toString();
+        after = (
+          parseInt(latestBlock.result.block.header.height) - 1
+        ).toString();
       } catch (e) {
-        console.log("missing header?", JSON.stringify(latestBlock))
+        console.log("missing header?", JSON.stringify(latestBlock));
         throw e;
       }
       limit--;
     }
-    if(!after) throw new Error("Failed to parse latest block");
+    if (!after) throw new Error("Failed to parse latest block");
     const blockResolutions = [];
-    for(let i = latestBlockResponse ? 1 : 0; i < limit; i++) {
-      blockResolutions.push(blockResolver({ endpoint: context.rpcEndpoint, height: after}));
+    for (let i = latestBlockResponse ? 1 : 0; i < limit; i++) {
+      blockResolutions.push(
+        blockResolver({ endpoint: context.rpcEndpoint, height: after }),
+      );
       after = (parseInt(after) - 1).toString();
     }
     const blocks = await Promise.all(blockResolutions);
@@ -705,67 +714,69 @@ export const CelestiaLatestBlocksResolver = createResolver(
             breakpoint: "sm",
           },
         ],
-        entries: (latestBlockResponse ? [latestBlockResponse, ...blocks] : blocks).map((resolution) => {
-            if (resolution.type !== "success") throw new Error("Failed to resolve one or more blocks");
-            const block: BlockResponse = resolution.result;
-            const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
-            return {
-              card: {
-                Hash: {
-                  type: "standard",
-                  payload: block.result.block_id.hash,
-                },
-                Timestamp: {
-                  type: "standard",
-                  payload: block.result.block.header.time,
-                }
+        entries: (latestBlockResponse
+          ? [latestBlockResponse, ...blocks]
+          : blocks
+        ).map((resolution) => {
+          if (resolution.type !== "success")
+            throw new Error("Failed to resolve one or more blocks");
+          const block: BlockResponse = resolution.result;
+          const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
+          return {
+            card: {
+              Hash: {
+                type: "standard",
+                payload: block.result.block_id.hash,
               },
-              link,
-              key: link,
-              row: {
-                Block: {
-                  type: "longval",
-                  payload: {
-                    maxLength: 30,
-                    stepDown: 5,
-                    value: block.result.block_id.hash,
-                  },
-                },
-                Height: {
-                  type: "standard",
-                  payload: block.result.block.header.height,
-                },
-                Txs: {
-                  type: "standard",
-                  payload: block.result.block.data.txs.length,
-                },
-                Timestamp: {
-                  type: "standard",
-                  payload:
-                    new Date(block.result.block.header.time).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "long",
-                        day: "numeric",
-                        // year: "numeric",
-                        // hour: "2-digit",
-                        // minute: "2-digit",
-                        // second: "2-digit",
-                        // timeZone: "UTC",
-                      },
-                    ) // + " UTC",
-                },
-                Proposer: {
-                  type: "longval",
-                  payload: {
-                    maxLength: 20,
-                    stepDown: 3,
-                    value: block.result.block.header.proposer_address,
-                  }
+              Timestamp: {
+                type: "standard",
+                payload: block.result.block.header.time,
+              },
+            },
+            link,
+            key: link,
+            row: {
+              Block: {
+                type: "longval",
+                payload: {
+                  maxLength: 30,
+                  stepDown: 5,
+                  value: block.result.block_id.hash,
                 },
               },
-            };
-          }),
+              Height: {
+                type: "standard",
+                payload: block.result.block.header.height,
+              },
+              Txs: {
+                type: "standard",
+                payload: block.result.block.data.txs.length,
+              },
+              Timestamp: {
+                type: "standard",
+                payload: new Date(
+                  block.result.block.header.time,
+                ).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  // year: "numeric",
+                  // hour: "2-digit",
+                  // minute: "2-digit",
+                  // second: "2-digit",
+                  // timeZone: "UTC",
+                }), // + " UTC",
+              },
+              Proposer: {
+                type: "longval",
+                payload: {
+                  maxLength: 20,
+                  stepDown: 3,
+                  value: block.result.block.header.proposer_address,
+                },
+              },
+            },
+          };
+        }),
       },
       sidebar: {
         headerKey: "Network",
@@ -780,7 +791,7 @@ export const CelestiaLatestBlocksResolver = createResolver(
             payload: "Cosmos SDK",
           },
         },
-        },
+      },
       tabs: [
         {
           text: "Latest Transactions",
@@ -790,7 +801,9 @@ export const CelestiaLatestBlocksResolver = createResolver(
           text: "Latest Blocks",
           route: ["blocks"],
         },
-      ]
-    }
+      ],
+    };
     return page;
-  }, [Celestia.BlockHeightResolver]);
+  },
+  [Celestia.BlockHeightResolver],
+);
