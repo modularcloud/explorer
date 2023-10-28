@@ -30,6 +30,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function NetworkWidgetPage({ params }: Props) {
   const network = (await getSingleNetworkCached(params.network))!;
 
+  // this fixes a bug on vercel with build where it would throw if the network doesn't
+  // exist (even though technically it should always exist)
+  if (!network) notFound();
+
   const searchOptionGroups = await getSearchOptionGroups();
   const values = Object.values(searchOptionGroups).flat();
   const searchOption = values.find((network) => network.id === params.network);
