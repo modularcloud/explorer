@@ -6,6 +6,8 @@ import {
   LongvalSchema,
   IconSchema,
   ErrorSchema,
+  TimestampSchema,
+  LinkSchema,
 } from "../../../schemas/page";
 import { z } from "zod";
 
@@ -54,5 +56,26 @@ export function Icon(payload: z.infer<typeof IconSchema>["payload"]) {
 export function Error() {
   return ErrorSchema.parse({
     type: "error",
+  });
+}
+
+export function Timestamp(
+  original: z.infer<typeof TimestampSchema>["payload"]["original"],
+) {
+  return TimestampSchema.parse({
+    type: "timestamp",
+    payload: {
+      original,
+      value: new Date(original).valueOf(),
+    },
+  });
+}
+
+export function Link(
+  payload: z.infer<typeof LinkSchema>["payload"],
+): z.infer<typeof LinkSchema> {
+  return LinkSchema.parse({
+    type: "link",
+    payload,
   });
 }

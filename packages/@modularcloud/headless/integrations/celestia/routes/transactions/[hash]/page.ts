@@ -3,6 +3,12 @@ import { Page, PageContext, Value } from "../../../../../schemas/page";
 import * as Celestia from "@modularcloud-resolver/celestia";
 import { BlockResponse, TransactionResponse } from "../../../types";
 import { z } from "zod";
+import {
+  getBlockProperties,
+  getTransactionProperties,
+  selectSidebarBlockProperties,
+} from "../../../helpers";
+import { getDefaultSidebar } from "../../../../../helpers";
 
 export const CelestiaTransactionResolver = createResolver(
   {
@@ -21,91 +27,31 @@ export const CelestiaTransactionResolver = createResolver(
     if (response.type === "error") throw response.error;
     if (response.type === "pending") throw PendingException;
 
-    const properties: Record<string, Value> = {};
+    const { Hash, Height, ...rest } = getTransactionProperties(response.result);
 
-    const data: TransactionResponse = response.result;
+    /**
+     * The block data to contextualize the transaction
+     */
     const blockResponse = await getBlock({
       endpoint: context.rpcEndpoint,
-      height: data.result.height,
+      height: (response.result as TransactionResponse)?.result?.height,
     });
-    try {
-      properties["Hash"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.hash),
-      };
-    } catch {}
-    try {
-      properties["Height"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.height),
-      };
-    } catch {}
-    try {
-      properties["Index"] = {
-        type: "standard",
-        payload: z.coerce.string().parse(data.result.index),
-      };
-    } catch {}
-    try {
-      if (blockResponse.type === "success") {
-        const data: BlockResponse = blockResponse.result;
-        properties["Timestamp"] = {
-          type: "timestamp",
-          payload: {
-            original: z.string().parse(data.result.block.header.time),
-            value: z.coerce.date().parse(data.result.block.header.time).valueOf()
-          }
-        };
+
+    const blockProperties: Record<string, Value> = {};
+
+    if (blockResponse.type === "success") {
+      const parsedBlockResponse = getBlockProperties(blockResponse.result);
+      blockProperties["Timestamp"] = parsedBlockResponse["Timestamp"];
+
+      // there has to be a better way...
+      if (Height.type === "link") {
+        Height.payload.sidebar.properties =
+          selectSidebarBlockProperties(parsedBlockResponse);
+        Height.payload.route.unshift(
+          `${context.chainBrand}-${context.chainName}`,
+        );
       }
-    } catch {}
-    try {
-      properties["Status"] = {
-        type: "status",
-        payload: !z.number().parse(data.result.tx_result.code),
-      };
-    } catch {}
-    try {
-      properties["Data"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx_result.data),
-      };
-    } catch {}
-    // try {
-    //   properties["Log"] = {
-    //     type: "standard",
-    //     payload: z.string().parse(txResponse.result.tx_result.log)
-    //   }
-    // } catch {}
-    try {
-      properties["Info"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx_result.info),
-      };
-    } catch {}
-    try {
-      properties["Gas Wanted"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx_result.gas_wanted),
-      };
-    } catch {}
-    try {
-      properties["Gas Used"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx_result.gas_used),
-      };
-    } catch {}
-    try {
-      properties["Codespace"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx_result.codespace),
-      };
-    } catch {}
-    try {
-      properties["Raw"] = {
-        type: "standard",
-        payload: z.string().parse(data.result.tx),
-      };
-    } catch {}
+    }
 
     const page: Page = {
       context,
@@ -115,18 +61,15 @@ export const CelestiaTransactionResolver = createResolver(
       },
       body: {
         type: "notebook",
-        properties,
-      },
-      sidebar: {
-        headerKey: "Transaction",
-        headerValue: hash,
         properties: {
-          Page: {
-            type: "standard",
-            payload: "Overview",
-          },
+          // Setting the proper order
+          Hash,
+          Height,
+          ...blockProperties,
+          ...rest,
         },
       },
+      sidebar: getDefaultSidebar("Transaction", hash, "Overview"),
       tabs: [
         {
           text: "Overview",

@@ -1,24 +1,25 @@
 import { z } from "zod";
 
-
 export const StandardSchema = z.object({
   type: z.literal("standard"),
   payload: z.union([z.string(), z.number()]),
-}); 
+});
 export const StatusSchema = z.object({
   type: z.literal("status"),
   payload: z.coerce.boolean(),
 });
-export const ListSchema = z.object({ type: z.literal("list"), payload: z.string().array() });
+export const ListSchema = z.object({
+  type: z.literal("list"),
+  payload: z.string().array(),
+});
 export const ImageSchema = z.object({
   type: z.literal("image"),
-  payload: z
-    .object({
-      src: z.string(),
-      alt: z.string(),
-      height: z.number(),
-      width: z.number(),
-    }),
+  payload: z.object({
+    src: z.string(),
+    alt: z.string(),
+    height: z.number(),
+    width: z.number(),
+  }),
 });
 export const LongvalSchema = z.object({
   type: z.literal("longval"),
@@ -48,19 +49,34 @@ export const TimestampSchema = z.object({
 /**
  * Doing this because zod doesn't handle recursive types well
  */
+export const SidebarHeaderSchema = z.object({
+  headerKey: z.string(),
+  headerValue: z.string(),
+});
+/**
+ * Doing this because zod doesn't handle recursive types well
+ */
 export const LinkSchema = z.object({
   type: z.literal("link"),
   payload: z.object({
     text: z.string(),
     route: z.string().array(),
-    sidebar: z.discriminatedUnion("type", [StandardSchema,
-      StatusSchema,
-      ListSchema,
-      ImageSchema,
-      LongvalSchema,
-      IconSchema,
-      ErrorSchema,
-      TimestampSchema,]),
+    sidebar: SidebarHeaderSchema.merge(
+      z.object({
+        properties: z.record(
+          z.discriminatedUnion("type", [
+            StandardSchema,
+            StatusSchema,
+            ListSchema,
+            ImageSchema,
+            LongvalSchema,
+            IconSchema,
+            ErrorSchema,
+            TimestampSchema,
+          ]),
+        ),
+      }),
+    ),
   }),
 });
 
@@ -115,11 +131,11 @@ export const ColumnSchema = z.object({
 });
 export type Column = z.infer<typeof ColumnSchema>;
 
-export const SidebarSchema = z.object({
-  headerKey: z.string(),
-  headerValue: z.string(),
-  properties: z.record(ValueSchema),
-});
+export const SidebarSchema = SidebarHeaderSchema.merge(
+  z.object({
+    properties: z.record(ValueSchema),
+  }),
+);
 export type Sidebar = z.infer<typeof SidebarSchema>;
 
 const CollectionSchema = z.object({

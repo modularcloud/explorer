@@ -1,4 +1,8 @@
-import type { PageContext, Sidebar, Value } from "../../schemas/page";
+import { z } from "zod";
+import type {
+  LinkSchema,
+  Value,
+} from "../../schemas/page";
 import { BlockResponse, TransactionResponse } from "./types";
 import * as Values from "./utils/values";
 
@@ -25,7 +29,19 @@ const transactionTransformers: [
   TransactionPropertyKeys,
   (transaction: TransactionResponse) => Value,
 ][] = [
-  ["Height", (transaction) => Values.Standard(transaction.result.height)],
+  [
+    "Height",
+    (transaction) =>
+      Values.Link({
+        text: transaction.result.height,
+        route: ["blocks", transaction.result.height],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Block",
+          properties: {},
+        },
+      }),
+  ],
   ["Hash", (transaction) => Values.Longval({ value: transaction.result.hash })],
   [
     "Status",
@@ -62,6 +78,25 @@ export function getTransactionProperties(transaction: any) {
   ) as Record<TransactionPropertyKeys, Value>;
 }
 
+export function selectSidebarTransactionProperties(
+  properties: Record<TransactionPropertyKeys, Value>,
+) {
+  const selectedProperties = [
+    "Height",
+    "Hash",
+    "Status",
+    "Index",
+    "Gas Wanted",
+    "Gas Used",
+  ];
+  return Object.fromEntries(
+    Object.entries(properties).filter(
+      ([key, value]) =>
+        selectedProperties.includes(key) && value.type !== "link",
+    ),
+  ) as z.infer<typeof LinkSchema>["payload"]["sidebar"]["properties"];
+}
+
 type BlockPropertyKeys =
   | "Height"
   | "Hash"
@@ -87,7 +122,7 @@ const blockTransformers: [
 ][] = [
   ["Height", (block) => Values.Standard(block.result.block.header.height)],
   ["Hash", (block) => Values.Longval({ value: block.result.block_id.hash })], // LongVal?
-  ["Timestamp", (block) => Values.Standard(block.result.block.header.time)],
+  ["Timestamp", (block) => Values.Timestamp(block.result.block.header.time)],
   [
     "Transactions",
     (block) => Values.Standard(block.result.block.data.txs.length),
@@ -158,4 +193,22 @@ export function getBlockProperties(block: any) {
       }
     }),
   ) as Record<BlockPropertyKeys, Value>;
+}
+
+export function selectSidebarBlockProperties(
+  properties: Record<BlockPropertyKeys, Value>,
+) {
+  const selectedProperties = [
+    "Height",
+    "Hash",
+    "Timestamp",
+    "Transactions",
+    "Proposer",
+  ];
+  return Object.fromEntries(
+    Object.entries(properties).filter(
+      ([key, value]) =>
+        selectedProperties.includes(key) && value.type !== "link",
+    ),
+  ) as z.infer<typeof LinkSchema>["payload"]["sidebar"]["properties"];
 }
