@@ -80,7 +80,7 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
       <dt className="text-foreground font-medium col-span-2">{label}</dt>
       {type === "status" && (
         <dd className={cn("col-span-3 flex justify-end px-4")}>
-          <Status status={payload!} noBorders />
+          <Status status={payload!} />
         </dd>
       )}
       {type === "standard" && (
