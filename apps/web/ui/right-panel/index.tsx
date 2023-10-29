@@ -25,6 +25,7 @@ import { headers } from "next/headers";
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
 import type { SingleNetwork } from "~/lib/network";
 import type { Page } from "@modularcloud/headless";
+import { SpotlightComponentList } from "./spotlight";
 
 interface HotkeyEntryProps {
   label: string;
@@ -77,7 +78,9 @@ interface Props {
 }
 
 export function RightPanel({ data, network }: Props) {
+  const { properties, headerKey, headerValue } = data;
 
+  const allAttributes = Object.entries(properties);
   return (
     <div
       className="w-full grid h-full max-h-full auto-rows-min"
@@ -118,9 +121,14 @@ export function RightPanel({ data, network }: Props) {
         id="components"
         className="pt-4 pb-12 px-8 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
       >
-        <AssociatedComponentList defaultContent={data} />
+        <AssociatedComponentList
+          headerValue={headerValue}
+          headerKey={headerKey}
+          defaultAttributes={allAttributes}
+        />
+        <SpotlightComponentList />
 
-        <dl className="w-full">
+        {/* <dl className="w-full">
           <div className="gap-4 w-full">
             <h3 className="text-foreground font-medium flex items-center gap-4 col-span-2 text-lg py-3.5">
               <Electricity aria-hidden="true" className="flex-shrink-0" />
@@ -206,7 +214,7 @@ export function RightPanel({ data, network }: Props) {
               isLast
             />
           </div>
-        </dl>
+        </dl> */}
       </section>
     </div>
   );
