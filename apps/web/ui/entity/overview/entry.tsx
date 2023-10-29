@@ -11,6 +11,7 @@ import { toast } from "~/ui/shadcn/components/ui/use-toast";
 import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
 import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
+import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
@@ -18,6 +19,7 @@ interface Props {
 
 export function OverviewEntryList({ entries }: Props) {
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
+  const { spotlight, setSpotlight } = React.useContext(SpotlightContext);
 
   const items = React.useMemo(() => {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
@@ -34,6 +36,22 @@ export function OverviewEntryList({ entries }: Props) {
       parentRef: listRef,
       onClickItem: ({ value }) => {
         /** TODO: should navigate to link if value type is `link` */
+      },
+      onSelectItem: ({ item }) => { 
+        // sometimes this fires many times on hover
+        if(item.id === spotlight?.headerValue) return;
+
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Property",
+          properties: {
+            Key: {
+              type: "standard",
+              payload: item.id
+            },
+            Value: item.value,
+          },
+        });
       },
     });
 
