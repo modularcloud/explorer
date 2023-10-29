@@ -2,7 +2,7 @@
 
 import * as React from "react";
 // components
-import { ArrowLeftRight } from "~/ui/icons";
+import { Search } from "~/ui/icons";
 import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
 
@@ -25,7 +25,7 @@ export function SpotlightComponentList() {
     <dl className="w-full">
       <div className="grid gap-4 text-lg w-full grid-cols-5">
         <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
-          <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
+          <Search aria-hidden="true" className="flex-shrink-0" />
           {spotlight.headerKey}
         </dt>
         <dd className="font-normal col-span-3">
