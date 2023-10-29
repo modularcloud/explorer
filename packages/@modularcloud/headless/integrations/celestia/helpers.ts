@@ -1,8 +1,5 @@
 import { z } from "zod";
-import type {
-  LinkSchema,
-  Value,
-} from "../../schemas/page";
+import type { LinkSchema, Value } from "../../schemas/page";
 import { BlockResponse, TransactionResponse } from "./types";
 import * as Values from "./utils/values";
 
@@ -95,6 +92,20 @@ export function selectSidebarTransactionProperties(
         selectedProperties.includes(key) && value.type !== "link",
     ),
   ) as z.infer<typeof LinkSchema>["payload"]["sidebar"]["properties"];
+}
+
+export function selectRowTransactionProperties(
+  properties: Record<TransactionPropertyKeys, Value>,
+  type: string,
+): Record<string, Value> {
+  const { Status } = properties;
+  return {
+    Icon: Values.Icon(Status.payload ? "SUCCESS" : "FAILURE"),
+    Transactions: properties.Hash,
+    Type: Values.Standard(type),
+    Status,
+    Height: properties.Height,
+  };
 }
 
 type BlockPropertyKeys =

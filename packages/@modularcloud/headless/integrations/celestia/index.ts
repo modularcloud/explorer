@@ -1,13 +1,6 @@
-import {
-  createResolver,
-  PendingException,
-  ResolutionResponse,
-} from "@modularcloud-resolver/core";
-import * as Celestia from "@modularcloud-resolver/celestia";
-import { z } from "zod";
-import { Page, PageContext, Value } from "../../schemas/page";
-import { addRoute, matchRoute, registerResolver } from "../../router";
-import { PaginationContext } from "../../schemas/context";
+import { ResolutionResponse } from "@modularcloud-resolver/core";
+import type { PageContext } from "../../schemas/page";
+import { addRoute, matchRoute } from "../../router";
 import { registerResolvers } from "..";
 
 type IntegrationResponse = ResolutionResponse | null;
@@ -44,10 +37,10 @@ export function createCelestiaIntegration(context: PageContext) {
     name: "Block",
   });
   addRoute(["blocks"], "celestia-latest-blocks-0.0.0");
-  // addRoute(
-  //   ["blocks", "[heightOrHash]", "transactions"],
-  //   "celestia-page-block-transactions-0.0.0",
-  // );
+  addRoute(
+    ["blocks", "[hashOrHeight]", "transactions"],
+    "celestia-page-block-transactions-0.0.0",
+  );
 
   return {
     resolveRoute: async (
