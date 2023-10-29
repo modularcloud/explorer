@@ -47,7 +47,7 @@ export function CopyableValue({
           >
             {children}
           </p>
-          <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
+          <Tooltip label="Click to Copy" side={tooltipPosition}>
             <Button
               isSquared
               className={cn("bg-transparent", {
@@ -65,13 +65,13 @@ export function CopyableValue({
                 }
               }}
             >
-              <span className="sr-only">Copy value to clipboard</span>
+              <span className="sr-only">Click to Copy</span>
               <Copy aria-hidden="true" className="text-muted" />
             </Button>
           </Tooltip>
         </>
       ) : (
-        <Tooltip label="Copy value to clipboard" side={tooltipPosition}>
+        <Tooltip label="Click to Copy" side={tooltipPosition}>
           <Button
             className="max-w-full bg-transparent font-normal"
             onClick={async () => {
@@ -92,7 +92,7 @@ export function CopyableValue({
               {children}
             </span>
 
-            <span className="sr-only">Copy value to clipboard</span>
+            <span className="sr-only">Click to Copy</span>
           </Button>
         </Tooltip>
       )}
