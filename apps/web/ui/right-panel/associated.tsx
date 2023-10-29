@@ -10,17 +10,23 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Page, Value } from "@modularcloud/headless";
+import type { Sidebar, Value } from "@modularcloud/headless";
+import { SpotlightContext } from "./spotlight-context";
 
-type Props = Pick<Page["sidebar"], "headerValue" | "headerKey"> & {
-  defaultAttributes: Array<[string, Value]>;
+type Props = {
+  defaultContent: Sidebar;
 };
 
-export function AssociatedComponentList({
-  headerValue,
-  headerKey,
-  defaultAttributes,
-}: Props) {
+export function AssociatedComponentList({ defaultContent }: Props) {
+  const { spotlight } = React.useContext(SpotlightContext);
+  const { headerKey, headerValue, properties } = React.useMemo(() => {
+    let content = spotlight || defaultContent;
+    const { properties, ...rest } = content;
+    return {
+      properties: Object.entries(properties),
+      ...rest,
+    };
+  }, [spotlight, defaultContent]);
   return (
     <dl className="w-full">
       <div className="grid gap-4 text-lg w-full grid-cols-5">
@@ -40,12 +46,12 @@ export function AssociatedComponentList({
         </dd>
       </div>
 
-      {defaultAttributes.map(([name, entry], index) => (
+      {properties.map(([name, entry], index) => (
         <AssociatedEntry
           key={name}
           label={name}
           value={entry}
-          isLast={index === defaultAttributes.length - 1}
+          isLast={index === properties.length - 1}
         />
       ))}
     </dl>

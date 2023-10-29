@@ -12,6 +12,7 @@ import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
+import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
 
 interface Props {
   initialData: Page;
@@ -120,6 +121,8 @@ function TableContent({ initialData, route }: Props) {
     [fetchNextPage, isFetching, hasNextPage],
   );
 
+  const { setSpotlight } = React.useContext(SpotlightContext);
+
   //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
   React.useEffect(() => {
     fetchMoreOnBottomReached(parentRef.current);
@@ -146,6 +149,7 @@ function TableContent({ initialData, route }: Props) {
       if (entry.link && inputMethod === "keyboard") {
         virtualizer.scrollToIndex(index);
       }
+      setSpotlight?.(entry.sidebar);
     },
     [virtualizer],
   );

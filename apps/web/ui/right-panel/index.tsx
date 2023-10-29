@@ -25,7 +25,6 @@ import { headers } from "next/headers";
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
 import type { SingleNetwork } from "~/lib/network";
 import type { Page } from "@modularcloud/headless";
-import { SpotlightContext } from "./spotlight-context";
 
 interface HotkeyEntryProps {
   label: string;
@@ -78,10 +77,7 @@ interface Props {
 }
 
 export function RightPanel({ data, network }: Props) {
-  const spotlight = React.useContext(SpotlightContext);
-  const { properties, headerKey, headerValue } = data;
 
-  const allAttributes = Object.entries(properties);
   return (
     <div
       className="w-full grid h-full max-h-full auto-rows-min"
@@ -122,19 +118,7 @@ export function RightPanel({ data, network }: Props) {
         id="components"
         className="pt-4 pb-12 px-8 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
       >
-        {spotlight ? (
-          <AssociatedComponentList
-            headerValue={spotlight.headerValue}
-            headerKey={spotlight.headerKey}
-            defaultAttributes={allAttributes}
-          />
-        ) : (
-          <AssociatedComponentList
-            headerValue={headerValue}
-            headerKey={headerKey}
-            defaultAttributes={allAttributes}
-          />
-        )}
+        <AssociatedComponentList defaultContent={data} />
 
         <dl className="w-full">
           <div className="gap-4 w-full">
