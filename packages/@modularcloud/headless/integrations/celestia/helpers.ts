@@ -159,20 +159,3 @@ export function getBlockProperties(block: any) {
     }),
   ) as Record<BlockPropertyKeys, Value>;
 }
-
-export function getDefaultCelestiaSidebar(context: PageContext): Sidebar {
-  return {
-    headerKey: "Network",
-    headerValue: context.chainName,
-    properties: {
-      Layer: {
-        type: "standard",
-        payload: "Data Availability",
-      },
-      Execution: {
-        type: "standard",
-        payload: "Cosmos SDK",
-      },
-    },
-  };
-}

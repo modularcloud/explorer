@@ -1,6 +1,7 @@
 import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import { getBlockProperties, getDefaultCelestiaSidebar } from "../../../helpers";
+import { getBlockProperties } from "../../../helpers";
+import { getDefaultSidebar } from "../../../../../helpers";
 
 import type { Page, PageContext } from "../../../../../schemas/page";
 
@@ -61,7 +62,7 @@ export const CelestiaBlockResolver = createResolver(
           type: "notebook",
           properties,
         },
-        sidebar: getDefaultCelestiaSidebar(context),
+        sidebar: getDefaultSidebar("Block", hashOrHeight, "Overview"),
         tabs: [
           {
             text: "Overview",

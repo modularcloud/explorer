@@ -85,9 +85,13 @@ export const CelestiaLatestTransactionsResolver = createResolver(
             const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
             return {
               sidebar: {
-                headerKey: "Transaction",
-                headerValue: tx.result.hash,
+                headerKey: "Spotlight",
+                headerValue: "Transaction",
                 properties: {
+                  Hash: {
+                    type: "standard",
+                    payload: tx.result.hash,
+                  },
                   Height: {
                     type: "standard",
                     payload: tx.result.height,
@@ -144,13 +148,9 @@ export const CelestiaLatestTransactionsResolver = createResolver(
         headerKey: "Network",
         headerValue: context.chainName,
         properties: {
-          Layer: {
+          Page: {
             type: "standard",
-            payload: "Data Availability",
-          },
-          Execution: {
-            type: "standard",
-            payload: "Cosmos SDK",
+            payload: "Latest Transactions",
           },
         },
       },
