@@ -50,20 +50,11 @@ export const CelestiaTransactionResolver = createResolver(
       if (blockResponse.type === "success") {
         const data: BlockResponse = blockResponse.result;
         properties["Timestamp"] = {
-          type: "standard",
-          payload:
-            new Date(data.result.block.header.time).toLocaleDateString(
-              "en-US",
-              {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                timeZone: "UTC",
-              },
-            ) + " UTC",
+          type: "timestamp",
+          payload: {
+            original: z.string().parse(data.result.block.header.time),
+            value: z.coerce.date().parse(data.result.block.header.time).valueOf()
+          }
         };
       }
     } catch {}

@@ -62,6 +62,7 @@ export function CompactDate({ datetime, classes }: Props) {
   }, []);
 
   if (!compactTime) return null;
+
   return (
     <time className={classes} dateTime={date.toISOString()}>
       {compactTime}

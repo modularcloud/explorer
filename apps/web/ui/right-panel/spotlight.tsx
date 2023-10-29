@@ -12,6 +12,7 @@ import { cn } from "~/ui/shadcn/utils";
 // types
 import type { Sidebar, Value } from "@modularcloud/headless";
 import { SpotlightContext } from "./spotlight-context";
+import { DateTime, formatDateTime } from "../date";
 
 export function SpotlightComponentList() {
   const { spotlight } = React.useContext(SpotlightContext);
@@ -83,6 +84,18 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
           <Status status={payload!} />
         </dd>
       )}
+      {type === "longval" && (
+        <dd className="font-normal col-span-3 flex">
+          <CopyableValue
+            tooltipPosition="left"
+            value={payload!.toString()}
+            hideCopyIcon
+            className="justify-end"
+          >
+            {getChildrenForStringPayload(payload.value!.toString())}
+          </CopyableValue>
+        </dd>
+      )}
       {type === "standard" && (
         <dd className="font-normal col-span-3 flex">
           <CopyableValue
@@ -92,6 +105,18 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
             className="justify-end"
           >
             {getChildrenForStringPayload(payload!.toString())}
+          </CopyableValue>
+        </dd>
+      )}
+      {type === "timestamp" && (
+        <dd className="font-normal col-span-3 flex">
+          <CopyableValue
+            tooltipPosition="left"
+            value={formatDateTime(payload.value)}
+            hideCopyIcon
+            className="justify-end"
+          >
+            <DateTime value={payload.value!} />
           </CopyableValue>
         </dd>
       )}

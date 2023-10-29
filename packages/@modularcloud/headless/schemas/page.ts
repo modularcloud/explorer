@@ -35,6 +35,33 @@ export const IconSchema = z.object({
 });
 export const ErrorSchema = z.object({
   type: z.literal("error"),
+  payload: z.string().optional(),
+});
+export const TimestampSchema = z.object({
+  type: z.literal("timestamp"),
+  payload: z.object({
+    original: z.union([z.string(), z.number()]),
+    value: z.number(),
+  }),
+});
+
+/**
+ * Doing this because zod doesn't handle recursive types well
+ */
+export const LinkSchema = z.object({
+  type: z.literal("link"),
+  payload: z.object({
+    text: z.string(),
+    route: z.string().array(),
+    sidebar: z.discriminatedUnion("type", [StandardSchema,
+      StatusSchema,
+      ListSchema,
+      ImageSchema,
+      LongvalSchema,
+      IconSchema,
+      ErrorSchema,
+      TimestampSchema,]),
+  }),
 });
 
 export const ValueSchema = z.discriminatedUnion("type", [
@@ -45,6 +72,8 @@ export const ValueSchema = z.discriminatedUnion("type", [
   LongvalSchema,
   IconSchema,
   ErrorSchema,
+  TimestampSchema,
+  LinkSchema,
 ]);
 export type Value = z.infer<typeof ValueSchema>;
 

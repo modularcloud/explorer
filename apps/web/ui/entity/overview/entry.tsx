@@ -12,6 +12,7 @@ import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
 import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
+import { DateTime, formatDateTime } from "~/ui/date";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
@@ -37,9 +38,23 @@ export function OverviewEntryList({ entries }: Props) {
       onClickItem: ({ value }) => {
         /** TODO: should navigate to link if value type is `link` */
       },
-      onSelectItem: ({ item }) => { 
+      onSelectItem: ({ item }) => {
         // sometimes this fires many times on hover
-        if(item.id === spotlight?.headerValue) return;
+        if (item.id === spotlight?.headerValue) return;
+
+        const extraFields: Record<string, Value> = {};
+
+        // some payloads like dates are rendered differently depending on certain context
+        // we can provide the original value as well
+        if (
+          typeof item.value.payload === "object" &&
+          "original" in item.value.payload
+        ) {
+          extraFields["Original"] = {
+            type: "standard",
+            payload: item.value.payload.original,
+          };
+        }
 
         setSpotlight?.({
           headerKey: "Spotlight",
@@ -47,9 +62,10 @@ export function OverviewEntryList({ entries }: Props) {
           properties: {
             Key: {
               type: "standard",
-              payload: item.id
+              payload: item.id,
             },
             Value: item.value,
+            ...extraFields,
           },
         });
       },
@@ -62,9 +78,14 @@ export function OverviewEntryList({ entries }: Props) {
       const { type, payload } = selectedItem.value;
       if (payload === null || payload === undefined) return false;
 
-      if (type === "standard" || type === "longval") {
-        const value =
-          type === "standard" ? payload.toString() : payload.value.toString();
+      if (type === "standard" || type === "longval" || type === "timestamp") {
+        let value = payload.toString();
+        if (type === "longval") {
+          value = payload.value.toString();
+        }
+        if (type === "timestamp") {
+          value = formatDateTime(payload.value);
+        }
         copyValueToClipboard(value).then((copied) => {
           if (copied) {
             toast({
@@ -219,6 +240,14 @@ export function OverviewEntry({
               </li>
             ))}
           </ol>
+        </dd>
+      )}
+
+      {type === "timestamp" && (
+        <dd className="col-span-3">
+          <CopyableValue value={formatDateTime(value.payload.value)}>
+            <DateTime value={payload.value!} />
+          </CopyableValue>
         </dd>
       )}
 
