@@ -13,7 +13,7 @@ import {
 } from "./use-widget-data";
 
 import type { SearchOption } from "~/lib/shared-utils";
-import { TreemapComponent } from "../../widgets/treemap";
+import { Treemap } from "../../widgets/treemap";
 interface Props {
   network: SearchOption;
 }
@@ -112,7 +112,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
 
-      <TreemapComponent
+      <Treemap
         data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
       />

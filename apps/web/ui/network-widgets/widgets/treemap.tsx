@@ -1,109 +1,53 @@
-import React, { useRef, useEffect, useMemo } from "react";
-import * as d3 from "d3";
+"use client";
+import * as React from "react";
 import { Card } from "~/ui/card";
 import { cn } from "~/ui/shadcn/utils";
+import { ResponsiveTreeMap } from "@nivo/treemap";
 
 interface Props {
   className?: string;
   data: Record<string, number>;
 }
 
-export function TreemapComponent(props: Props) {
-  const labelSkipSize = 11;
-  function formatBytes(bytes: number | undefined) {
-    if (typeof bytes === "number") {
-      const kb = bytes / 1024;
-      if (kb < 1) {
-        return bytes + "bytes";
-      } else if (kb < 1024) {
-        return kb.toFixed(2) + "kb";
-      } else {
-        return (kb / 1024).toFixed(2) + " Mb";
-      }
-    }
-  }
-  const svgRef = useRef(null);
-  const treemapData = useMemo(() => {
-    const colors = ["#daccff8f", "#d2d4fe8f", "#D6E1FF8F"];
-    const data = {
-      name: "All Namespaces",
-      children: Object.entries(props.data).map(([name, size]) => ({
-        name,
-        value: size,
-        tileColor: colors[Math.floor(Math.random() * colors.length)],
-      })),
-    };
-
-    const root = d3.hierarchy(data).sum((d) => d.value);
-    const treemapRoot = d3.treemap().size([450, 500]).padding(4)(root);
-
-    return treemapRoot.leaves();
-  }, [props.data]);
-  useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-    const leaf = svg
-      .selectAll("g")
-      .data(treemapData)
-      .join("g")
-      .attr("transform", (d) => `translate(${d.x0},${d.y0})`);
-
-    leaf
-      .append("rect")
-      .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
-      .attr("id", (d) => (d.leafUid = "leaf").id)
-      .attr("fill", (d) => {
-        return d.data.tileColor;
-      })
-      .attr("width", (d) => d.x1 - d.x0)
-      .attr("height", (d) => d.y1 - d.y0)
-      .attr("rx", 5)
-      .attr("ry", 5);
-
-    const texts = leaf
-      .append("text")
-      .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
-      .attr("fill", (d) => {
-        if (d.data.tileColor == "#daccff8f") {
-          return "#3D1E95";
-        } else if (d.data.tileColor == "#d2d4fe8f") {
-          return "#213898";
-        } else if (d.data.tileColor == "#D6E1FF8F") {
-          return "#3A68A6";
-        }
-      })
-      .text((d) => formatBytes(d.value))
-      .attr("x", (d) => (d.x1 - d.x0) / 2) // half the width of the rectangle
-      .attr("y", (d) => (d.y1 - d.y0) / 2 + 5)
-      .attr("font-size", "12px")
-      .attr("text-anchor", "middle")
-      .attr("class", "font-sans")
-      .attr("font-weight", "500");
-    texts.each(function (d) {
-      const textHeight = this.getBBox().height;
-      const rectHeight = d.y1 - d.y0;
-
-      if (textHeight > rectHeight) {
-        d3.select(this).attr(
-          "transform",
-          `rotate(-90, ${d.x0 + (d.x1 - d.x0) / 2}, ${
-            d.y0 + (d.y1 - d.y0) / 2
-          })`,
-        );
-      }
+export function Treemap(props: Props) {
+  const data = React.useMemo(() => {
+    const colors = ["hsl(256, 100%, 60%)", "hsl(223, 100%, 60%)", "hsl(202, 100%, 60%)"];
+    return Object.entries(props.data).map(([id, value]) => {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id,
+        value,
+        color,
+      };
     });
-  }, [treemapData]);
-
+  }, [props.data]);
   return (
-    <Card className={cn("flex flex-col p-0 ", props.className)}>
-      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between">
+    <Card className={cn("flex flex-col p-0", props.className)}>
+      <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
         <p className="text-lg">Data Usage</p>
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
       <div className="h-full">
-        <svg ref={svgRef} width="500" height="500" />
+        <ResponsiveTreeMap
+          data={{ id: "All Namespaces", color: "hsl(256, 100%, 60%)", children: data }}
+          valueFormat=".02s"
+          labelSkipSize={12}
+          labelTextColor={{
+            from: "color",
+            modifiers: [["darker", 1.2]],
+          }}
+          parentLabelPosition="left"
+          parentLabelTextColor={{
+            from: "color",
+            modifiers: [["darker", 2]],
+          }}
+          borderColor={{
+            from: "color",
+            modifiers: [["darker", 0.1]],
+          }}
+          colors={node => node.data.color}
+        />
       </div>
     </Card>
   );
 }
-export default TreemapComponent;
