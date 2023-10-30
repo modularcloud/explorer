@@ -79,6 +79,10 @@ export const CelestiaTransactionResolver = createResolver(
           text: "Messages",
           route: ["transactions", hash, "messages"],
         },
+        {
+          text: "Blobs",
+          route: ["transactions", hash, "blobs"],
+        },
       ],
     };
     return page;
