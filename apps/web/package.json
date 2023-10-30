@@ -36,6 +36,7 @@
     "bright": "^0.8.3",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
+    "d3": "^7.8.5",
     "dayjs": "^1.11.7",
     "decimal.js": "^10.4.3",
     "lucide-react": "^0.259.0",
@@ -59,6 +60,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@svgr/cli": "^8.1.0",
+    "@types/d3": "^7.4.2",
     "@types/node": "^17.0.12",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
