@@ -19,6 +19,9 @@ interface Props {
 
 // TODO : transform this into a client component
 export function CelestiaWidgetLayout({ network }: Props) {
+  // for some reason this is still necessary despite even https://github.com/modularcloud/explorer/pull/221/files#diff-c69978f5b3968360f90c0512cc7d7e2b73d184e4b4aa1b70dccaee69465000f2R33
+  if (!network) return null;
+
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
   const latestBlocks = useLatestBlocks(network.id);
