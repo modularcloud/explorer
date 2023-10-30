@@ -2,7 +2,7 @@
 
 import * as React from "react";
 // components
-import { ArrowLeftRight } from "~/ui/icons";
+import { Search } from "~/ui/icons";
 import { CopyableValue } from "~/ui/copyable-value";
 import { Status } from "~/ui/status";
 
@@ -10,42 +10,43 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Page, Value } from "@modularcloud/headless";
+import type { Sidebar, Value } from "@modularcloud/headless";
+import { SpotlightContext } from "./spotlight-context";
+import { DateTime, formatDateTime } from "../date";
 
-type Props = Pick<Page["sidebar"], "headerValue" | "headerKey"> & {
-  defaultAttributes: Array<[string, Value]>;
-};
+export function SpotlightComponentList() {
+  const { spotlight } = React.useContext(SpotlightContext);
+  if (!spotlight) {
+    return null;
+  }
 
-export function AssociatedComponentList({
-  headerValue,
-  headerKey,
-  defaultAttributes,
-}: Props) {
+  const properties = Object.entries(spotlight.properties);
+
   return (
     <dl className="w-full">
       <div className="grid gap-4 text-lg w-full grid-cols-5">
         <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
-          <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
-          {headerKey}
+          <Search aria-hidden="true" className="flex-shrink-0" />
+          {spotlight.headerKey}
         </dt>
         <dd className="font-normal col-span-3">
           <CopyableValue
             tooltipPosition="left"
-            value={headerValue}
+            value={spotlight.headerValue}
             hideCopyIcon
             className="[&>button]:uppercase justify-end"
           >
-            {headerValue}
+            {spotlight.headerValue}
           </CopyableValue>
         </dd>
       </div>
 
-      {defaultAttributes.map(([name, entry], index) => (
+      {properties.map(([name, entry], index) => (
         <AssociatedEntry
           key={name}
           label={name}
           value={entry}
-          isLast={index === defaultAttributes.length - 1}
+          isLast={index === properties.length - 1}
         />
       ))}
     </dl>
@@ -83,6 +84,18 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
           <Status status={payload!} />
         </dd>
       )}
+      {type === "longval" && (
+        <dd className="font-normal col-span-3 flex">
+          <CopyableValue
+            tooltipPosition="left"
+            value={payload!.toString()}
+            hideCopyIcon
+            className="justify-end"
+          >
+            {getChildrenForStringPayload(payload.value!.toString())}
+          </CopyableValue>
+        </dd>
+      )}
       {type === "standard" && (
         <dd className="font-normal col-span-3 flex">
           <CopyableValue
@@ -92,6 +105,18 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
             className="justify-end"
           >
             {getChildrenForStringPayload(payload!.toString())}
+          </CopyableValue>
+        </dd>
+      )}
+      {type === "timestamp" && (
+        <dd className="font-normal col-span-3 flex">
+          <CopyableValue
+            tooltipPosition="left"
+            value={formatDateTime(payload.value)}
+            hideCopyIcon
+            className="justify-end"
+          >
+            <DateTime value={payload.value!} />
           </CopyableValue>
         </dd>
       )}

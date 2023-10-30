@@ -9,6 +9,7 @@ import { cn } from "~/ui/shadcn/utils";
 // types
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 import { RQTableProvider } from "~/ui/entity/table/table-provider";
+import { SpotlightProvider } from "~/ui/right-panel/spotlight-context";
 
 export default async function BlockLayout({
   children,
@@ -22,6 +23,7 @@ export default async function BlockLayout({
   const network = await getSingleNetworkCached(params.network);
   return (
     <RQTableProvider>
+      <SpotlightProvider>
       <main
         className="min-h-screen flex flex-col h-full"
         style={{
@@ -75,6 +77,7 @@ export default async function BlockLayout({
           )}
         </div>
       </main>
+      </SpotlightProvider>
     </RQTableProvider>
   );
 }

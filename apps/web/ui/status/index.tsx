@@ -1,22 +1,13 @@
 import * as React from "react";
 import { CheckCircle, XCircle } from "~/ui/icons";
-import { cn } from "../shadcn/utils";
 
 interface Props {
   status: boolean;
-  noBorders?: boolean;
 }
 
-export function Status({ status, noBorders = false }: Props) {
+export function Status({ status }: Props) {
   return (
-    <div
-      className={cn(
-        "rounded-lg items-center gap-1 justify-center  inline-flex",
-        {
-          "px-4 py-2 border border-mid-dark-100": !noBorders,
-        },
-      )}
-    >
+    <div className="rounded-lg items-center gap-1 justify-center  inline-flex px-4 py-2 border border-mid-dark-100">
       {status ? (
         <>
           <CheckCircle

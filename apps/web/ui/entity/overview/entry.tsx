@@ -11,13 +11,19 @@ import { toast } from "~/ui/shadcn/components/ui/use-toast";
 import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
 import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
+import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
+import { DateTime, formatDateTime } from "~/ui/date";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
 }
 
 export function OverviewEntryList({ entries }: Props) {
+  const router = useRouter();
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
+  const { spotlight, setSpotlight } = React.useContext(SpotlightContext);
 
   const items = React.useMemo(() => {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
@@ -35,6 +41,41 @@ export function OverviewEntryList({ entries }: Props) {
       onClickItem: ({ value }) => {
         /** TODO: should navigate to link if value type is `link` */
       },
+      onSelectItem: ({ item }) => {
+        // sometimes this fires many times on hover
+        if (item.id === spotlight?.headerValue) return;
+
+        const extraFields: Record<string, Value> = {};
+
+        // some payloads like dates are rendered differently depending on certain context
+        // we can provide the original value as well
+        if (
+          typeof item.value.payload === "object" &&
+          "original" in item.value.payload
+        ) {
+          extraFields["Original"] = {
+            type: "standard",
+            payload: item.value.payload.original,
+          };
+        }
+
+        if (item.value.type === "link") {
+          setSpotlight?.(item.value.payload.sidebar);
+        } else {
+          setSpotlight?.({
+            headerKey: "Spotlight",
+            headerValue: "Property",
+            properties: {
+              Key: {
+                type: "standard",
+                payload: item.id,
+              },
+              Value: item.value,
+              ...extraFields,
+            },
+          });
+        }
+      },
     });
 
   useHotkeyListener({
@@ -44,9 +85,22 @@ export function OverviewEntryList({ entries }: Props) {
       const { type, payload } = selectedItem.value;
       if (payload === null || payload === undefined) return false;
 
-      if (type === "standard" || type === "longval") {
-        const value =
-          type === "standard" ? payload.toString() : payload.value.toString();
+      if (
+        type === "standard" ||
+        type === "longval" ||
+        type === "timestamp" ||
+        type === "link"
+      ) {
+        let value = payload.toString();
+        if (type === "longval") {
+          value = payload.value.toString();
+        }
+        if (type === "timestamp") {
+          value = formatDateTime(payload.value);
+        }
+        if (type === "link") {
+          value = payload.text;
+        }
         copyValueToClipboard(value).then((copied) => {
           if (copied) {
             toast({
@@ -65,6 +119,21 @@ export function OverviewEntryList({ entries }: Props) {
       return false;
     },
     modifier: "META",
+  });
+
+  useHotkeyListener({
+    keys: ["Enter"],
+    listener: () => {
+      if (!selectedItem) return false;
+      const { type, payload } = selectedItem.value;
+      if (payload === null || payload === undefined) return false;
+
+      if (type === "link") {
+        router.push(`/${payload.route.join("/")}`);
+        return true;
+      }
+      return false;
+    },
   });
 
   return (
@@ -201,6 +270,24 @@ export function OverviewEntry({
               </li>
             ))}
           </ol>
+        </dd>
+      )}
+
+      {type === "timestamp" && (
+        <dd className="col-span-3">
+          <CopyableValue value={formatDateTime(value.payload.value)}>
+            <DateTime value={payload.value!} />
+          </CopyableValue>
+        </dd>
+      )}
+
+      {type === "link" && (
+        <dd className="col-span-3">
+          <CopyableValue value={payload.text}>
+            <Link className="underline" href={`/${payload.route.join("/")}`}>
+              {payload.text}
+            </Link>
+          </CopyableValue>
         </dd>
       )}
 
