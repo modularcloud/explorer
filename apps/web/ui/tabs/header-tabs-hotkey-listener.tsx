@@ -24,7 +24,9 @@ export function HeaderTabsHotkeyListener({ tabList }: Props) {
       const selectedTab = tabList[Number(keyPressed) - 1];
       if (selectedTab) {
         router.push(`/${params.network}/${selectedTab}`);
+        return true;
       }
+      return false;
     },
     modifier: "CTRL",
   });

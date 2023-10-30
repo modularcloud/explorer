@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: HeadlessRoute }) {
     };
   }
 
-  const { metadata } = await loadPage(params);
+  const { metadata } = await loadPage({ route: params });
   return {
     title: metadata.title,
     description: metadata.description,
@@ -46,7 +46,8 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
     }
   }
 
-  const page = await loadPage(params);
+  // TODO : skip cache as of now until collection doesn't return
+  const page = await loadPage({ route: params });
 
   if (page.body.type === "notebook") {
     return <Overview properties={page.body.properties} />;

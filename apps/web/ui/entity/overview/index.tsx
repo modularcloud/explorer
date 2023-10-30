@@ -15,19 +15,7 @@ type Props = {
 };
 
 async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
-  const entity = await fetchEntity({
-    resourcePath,
-    archetype: AttributesArchetype,
-  });
-  if (!entity) return null;
-  const attributes = entity.components.attributes.data;
-  return (
-    <>
-      {Object.entries(attributes).map(([key, value]) => {
-        return <OverviewEntry key={key} label={key} value={value} />;
-      })}
-    </>
-  );
+  return null;
 }
 
 export async function Overview({ properties }: Props) {

@@ -8,19 +8,19 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 interface Props {
-  filter: string;
   className?: string;
   optionGroups: OptionGroups;
   onSelectOption?: (chain: SearchOption) => void;
   defaultChainBrand?: string;
+  parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
 
 export function IntegrationGridView({
-  filter,
   onSelectOption,
   optionGroups,
   className,
   defaultChainBrand,
+  parentDialogRef,
 }: Props) {
   const isOneColumn = useMediaQuery("(max-width: 594px)");
   const isTwoColumns = useMediaQuery(
@@ -33,10 +33,11 @@ export function IntegrationGridView({
 
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
-    parentRef: gridRef.current,
+    parentRef: gridRef,
     optionGroups,
+    scopeRef: parentDialogRef,
     onSelectOption,
-    defaultOptionGroupKey: defaultChainBrand,
+    defaultOptionGroupKeyToSortFirst: defaultChainBrand,
   });
 
   return (
@@ -91,7 +92,7 @@ export function IntegrationGridView({
                     {options.map((option) => {
                       const optionId = getOptionId(rowIndex, colIndex, option);
                       return (
-                        <button
+                        <div
                           key={optionId}
                           {...registerOptionProps(rowIndex, colIndex, option)}
                           className={cn(
@@ -118,7 +119,7 @@ export function IntegrationGridView({
                           >
                             Select
                           </div>
-                        </button>
+                        </div>
                       );
                     })}
                   </div>

@@ -3,14 +3,29 @@ import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;
-  parentRef?: React.ElementRef<"div" | "ul" | "ol" | "dl"> | null;
+  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
+  /**
+   * The ref of the parent to attach keyboard events
+   */
+  scopeRef: React.RefObject<HTMLElement | null>;
+  /**
+   * Callback for when the item is clicked, either with the mouse
+   * or with Enter key
+   */
   onSelectOption?: (option: T) => void;
+  /**
+   * The list of groups to display into grids, this should be memoized or else
+   *  it could cause too many rerenders
+   */
   optionGroups: { [groupDisplayName: string]: T[] };
-  defaultOptionGroupKey?: string; // the default key to show first in the list
+  /**
+   * The default key to show first in the list
+   */
+  defaultOptionGroupKeyToSortFirst?: string;
 };
 
 /**
- * Hook to make navigable menus with grid/list (a list is just a grid with one column)
+ * Hook to make navigable menus with grid/list (a list is just a grid with one column) in groups
  * @returns
  */
 export function useItemGrid<
@@ -19,18 +34,22 @@ export function useItemGrid<
   noOfColumns,
   optionGroups,
   parentRef,
-  defaultOptionGroupKey,
+  defaultOptionGroupKeyToSortFirst,
   onSelectOption,
+  scopeRef,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
     let groups = Object.entries(optionGroups);
-    if (defaultOptionGroupKey && optionGroups[defaultOptionGroupKey]) {
+    if (
+      defaultOptionGroupKeyToSortFirst &&
+      optionGroups[defaultOptionGroupKeyToSortFirst]
+    ) {
       groups = groups.sort((a, b) => {
-        if (a[0] === defaultOptionGroupKey) {
+        if (a[0] === defaultOptionGroupKeyToSortFirst) {
           return -1;
         }
-        if (b[0] === defaultOptionGroupKey) {
+        if (b[0] === defaultOptionGroupKeyToSortFirst) {
           return 1;
         }
         return 0;
@@ -38,7 +57,7 @@ export function useItemGrid<
     }
 
     return chunkArray(groups, noOfColumns);
-  }, [noOfColumns, optionGroups, defaultOptionGroupKey]);
+  }, [noOfColumns, optionGroups, defaultOptionGroupKeyToSortFirst]);
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
   const [selectedColIndex, setSelectedColIndex] = React.useState(0);
@@ -247,8 +266,8 @@ export function useItemGrid<
         `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
       ) as HTMLDivElement | null;
 
-      if (element && parentRef) {
-        if (isElementOverflowing(parentRef, element)) {
+      if (element && parentRef?.current) {
+        if (isElementOverflowing(parentRef.current, element)) {
           element?.scrollIntoView({
             behavior: "smooth",
             block: "end",
@@ -265,15 +284,33 @@ export function useItemGrid<
     [itemRootId],
   );
 
-  // Listen for keyboard events
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
-      // Prevent scrolling
+      /**
+       * Prevent default scrolling in favor of manual scrolling
+       * TODO (fredk3): (re)figure out why i did this ?
+       */
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
       }
 
-      let eventIgnored = false;
+      /**
+       * we want to listen on `Enter` key to select an item,
+       * but only once and not listen for repeated presses.
+       * This fixes a bug with the search modal, where if you
+       * clicked on `Enter` it would skip one step, Enter was detected & repeated
+       */
+      const { option: currentOption } = selectedItemPositionRef.current;
+      if (event.key === "Enter" && !event.repeat && currentOption) {
+        onSelectOption?.(currentOption);
+        // we don't want this event to be propagated to the whole page
+        // so that element that listen globally (for hotkey for ex.) don't react accordingly
+        event.stopPropagation();
+        return;
+      }
+
+      let eventHandled = true;
+
       switch (event.key) {
         case "ArrowUp":
           moveSelectionUp();
@@ -290,34 +327,25 @@ export function useItemGrid<
           moveSelectionRight();
           break;
         default:
-          eventIgnored = true;
+          eventHandled = false;
           // we don't care for other key events
           break;
       }
 
-      const { option, rowIndex, colIndex } = selectedItemPositionRef.current;
-      if (!eventIgnored && option) {
-        const element = document.getElementById(
-          `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
-        );
-        element?.focus();
+      // we don't want this event to be propagated to the whole page
+      // so that element that listen globally (for hotkey for ex.) don't react accordingly,
+      if (eventHandled) {
+        event.stopPropagation();
       }
     };
 
-    const keyUpListener = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        const { option } = selectedItemPositionRef.current;
-        if (option) {
-          onSelectOption?.(option);
-        }
-      }
-    };
+    const scope = scopeRef?.current;
 
-    window.addEventListener("keydown", navigationListener);
-    window.addEventListener("keyup", keyUpListener);
+    if (!scope) return;
+
+    scope.addEventListener("keydown", navigationListener);
     return () => {
-      window.removeEventListener("keyup", keyUpListener);
-      window.removeEventListener("keydown", navigationListener);
+      scope.removeEventListener("keydown", navigationListener);
     };
   }, [
     groupedByLines,
@@ -328,6 +356,7 @@ export function useItemGrid<
     scrollOptionIntoView,
     onSelectOption,
     itemRootId,
+    scopeRef,
   ]);
 
   React.useEffect(() => {

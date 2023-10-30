@@ -298,7 +298,39 @@ export const addressTransactionsResolver = createResolver(
                 Slot: properties.Slot,
               },
               key: link,
-              card,
+              sidebar: {
+                headerKey: "Transaction",
+                headerValue: transaction.transaction.signatures[0],
+                properties: {
+                  Slot: {
+                    type: "standard",
+                    payload: transaction.slot,
+                  },
+                  Status: {
+                    type: "status",
+                    payload: !transaction.meta.err,
+                  },
+                  Fee: {
+                    type: "standard",
+                    payload:
+                      (transaction.meta.fee / Math.pow(10, 9)).toFixed(2) +
+                      " " +
+                      context.nativeToken,
+                  },
+                  Signer: {
+                    type: "standard",
+                    payload: transaction.transaction.message.accountKeys[0],
+                  },
+                  "Compute Units": {
+                    type: "standard",
+                    payload: transaction.meta.computeUnitsConsumed,
+                  },
+                  Type: {
+                    type: "standard",
+                    payload: "TODO",
+                  },
+                },
+              },
               link,
             };
           }),
@@ -537,7 +569,11 @@ export const transactionInstructionsResolver = createResolver(
                 Program: properties.Program,
                 Data: properties.Data,
               },
-              card: properties,
+              sidebar: {
+                headerKey: "Instruction",
+                headerValue: String(index),
+                properties,
+              },
               key,
             };
           },
@@ -768,7 +804,7 @@ export const blockTransactionsResolver = createResolver(
           {
             columnLabel: "Status",
             breakpoint: "sm",
-          }
+          },
         ],
         entries: block.transactions.map((transaction) => {
           const properties: Record<string, Value> = {
@@ -827,7 +863,39 @@ export const blockTransactionsResolver = createResolver(
               Slot: properties.Slot,
             },
             key: link,
-            card,
+            sidebar: {
+              headerKey: "Transaction",
+              headerValue: transaction.transaction.signatures[0],
+              properties: {
+                Slot: {
+                  type: "standard",
+                  payload: slot,
+                },
+                Status: {
+                  type: "status",
+                  payload: !transaction.meta.err,
+                },
+                Fee: {
+                  type: "standard",
+                  payload:
+                    (transaction.meta.fee / Math.pow(10, 9)).toFixed(2) +
+                    " " +
+                    context.nativeToken,
+                },
+                Signer: {
+                  type: "standard",
+                  payload: transaction.transaction.message.accountKeys[0],
+                },
+                "Compute Units": {
+                  type: "standard",
+                  payload: transaction.meta.computeUnitsConsumed,
+                },
+                Type: {
+                  type: "standard",
+                  payload: "TODO",
+                },
+              },
+            },
             link,
           };
         }),

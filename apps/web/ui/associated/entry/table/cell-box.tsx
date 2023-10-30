@@ -1,7 +1,7 @@
 import { Badge } from "~/ui/badge";
 import { OldStatus } from "~/ui/old-status";
 import { Cell } from "~/ecs/components/row";
-import { CompactDate } from "~/ui/compact-date";
+import { CompactDate } from "~/ui/date/compact";
 import { LongVal } from "~/ui/long-val";
 import Image from "next/image";
 import SvgGreenTick from "~/ui/icons/GreenTick";

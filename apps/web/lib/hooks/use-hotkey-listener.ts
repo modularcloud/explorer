@@ -2,13 +2,19 @@ import * as React from "react";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { isMacLike } from "~/lib/shared-utils";
 
-type HotkeyListener = (keyPressed: string) => void;
 type UseHotkeyListenerArgs = {
   keys: string[];
   modifier?: "CTRL" | "META" | "ALT";
-  listener: HotkeyListener;
+  /**
+   * callback to run when the hotkey is executed,
+   * the returned value tells if the event has been consumed or not
+   */
+  listener: (keyPressed: string) => boolean;
 };
 
+/**
+ * Hook for listening to hotkeys
+ */
 export function useHotkeyListener({
   keys,
   modifier,
@@ -18,7 +24,7 @@ export function useHotkeyListener({
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
 
   React.useEffect(() => {
-    const keyDownListener = (event: KeyboardEvent) => {
+    function keyDownListener(event: KeyboardEvent) {
       if (isSearchModalOpen) {
         return;
       }
@@ -41,13 +47,20 @@ export function useHotkeyListener({
         keysPressedRef.current[event.key] = true;
       }
 
+      // TODO : one more bug -> we also need to check that the keys don't include unwanted shortcuts
       if (
         keys.includes(event.key) &&
         (!modifier || keysPressedRef.current[modifier])
       ) {
-        listener(event.key);
+        const consumed = listener(event.key);
+
+        console.log({ consumed });
+        if (consumed) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
       }
-    };
+    }
 
     const keyUpListener = (event: KeyboardEvent) => {
       const { [event.key]: _, ...keysPressed } = keysPressedRef.current;
