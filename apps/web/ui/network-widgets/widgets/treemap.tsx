@@ -35,7 +35,7 @@ export function Treemap(props: Props) {
       })),
     };
 
-    const root = d3.hierarchy(data).sum((d) => d.value);
+    const root = d3.hierarchy(data).sum((d:any) => d.value);
     const treemapRoot = d3.treemap().size([450, 500]).padding(4)(root);
 
     return treemapRoot.leaves();
@@ -53,8 +53,12 @@ export function Treemap(props: Props) {
     leaf
       .append("rect")
       .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
-      .attr("id", (d) => (d.leafUid = "leaf").id)
-      .attr("fill", (d) => {
+      .attr("id", (d:any) => {
+        d.leafUid = "leaf";
+        return d.leafUid;
+      })
+      
+      .attr("fill", (d:any) => {
         return d.data.tileColor;
       })
       .attr("width", (d) => d.x1 - d.x0)
@@ -65,16 +69,18 @@ export function Treemap(props: Props) {
     leaf
       .append("text")
       .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
-      .attr("fill", (d) => {
+      .attr("fill", (d:any) => {
         if (d.data.tileColor == "#daccff8f") {
           return "#3D1E95";
         } else if (d.data.tileColor == "#d2d4fe8f") {
           return "#213898";
-        } else if (d.data.tileColor == "#D6E1FF8F") {
+        }
+        else
+        {
           return "#3A68A6";
         }
       })
-      .text((d) => formatBytes(d.value))
+      .text((d) => formatBytes(d.value) || "")
       .attr("transform", (d) => {
         const width = d.x1 - d.x0;
         const height = d.y1 - d.y0;
