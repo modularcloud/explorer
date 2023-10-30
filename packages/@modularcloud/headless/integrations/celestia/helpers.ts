@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { LinkSchema, Value } from "../../schemas/page";
-import { BlockResponse, TransactionResponse } from "./types";
+import { BlockResponse, TransactionResponse, TxBlob } from "./types";
 import * as Values from "./utils/values";
 
 // no network requests allowed by functions in this file!!
@@ -222,4 +222,100 @@ export function selectSidebarBlockProperties(
         selectedProperties.includes(key) && value.type !== "link",
     ),
   ) as z.infer<typeof LinkSchema>["payload"]["sidebar"]["properties"];
+}
+
+type BlobPropertyKeys =
+  | "Height"
+  | "Transaction"
+  | "Namespace"
+  | "Share Version"
+  | "Namespace Version"
+  | "Blob Index"
+  | "Rollup"
+  | "Data";
+// | "Share Commitment"
+// | "Signer"
+// | "Size";
+const blobTransformers: [
+  BlobPropertyKeys,
+  (txBlob: TxBlob, blobIndex: number) => Value,
+][] = [
+  ["Height", (txBlob) => Values.Standard(txBlob.height)],
+  [
+    "Namespace",
+    (txBlob, blobIndex) =>
+      Values.Standard(
+        Buffer.from(txBlob.blobs[blobIndex].namespaceId).toString("base64"),
+      ),
+  ],
+  [
+    "Transaction",
+    (txBlob) =>
+      Values.Longval({ value: txBlob.txHash, maxLength: 25, stepDown: 5 }),
+  ],
+  [
+    "Share Version",
+    (txBlob, blobIndex) =>
+      Values.Standard(txBlob.blobs[blobIndex].shareVersion),
+  ],
+  [
+    "Namespace Version",
+    (txBlob, blobIndex) =>
+      Values.Standard(txBlob.blobs[blobIndex].namespaceVersion),
+  ],
+  ["Blob Index", (txBlob, blobIndex) => Values.Standard(blobIndex)],
+  ["Rollup", () => Values.Standard("-")],
+  [
+    "Data",
+    (txBlob, blobIndex) =>
+      Values.Longval({
+        value: Buffer.from(txBlob.blobs[blobIndex].data).toString("base64"),
+        strategy: "end",
+        maxLength: 25,
+        stepDown: 5,
+      }),
+  ],
+  // [
+  //   "Share Commitment",
+  //   (txBlob, blobIndex) =>
+  //     Values.Standard(
+  //       (
+  //         txBlob.messages.find(
+  //           (message) => message.uniqueIdentifier === "Pay For Blobs",
+  //         ) as any
+  //       )["Share Commitments"].payload.toString(),
+  //     ),
+  // ],
+  // ["Signer", (txBlob, blobIndex) => Values.Standard("-")],
+  // ["Size", (txBlob, blobIndex) => Values.Standard("-")],
+];
+
+export function getBlobProperties(blob: any, blobIndex: number) {
+  return Object.fromEntries(
+    blobTransformers.map((transformer) => {
+      try {
+        return [transformer[0], transformer[1](blob, blobIndex)];
+      } catch {
+        return [transformer[0], Values.Error()];
+      }
+    }),
+  ) as Record<BlobPropertyKeys, Value>;
+}
+
+// export function selectSidebarBlobProperties(
+//   properties: Record<TransactionPropertyKeys, Value>,
+// ) {
+
+// }
+
+export function selectRowBlobProperties(
+  properties: Record<BlobPropertyKeys, Value>,
+): Record<string, Value> {
+  return {
+    Height: properties.Height,
+    Transaction: properties.Transaction,
+    Namespace: properties.Namespace.type === "standard" ? Values.Standard("..." + String(properties.Namespace.payload).substring(26)) : properties.Namespace,
+    Rollup: properties.Rollup,
+    Data: properties.Data,
+  };
 }

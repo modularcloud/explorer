@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 type JSONRPCResponse<T> = {
   jsonrpc: string;
   id: number;
@@ -102,3 +104,32 @@ type Block = {
 
 export type TransactionResponse = JSONRPCResponse<Transaction>;
 export type BlockResponse = JSONRPCResponse<Block>;
+
+type LegacyValueSchemaType = 
+  | { type: "string"; payload: string }
+  | { type: "status"; payload: boolean }
+  | { type: "list"; payload: string[] }
+  | { type: "time"; payload: number };
+type LegacyEntity = {
+  uniqueIdentifierLabel: string;
+  uniqueIdentifier: string;
+  metadata: { [key: string]: LegacyValueSchemaType };
+  computed: { [key: string]: any };
+  context: {
+    network: string;
+    entityTypeName: string;
+  };
+  raw: string;
+};
+
+export type TxBlob = {
+  txHash: string;
+  height: string;
+  blobs: {
+    namespaceId: Uint8Array;
+    data: Uint8Array;
+    shareVersion: number;
+    namespaceVersion: number;
+  }[];
+  messages: LegacyEntity[];
+};

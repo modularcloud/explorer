@@ -41,6 +41,11 @@ export function createCelestiaIntegration(context: PageContext) {
     ["blocks", "[hashOrHeight]", "transactions"],
     "celestia-page-block-transactions-0.0.0",
   );
+  addRoute(["blocks"], "celestia-latest-blocks-0.0.0");
+  addRoute(
+    ["blocks", "[hashOrHeight]", "blobs"],
+    "celestia-page-block-blobs-0.0.0",
+  );
 
   return {
     resolveRoute: async (
