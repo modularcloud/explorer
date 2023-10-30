@@ -26,6 +26,10 @@ export function createCelestiaIntegration(context: PageContext) {
     key: "hash",
     name: "Transaction",
   });
+  addRoute(
+    ["transactions", "[hash]", "blobs"],
+    "celestia-page-transaction-blobs-0.0.0",
+  );
   // addRoute(
   //   ["transactions", "[hash]", "messages"],
   //   "celestia-page-transaction-messages-0.0.0",
@@ -40,6 +44,11 @@ export function createCelestiaIntegration(context: PageContext) {
   addRoute(
     ["blocks", "[hashOrHeight]", "transactions"],
     "celestia-page-block-transactions-0.0.0",
+  );
+  addRoute(["blocks"], "celestia-latest-blocks-0.0.0");
+  addRoute(
+    ["blocks", "[hashOrHeight]", "blobs"],
+    "celestia-page-block-blobs-0.0.0",
   );
 
   return {

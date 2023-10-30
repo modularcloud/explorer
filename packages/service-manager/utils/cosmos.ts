@@ -112,6 +112,21 @@ export function txStringToHash(txstr: string) {
   return Buffer.from(sha256(raw)).toString("hex");
 }
 
+export function getBlockTxString(txstr: string) {
+  let raw = fromBase64(txstr);
+  try {
+    decodeTxRaw(raw); // detecting if normal transaction, if PFB it catches
+  } catch {
+    try {
+      raw = IndexWrapper.decode(raw).tx;
+    } catch {
+      raw = MalleatedTx.decode(raw).tx;
+    }
+  }
+  
+  return Buffer.from(raw).toString("base64");
+}
+
 export function getBalanceQueryData(address: string, denom: string) {
   const QBR = QueryBalanceRequest.fromJSON({ address, denom });
   const bytes = QueryBalanceRequest.encode(QBR).finish();

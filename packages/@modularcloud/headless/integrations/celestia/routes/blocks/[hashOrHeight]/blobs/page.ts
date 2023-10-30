@@ -1,18 +1,21 @@
 import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
-  getTransactionProperties,
-  selectRowTransactionProperties,
-  selectSidebarTransactionProperties,
+  getBlobProperties,
+  selectRowBlobProperties,
 } from "../../../../helpers";
 import { getDefaultSidebar } from "../../../../../../helpers";
 
-import type { Page, PageContext } from "../../../../../../schemas/page";
-import { BlockResponse, TransactionResponse } from "../../../../types";
+import type {
+  Collection,
+  Page,
+  PageContext,
+} from "../../../../../../schemas/page";
+import { BlockResponse, TxBlob } from "../../../../types";
 
 export const CelestiaBlockBlobsResolver = createResolver(
   {
-    id: "celestia-page-block-transactions-0.0.0",
+    id: "celestia-page-block-blobs-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (
@@ -50,81 +53,70 @@ export const CelestiaBlockBlobsResolver = createResolver(
       "http://localhost:3000";
 
     const block: BlockResponse = response.result;
-    const transactions = (
-      await Promise.all(
-        block.result.block.data.txs.map(async (txstr) =>
-          fetch(baseUrl + "/api/node/tx-string-to-hash", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ txstr }),
-          })
-            .then((res) => res.json())
-            .then((res) =>
-              getTransaction({
-                hash: res,
-                endpoint: context.rpcEndpoint,
-              }),
-            )
-            .then((res) => (res.type === "success" ? res.result : null)),
-        ),
-      )
-    ).filter((tx) => tx !== null) as TransactionResponse[];
+
+    const txBlobs: TxBlob[] = await Promise.all(
+      block.result.block.data.txs.map(async (tx) =>
+        fetch(baseUrl + "/api/node/parse-tx", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ tx }),
+        })
+          .then((res) => res.json())
+          .then((res) => ({
+            height: block.result.block.header.height,
+            ...res,
+          })),
+      ),
+    );
+
+    const allBlobs: Collection["entries"] = [];
+    for (let i = 0; i < txBlobs.length; i++) {
+      const txBlob = txBlobs[i];
+      for (let j = 0; j < txBlob.blobs.length; j++) {
+        const blobIndex = j;
+        const properties = getBlobProperties(txBlob, blobIndex);
+        const row = selectRowBlobProperties(properties);
+        const { Height, Rollup, ...rest } = properties;
+        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}`
+        allBlobs.push({
+          row,
+          link,
+          key: `${link}/blobs/${blobIndex}`,
+          sidebar: {
+            headerKey: "Spotlight",
+            headerValue: "Blob",
+            properties: rest,
+          },
+        });
+      }
+    }
+
     const page: Page = {
       context,
       metadata: {
-        title: `Transactions - Block ${hashOrHeight}`,
-        description: `See the transactions in Block ${hashOrHeight} on ${context.chainBrand} ${context.chainName}`,
+        title: `Blobs - Block ${hashOrHeight}`,
+        description: `See the blobs in Block ${hashOrHeight} on ${context.chainBrand} ${context.chainName}`,
       },
       body: {
         type: "collection",
         tableColumns: [
           {
-            columnLabel: "Icon",
-            hideColumnLabel: true,
-            breakpoint: "max-sm",
+            columnLabel: "Namespace",
           },
           {
-            columnLabel: "Transactions",
+            columnLabel: "Transaction",
           },
           {
-            columnLabel: "Type",
+            columnLabel: "Data",
+            breakpoint: "lg"
           },
           {
-            columnLabel: "Status",
-            breakpoint: "sm",
+            columnLabel: "Rollup",
           },
         ],
-        entries: await Promise.all(
-          transactions.map(async (resolution) => {
-            const response = await fetch(baseUrl + "/api/node/get-messages", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ str: resolution.result.tx }),
-            });
-            const messages = await response.json();
-            const type = messages[0]?.uniqueIdentifier ?? "Unknown";
-            const link = `/${context.chainBrand}-${context.chainName}/transactions/${resolution.result.hash}`;
-            const properties = getTransactionProperties(resolution);
-            const { Height, ...row } = selectRowTransactionProperties(
-              properties,
-              type,
-            );
-            return {
-              sidebar: {
-                headerKey: "Spotlight",
-                headerValue: "Transaction",
-                properties: selectSidebarTransactionProperties(properties),
-              },
-              link,
-              key: link,
-              row,
-            };
-          }),
-        ),
+        entries: allBlobs,
       },
       sidebar: getDefaultSidebar("Block", hashOrHeight, "Transactions"),
       tabs: [
@@ -135,6 +127,10 @@ export const CelestiaBlockBlobsResolver = createResolver(
         {
           text: "Transactions",
           route: ["blocks", hashOrHeight, "transactions"],
+        },
+        {
+          text: "Blobs",
+          route: ["blocks", hashOrHeight, "blobs"],
         },
       ],
     };
