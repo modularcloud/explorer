@@ -2,10 +2,7 @@ import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getBlobProperties,
-  getTransactionProperties,
   selectRowBlobProperties,
-  selectRowTransactionProperties,
-  selectSidebarTransactionProperties,
 } from "../../../../helpers";
 import { getDefaultSidebar } from "../../../../../../helpers";
 
@@ -14,8 +11,7 @@ import type {
   Page,
   PageContext,
 } from "../../../../../../schemas/page";
-import { BlockResponse, TransactionResponse, TxBlob } from "../../../../types";
-import { z } from "zod";
+import { BlockResponse, TxBlob } from "../../../../types";
 
 export const CelestiaBlockBlobsResolver = createResolver(
   {
@@ -57,17 +53,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
       "http://localhost:3000";
 
     const block: BlockResponse = response.result;
-    // const TxBlobSchema = z.object({
-    //   txHash: z.string(),
-    //   blobs: z
-    //     .object({
-    //       namespaceId: z.number().int().array(),
-    //       data: z.number().int().array(),
-    //       shareVersion: z.number(),
-    //       namespaceVersion: z.number(),
-    //     })
-    //     .array(),
-    // });
+
     const txBlobs: TxBlob[] = await Promise.all(
       block.result.block.data.txs.map(async (tx) =>
         fetch(baseUrl + "/api/node/parse-tx", {

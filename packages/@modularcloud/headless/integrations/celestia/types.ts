@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 type JSONRPCResponse<T> = {
   jsonrpc: string;
   id: number;
