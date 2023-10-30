@@ -8,12 +8,13 @@ import { cn } from "~/ui/shadcn/utils";
 interface Props {
   className?: string;
   data: Record<string, number>;
+  networkId: String;
 }
 
 export function Treemap(props: Props) {
   const router = useRouter();
   const labelSkipSize = 11;
-  function formatBytes(bytes: number | undefined) {
+  const formatBytes = (bytes: number | undefined) => {
     if (typeof bytes === "number") {
       const kb = bytes / 1024;
       if (kb < 1) {
@@ -24,11 +25,12 @@ export function Treemap(props: Props) {
         return (kb / 1024).toFixed(2) + " Mb";
       }
     }
-  }
+  };
   const svgRef = useRef(null);
+
   const treemapData = useMemo(() => {
     const colors = ["#daccff8f", "#d2d4fe8f", "#D6E1FF8F"];
-    const data = {
+    const rawData = {
       name: "All Namespaces",
       children: Object.entries(props.data).map(([name, size]) => ({
         name,
@@ -36,11 +38,34 @@ export function Treemap(props: Props) {
         tileColor: colors[Math.floor(Math.random() * colors.length)],
       })),
     };
+    const dummyRoot = d3.hierarchy(rawData).sum((d: any) => d.value);
+    const dummyTreemapRoot = d3.treemap().size([450, 250]).padding(4)(
+      dummyRoot,
+    );
 
-    const root = d3.hierarchy(data).sum((d: any) => d.value);
-    const treemapRoot = d3.treemap().size([450, 500]).padding(4)(root);
+    const filteredChildren = rawData.children.filter((d: any) => {
+      const node = dummyTreemapRoot
+        .descendants()
+        .find((n: any) => n.data.name === d.name);
+      if (!node) return false;
+      return (
+        node.x1 - node.x0 > labelSkipSize && node.y1 - node.y0 > labelSkipSize
+      );
+    });
 
-    return treemapRoot.leaves();
+    const filteredData = {
+      name: "All Namespaces",
+      children: filteredChildren,
+    };
+
+    const root = d3.hierarchy(filteredData).sum((d: any) => d.value);
+    const treemapRoot = d3.treemap().size([450, 300]).padding(4)(root);
+
+    return treemapRoot
+      .leaves()
+      .filter(
+        (d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize,
+      );
   }, [props.data]);
   useEffect(() => {
     const svg = d3.select(svgRef.current);
@@ -60,16 +85,13 @@ export function Treemap(props: Props) {
       .style("padding", "5px")
       .style("border", "1px solid black")
       .style("border-radius", "5px")
-      .style("opacity", 0); // start off as hidden
-
+      .style("opacity", 0);
     leaf
       .append("rect")
-      .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
       .attr("id", (d: any) => {
         d.leafUid = "leaf";
         return d.leafUid;
       })
-
       .attr("fill", (d: any) => {
         return d.data.tileColor;
       })
@@ -95,14 +117,13 @@ export function Treemap(props: Props) {
         tooltip.style("opacity", 0); // Hide tooltip
       })
       .on("click", (event, d: any) => {
-        console.log(d);
-        router.push(`/namespace/${d.data.name}`);
+        tooltip.style("opacity", 0);
+        router.push(`/${props.networkId}/namespace/${d.data.name}`);
       })
       .attr("ry", 5);
 
     leaf
       .append("text")
-      .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
       .attr("fill", (d: any) => {
         if (d.data.tileColor == "#daccff8f") {
           return "#3D1E95";
@@ -117,7 +138,6 @@ export function Treemap(props: Props) {
         const width = d.x1 - d.x0;
         const height = d.y1 - d.y0;
         if (height > width) {
-          // 270-degree rotation and adjust the y-coordinate (which is now x after rotation)
           return `rotate(270 ${width / 2} ${height / 2}) translate(0, ${
             -width / 2 + height / 2
           })`;
@@ -125,28 +145,31 @@ export function Treemap(props: Props) {
           return "";
         }
       })
-      .attr("x", (d) => (d.x1 - d.x0) / 2) // half the width of the rectangle
+      .attr("x", (d) => (d.x1 - d.x0) / 2)
       .attr("y", (d) => {
         const width = d.x1 - d.x0;
         const height = d.y1 - d.y0;
         return height > width ? width / 2 + 5 : height / 2 + 5;
       })
-      .attr("font-size", "12px")
+      .attr("font-size", "11px")
       .attr("text-anchor", "middle")
       .attr("class", "font-sans")
       .attr("display", "relative")
       .attr("text-align", "center")
+      .style("cursor", "pointer")
+      .attr("text-align", "center")
+      .attr("pointer-events", "none")
       .attr("font-weight", "500");
-  }, [treemapData]);
+  }, [props.networkId, router, treemapData]);
 
   return (
     <Card className={cn("flex flex-col p-0  ", props.className)}>
-      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between text  ">
+      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between text">
         <p className="text-lg">Data Usage</p>
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
       <div className="h-full">
-        <svg ref={svgRef} width="100%" height="500" />
+        <svg ref={svgRef} width="100%" height="300" />
       </div>
     </Card>
   );
