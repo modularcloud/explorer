@@ -103,7 +103,7 @@ export function SearchModal({
         className={cn(
           "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-20rem)] min-h-0",
           {
-            "top-[34%]": position === "top",
+            "top-[20rem]": position === "top",
           },
         )}
       >
