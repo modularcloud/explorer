@@ -12,6 +12,32 @@ import type {
   PageContext,
 } from "../../../../../../schemas/page";
 import { BlockResponse, TxBlob } from "../../../../types";
+import { BlobTx } from "./proto";
+
+export function getDataFromBlockTx(tx: string) {
+  // decode base64 string to bytes
+  const bytes = Buffer.from(tx, "base64");
+
+  // decode bytes to blob tx
+  const blobTx = BlobTx.decode(bytes);
+
+  // return blobs
+  return blobTx.blobs;
+}
+
+export async function getTxHashFromBlockTx(tx: string) {
+  // decode base64 string to bytes
+  const bytes = Buffer.from(tx, "base64");
+
+  // encode bytes to blob tx
+  const blobTx = BlobTx.decode(bytes);
+
+  // get sha256 hash of blobTx.tx
+  const hash = await crypto.subtle.digest("SHA-256", blobTx.tx);
+
+  // return as hex string
+  return Buffer.from(hash).toString("hex");
+}
 
 export const CelestiaBlockBlobsResolver = createResolver(
   {
@@ -55,20 +81,18 @@ export const CelestiaBlockBlobsResolver = createResolver(
     const block: BlockResponse = response.result;
 
     const txBlobs: TxBlob[] = await Promise.all(
-      block.result.block.data.txs.map(async (tx) =>
-        fetch(baseUrl + "/api/node/parse-tx", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tx }),
-        })
-          .then((res) => res.json())
-          .then((res) => ({
-            height: block.result.block.header.height,
-            ...res,
-          })),
-      ),
+      block.result.block.data.txs.map(async (tx) => {
+        const txHash = await getTxHashFromBlockTx(tx);
+        const blobs = getDataFromBlockTx(tx);
+        //const messages = getMessages(getBlockTxString(tx));
+
+        return {
+          txHash,
+          height: block.result.block.header.height,
+          blobs,
+          messages: [],
+        };
+      }),
     );
 
     const allBlobs: Collection["entries"] = [];
@@ -79,7 +103,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
         const properties = getBlobProperties(txBlob, blobIndex);
         const row = selectRowBlobProperties(properties);
         const { Height, Rollup, ...rest } = properties;
-        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}`
+        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}`;
         allBlobs.push({
           row,
           link,
@@ -110,7 +134,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
           },
           {
             columnLabel: "Data",
-            breakpoint: "lg"
+            breakpoint: "lg",
           },
           {
             columnLabel: "Rollup",
