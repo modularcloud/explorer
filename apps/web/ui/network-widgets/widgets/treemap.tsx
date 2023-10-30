@@ -46,7 +46,8 @@ export function TreemapComponent(props: Props) {
       .selectAll("g")
       .data(treemapData)
       .join("g")
-      .attr("transform", (d) => `translate(${d.x0},${d.y0})`);
+      .attr("transform", (d) => `translate(${d.x0},${d.y0})`)
+      .attr("display", "relative");
 
     leaf
       .append("rect")
@@ -60,7 +61,7 @@ export function TreemapComponent(props: Props) {
       .attr("rx", 5)
       .attr("ry", 5);
 
-    const texts = leaf
+    leaf
       .append("text")
       .filter((d) => d.x1 - d.x0 > labelSkipSize && d.y1 - d.y0 > labelSkipSize)
       .attr("fill", (d) => {
@@ -73,30 +74,35 @@ export function TreemapComponent(props: Props) {
         }
       })
       .text((d) => formatBytes(d.value))
+      .attr("transform", (d) => {
+        const width = d.x1 - d.x0;
+        const height = d.y1 - d.y0;
+        if (height > width) {
+          // 270-degree rotation and adjust the y-coordinate (which is now x after rotation)
+          return `rotate(270 ${width / 2} ${height / 2}) translate(0, ${
+            -width / 2 + height / 2
+          })`;
+        } else {
+          return "";
+        }
+      })
       .attr("x", (d) => (d.x1 - d.x0) / 2) // half the width of the rectangle
-      .attr("y", (d) => (d.y1 - d.y0) / 2 + 5)
+      .attr("y", (d) => {
+        const width = d.x1 - d.x0;
+        const height = d.y1 - d.y0;
+        return height > width ? width / 2 + 5 : height / 2 + 5;
+      })
       .attr("font-size", "12px")
       .attr("text-anchor", "middle")
       .attr("class", "font-sans")
+      .attr("display", "relative")
+      .attr("text-align", "center")
       .attr("font-weight", "500");
-    texts.each(function (d) {
-      const textHeight = this.getBBox().height;
-      const rectHeight = d.y1 - d.y0;
-
-      if (textHeight > rectHeight) {
-        d3.select(this).attr(
-          "transform",
-          `rotate(-90, ${d.x0 + (d.x1 - d.x0) / 2}, ${
-            d.y0 + (d.y1 - d.y0) / 2
-          })`,
-        );
-      }
-    });
   }, [treemapData]);
 
   return (
     <Card className={cn("flex flex-col p-0 ", props.className)}>
-      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between">
+      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between text  ">
         <p className="text-lg">Data Usage</p>
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
