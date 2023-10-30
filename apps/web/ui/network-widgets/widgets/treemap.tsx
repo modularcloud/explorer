@@ -59,7 +59,7 @@ export function Treemap(props: Props) {
     };
 
     const root = d3.hierarchy(filteredData).sum((d: any) => d.value);
-    const treemapRoot = d3.treemap().size([440, 290]).padding(4)(root);
+    const treemapRoot = d3.treemap().size([430, 300]).padding(4)(root);
 
     return treemapRoot
       .leaves()
@@ -84,7 +84,7 @@ export function Treemap(props: Props) {
       .style("background-color", "white")
       .style("padding", "5px")
       .style("border", "1px solid black")
-      .style("border-radius", "5px")
+      .style("border-radius", "4px")
       .style("opacity", 0);
     leaf
       .append("rect")
@@ -169,7 +169,7 @@ export function Treemap(props: Props) {
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
       <div className="h-full">
-        <svg ref={svgRef} width="100%" height="300" className="p-1" />
+        <svg ref={svgRef} width="100%" height="310" className="py-1 pl-2" />
       </div>
     </Card>
   );
