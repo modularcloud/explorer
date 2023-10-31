@@ -13,6 +13,7 @@ import {
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
 import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
+import NotFound from "../../not-found";
 
 interface Props {
   initialData: Page;
@@ -56,6 +57,11 @@ export function Table(props: Props) {
 }
 
 function TableContent({ initialData, route }: Props) {
+  let containsData = false;
+  // @ts-ignore: Property 'entries' does not exist on type
+  if (initialData && initialData.body?.entries?.length > 0) {
+    containsData = true;
+  }
   if (initialData.body.type !== "collection") {
     throw new Error("Table component can only be used with a collection");
   }
@@ -190,98 +196,107 @@ function TableContent({ initialData, route }: Props) {
   }
 
   return (
-    <div
-      ref={parentRef}
-      onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-      className="overflow-y-auto h-screen"
-    >
-      <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-        <table
-          className="w-full max-w-full border-separate bg-muted-100"
-          style={{ borderSpacing: "0 1px" }}
+    <div>
+      {containsData ? (
+        <div
+          ref={parentRef}
+          onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
+          className="overflow-y-auto h-screen"
         >
-          <thead className="sticky top-0 bg-white z-10">
-            <tr className="h-12 text-left hidden sm:table-row">
-              <th
-                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-                aria-hidden={true}
-              >
-                {/* For spacing purposes only */}
-              </th>
-              {columns.map((col) => (
-                <th
-                  key={col.columnLabel}
-                  className={cn(
-                    // bottom border disapears when scrolling, so using a shadow instead
-                    "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                    "px-2 font-semibold",
-                    // breakpoints
-                    generateClassname(col.breakpoint),
-                  )}
-                >
-                  <span className={cn(col.hideColumnLabel && "invisible")}>
-                    {col.columnLabel}
-                  </span>
-                </th>
-              ))}
-              <th
-                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-                aria-hidden={true}
-              >
-                {/* For spacing purposes only */}
-              </th>
-            </tr>
-            <tr className="h-12 text-left table-row sm:hidden">
-              <th
-                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-                aria-hidden={true}
-              >
-                {/* For spacing purposes only */}
-              </th>
+          <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+            <table
+              className="w-full max-w-full border-separate bg-muted-100"
+              style={{ borderSpacing: "0 1px" }}
+            >
+              <thead className="sticky top-0 bg-white z-10">
+                <tr className="h-12 text-left hidden sm:table-row">
+                  <th
+                    className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                    aria-hidden={true}
+                  >
+                    {/* For spacing purposes only */}
+                  </th>
+                  {columns.map((col) => (
+                    <th
+                      key={col.columnLabel}
+                      className={cn(
+                        // bottom border disapears when scrolling, so using a shadow instead
+                        "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                        "px-2 font-semibold",
+                        // breakpoints
+                        generateClassname(col.breakpoint),
+                      )}
+                    >
+                      <span className={cn(col.hideColumnLabel && "invisible")}>
+                        {col.columnLabel}
+                      </span>
+                    </th>
+                  ))}
+                  <th
+                    className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                    aria-hidden={true}
+                  >
+                    {/* For spacing purposes only */}
+                  </th>
+                </tr>
+                <tr className="h-12 text-left table-row sm:hidden">
+                  <th
+                    className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                    aria-hidden={true}
+                  >
+                    {/* For spacing purposes only */}
+                  </th>
 
-              <th
-                colSpan={columns.length}
-                className={cn(
-                  // bottom border disapears when scrolling, so using a shadow instead
-                  "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
-                  "px-2 font-semibold",
-                )}
-              >
-                {firstVisibleColumnName}
-              </th>
-              <th
-                className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
-                aria-hidden={true}
-              >
-                {/* For spacing purposes only */}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {virtualizer.getVirtualItems().map((virtualRow, index) => {
-              const entry = flatData[virtualRow.index];
-              return (
-                <TableRow
-                  key={index}
-                  columns={columns}
-                  entry={entry}
-                  registerOptionProps={() =>
-                    registerItemProps(virtualRow.index, entry)
-                  }
-                  currentItemIndex={virtualRow.index}
-                  selectedItemIndex={selectedItemIndex}
-                  style={{
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${
-                      virtualRow.start - index * virtualRow.size
-                    }px)`,
-                  }}
-                />
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                  <th
+                    colSpan={columns.length}
+                    className={cn(
+                      // bottom border disapears when scrolling, so using a shadow instead
+                      "shadow-[0rem_0.03125rem_0rem_#ECEFF3]",
+                      "px-2 font-semibold",
+                    )}
+                  >
+                    {firstVisibleColumnName}
+                  </th>
+                  <th
+                    className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
+                    aria-hidden={true}
+                  >
+                    {/* For spacing purposes only */}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {virtualizer.getVirtualItems().map((virtualRow, index) => {
+                  const entry = flatData[virtualRow.index];
+                  return (
+                    <TableRow
+                      key={index}
+                      columns={columns}
+                      entry={entry}
+                      registerOptionProps={() =>
+                        registerItemProps(virtualRow.index, entry)
+                      }
+                      currentItemIndex={virtualRow.index}
+                      selectedItemIndex={selectedItemIndex}
+                      style={{
+                        height: `${virtualRow.size}px`,
+                        transform: `translateY(${
+                          virtualRow.start - index * virtualRow.size
+                        }px)`,
+                      }}
+                    />
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <NotFound
+          heading="Nothing to see here!"
+          description="This table is empty"
+        />
+      )}
     </div>
   );
 }
