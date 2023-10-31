@@ -9,6 +9,7 @@ import { getDefaultSidebar } from "../../../../../../helpers";
 
 import type { Page, PageContext } from "../../../../../../schemas/page";
 import { BlockResponse, TransactionResponse } from "../../../../types";
+import { PaginationContext } from "../../../../../../schemas/context";
 
 export const CelestiaBlockTransctionsResolver = createResolver(
   {
@@ -16,11 +17,15 @@ export const CelestiaBlockTransctionsResolver = createResolver(
     cache: false, // all cache is disabled for now
   },
   async (
-    { context, hashOrHeight }: { context: PageContext; hashOrHeight: string },
+    { context, hashOrHeight }: { context: PageContext & PaginationContext; hashOrHeight: string },
     getBlock: typeof Celestia.BlockHeightResolver,
     getBlockByHash: typeof Celestia.BlockHashResolver,
     getTransaction: typeof Celestia.TransactionResolver,
   ) => {
+    const pageToken = context.after ?? "0";
+    const limit = 30;
+    const startIndex = parseInt(pageToken) * limit;
+    const endIndex = startIndex + limit;
     let type: "hash" | "height" | undefined;
     if (hashOrHeight.match(/^\d+$/)) {
       type = "height";
@@ -52,7 +57,7 @@ export const CelestiaBlockTransctionsResolver = createResolver(
     const block: BlockResponse = response.result;
     const transactions = (
       await Promise.all(
-        block.result.block.data.txs.map(async (txstr) =>
+        block.result.block.data.txs.slice(startIndex, endIndex).map(async (txstr) =>
           fetch(baseUrl + "/api/node/tx-string-to-hash", {
             method: "POST",
             headers: {
@@ -79,6 +84,7 @@ export const CelestiaBlockTransctionsResolver = createResolver(
       },
       body: {
         type: "collection",
+        nextToken: block.result.block.data.txs.length > endIndex ? pageToken + 1 : undefined,
         tableColumns: [
           {
             columnLabel: "Icon",
