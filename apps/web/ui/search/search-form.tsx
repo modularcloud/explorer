@@ -79,7 +79,7 @@ export function SearchForm({ optionGroups }: Props) {
         className={cn(
           "flex flex-grow items-stretch rounded-r-lg",
           "hover:bg-muted/5 transition duration-200",
-          "flex-1 h-full",
+          "sm:flex-1 h-full relative",
         )}
         action={`/${network.id}/search`}
         onSubmit={(e) => {
@@ -99,7 +99,7 @@ export function SearchForm({ optionGroups }: Props) {
           type="text"
           name="q"
           placeholder="Explore"
-          className="focus:outline-none placeholder:text-muted font-medium bg-transparent flex-grow py-2 pl-4 h-full"
+          className="focus:outline-none placeholder:text-muted font-medium bg-transparent sm:flex-grow py-2 pl-4 h-full"
           onChange={(e) => {
             if (e.target.value) {
               // prefetch on search to make the navigation faster
@@ -111,7 +111,7 @@ export function SearchForm({ optionGroups }: Props) {
         />
 
         <button
-          className="h-full rounded-r-lg px-4 py-2 inline-flex items-center justify-center"
+          className="h-full absolute right-1 sm:right-0 rounded-r-lg px-4 py-2 inline-flex items-center justify-center"
           type="submit"
         >
           <ArrowRight className="text-muted" aria-hidden="true" />
