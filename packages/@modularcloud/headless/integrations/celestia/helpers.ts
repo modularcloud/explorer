@@ -114,10 +114,7 @@ type BlockPropertyKeys =
   | "Timestamp"
   | "Transactions"
   | "Proposer"
-  | "Voting Power"
-  | "Gas Used"
-  | "Gas Limit"
-  | "Size"
+  | "Square Size"
   | "Version"
   | "Data Hash"
   | "Last Commit Hash"
@@ -144,20 +141,8 @@ const blockTransformers: [
       Values.Longval({ value: block.result.block.header.proposer_address }),
   ],
   [
-    "Voting Power",
-    (block) => Values.Standard(block.result.block.header.validators_hash),
-  ],
-  [
-    "Gas Used",
-    (block) => Values.Standard(block.result.block.header.last_commit_hash),
-  ],
-  [
-    "Gas Limit",
-    (block) => Values.Standard(block.result.block.header.data_hash),
-  ],
-  [
-    "Size",
-    (block) => Values.Standard(block.result.block.header.validators_hash),
+    "Square Size",
+    (block) => Values.Standard(block.result.block.data.square_size ?? "-"),
   ],
   [
     "Version",
@@ -314,7 +299,12 @@ export function selectRowBlobProperties(
   return {
     Height: properties.Height,
     Transaction: properties.Transaction,
-    Namespace: properties.Namespace.type === "standard" ? Values.Standard("..." + String(properties.Namespace.payload).substring(26)) : properties.Namespace,
+    Namespace:
+      properties.Namespace.type === "standard"
+        ? Values.Standard(
+            "..." + String(properties.Namespace.payload).substring(26),
+          )
+        : properties.Namespace,
     Rollup: properties.Rollup,
     Data: properties.Data,
   };
