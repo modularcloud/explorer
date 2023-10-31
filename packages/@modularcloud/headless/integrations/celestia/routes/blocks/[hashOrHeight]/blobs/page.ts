@@ -13,6 +13,7 @@ import type {
 } from "../../../../../../schemas/page";
 import { BlockResponse, TxBlob } from "../../../../types";
 import { BlobTx } from "./proto";
+import { PaginationContext } from "../../../../../../schemas/context";
 
 export function getDataFromBlockTx(tx: string) {
   // decode base64 string to bytes
@@ -45,11 +46,18 @@ export const CelestiaBlockBlobsResolver = createResolver(
     cache: false, // all cache is disabled for now
   },
   async (
-    { context, hashOrHeight }: { context: PageContext; hashOrHeight: string },
+    {
+      context,
+      hashOrHeight,
+    }: { context: PageContext & PaginationContext; hashOrHeight: string },
     getBlock: typeof Celestia.BlockHeightResolver,
     getBlockByHash: typeof Celestia.BlockHashResolver,
     getTransaction: typeof Celestia.TransactionResolver,
   ) => {
+    const pageToken = context.after ?? "0";
+    const limit = 30;
+    const startIndex = parseInt(pageToken) * limit;
+    const endIndex = startIndex + limit;
     let type: "hash" | "height" | undefined;
     if (hashOrHeight.match(/^\d+$/)) {
       type = "height";
@@ -80,20 +88,23 @@ export const CelestiaBlockBlobsResolver = createResolver(
 
     const block: BlockResponse = response.result;
 
-    const txBlobs: TxBlob[] = await Promise.all(
-      block.result.block.data.txs.map(async (tx) => {
-        const txHash = await getTxHashFromBlockTx(tx);
-        const blobs = getDataFromBlockTx(tx);
-        //const messages = getMessages(getBlockTxString(tx));
+    const txBlobs: TxBlob[] = (
+      await Promise.all(
+        block.result.block.data.txs.map(async (tx): Promise<TxBlob | null> => {
+          const blobTx = Celestia.helpers.getBlobTx(tx);
+          if (blobTx.typeId !== "BLOB") return null;
+          //const messages = getMessages(getBlockTxString(tx));
+          const hashBuffer = await crypto.subtle.digest("SHA-256", blobTx.tx);
 
-        return {
-          txHash,
-          height: block.result.block.header.height,
-          blobs,
-          messages: [],
-        };
-      }),
-    );
+          return {
+            txHash: Buffer.from(hashBuffer).toString("hex"),
+            height: block.result.block.header.height,
+            blobs: blobTx.blobs,
+            messages: [],
+          };
+        }),
+      )
+    ).filter((txBlob) => txBlob !== null) as TxBlob[];
 
     const allBlobs: Collection["entries"] = [];
     for (let i = 0; i < txBlobs.length; i++) {
@@ -125,6 +136,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
       },
       body: {
         type: "collection",
+        // nextToken: block.result.block.data.txs.length > endIndex ? pageToken + 1 : undefined,
         tableColumns: [
           {
             columnLabel: "Namespace",

@@ -2,6 +2,7 @@ import { createResolver, NotFound } from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages } from "./registry";
+import { getBlobTx } from "./parse-tx";
 
 export const BlockHashResolver = createResolver(
   {
@@ -146,4 +147,5 @@ export const helpers = {
   getMessages,
   getMessageDisplayName,
   convertMessageToKeyValue,
+  getBlobTx,
 };
