@@ -8,6 +8,7 @@ import type { OptionGroups, SearchOption } from "./shared-utils";
  */
 export async function getSearchOptionGroups(): Promise<OptionGroups> {
   const integrations = await getAllNetworksCached();
+  console.log("integrations", integrations)
 
   const optionGroups = integrations.reduce((acc, currentValue) => {
     const brand = currentValue.chainBrand;
