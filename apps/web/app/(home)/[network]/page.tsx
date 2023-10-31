@@ -37,7 +37,7 @@ export default async function NetworkWidgetPage({ params }: Props) {
   const searchOptionGroups = await getSearchOptionGroups();
   const values = Object.values(searchOptionGroups).flat();
   const searchOption = values.find((network) => network.id === params.network);
-
+  console.log("============", params.network, "searchOption", searchOption);
   switch (network.config.widgetLayout) {
     case "EvmWithPrice":
       return <EvmWithPriceWidgetLayout network={searchOption!} />;
