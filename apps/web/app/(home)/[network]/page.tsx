@@ -52,7 +52,10 @@ export default async function NetworkWidgetPage({ params }: Props) {
 
 export async function generateStaticParams() {
   const allNetworks = await getAllNetworks();
-  console.log(allNetworks);
-  console.error("allNetworks", allNetworks);
+  allNetworks.forEach((network) => {
+    if(network.chainBrand === "celestia") {
+      console.log(network.slug, network)
+    }
+  })
   return allNetworks.map((network) => ({ network: network.slug }));
 }
