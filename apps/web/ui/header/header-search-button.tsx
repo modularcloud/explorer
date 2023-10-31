@@ -33,7 +33,9 @@ export function HeaderSearchButton({ optionGroups }: Props) {
   }, [optionGroups, params.network]);
 
   let entityType = capitalize(params.path[0]);
-  if (entityType.endsWith("s")) {
+  if (entityType === "Addresses") {
+    entityType = "Address";
+  } else if (entityType.endsWith("s")) {
     entityType = entityType.substring(0, entityType.length - 1);
   }
   const query = params.path[1];
