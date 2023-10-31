@@ -11,11 +11,13 @@
         "build": "tsup index.ts --format esm,cjs --dts --external react",
         "dev": "tsup index.ts --format esm,cjs --dts --external react --watch",
         "clean": "rm -rf dist",
+        "gen:proto": "find ./proto -name 'tx.proto' | xargs protoc --plugin=../../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=. --ts_proto_opt=esModuleInterop=true -I./proto -I ./proto/submodules/cosmos-proto/proto -I ./proto/submodules/protobuh/src/google/protobuf -I ./resolver/celestia/proto/submodules/gogoproto -I ./resolver/celestia/proto/submodules/googleapis -I ./third-party/ics23/proto -I ./proto/submodules/cosmos-sdk/proto -I ./proto/submodules/ibc-go/proto -I ./third-party/real-cosmos-sdk/proto",
         "lint": "TIMING=1 eslint \"**/*.ts*\""
     },
     "dependencies": {
         "@modularcloud-resolver/core": "*",
-        "@modularcloud-resolver/fetch": "*"
+        "@modularcloud-resolver/fetch": "*",
+        "ts-proto": "^1.162.2"
     },
     "devDependencies": {
         "@types/jest": "^29.5.3",
