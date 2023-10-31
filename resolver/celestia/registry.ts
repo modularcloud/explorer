@@ -62,9 +62,7 @@ allParsers.forEach((parser) => {
   });
 });
 
-// Helper function to decode an Any type
 function decodeAny(anyMessage: Any) {
-  //const anyMessage = Any.decode(anyBuffer);
   const typeUrl = anyMessage.typeUrl;
   const value = anyMessage.value;
 
@@ -76,24 +74,20 @@ function decodeAny(anyMessage: Any) {
 }
 
 export type DecodedAny = { typeUrl: string; decodedValue: any };
-export function decodeTx(txRaw: string) {
-  // Assume txBodyBuffer is the raw bytes you have for the transaction body
+export function getMessages(txRaw: string) {
   const txBuffer = Buffer.from(txRaw, "base64");
 
-  try {
-    const txBody = Tx.decode(txBuffer).body;
-    if (!txBody) {
-      return null;
-    }
+  const txBody = Tx.decode(txBuffer).body;
+  if (!txBody) {
+    return [];
+  }
 
-    const messageBuffer = txBody.messages[0];
-    const message = decodeAny(messageBuffer);
+  return txBody.messages.map((anyMessage) => {
+    const message = decodeAny(anyMessage);
 
     return {
-      typeUrl: messageBuffer.typeUrl,
+      typeUrl: anyMessage.typeUrl,
       decodedValue: message,
     };
-  } catch (error) {
-    return null;
-  }
+  });
 }

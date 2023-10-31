@@ -18,7 +18,8 @@
     "dependencies": {
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/fetch": "*",
-        "ts-proto": "^1.162.2"
+        "ts-proto": "^1.162.2",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
         "@types/jest": "^29.5.3",
