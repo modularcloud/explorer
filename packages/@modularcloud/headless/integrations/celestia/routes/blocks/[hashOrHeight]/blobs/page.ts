@@ -85,20 +85,21 @@ export const CelestiaBlockBlobsResolver = createResolver(
 
     const block: BlockResponse = response.result;
 
-    const txBlobs: TxBlob[] = await Promise.all(
-      block.result.block.data.txs.slice(startIndex, endIndex).map(async (tx) => {
-        const txHash = await getTxHashFromBlockTx(tx);
-        const blobs = getDataFromBlockTx(tx);
+    const txBlobs: TxBlob[] = (await Promise.all(
+      block.result.block.data.txs.map(async (tx): Promise<TxBlob | null> => {
+        const blobTx = Celestia.helpers.getBlobTx(tx)
+        if(blobTx.typeId !== "BLOB")  return null;
         //const messages = getMessages(getBlockTxString(tx));
+        const hashBuffer = await crypto.subtle.digest("SHA-256", blobTx.tx)
 
         return {
-          txHash,
+          txHash: Buffer.from(hashBuffer).toString("hex"),
           height: block.result.block.header.height,
-          blobs,
+          blobs: blobTx.blobs,
           messages: [],
         };
       }),
-    );
+    )).filter((txBlob) => txBlob !== null) as TxBlob[];
 
     const allBlobs: Collection["entries"] = [];
     for (let i = 0; i < txBlobs.length; i++) {
@@ -130,7 +131,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
       },
       body: {
         type: "collection",
-        nextToken: block.result.block.data.txs.length > endIndex ? pageToken + 1 : undefined,
+        // nextToken: block.result.block.data.txs.length > endIndex ? pageToken + 1 : undefined,
         tableColumns: [
           {
             columnLabel: "Namespace",
