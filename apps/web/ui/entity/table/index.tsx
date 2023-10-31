@@ -57,9 +57,10 @@ export function Table(props: Props) {
 }
 
 function TableContent({ initialData, route }: Props) {
-  let containsData = true;
-  if (initialData.body.entries.length == 0) {
-    containsData = false;
+  let containsData = false;
+  // @ts-ignore: Property 'entries' does not exist on type
+  if (initialData && initialData.body?.entries?.length > 0) {
+    containsData = true;
   }
   if (initialData.body.type !== "collection") {
     throw new Error("Table component can only be used with a collection");
