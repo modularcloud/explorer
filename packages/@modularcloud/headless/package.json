@@ -18,6 +18,7 @@
         "@modularcloud-resolver/celestia": "*",
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/sealevel": "*",
+        "@modularcloud/sdk": "*",
         "ts-proto": "^1.162.2",
         "zod": "^3.22.2"
     },

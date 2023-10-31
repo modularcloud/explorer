@@ -142,7 +142,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
         ],
         entries: allBlobs,
       },
-      sidebar: getDefaultSidebar("Block", hashOrHeight, "Transactions"),
+      sidebar: getDefaultSidebar("Block", hashOrHeight, "Blobs"),
       tabs: [
         {
           text: "Overview",
