@@ -52,5 +52,7 @@ export default async function NetworkWidgetPage({ params }: Props) {
 
 export async function generateStaticParams() {
   const allNetworks = await getAllNetworks();
+  console.log(allNetworks);
+  console.error("allNetworks", allNetworks);
   return allNetworks.map((network) => ({ network: network.slug }));
 }
