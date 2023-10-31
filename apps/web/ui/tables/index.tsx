@@ -2,7 +2,7 @@ import { Badge } from "~/ui/badge";
 import { truncateString } from "~/lib/shared-utils";
 import Web3 from "web3";
 import Link from "next/link";
-import { createModularCloud } from "@modularcloud/sdk";
+//import { createModularCloud } from "@modularcloud/sdk";
 import { ClientTime } from "./time";
 import SvgBlocksIcon from "~/ui/icons/BlocksIcon";
 import SvgBarChartIcon from "~/ui/icons/BarChartIcon";
@@ -156,136 +156,137 @@ export const BlockSummaryTable = async () => {
 };
 
 export const TransactionsSummaryTable = async () => {
-  const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
-  const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
-  const txRefs = await mc.evm.getRecentTransactions("triton", 8);
-  async function getTransaction(hash: string, blockNumber: number) {
-    const [tx, block] = await Promise.all([
-      web3.eth.getTransaction(hash),
-      web3.eth.getBlock(blockNumber),
-    ]);
-    return {
-      hash: tx.hash,
-      from: tx.from,
-      recipient: tx.to,
-      amount: Number(web3.utils.fromWei(tx.value)).toPrecision(3),
-      timestamp: Number(block.timestamp) * 1000,
-    };
-  }
-  const transactionData = await Promise.all(
-    txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber)),
-  );
+  return null
+  // const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
+  // const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
+  // const txRefs = await mc.evm.getRecentTransactions("triton", 8);
+  // async function getTransaction(hash: string, blockNumber: number) {
+  //   const [tx, block] = await Promise.all([
+  //     web3.eth.getTransaction(hash),
+  //     web3.eth.getBlock(blockNumber),
+  //   ]);
+  //   return {
+  //     hash: tx.hash,
+  //     from: tx.from,
+  //     recipient: tx.to,
+  //     amount: Number(web3.utils.fromWei(tx.value)).toPrecision(3),
+  //     timestamp: Number(block.timestamp) * 1000,
+  //   };
+  // }
+  // const transactionData = await Promise.all(
+  //   txRefs.txs.map((txRef) => getTransaction(txRef.hash, txRef.blockNumber)),
+  // );
 
-  return (
-    <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg  border bg-white px-4 py-6">
-      <TableHeader
-        href="/triton/latest/transactions/transactions"
-        icon={<SvgBarChartIcon />}
-        title="Latest Transactions"
-      />
-      <div className="mt-8 w-full md:hidden">
-        <ul className="space-y-2 divide-y px-1">
-          {transactionData.map((transaction) => (
-            <li key={transaction.hash} className="py-2">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                  <Link href={`/tx/${transaction.hash}`} className="text-ocean">
-                    {truncateString(transaction.hash, 10, 0)}
-                  </Link>
-                  <span className="text-[rgba(42,43,46,0.48)]">
-                    <ClientTime time={Number(transaction.timestamp)} />
-                  </span>
-                </div>
+  // return (
+  //   <div className="border-mid-dark-100 lifting-shadow flex-1 rounded-lg  border bg-white px-4 py-6">
+  //     <TableHeader
+  //       href="/triton/latest/transactions/transactions"
+  //       icon={<SvgBarChartIcon />}
+  //       title="Latest Transactions"
+  //     />
+  //     <div className="mt-8 w-full md:hidden">
+  //       <ul className="space-y-2 divide-y px-1">
+  //         {transactionData.map((transaction) => (
+  //           <li key={transaction.hash} className="py-2">
+  //             <div className="flex items-center justify-between">
+  //               <div className="flex flex-col gap-1">
+  //                 <Link href={`/tx/${transaction.hash}`} className="text-ocean">
+  //                   {truncateString(transaction.hash, 10, 0)}
+  //                 </Link>
+  //                 <span className="text-[rgba(42,43,46,0.48)]">
+  //                   <ClientTime time={Number(transaction.timestamp)} />
+  //                 </span>
+  //               </div>
 
-                <Badge long text={`${transaction.amount} ZBC`} />
-              </div>
+  //               <Badge long text={`${transaction.amount} ZBC`} />
+  //             </div>
 
-              <div className="mt-2 flex flex-col gap-1 whitespace-nowrap">
-                <span>
-                  <span className="block">From: </span>
-                  <Link
-                    href={`/address/${transaction.from}`}
-                    className="text-ocean"
-                  >
-                    {truncateString(transaction.from, 8, 8)}
-                  </Link>
-                </span>
-                <span>
-                  To:{" "}
-                  {transaction.recipient ? (
-                    <Link
-                      href={`/address/${transaction.recipient}`}
-                      className="text-ocean"
-                    >
-                      {truncateString(transaction.recipient, 8, 8)}
-                    </Link>
-                  ) : (
-                    <span>None</span>
-                  )}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+  //             <div className="mt-2 flex flex-col gap-1 whitespace-nowrap">
+  //               <span>
+  //                 <span className="block">From: </span>
+  //                 <Link
+  //                   href={`/address/${transaction.from}`}
+  //                   className="text-ocean"
+  //                 >
+  //                   {truncateString(transaction.from, 8, 8)}
+  //                 </Link>
+  //               </span>
+  //               <span>
+  //                 To:{" "}
+  //                 {transaction.recipient ? (
+  //                   <Link
+  //                     href={`/address/${transaction.recipient}`}
+  //                     className="text-ocean"
+  //                   >
+  //                     {truncateString(transaction.recipient, 8, 8)}
+  //                   </Link>
+  //                 ) : (
+  //                   <span>None</span>
+  //                 )}
+  //               </span>
+  //             </div>
+  //           </li>
+  //         ))}
+  //       </ul>
+  //     </div>
 
-      <table className="responsive mt-8 hidden w-full border-collapse md:table">
-        <tbody>
-          {transactionData.map((transaction) => {
-            return (
-              <tr
-                key={transaction.hash}
-                className="border-b border-[rgba(8,6,21,0.06)]"
-              >
-                <td className="py-2">
-                  <div className="flex flex-col gap-1">
-                    <Link
-                      href={`/tx/${transaction.hash}`}
-                      className="text-ocean"
-                    >
-                      {truncateString(transaction.hash, 10, 0)}
-                    </Link>
-                    <span className="text-[rgba(42,43,46,0.48)]">
-                      <ClientTime time={Number(transaction.timestamp)} />
-                    </span>
-                  </div>
-                </td>
-                <td className="py-2">
-                  <div className="flex flex-col gap-1 whitespace-nowrap">
-                    <span>
-                      From:{" "}
-                      <Link
-                        href={`/address/${transaction.from}`}
-                        className="text-ocean"
-                      >
-                        {truncateString(transaction.from, 8, 8)}
-                      </Link>
-                    </span>
-                    <span>
-                      To:{" "}
-                      {transaction.recipient ? (
-                        <Link
-                          href={`/address/${transaction.recipient}`}
-                          className="text-ocean"
-                        >
-                          {truncateString(transaction.recipient, 8, 8)}
-                        </Link>
-                      ) : (
-                        <span>None</span>
-                      )}
-                    </span>
-                  </div>
-                </td>
-                <td className="py-2 text-right">
-                  <div className="ml-auto w-fit">
-                    <Badge long text={`${transaction.amount} ZBC`} />
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
+  //     <table className="responsive mt-8 hidden w-full border-collapse md:table">
+  //       <tbody>
+  //         {transactionData.map((transaction) => {
+  //           return (
+  //             <tr
+  //               key={transaction.hash}
+  //               className="border-b border-[rgba(8,6,21,0.06)]"
+  //             >
+  //               <td className="py-2">
+  //                 <div className="flex flex-col gap-1">
+  //                   <Link
+  //                     href={`/tx/${transaction.hash}`}
+  //                     className="text-ocean"
+  //                   >
+  //                     {truncateString(transaction.hash, 10, 0)}
+  //                   </Link>
+  //                   <span className="text-[rgba(42,43,46,0.48)]">
+  //                     <ClientTime time={Number(transaction.timestamp)} />
+  //                   </span>
+  //                 </div>
+  //               </td>
+  //               <td className="py-2">
+  //                 <div className="flex flex-col gap-1 whitespace-nowrap">
+  //                   <span>
+  //                     From:{" "}
+  //                     <Link
+  //                       href={`/address/${transaction.from}`}
+  //                       className="text-ocean"
+  //                     >
+  //                       {truncateString(transaction.from, 8, 8)}
+  //                     </Link>
+  //                   </span>
+  //                   <span>
+  //                     To:{" "}
+  //                     {transaction.recipient ? (
+  //                       <Link
+  //                         href={`/address/${transaction.recipient}`}
+  //                         className="text-ocean"
+  //                       >
+  //                         {truncateString(transaction.recipient, 8, 8)}
+  //                       </Link>
+  //                     ) : (
+  //                       <span>None</span>
+  //                     )}
+  //                   </span>
+  //                 </div>
+  //               </td>
+  //               <td className="py-2 text-right">
+  //                 <div className="ml-auto w-fit">
+  //                   <Badge long text={`${transaction.amount} ZBC`} />
+  //                 </div>
+  //               </td>
+  //             </tr>
+  //           );
+  //         })}
+  //       </tbody>
+  //     </table>
+  //   </div>
+  // );
 };
