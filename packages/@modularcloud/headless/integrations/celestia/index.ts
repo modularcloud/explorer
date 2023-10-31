@@ -8,12 +8,12 @@ type IntegrationResponse = ResolutionResponse | null;
 export function createCelestiaIntegration(context: PageContext) {
   registerResolvers();
 
-  // addRoute(["addresses", "[address]"], "svm-address-0.0.0", {
-  //   enabled: true,
-  //   regex: /[1-9A-HJ-NP-Za-km-z]{32,44}/,
-  //   key: "address",
-  //   name: "Address",
-  // });
+  addRoute(["addresses", "[address]"], "celestia-address-balances-0.0.0", {
+    enabled: true,
+    regex: /^celestia\w{39}$/,
+    key: "address",
+    name: "Address",
+  });
   // addRoute(
   //   ["addresses", "[address]", "transactions"],
   //   "svm-address-transactions-0.0.0",
