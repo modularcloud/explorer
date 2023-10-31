@@ -74,7 +74,7 @@ export function useLatestTransactions(network: string) {
 }
 
 export function useWidgetData(networkSlug: string) {
-  let id;
+  let id = 7;
   if (networkSlug.indexOf("mocha") !== -1) id = 6;
   else if (networkSlug.indexOf("arabica") !== -1) id = 5;
 
