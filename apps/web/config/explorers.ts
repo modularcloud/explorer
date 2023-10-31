@@ -60,7 +60,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for SVM Devnet.",
+    homepageDescription: "A block explorer for SVM Devnet.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, svm",
     defaultSearchOptionGroup: "Eclipse",
@@ -72,7 +72,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for the Worlds ecosystem.",
+    homepageDescription: "A block explorer for the Worlds ecosystem.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, worlds",
     defaultSearchOptionGroup: "Worlds",
@@ -84,7 +84,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for the Degen ecosystem.",
+    homepageDescription: "A block explorer for the Degen ecosystem.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, degen",
     defaultSearchOptionGroup: "Eclipse",
@@ -96,7 +96,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for the Waev ecosystem.",
+    homepageDescription: "A block explorer for the Waev ecosystem.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, waev",
     defaultSearchOptionGroup: "Waev",
@@ -108,7 +108,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for the Aether Games ecosystem.",
+    homepageDescription: "A block explorer for the Aether Games ecosystem.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, aeg, aether games",
     defaultSearchOptionGroup: "AEG",
@@ -120,7 +120,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for the Apricot ecosystem.",
+    homepageDescription: "A block explorer for the Apricot ecosystem.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, apricot",
     defaultSearchOptionGroup: "Apricot",
@@ -132,7 +132,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for modular blockchains.",
+    homepageDescription: "A block explorer for modular blockchains.",
     homepageKeywords:
       "saga, block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
     defaultSearchOptionGroup: "Saga",
@@ -171,7 +171,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     name: ["Modular", "Cloud"],
     subtitle: "Explorer",
     homepageTitle: "Explorer by Modular Cloud",
-    homepageDescription: "A block exporer for modular blockchains.",
+    homepageDescription: "A block explorer for modular blockchains.",
     homepageKeywords:
       "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
     defaultSearchOptionGroup: "Celestia",
