@@ -33,7 +33,6 @@ export const CelestiaAddressBalancesResolver = createResolver(
         };
       };
     };
-        console.log(`${process.env.NAMESPACE_ENDPOINT}/${id}/acc-address/${address}/balances`)
     const response = await fetch(
       `${process.env.NAMESPACE_ENDPOINT}/${id}/acc-address/${address}/balances`,
     );
@@ -59,6 +58,10 @@ export const CelestiaAddressBalancesResolver = createResolver(
         {
           text: "Balances",
           route: ["addresses", address],
+        },
+        {
+          text: "Transactions",
+          route: ["addresses", address, "transactions"],
         },
       ],
     };
