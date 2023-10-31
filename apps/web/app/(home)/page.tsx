@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
+
 export default async function HomePage() {
-  return null;
+  redirect("/celestia-mocha");
 }
 export const runtime = "edge";
