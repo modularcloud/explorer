@@ -113,15 +113,14 @@ function convertMessageToKeyValue(message: any, prefix?: string) {
     const activeKey = prefix
       ? `${prefix} ${fixCapsAndSpacing(key)}`
       : fixCapsAndSpacing(key);
+    if (Buffer.isBuffer(value)) {
+      KV[fixCapsAndSpacing(key)] = value.toString("base64");
+      return;
+    }
     if (Array.isArray(value)) {
-      try {
-        const byteArray = z.number().int().array().parse(value);
-        KV[fixCapsAndSpacing(key)] = Buffer.from(
-          Uint8Array.from(byteArray),
-        ).toString("base64");
-        return;
-      } catch {}
-      KV[fixCapsAndSpacing(key)] = Object.values(convertMessageToKeyValue(value)).join(", ");
+      KV[fixCapsAndSpacing(key)] = Object.values(
+        convertMessageToKeyValue(value),
+      ).join(", ");
     } else if (typeof value === "object") {
       try {
         const AmountSchema = z.object({
