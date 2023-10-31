@@ -22,7 +22,11 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       logoURL: currentValue.config.logoUrl,
     } satisfies SearchOption;
     if (acc[brand]) {
-      acc[brand].push(newOption);
+      if (currentValue.chainName === "mainnet") {
+        acc[brand].unshift(newOption);
+      } else {
+        acc[brand].push(newOption);
+      }
     } else {
       acc[brand] = [newOption];
     }

@@ -58,7 +58,7 @@ export const CelestiaNamespaceResolver = createResolver(
       // Remove the first two characters
       hexId = id.substring(2);
     }
-    let chain = "";
+    let chain = "7";
     if (context.chainName.indexOf("mocha") !== -1) {
       chain = "6";
     }

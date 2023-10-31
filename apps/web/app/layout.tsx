@@ -21,7 +21,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s - ModularCloud",
+    template: "%s - Modular Cloud",
     default: EXPLORER_CONFIG.homepageTitle,
   },
   description: EXPLORER_CONFIG.homepageDescription,

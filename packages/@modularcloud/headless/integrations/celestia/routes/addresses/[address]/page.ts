@@ -16,7 +16,7 @@ export const CelestiaAddressBalancesResolver = createResolver(
     address: string;
     context: PageContext & PaginationContext;
   }) => {
-    let id = "";
+    let id = "7";
     if (context.chainName.indexOf("mocha") !== -1) {
       id = "6";
     }
