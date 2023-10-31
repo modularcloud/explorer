@@ -20,7 +20,7 @@ const THIRTY_SECONDS = 30 * 1000;
 export function useLatestBlocks(network: string) {
   const loadPageArgs = {
     route: { network: network, path: ["blocks"] },
-    context: { limit: 5 },
+    context: { limit: 6 },
     skipCache: true,
   };
   return useSWR<Page>(
