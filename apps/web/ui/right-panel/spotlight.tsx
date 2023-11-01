@@ -88,7 +88,7 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
         <dd className="font-normal col-span-3 flex">
           <CopyableValue
             tooltipPosition="left"
-            value={payload!.toString()}
+            value={payload.value!.toString()}
             hideCopyIcon
             className="justify-end"
           >
