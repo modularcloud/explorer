@@ -20,9 +20,9 @@ export function Treemap(props: Props) {
       if (kb < 1) {
         return bytes + "bytes";
       } else if (kb < 1024) {
-        return kb.toFixed(2) + "kb";
+        return kb.toFixed(1) + "Kb";
       } else {
-        return (kb / 1024).toFixed(2) + " Mb";
+        return (kb / 1024).toFixed(1) + " Mb";
       }
     }
   };
@@ -30,35 +30,26 @@ export function Treemap(props: Props) {
 
   const treemapData = useMemo(() => {
     const colors = ["#daccff8f", "#d2d4fe8f", "#D6E1FF8F"];
-    const rawData = {
-      name: "All Namespaces",
-      children: Object.entries(props.data).map(([name, size]) => ({
-        name,
-        value: size,
-        tileColor: colors[Math.floor(Math.random() * colors.length)],
-      })),
-    };
-    const dummyRoot = d3.hierarchy(rawData).sum((d: any) => d.value);
-    const dummyTreemapRoot = d3.treemap().size([450, 250]).padding(4)(
-      dummyRoot,
-    );
+    const sortedData = Object.entries(props.data)
+      .map(([name, size]) => ({ name, value: size }))
+      .sort((a, b) => b.value - a.value);
 
-    const filteredChildren = rawData.children.filter((d: any) => {
-      const node = dummyTreemapRoot
-        .descendants()
-        .find((n: any) => n.data.name === d.name);
-      if (!node) return false;
-      return (
-        node.x1 - node.x0 > labelSkipSize && node.y1 - node.y0 > labelSkipSize
-      );
-    });
+    const colorCategorizedData = sortedData
+      .map((item, index) => {
+        const colorIndex = Math.floor(index / 10);
+        return {
+          ...item,
+          tileColor: colors[colorIndex] || colors[colors.length - 1],
+        };
+      })
+      .slice(0, 25);
 
-    const filteredData = {
+    const data = {
       name: "All Namespaces",
-      children: filteredChildren,
+      children: colorCategorizedData,
     };
 
-    const root = d3.hierarchy(filteredData).sum((d: any) => d.value);
+    const root = d3.hierarchy(data).sum((d: any) => d.value);
     const treemapRoot = d3.treemap().size([430, 300]).padding(4)(root);
 
     return treemapRoot
@@ -83,11 +74,14 @@ export function Treemap(props: Props) {
       .style("position", "absolute")
       .style("background-color", "white")
       .style("padding", "5px")
-      .style("border", "1px solid black")
       .style("border-radius", "4px")
       .style("opacity", 0);
     leaf
       .append("rect")
+      .attr("stroke", (d) => {
+        return d.data.tileColor;
+      }) // Color of the border
+      .attr("stroke-width", 1)
       .attr("id", (d: any) => {
         d.leafUid = "leaf";
         return d.leafUid;
@@ -104,9 +98,27 @@ export function Treemap(props: Props) {
           .style("fill", "lightsteelblue")
           .style("cursor", "pointer");
         tooltip
-          .html("ID: " + d.data.name + "<br/>Value: " + d.value)
+          .html(function () {
+            return `<div style="display: flex; align-items: center; justify-content: center;">
+              <div style="width:20px; height:20px; background-color:${d.data.tileColor};"></div>
+              <span style="margin-left: 5px;">ID: ${d.data.name} ${d.value}</span>
+            </div>`;
+          })
           .style("left", event.pageX + 10 + "px")
           .style("top", event.pageY - 15 + "px")
+          .on("mousemove", function (event) {
+            const [mouseX, mouseY] = d3.pointer(event);
+
+            const tooltipWidth = tooltip.node()?.offsetWidth || 200;
+
+            const offset = 10;
+            const tooltipX = mouseX - tooltipWidth - offset;
+            const tooltipY = mouseY;
+
+            tooltip
+              .style("left", `${tooltipX}px`)
+              .style("top", `${tooltipY}px`);
+          })
           .style("opacity", 1);
       })
       .on("mouseout", function () {
@@ -135,6 +147,7 @@ export function Treemap(props: Props) {
       })
       .text((d) => formatBytes(d.value) || "")
       .attr("transform", (d) => {
+        //Text Rotation
         const width = d.x1 - d.x0;
         const height = d.y1 - d.y0;
         if (height > width) {
@@ -159,6 +172,7 @@ export function Treemap(props: Props) {
       .style("cursor", "pointer")
       .attr("text-align", "center")
       .attr("pointer-events", "none")
+      .attr("padding", "2px")
       .attr("font-weight", "500");
   }, [props.networkId, router, treemapData]);
 
