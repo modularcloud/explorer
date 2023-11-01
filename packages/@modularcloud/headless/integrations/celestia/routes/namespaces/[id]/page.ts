@@ -42,10 +42,7 @@ export const CelestiaNamespaceResolver = createResolver(
     { id, context }: { id: string; context: PageContext & PaginationContext },
     blockResolver,
   ) => {
-    let hexId = decodeURIComponent(id)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .replace(/%3D/g, "=");
+    let hexId = decodeURIComponent(id);
     const base64Regex = /^[A-Za-z0-9+\/]{38}==$/;
     if (base64Regex.test(hexId)) {
       console.log("base64");

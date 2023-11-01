@@ -38,7 +38,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
   } else if (entityType.endsWith("s")) {
     entityType = entityType.substring(0, entityType.length - 1);
   }
-  const query = params.path[1];
+  const query = decodeURIComponent(params.path[1]);
 
   return (
     <SearchModal
