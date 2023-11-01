@@ -33,12 +33,15 @@ export function HeaderSearchButton({ optionGroups }: Props) {
   }, [optionGroups, params.network]);
 
   let entityType = capitalize(params.path[0]);
-  if (entityType === "Addresses") {
-    entityType = "Address";
-  } else if (entityType.endsWith("s")) {
-    entityType = entityType.substring(0, entityType.length - 1);
+  let query = "";
+  if (params.path.length > 1) {
+    if (entityType === "Addresses") {
+      entityType = "Address";
+    } else if (entityType.endsWith("s")) {
+      entityType = entityType.substring(0, entityType.length - 1);
+    }
+    query = decodeURIComponent(params.path[1]);
   }
-  const query = decodeURIComponent(params.path[1]);
 
   return (
     <SearchModal
