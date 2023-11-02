@@ -1,12 +1,7 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import { Page, PageContext, Value } from "../../../../../../schemas/page";
+import { Page, PageContext } from "../../../../../../schemas/page";
 import * as Celestia from "@modularcloud-resolver/celestia";
 import { TransactionResponse } from "../../../../types";
-import {
-  getBlockProperties,
-  getTransactionProperties,
-  selectSidebarBlockProperties,
-} from "../../../../helpers";
 import { getDefaultSidebar } from "../../../../../../helpers";
 import { CelestiaBlockBlobsResolver } from "../../../blocks/[hashOrHeight]/blobs/page";
 import { Standard } from "../../../../utils/values";
@@ -47,8 +42,10 @@ export const CelestiaTransactionMessagesResolver = createResolver(
           },
         ],
         entries: messages.map((message, index) => {
+          const link = `/${context.chainBrand}-${context.chainName}/transactions/${hash}/messages/${index}`;
           return {
-            key: `${context.chainName}-${context.chainBrand}/transactions/${hash}/messages/${index}`,
+            key: link,
+            link,
             row: {
               Message: Standard(
                 Celestia.helpers.getMessageDisplayName(message.typeUrl),

@@ -8,7 +8,10 @@ import {
   selectSidebarBlockProperties,
   selectSidebarTransactionProperties,
 } from "../../../../../helpers";
-import { getDefaultSidebar } from "../../../../../../../helpers";
+import {
+  getDefaultNestedSidebar,
+  getDefaultSidebar,
+} from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
 
 export interface MsgPayForBlobs {
@@ -143,11 +146,23 @@ export const CelestiaBlobResolver = createResolver(
           "Namespace Version": Standard(blob.namespaceVersion),
         },
       },
-      sidebar: getDefaultSidebar("Blob", index, "Overview"),
+      sidebar: getDefaultNestedSidebar("Transaction", hash, [
+        "Blobs",
+        "Index",
+        index,
+      ]),
       tabs: [
         {
           text: "Overview",
-          route: ["transactions", hash, "blobs", index],
+          route: ["transactions", hash],
+        },
+        {
+          text: "Messages",
+          route: ["transactions", hash, "messages"],
+        },
+        {
+          text: "Blobs",
+          route: ["transactions", hash, "blobs"],
         },
       ],
     };
