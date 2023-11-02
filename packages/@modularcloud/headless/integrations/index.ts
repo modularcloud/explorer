@@ -7,6 +7,12 @@ import { CelestiaLatestBlocksResolver } from "./celestia/routes/blocks/page";
 import { CelestiaBlockTransctionsResolver } from "./celestia/routes/blocks/[hashOrHeight]/transactions/page";
 import { CelestiaBlockBlobsResolver } from "./celestia/routes/blocks/[hashOrHeight]/blobs/page";
 import { CelestiaTransactionBlobsResolver } from "./celestia/routes/transactions/[hash]/blobs/page";
+import { CelestiaTransactionMessagesResolver } from "./celestia/routes/transactions/[hash]/messages/page";
+import { CelestiaNamespaceResolver } from "./celestia/routes/namespaces/[id]/page";
+import { CelestiaAddressBalancesResolver } from "./celestia/routes/addresses/[address]/page";
+import { CelestiaBlobResolver } from "./celestia/routes/transactions/[hash]/blobs/[index]/page";
+import { CelestiaMessageResolver } from "./celestia/routes/transactions/[hash]/messages/[index]/page";
+import { CelestiaAddressTransactionsResolver } from "./celestia/routes/addresses/[address]/transactions/page";
 
 export function registerResolvers() {
   registerResolver(SVM.addressOverviewResolver);
@@ -25,5 +31,10 @@ export function registerResolvers() {
   registerResolver(CelestiaBlockTransctionsResolver);
   registerResolver(CelestiaBlockBlobsResolver);
   registerResolver(CelestiaTransactionBlobsResolver);
-
+  registerResolver(CelestiaTransactionMessagesResolver);
+  registerResolver(CelestiaNamespaceResolver);
+  registerResolver(CelestiaAddressBalancesResolver);
+  registerResolver(CelestiaBlobResolver);
+  registerResolver(CelestiaMessageResolver);
+  registerResolver(CelestiaAddressTransactionsResolver);
 }

@@ -131,7 +131,7 @@ export async function search(networkSlug: string, query: string) {
   const integration = await loadIntegration(networkSlug);
 
   const queries = SearchBuilders.map(
-    (searchBuilder) => searchBuilder.getPath(query)!,
+    (searchBuilder) => searchBuilder.getPath(decodeURIComponent(query))!,
   ).filter(Boolean);
 
   try {

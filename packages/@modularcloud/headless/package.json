@@ -18,7 +18,8 @@
         "@modularcloud-resolver/celestia": "*",
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/sealevel": "*",
-        "type-fest": "^4.5.0",
+        "@modularcloud/sdk": "*",
+        "ts-proto": "^1.162.2",
         "zod": "^3.22.2"
     },
     "devDependencies": {

@@ -14,7 +14,6 @@
   "dependencies": {
     "@modularcloud/ecs": "*",
     "@modularcloud/headless": "*",
-    "@modularcloud/sdk": "*",
     "@monaco-editor/react": "^4.5.1",
     "@nivo/treemap": "^0.83.0",
     "@radix-ui/react-dialog": "^1.0.4",

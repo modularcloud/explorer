@@ -9,6 +9,7 @@ import { getDefaultSidebar } from "../../../../../../helpers";
 
 import type { Page, PageContext } from "../../../../../../schemas/page";
 import { BlockResponse, TransactionResponse } from "../../../../types";
+import { PaginationContext } from "../../../../../../schemas/context";
 
 export const CelestiaBlockTransctionsResolver = createResolver(
   {
@@ -16,11 +17,18 @@ export const CelestiaBlockTransctionsResolver = createResolver(
     cache: false, // all cache is disabled for now
   },
   async (
-    { context, hashOrHeight }: { context: PageContext; hashOrHeight: string },
+    {
+      context,
+      hashOrHeight,
+    }: { context: PageContext & PaginationContext; hashOrHeight: string },
     getBlock: typeof Celestia.BlockHeightResolver,
     getBlockByHash: typeof Celestia.BlockHashResolver,
     getTransaction: typeof Celestia.TransactionResolver,
   ) => {
+    const pageToken = context.after ?? "0";
+    const limit = 30;
+    const startIndex = parseInt(pageToken) * limit;
+    const endIndex = startIndex + limit;
     let type: "hash" | "height" | undefined;
     if (hashOrHeight.match(/^\d+$/)) {
       type = "height";
@@ -52,25 +60,26 @@ export const CelestiaBlockTransctionsResolver = createResolver(
     const block: BlockResponse = response.result;
     const transactions = (
       await Promise.all(
-        block.result.block.data.txs.map(async (txstr) =>
-          fetch(baseUrl + "/api/node/tx-string-to-hash", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ txstr }),
-          })
-            .then((res) => res.json())
-            .then((res) =>
-              getTransaction({
-                hash: res,
-                endpoint: context.rpcEndpoint,
-              }),
-            )
-            .then((res) => (res.type === "success" ? res.result : null)),
-        ),
+        block.result.block.data.txs
+          .slice(startIndex, endIndex)
+          .map(async (txstr) => {
+            let hashBuffer = await crypto.subtle.digest(
+              "SHA-256",
+              Buffer.from(txstr, "base64"),
+            );
+            const blobTx = Celestia.helpers.getBlobTx(txstr);
+            if (blobTx.typeId === "BLOB")
+              hashBuffer = await crypto.subtle.digest("SHA-256", blobTx.tx);
+            return getTransaction({
+              hash: Buffer.from(hashBuffer).toString("hex"),
+              endpoint: context.rpcEndpoint,
+            }).then((res) => (res.type === "success" ? res.result : null));
+          }),
       )
     ).filter((tx) => tx !== null) as TransactionResponse[];
+    console.log("nextToken", block.result.block.data.txs.length > endIndex
+    ? pageToken + 1
+    : undefined,)
     const page: Page = {
       context,
       metadata: {
@@ -79,6 +88,10 @@ export const CelestiaBlockTransctionsResolver = createResolver(
       },
       body: {
         type: "collection",
+        nextToken:
+          block.result.block.data.txs.length > endIndex
+            ? String(parseInt(pageToken) + 1)
+            : undefined,
         tableColumns: [
           {
             columnLabel: "Icon",
@@ -139,7 +152,7 @@ export const CelestiaBlockTransctionsResolver = createResolver(
         {
           text: "Blobs",
           route: ["blocks", hashOrHeight, "blobs"],
-        }
+        },
       ],
     };
     return page;

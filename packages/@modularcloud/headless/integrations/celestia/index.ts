@@ -8,16 +8,23 @@ type IntegrationResponse = ResolutionResponse | null;
 export function createCelestiaIntegration(context: PageContext) {
   registerResolvers();
 
-  // addRoute(["addresses", "[address]"], "svm-address-0.0.0", {
-  //   enabled: true,
-  //   regex: /[1-9A-HJ-NP-Za-km-z]{32,44}/,
-  //   key: "address",
-  //   name: "Address",
-  // });
-  // addRoute(
-  //   ["addresses", "[address]", "transactions"],
-  //   "svm-address-transactions-0.0.0",
-  // );
+  addRoute(["addresses", "[address]"], "celestia-address-balances-0.0.0", {
+    enabled: true,
+    regex: /^celestia\w{39}$/,
+    key: "address",
+    name: "Address",
+  });
+  addRoute(
+    ["addresses", "[address]", "transactions"],
+    "celestia-address-transactions-0.0.0",
+  );
+  addRoute(["namespaces", "[id]"], "celestia-namespace-0.0.0", {
+    enabled: true,
+    regex: /^(?:[A-Za-z0-9+\/]{38}==|[A-Fa-f0-9]{56}|[A-Fa-f0-9]{58})$/,
+    key: "id",
+    name: "Namespace",
+  });
+
   addRoute(["transactions"], "celestia-latest-transactions-0.0.0");
 
   addRoute(["transactions", "[hash]"], "celestia-page-transaction-0.0.0", {
@@ -30,10 +37,18 @@ export function createCelestiaIntegration(context: PageContext) {
     ["transactions", "[hash]", "blobs"],
     "celestia-page-transaction-blobs-0.0.0",
   );
-  // addRoute(
-  //   ["transactions", "[hash]", "messages"],
-  //   "celestia-page-transaction-messages-0.0.0",
-  // );
+  addRoute(
+    ["transactions", "[hash]", "blobs", "[index]"],
+    "celestia-page-blob-0.0.0",
+  );
+  addRoute(
+    ["transactions", "[hash]", "messages"],
+    "celestia-page-transaction-messages-0.0.0",
+  );
+  addRoute(
+    ["transactions", "[hash]", "messages", "[index]"],
+    "celestia-page-messages-0.0.0",
+  );
   addRoute(["blocks", "[hashOrHeight]"], "celestia-page-block-0.0.0", {
     enabled: true,
     regex: /^\d+$|^(?:0x)?[a-fA-F0-9]{64}$/,

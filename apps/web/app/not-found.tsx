@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 export const metadata = {
-  title: "Page Not found - ModularCloud",
+  title: "Page Not found - Modular Cloud",
 };
 
 export default function NotFound() {

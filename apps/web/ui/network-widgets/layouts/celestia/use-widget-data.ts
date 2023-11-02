@@ -20,7 +20,7 @@ const THIRTY_SECONDS = 30 * 1000;
 export function useLatestBlocks(network: string) {
   const loadPageArgs = {
     route: { network: network, path: ["blocks"] },
-    context: { limit: 5 },
+    context: { limit: 6 },
     skipCache: true,
   };
   return useSWR<Page>(
@@ -74,9 +74,13 @@ export function useLatestTransactions(network: string) {
 }
 
 export function useWidgetData(networkSlug: string) {
+  let id = 7;
+  if (networkSlug.indexOf("mocha") !== -1) id = 6;
+  else if (networkSlug.indexOf("arabica") !== -1) id = 5;
+
   return useSWR(
-    `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/3/metrics`,
-    async (url) => {
+    `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/${id}/metrics`,
+    async (url: string) => {
       const response = await fetch(url);
       const data = await response.json();
       return widgetDataSchema.parse(data.result);
