@@ -14,10 +14,10 @@ export function createCelestiaIntegration(context: PageContext) {
     key: "address",
     name: "Address",
   });
-  // addRoute(
-  //   ["addresses", "[address]", "transactions"],
-  //   "svm-address-transactions-0.0.0",
-  // );
+  addRoute(
+    ["addresses", "[address]", "transactions"],
+    "celestia-address-transactions-0.0.0",
+  );
   addRoute(["namespaces", "[id]"], "celestia-namespace-0.0.0", {
     enabled: true,
     regex: /^(?:[A-Za-z0-9+\/]{38}==|[A-Fa-f0-9]{56}|[A-Fa-f0-9]{58})$/,
