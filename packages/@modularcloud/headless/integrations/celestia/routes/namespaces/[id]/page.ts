@@ -102,11 +102,11 @@ export const CelestiaNamespaceResolver = createResolver(
         const properties = getBlobProperties(txBlob, blobIndex);
         const row = selectRowBlobProperties(properties);
         const { Height, Rollup, ...rest } = properties;
-        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}`;
+        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}/blobs/${blobIndex}`;
         allBlobs.push({
           row,
           link,
-          key: `${link}/blobs/${blobIndex}`,
+          key: link,
           sidebar: {
             headerKey: "Spotlight",
             headerValue: "Blob",

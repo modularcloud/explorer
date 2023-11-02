@@ -114,7 +114,7 @@ export const CelestiaBlockBlobsResolver = createResolver(
         const properties = getBlobProperties(txBlob, blobIndex);
         const row = selectRowBlobProperties(properties);
         const { Height, Rollup, ...rest } = properties;
-        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}`;
+        const link = `/${context.chainBrand}-${context.chainName}/transactions/${txBlob.txHash}/blobs/${blobIndex}`;
         allBlobs.push({
           row,
           link,
