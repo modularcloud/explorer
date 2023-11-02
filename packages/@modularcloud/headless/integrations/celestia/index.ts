@@ -45,6 +45,10 @@ export function createCelestiaIntegration(context: PageContext) {
     ["transactions", "[hash]", "messages"],
     "celestia-page-transaction-messages-0.0.0",
   );
+  addRoute(
+    ["transactions", "[hash]", "messages", "[index]"],
+    "celestia-page-messages-0.0.0",
+  );
   addRoute(["blocks", "[hashOrHeight]"], "celestia-page-block-0.0.0", {
     enabled: true,
     regex: /^\d+$|^(?:0x)?[a-fA-F0-9]{64}$/,

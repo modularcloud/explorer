@@ -33,7 +33,12 @@ export function NavLink({
   let activeTabIndex = tabs.findIndex(
     (tab) => tab === pathParams.path.join("/"),
   );
-  if (activeTabIndex === -1) activeTabIndex = 0;
+  if (activeTabIndex === -1) {
+    const subtab = tabs
+      .filter((tab) => pathParams.path.join("/").startsWith(tab))
+      .reduce((a, b) => (a.length > b.length ? a : b), "");
+    activeTabIndex = subtab ? tabs.findIndex((tab) => tab === subtab) : 0;
+  }
 
   const isSelected = currentIndex === activeTabIndex;
 
