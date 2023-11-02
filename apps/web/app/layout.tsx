@@ -5,11 +5,12 @@ import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
-
+import {UserSnap} from "~/ui/usersnap";
 // utils
 import { Inter } from "next/font/google";
 import { getSearchOptionGroups } from "~/lib/search-options";
 import { EXPLORER_CONFIG } from "~/config/explorers";
+
 
 // types
 import type { Metadata } from "next";
@@ -53,6 +54,7 @@ export default async function RootLayout({
           <Toaster />
           <Analytics />
         </GlobalHotkeyProvider>
+      <UserSnap/>
       </body>
     </html>
   );
