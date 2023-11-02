@@ -72,10 +72,20 @@ export const CelestiaBlobResolver = createResolver(
       .find((msg) => msg.typeUrl === "/celestia.blob.v1.MsgPayForBlobs");
 
     const msgPayForBlobs: MsgPayForBlobs = message?.decodedValue;
+    const namespaceId = Buffer.from(blob.namespaceId).toString("base64");
+    const networkSlug = `${context.chainBrand}-${context.chainName}`;
 
     const msgProperties: Record<string, Value> = {};
     if (msgPayForBlobs) {
-      msgProperties["Signer"] = Standard(msgPayForBlobs.signer);
+      msgProperties["Signer"] = Link({
+        text: msgPayForBlobs.signer,
+        route: [networkSlug, "addresses", msgPayForBlobs.signer],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: { Address: Standard(msgPayForBlobs.signer) },
+        },
+      });
       msgProperties["Size"] = Standard(
         msgPayForBlobs.blobSizes[parseInt(index)],
       );
@@ -85,9 +95,6 @@ export const CelestiaBlobResolver = createResolver(
         ),
       );
     }
-
-    const namespaceId = Buffer.from(blob.namespaceId).toString("base64");
-    const networkSlug = `${context.chainBrand}-${context.chainName}`;
 
     const page: Page = {
       context,
