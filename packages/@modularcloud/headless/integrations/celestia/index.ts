@@ -24,7 +24,7 @@ export function createCelestiaIntegration(context: PageContext) {
     key: "id",
     name: "Namespace",
   });
-  
+
   addRoute(["transactions"], "celestia-latest-transactions-0.0.0");
 
   addRoute(["transactions", "[hash]"], "celestia-page-transaction-0.0.0", {
@@ -36,6 +36,10 @@ export function createCelestiaIntegration(context: PageContext) {
   addRoute(
     ["transactions", "[hash]", "blobs"],
     "celestia-page-transaction-blobs-0.0.0",
+  );
+  addRoute(
+    ["transactions", "[hash]", "blobs", "[index]"],
+    "celestia-page-blob-0.0.0",
   );
   addRoute(
     ["transactions", "[hash]", "messages"],

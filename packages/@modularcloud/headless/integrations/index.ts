@@ -10,6 +10,7 @@ import { CelestiaTransactionBlobsResolver } from "./celestia/routes/transactions
 import { CelestiaTransactionMessagesResolver } from "./celestia/routes/transactions/[hash]/messages/page";
 import { CelestiaNamespaceResolver } from "./celestia/routes/namespaces/[id]/page";
 import { CelestiaAddressBalancesResolver } from "./celestia/routes/addresses/[address]/page";
+import { CelestiaBlobResolver } from "./celestia/routes/transactions/[hash]/blobs/[index]/page";
 
 export function registerResolvers() {
   registerResolver(SVM.addressOverviewResolver);
@@ -31,4 +32,5 @@ export function registerResolvers() {
   registerResolver(CelestiaTransactionMessagesResolver);
   registerResolver(CelestiaNamespaceResolver);
   registerResolver(CelestiaAddressBalancesResolver);
+  registerResolver(CelestiaBlobResolver);
 }
