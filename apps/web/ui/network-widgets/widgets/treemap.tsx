@@ -92,7 +92,7 @@ export function Treemap(props: Props) {
       .attr("width", (d) => d.x1 - d.x0)
       .attr("height", (d) => d.y1 - d.y0)
       .attr("rx", 5)
-      .on("mouseover", function (event, d: any) {
+      .on("mousemove", function (event, d: any) {
         d3.select(this).attr("data-original-color");
         d3.select(this)
           .style("fill", "lightsteelblue")
@@ -104,8 +104,25 @@ export function Treemap(props: Props) {
               <span style="margin-left: 5px;">ID: ${d.data.name} ${d.value}</span>
             </div>`;
           })
-          .style("left", event.pageX + 10 + "px")
-          .style("top", event.pageY - 15 + "px")
+          .each(function () {
+            const svgNode = svg.node() as Element | null;
+            if (svgNode) {
+              const treemapWidth = svgNode.getBoundingClientRect().width;
+              const treemapCenter = treemapWidth / 2;
+              const rectMidpoint = d.x0 + (d.x1 - d.x0) / 2;
+              let tooltipWidth = this.offsetWidth;
+
+              if (rectMidpoint > treemapCenter) {
+                d3.select(this).style(
+                  "left",
+                  event.pageX - tooltipWidth - 10 + "px",
+                );
+              } else {
+                d3.select(this).style("left", event.pageX + 10 + "px");
+              }
+            }
+          })
+          .style("top", event.pageY + 5 + "px")
           .on("mousemove", function (event) {
             const [mouseX, mouseY] = d3.pointer(event);
 
