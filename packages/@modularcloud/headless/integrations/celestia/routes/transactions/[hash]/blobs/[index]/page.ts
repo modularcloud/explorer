@@ -13,6 +13,8 @@ import {
   getDefaultSidebar,
 } from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
+import { fileTypeFromBuffer } from "./filetype";
+import { head, put } from "@vercel/blob";
 
 export interface MsgPayForBlobs {
   signer: string;
@@ -99,6 +101,21 @@ export const CelestiaBlobResolver = createResolver(
       );
     }
 
+    const fileType = await fileTypeFromBuffer(blob.data);
+
+    const blobPath = `${hash}-${index}${
+      fileType?.ext ? `.${fileType.ext}` : ""
+    }`;
+    let vercelBlob;
+    try {
+      vercelBlob = await head(blobPath);
+    } catch {
+      vercelBlob = await put(blobPath, blob.data, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+    }
+
     const page: Page = {
       context,
       metadata: {
@@ -144,6 +161,14 @@ export const CelestiaBlobResolver = createResolver(
           ...msgProperties,
           "Share Version": Standard(blob.shareVersion),
           "Namespace Version": Standard(blob.namespaceVersion),
+          Mime: Standard(fileType?.mime ?? "Unknown"),
+          Blob: {
+            type: "blob",
+            payload: {
+              url: vercelBlob.url,
+              mimeType: fileType?.mime ?? "Unknown",
+            },
+          },
         },
       },
       sidebar: getDefaultNestedSidebar("Transaction", hash, [

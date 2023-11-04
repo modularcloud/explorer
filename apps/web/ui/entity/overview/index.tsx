@@ -19,9 +19,12 @@ async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
 }
 
 export async function Overview({ properties }: Props) {
+  const entries = React.useMemo(() => {
+    return Object.entries(properties);
+  }, [properties]);
   return (
     <section className="pb-4 pt-8 h-full overflow-y-auto">
-      <OverviewEntryList entries={Object.entries(properties)} />
+      <OverviewEntryList entries={entries} />
 
       {/* {(asyncAttributes ?? []).map((set) => (
           <AsyncEntries resourcePath={set.src} />
