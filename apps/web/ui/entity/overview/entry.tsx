@@ -15,6 +15,7 @@ import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Blob } from "./blob";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
@@ -290,7 +291,11 @@ export function OverviewEntry({
           </CopyableValue>
         </dd>
       )}
-
+      {type === "blob" && (
+        <dd className="col-span-3">
+          <Blob url={payload.url} mimeType={payload.mimeType} />
+        </dd>
+      )}
       {/* TODO : handle "image" type */}
     </div>
   );

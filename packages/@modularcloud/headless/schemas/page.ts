@@ -45,6 +45,13 @@ export const TimestampSchema = z.object({
     value: z.number(),
   }),
 });
+export const BlobSchema = z.object({
+  type: z.literal("blob"),
+  payload: z.object({
+    url: z.string(),
+    mimeType: z.string(),
+  }),
+});
 
 /**
  * Doing this because zod doesn't handle recursive types well
@@ -73,6 +80,7 @@ export const LinkSchema = z.object({
             IconSchema,
             ErrorSchema,
             TimestampSchema,
+            BlobSchema,
           ]),
         ),
       }),
@@ -90,6 +98,7 @@ export const ValueSchema = z.discriminatedUnion("type", [
   ErrorSchema,
   TimestampSchema,
   LinkSchema,
+  BlobSchema,
 ]);
 export type Value = z.infer<typeof ValueSchema>;
 
