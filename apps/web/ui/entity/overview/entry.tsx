@@ -62,6 +62,17 @@ export function OverviewEntryList({ entries }: Props) {
 
         if (item.value.type === "link") {
           setSpotlight?.(item.value.payload.sidebar);
+        } else if (item.value.type === "blob") {
+          setSpotlight?.({
+            headerKey: "Spotlight",
+            headerValue: "Property",
+            properties: {
+              Key: {
+                type: "standard",
+                payload: item.id,
+              },
+            },
+          });
         } else {
           setSpotlight?.({
             headerKey: "Spotlight",
