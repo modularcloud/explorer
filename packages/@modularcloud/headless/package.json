@@ -19,6 +19,8 @@
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/sealevel": "*",
         "@modularcloud/sdk": "*",
+        "@vercel/blob": "^0.14.1",
+        "strtok3": "^7.0.0",
         "ts-proto": "^1.162.2",
         "zod": "^3.22.2"
     },
