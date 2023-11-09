@@ -216,8 +216,8 @@ type BlobPropertyKeys =
   | "Share Version"
   | "Namespace Version"
   | "Blob Index"
-  | "Rollup"
-  | "Data";
+  | "Rollup";
+// | "Data";
 // | "Share Commitment"
 // | "Signer"
 // | "Size";
@@ -250,16 +250,16 @@ const blobTransformers: [
   ],
   ["Blob Index", (txBlob, blobIndex) => Values.Standard(blobIndex)],
   ["Rollup", () => Values.Standard("-")],
-  [
-    "Data",
-    (txBlob, blobIndex) =>
-      Values.Longval({
-        value: Buffer.from(txBlob.blobs[blobIndex].data).toString("base64"),
-        strategy: "end",
-        maxLength: 25,
-        stepDown: 5,
-      }),
-  ],
+  // [
+  //   "Data",
+  //   (txBlob, blobIndex) =>
+  //     Values.Longval({
+  //       value: Buffer.from(txBlob.blobs[blobIndex].data).toString("base64"),
+  //       strategy: "end",
+  //       maxLength: 25,
+  //       stepDown: 5,
+  //     }),
+  // ],
   // [
   //   "Share Commitment",
   //   (txBlob, blobIndex) =>
@@ -306,6 +306,6 @@ export function selectRowBlobProperties(
           )
         : properties.Namespace,
     Rollup: properties.Rollup,
-    Data: properties.Data,
+    // Data: properties.Data,
   };
 }
