@@ -103,14 +103,18 @@ const importLines = msgExports
       `import * as _${index} from './${exp.fileName.replace(/\.ts$/, "")}';`,
   )
   .join("\n");
-const exportLines = `export const Msgs = [\n${msgExports
+const typeLines = `export type MsgType = ${msgExports.map(
+  (exp, index) => `  | { parser: typeof _${index}.${exp.parser}, typeUrl: '/${exp.type}.${exp.parser}' }`,
+).join("\n")};`;
+
+const exportLines = `export const Msgs: MsgType[] = [\n${msgExports
   .map(
     (exp, index) =>
       `  { parser: _${index}.${exp.parser}, typeUrl: '/${exp.type}.${exp.parser}' },`,
   )
   .join("\n")}\n];`;
 
-const fileContent = `${importLines}\n\n${exportLines}`;
+const fileContent = `${importLines}\n\n${typeLines}\n${exportLines}`;
 
 const outputPath = path.join(__dirname, "msgs.ts");
 fs.writeFileSync(outputPath, fileContent);
