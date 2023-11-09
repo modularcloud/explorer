@@ -50,7 +50,7 @@ function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
               const exportedName = symbol.getName();
               let relativeFileName = sourceFile.fileName;
               if (path.isAbsolute(sourceFile.fileName)) {
-                relativeFileName = path.relative(path.join(__dirname, '..'), sourceFile.fileName).replace(/^..\//, '');
+                relativeFileName = path.relative(__dirname, sourceFile.fileName);
               }
               if (exportedName.startsWith("Msg")) {
                 exportObjects.push({ parser: exportedName, type: protobufPackage, fileName: relativeFileName });
@@ -75,7 +75,7 @@ const exportLines = `export const Msgs = [\n${msgExports.map((exp, index) => `  
 
 const fileContent = `${importLines}\n\n${exportLines}`;
 
-const outputPath = path.join(__dirname, '..', 'generatedExports.ts');
+const outputPath = path.join(__dirname, 'msgs.ts');
 fs.writeFileSync(outputPath, fileContent);
 
-console.log('Exports generated in generatedExports.ts');
+console.log('Exports generated in msgs.ts');

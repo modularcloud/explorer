@@ -3,20 +3,18 @@
     "version": "0.0.0",
     "license": "MIT",
     "scripts": {
-        "gen": "python gen.py",
-        "build": "npx tsc",
-        "generate-tx": "node ./dist/generate-tx.js"
+        "gen": "npm run gen:proto && npm run gen:ts",
+        "gen:proto": "python gen.py",
+        "gen:ts": "npx tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js"
     },
     "devDependencies": {
         "eslint": "^7.32.0",
         "eslint-config-custom": "*",
         "tsconfig": "*",
-        "tsup": "^7.2.0",
         "typescript": "^4.5.2"
     },
     "dependencies": {
         "glob": "^10.3.10",
-        "ts-node": "^10.9.1",
         "ts-proto": "^1.139.0"
     }
 }
