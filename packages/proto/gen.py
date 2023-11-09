@@ -25,7 +25,17 @@ batches = [
             ('https://github.com/googleapis/googleapis', '.'),
         ]
     },
-    # Add more batches as needed
+    {
+        "name": "go-ibc",
+        "main_repo": ('https://github.com/cosmos/ibc-go', 'proto'),
+        "dependencies": [
+            ('https://github.com/cosmos/cosmos-sdk', 'proto'),
+            ('https://github.com/cosmos/gogoproto', '.'),
+            ('https://github.com/cosmos/cosmos-proto', 'proto'),
+            ('https://github.com/googleapis/googleapis', '.'),
+            ('https://github.com/cosmos/ics23', 'proto'),
+        ]
+    },
 ]
 
 # Create a .cached-repos directory if it does not exist
