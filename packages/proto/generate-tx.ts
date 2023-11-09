@@ -24,7 +24,7 @@ function isNodeExported(node: ts.Node): boolean {
 }
 
 function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
-  let exportObjects: Array<{ parser: string; type: string; }> = [];
+  let exportObjects: Array<{ parser: string; type: string; fileName: string }> = [];
 
   let program = ts.createProgram(fileNames, options);
   let checker = program.getTypeChecker();
@@ -48,8 +48,12 @@ function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
             const symbol = checker.getSymbolAtLocation(nameNode.name);
             if (symbol) {
               const exportedName = symbol.getName();
+              let relativeFileName = sourceFile.fileName;
+              if (path.isAbsolute(sourceFile.fileName)) {
+                relativeFileName = path.relative(path.join(__dirname, '..'), sourceFile.fileName).replace(/^..\//, '');
+              }
               if (exportedName.startsWith("Msg")) {
-                exportObjects.push({ parser: exportedName, type: protobufPackage });
+                exportObjects.push({ parser: exportedName, type: protobufPackage, fileName: relativeFileName });
               }
             }
           }
@@ -66,7 +70,7 @@ const options = { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2015
 const msgExports = findMsgExports(files, options);
 
 // Now we use msgExports to generate the content
-const importLines = msgExports.map((exp, index) => `import * as _${index} from './path/to/${exp.parser}';`).join('\n');
+const importLines = msgExports.map((exp, index) => `import * as _${index} from './${exp.fileName.replace(/\.ts$/,'')}';`).join('\n');
 const exportLines = `export const Msgs = [\n${msgExports.map((exp, index) => `  { parser: _${index}.${exp.parser}, typeUrl: '/${exp.type}.${exp.parser}' },`).join('\n')}\n];`;
 
 const fileContent = `${importLines}\n\n${exportLines}`;
