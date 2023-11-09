@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 from git import Repo
+from urllib.parse import urlparse
 
 # Define your batches with a main repository, dependencies, and a name for the output directory
 batches = [
@@ -15,6 +16,10 @@ batches = [
     },
     # Add more batches as needed
 ]
+
+# Create a .cached-repos directory if it does not exist
+cached_repos_dir = '.cached-repos'
+os.makedirs(cached_repos_dir, exist_ok=True)
 
 # Function to compile .proto files
 def compile_protos(proto_path, import_paths, ts_output_dir):
@@ -37,6 +42,27 @@ def compile_protos(proto_path, import_paths, ts_output_dir):
                     continue
                 print(f'Compiled {proto_file} to TypeScript.')
 
+# Function to create a unique path for each repository based on its URL
+def get_unique_repo_path(repo_url):
+    parsed_url = urlparse(repo_url)
+    path_parts = parsed_url.path.strip('/').split('/')
+    unique_path = os.path.join(*path_parts) # This will create a structure like 'org/repo'
+    return unique_path
+
+# Function to clone or use cached repositories
+def clone_or_use_cached(repo_url, cached_repos_dir):
+    unique_repo_path = get_unique_repo_path(repo_url)
+    cached_repo_path = os.path.join(cached_repos_dir, unique_repo_path)
+
+    if os.path.isdir(cached_repo_path):
+        print(f'Using cached repository: {cached_repo_path}')
+    else:
+        os.makedirs(cached_repo_path, exist_ok=True)
+        print(f'Cloning {repo_url}...')
+        Repo.clone_from(repo_url, cached_repo_path)
+        print(f'Cloned {repo_url}')
+    return cached_repo_path
+
 # Process each batch
 for batch in batches:
     batch_name = batch["name"]
@@ -47,30 +73,19 @@ for batch in batches:
     ts_output_dir = os.path.join('ts-out', batch_name)
     os.makedirs(ts_output_dir, exist_ok=True)
 
-    # Clone and compile for the main repository
-    main_repo_name = main_repo_url.split('/')[-1]
-    if os.path.isdir(main_repo_name):
-        print(f'Using existing directory: {main_repo_name}')
-    else:
-        print(f'Cloning main repository {main_repo_url}...')
-        Repo.clone_from(main_repo_url, main_repo_name)
-        print(f'Cloned {main_repo_url}')
-    main_import_path = os.path.join(main_repo_name, main_proto_dir)
+    # Clone or use cached for the main repository
+    main_repo_path = clone_or_use_cached(main_repo_url, cached_repos_dir)
+    main_import_path = os.path.join(main_repo_path, main_proto_dir)
 
-    # Clone dependencies if they don't exist
+    # Clone or use cached dependencies
+    import_paths = [main_import_path]
     for dep_url, dep_proto_dir in dependencies:
-        dep_name = dep_url.split('/')[-1]
-        if not os.path.isdir(dep_name):
-            print(f'Cloning dependency {dep_url}...')
-            Repo.clone_from(dep_url, dep_name)
-            print(f'Cloned {dep_url}')
-
-    # Prepare import paths with dependencies
-    import_paths = [main_import_path] + [os.path.join(dep.split('/')[-1], proto_dir) for dep, proto_dir in dependencies]
+        dep_repo_path = clone_or_use_cached(dep_url, cached_repos_dir)
+        import_paths.append(os.path.join(dep_repo_path, dep_proto_dir))
 
     # Compile protobuf files from the main repository
     print(f'Starting compilation of protobuf files in {main_proto_dir}...')
-    compile_protos(os.path.join(main_repo_name, main_proto_dir), import_paths, ts_output_dir)
+    compile_protos(os.path.join(main_repo_path, main_proto_dir), import_paths, ts_output_dir)
     print(f'Completed compilation of protobuf files in {main_proto_dir}.')
 
 print('All tasks completed. Check each batch\'s directory inside ts-out for TypeScript files.')
