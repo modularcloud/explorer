@@ -1,6 +1,5 @@
 import os
 import subprocess
-import shutil
 from git import Repo
 from urllib.parse import urlparse
 
@@ -11,6 +10,8 @@ batches = [
         "main_repo": ('https://github.com/celestiaorg/celestia-app', 'proto'),
         "dependencies": [
             ('https://github.com/cosmos/gogoproto', '.'),
+            ('https://github.com/cosmos/cosmos-proto', 'proto'),
+            ('https://github.com/googleapis/googleapis', '.'),
             # Add more dependency tuples as needed
         ]
     },
