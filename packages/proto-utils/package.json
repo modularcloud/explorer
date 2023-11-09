@@ -1,16 +1,15 @@
 {
-    "name": "proto",
+    "name": "proto-utils",
     "version": "0.0.0",
     "license": "MIT",
+    "main": "./index.ts",
+    "types": "./index.ts",
     "scripts": {
         "gen": "npm run gen:proto && npm run gen:ts",
         "gen:proto": "python gen.py",
-        "gen:ts": "npx tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js"
+        "gen:ts": "tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js"
     },
     "devDependencies": {
-        "eslint": "^7.32.0",
-        "eslint-config-custom": "*",
-        "tsconfig": "*",
         "typescript": "^4.5.2"
     },
     "dependencies": {
