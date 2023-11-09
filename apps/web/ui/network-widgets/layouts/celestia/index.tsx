@@ -117,7 +117,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
 
       <Treemap
         networkId={network.id}
-        data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
+        data={apiResult.metrics.LAST_100_BLOBS_SIZE}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
       />
 

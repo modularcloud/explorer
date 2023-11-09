@@ -9,6 +9,7 @@ const widgetDataSchema = z.object({
     NAMESPACE: z.number(),
     BLOB: z.number(),
     AVG_BlOCK_BLOB_SIZE: z.number(),
+    LAST_100_BLOBS_SIZE: z.record(z.number()),
     LAST_10_BLOCKS_BLOB_SIZES: z.record(z.number()),
     LAST_10_BLOCKS_AVG_GAS_PRICE: z.number(),
   }),
