@@ -1,0 +1,433 @@
+import * as _0 from './path/to/MsgConnectionOpenInit';
+import * as _1 from './path/to/MsgConnectionOpenInitResponse';
+import * as _2 from './path/to/MsgConnectionOpenTry';
+import * as _3 from './path/to/MsgConnectionOpenTryResponse';
+import * as _4 from './path/to/MsgConnectionOpenAck';
+import * as _5 from './path/to/MsgConnectionOpenAckResponse';
+import * as _6 from './path/to/MsgConnectionOpenConfirm';
+import * as _7 from './path/to/MsgConnectionOpenConfirmResponse';
+import * as _8 from './path/to/MsgUpdateParams';
+import * as _9 from './path/to/MsgUpdateParamsResponse';
+import * as _10 from './path/to/MsgServiceName';
+import * as _11 from './path/to/MsgClientImpl';
+import * as _12 from './path/to/MsgCreateClient';
+import * as _13 from './path/to/MsgCreateClientResponse';
+import * as _14 from './path/to/MsgUpdateClient';
+import * as _15 from './path/to/MsgUpdateClientResponse';
+import * as _16 from './path/to/MsgUpgradeClient';
+import * as _17 from './path/to/MsgUpgradeClientResponse';
+import * as _18 from './path/to/MsgSubmitMisbehaviour';
+import * as _19 from './path/to/MsgSubmitMisbehaviourResponse';
+import * as _20 from './path/to/MsgRecoverClient';
+import * as _21 from './path/to/MsgRecoverClientResponse';
+import * as _22 from './path/to/MsgIBCSoftwareUpgrade';
+import * as _23 from './path/to/MsgIBCSoftwareUpgradeResponse';
+import * as _24 from './path/to/MsgUpdateParams';
+import * as _25 from './path/to/MsgUpdateParamsResponse';
+import * as _26 from './path/to/MsgServiceName';
+import * as _27 from './path/to/MsgClientImpl';
+import * as _28 from './path/to/MsgChannelOpenInit';
+import * as _29 from './path/to/MsgChannelOpenInitResponse';
+import * as _30 from './path/to/MsgChannelOpenTry';
+import * as _31 from './path/to/MsgChannelOpenTryResponse';
+import * as _32 from './path/to/MsgChannelOpenAck';
+import * as _33 from './path/to/MsgChannelOpenAckResponse';
+import * as _34 from './path/to/MsgChannelOpenConfirm';
+import * as _35 from './path/to/MsgChannelOpenConfirmResponse';
+import * as _36 from './path/to/MsgChannelCloseInit';
+import * as _37 from './path/to/MsgChannelCloseInitResponse';
+import * as _38 from './path/to/MsgChannelCloseConfirm';
+import * as _39 from './path/to/MsgChannelCloseConfirmResponse';
+import * as _40 from './path/to/MsgRecvPacket';
+import * as _41 from './path/to/MsgRecvPacketResponse';
+import * as _42 from './path/to/MsgTimeout';
+import * as _43 from './path/to/MsgTimeoutResponse';
+import * as _44 from './path/to/MsgTimeoutOnClose';
+import * as _45 from './path/to/MsgTimeoutOnCloseResponse';
+import * as _46 from './path/to/MsgAcknowledgement';
+import * as _47 from './path/to/MsgAcknowledgementResponse';
+import * as _48 from './path/to/MsgServiceName';
+import * as _49 from './path/to/MsgClientImpl';
+import * as _50 from './path/to/MsgTransfer';
+import * as _51 from './path/to/MsgTransferResponse';
+import * as _52 from './path/to/MsgUpdateParams';
+import * as _53 from './path/to/MsgUpdateParamsResponse';
+import * as _54 from './path/to/MsgServiceName';
+import * as _55 from './path/to/MsgClientImpl';
+import * as _56 from './path/to/MsgUpdateParams';
+import * as _57 from './path/to/MsgUpdateParamsResponse';
+import * as _58 from './path/to/MsgServiceName';
+import * as _59 from './path/to/MsgClientImpl';
+import * as _60 from './path/to/MsgRegisterInterchainAccount';
+import * as _61 from './path/to/MsgRegisterInterchainAccountResponse';
+import * as _62 from './path/to/MsgSendTx';
+import * as _63 from './path/to/MsgSendTxResponse';
+import * as _64 from './path/to/MsgUpdateParams';
+import * as _65 from './path/to/MsgUpdateParamsResponse';
+import * as _66 from './path/to/MsgServiceName';
+import * as _67 from './path/to/MsgClientImpl';
+import * as _68 from './path/to/MsgRegisterPayee';
+import * as _69 from './path/to/MsgRegisterPayeeResponse';
+import * as _70 from './path/to/MsgRegisterCounterpartyPayee';
+import * as _71 from './path/to/MsgRegisterCounterpartyPayeeResponse';
+import * as _72 from './path/to/MsgPayPacketFee';
+import * as _73 from './path/to/MsgPayPacketFeeResponse';
+import * as _74 from './path/to/MsgPayPacketFeeAsync';
+import * as _75 from './path/to/MsgPayPacketFeeAsyncResponse';
+import * as _76 from './path/to/MsgServiceName';
+import * as _77 from './path/to/MsgClientImpl';
+import * as _78 from './path/to/MsgCreateVestingAccount';
+import * as _79 from './path/to/MsgCreateVestingAccountResponse';
+import * as _80 from './path/to/MsgCreatePermanentLockedAccount';
+import * as _81 from './path/to/MsgCreatePermanentLockedAccountResponse';
+import * as _82 from './path/to/MsgCreatePeriodicVestingAccount';
+import * as _83 from './path/to/MsgCreatePeriodicVestingAccountResponse';
+import * as _84 from './path/to/MsgServiceName';
+import * as _85 from './path/to/MsgClientImpl';
+import * as _86 from './path/to/MsgSoftwareUpgrade';
+import * as _87 from './path/to/MsgSoftwareUpgradeResponse';
+import * as _88 from './path/to/MsgCancelUpgrade';
+import * as _89 from './path/to/MsgCancelUpgradeResponse';
+import * as _90 from './path/to/MsgServiceName';
+import * as _91 from './path/to/MsgClientImpl';
+import * as _92 from './path/to/MsgData';
+import * as _93 from './path/to/MsgCreateValidator';
+import * as _94 from './path/to/MsgCreateValidatorResponse';
+import * as _95 from './path/to/MsgEditValidator';
+import * as _96 from './path/to/MsgEditValidatorResponse';
+import * as _97 from './path/to/MsgDelegate';
+import * as _98 from './path/to/MsgDelegateResponse';
+import * as _99 from './path/to/MsgBeginRedelegate';
+import * as _100 from './path/to/MsgBeginRedelegateResponse';
+import * as _101 from './path/to/MsgUndelegate';
+import * as _102 from './path/to/MsgUndelegateResponse';
+import * as _103 from './path/to/MsgCancelUnbondingDelegation';
+import * as _104 from './path/to/MsgCancelUnbondingDelegationResponse';
+import * as _105 from './path/to/MsgServiceName';
+import * as _106 from './path/to/MsgClientImpl';
+import * as _107 from './path/to/MsgUnjail';
+import * as _108 from './path/to/MsgUnjailResponse';
+import * as _109 from './path/to/MsgServiceName';
+import * as _110 from './path/to/MsgClientImpl';
+import * as _111 from './path/to/MsgSend';
+import * as _112 from './path/to/MsgSendResponse';
+import * as _113 from './path/to/MsgServiceName';
+import * as _114 from './path/to/MsgClientImpl';
+import * as _115 from './path/to/MsgCreateGroup';
+import * as _116 from './path/to/MsgCreateGroupResponse';
+import * as _117 from './path/to/MsgUpdateGroupMembers';
+import * as _118 from './path/to/MsgUpdateGroupMembersResponse';
+import * as _119 from './path/to/MsgUpdateGroupAdmin';
+import * as _120 from './path/to/MsgUpdateGroupAdminResponse';
+import * as _121 from './path/to/MsgUpdateGroupMetadata';
+import * as _122 from './path/to/MsgUpdateGroupMetadataResponse';
+import * as _123 from './path/to/MsgCreateGroupPolicy';
+import * as _124 from './path/to/MsgCreateGroupPolicyResponse';
+import * as _125 from './path/to/MsgUpdateGroupPolicyAdmin';
+import * as _126 from './path/to/MsgCreateGroupWithPolicy';
+import * as _127 from './path/to/MsgCreateGroupWithPolicyResponse';
+import * as _128 from './path/to/MsgUpdateGroupPolicyAdminResponse';
+import * as _129 from './path/to/MsgUpdateGroupPolicyDecisionPolicy';
+import * as _130 from './path/to/MsgUpdateGroupPolicyDecisionPolicyResponse';
+import * as _131 from './path/to/MsgUpdateGroupPolicyMetadata';
+import * as _132 from './path/to/MsgUpdateGroupPolicyMetadataResponse';
+import * as _133 from './path/to/MsgSubmitProposal';
+import * as _134 from './path/to/MsgSubmitProposalResponse';
+import * as _135 from './path/to/MsgWithdrawProposal';
+import * as _136 from './path/to/MsgWithdrawProposalResponse';
+import * as _137 from './path/to/MsgVote';
+import * as _138 from './path/to/MsgVoteResponse';
+import * as _139 from './path/to/MsgExec';
+import * as _140 from './path/to/MsgExecResponse';
+import * as _141 from './path/to/MsgLeaveGroup';
+import * as _142 from './path/to/MsgLeaveGroupResponse';
+import * as _143 from './path/to/MsgServiceName';
+import * as _144 from './path/to/MsgClientImpl';
+import * as _145 from './path/to/MsgSubmitProposal';
+import * as _146 from './path/to/MsgSubmitProposalResponse';
+import * as _147 from './path/to/MsgVote';
+import * as _148 from './path/to/MsgVoteResponse';
+import * as _149 from './path/to/MsgVoteWeighted';
+import * as _150 from './path/to/MsgVoteWeightedResponse';
+import * as _151 from './path/to/MsgDeposit';
+import * as _152 from './path/to/MsgDepositResponse';
+import * as _153 from './path/to/MsgServiceName';
+import * as _154 from './path/to/MsgClientImpl';
+import * as _155 from './path/to/MsgSubmitProposal';
+import * as _156 from './path/to/MsgSubmitProposalResponse';
+import * as _157 from './path/to/MsgExecLegacyContent';
+import * as _158 from './path/to/MsgExecLegacyContentResponse';
+import * as _159 from './path/to/MsgVote';
+import * as _160 from './path/to/MsgVoteResponse';
+import * as _161 from './path/to/MsgVoteWeighted';
+import * as _162 from './path/to/MsgVoteWeightedResponse';
+import * as _163 from './path/to/MsgDeposit';
+import * as _164 from './path/to/MsgDepositResponse';
+import * as _165 from './path/to/MsgServiceName';
+import * as _166 from './path/to/MsgClientImpl';
+import * as _167 from './path/to/MsgGrantAllowance';
+import * as _168 from './path/to/MsgGrantAllowanceResponse';
+import * as _169 from './path/to/MsgRevokeAllowance';
+import * as _170 from './path/to/MsgRevokeAllowanceResponse';
+import * as _171 from './path/to/MsgServiceName';
+import * as _172 from './path/to/MsgClientImpl';
+import * as _173 from './path/to/MsgSubmitEvidence';
+import * as _174 from './path/to/MsgSubmitEvidenceResponse';
+import * as _175 from './path/to/MsgServiceName';
+import * as _176 from './path/to/MsgClientImpl';
+import * as _177 from './path/to/MsgSetWithdrawAddress';
+import * as _178 from './path/to/MsgSetWithdrawAddressResponse';
+import * as _179 from './path/to/MsgWithdrawDelegatorReward';
+import * as _180 from './path/to/MsgWithdrawDelegatorRewardResponse';
+import * as _181 from './path/to/MsgWithdrawValidatorCommission';
+import * as _182 from './path/to/MsgWithdrawValidatorCommissionResponse';
+import * as _183 from './path/to/MsgFundCommunityPool';
+import * as _184 from './path/to/MsgFundCommunityPoolResponse';
+import * as _185 from './path/to/MsgServiceName';
+import * as _186 from './path/to/MsgClientImpl';
+import * as _187 from './path/to/MsgVerifyInvariant';
+import * as _188 from './path/to/MsgVerifyInvariantResponse';
+import * as _189 from './path/to/MsgServiceName';
+import * as _190 from './path/to/MsgClientImpl';
+import * as _191 from './path/to/MsgDescriptor';
+import * as _192 from './path/to/MsgSend';
+import * as _193 from './path/to/MsgSendResponse';
+import * as _194 from './path/to/MsgMultiSend';
+import * as _195 from './path/to/MsgMultiSendResponse';
+import * as _196 from './path/to/MsgServiceName';
+import * as _197 from './path/to/MsgClientImpl';
+import * as _198 from './path/to/MsgGrant';
+import * as _199 from './path/to/MsgExecResponse';
+import * as _200 from './path/to/MsgExec';
+import * as _201 from './path/to/MsgGrantResponse';
+import * as _202 from './path/to/MsgRevoke';
+import * as _203 from './path/to/MsgRevokeResponse';
+import * as _204 from './path/to/MsgServiceName';
+import * as _205 from './path/to/MsgClientImpl';
+import * as _206 from './path/to/MsgVersionChange';
+import * as _207 from './path/to/MsgRegisterEVMAddress';
+import * as _208 from './path/to/MsgRegisterEVMAddressResponse';
+import * as _209 from './path/to/MsgServiceName';
+import * as _210 from './path/to/MsgClientImpl';
+import * as _211 from './path/to/MsgPayForBlobs';
+import * as _212 from './path/to/MsgPayForBlobsResponse';
+import * as _213 from './path/to/MsgServiceName';
+import * as _214 from './path/to/MsgClientImpl';
+
+export const Msgs = [
+  { parser: _0.MsgConnectionOpenInit, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenInit' },
+  { parser: _1.MsgConnectionOpenInitResponse, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenInitResponse' },
+  { parser: _2.MsgConnectionOpenTry, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenTry' },
+  { parser: _3.MsgConnectionOpenTryResponse, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenTryResponse' },
+  { parser: _4.MsgConnectionOpenAck, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenAck' },
+  { parser: _5.MsgConnectionOpenAckResponse, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenAckResponse' },
+  { parser: _6.MsgConnectionOpenConfirm, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenConfirm' },
+  { parser: _7.MsgConnectionOpenConfirmResponse, typeUrl: '/ibc.core.connection.v1.MsgConnectionOpenConfirmResponse' },
+  { parser: _8.MsgUpdateParams, typeUrl: '/ibc.core.connection.v1.MsgUpdateParams' },
+  { parser: _9.MsgUpdateParamsResponse, typeUrl: '/ibc.core.connection.v1.MsgUpdateParamsResponse' },
+  { parser: _10.MsgServiceName, typeUrl: '/ibc.core.connection.v1.MsgServiceName' },
+  { parser: _11.MsgClientImpl, typeUrl: '/ibc.core.connection.v1.MsgClientImpl' },
+  { parser: _12.MsgCreateClient, typeUrl: '/ibc.core.client.v1.MsgCreateClient' },
+  { parser: _13.MsgCreateClientResponse, typeUrl: '/ibc.core.client.v1.MsgCreateClientResponse' },
+  { parser: _14.MsgUpdateClient, typeUrl: '/ibc.core.client.v1.MsgUpdateClient' },
+  { parser: _15.MsgUpdateClientResponse, typeUrl: '/ibc.core.client.v1.MsgUpdateClientResponse' },
+  { parser: _16.MsgUpgradeClient, typeUrl: '/ibc.core.client.v1.MsgUpgradeClient' },
+  { parser: _17.MsgUpgradeClientResponse, typeUrl: '/ibc.core.client.v1.MsgUpgradeClientResponse' },
+  { parser: _18.MsgSubmitMisbehaviour, typeUrl: '/ibc.core.client.v1.MsgSubmitMisbehaviour' },
+  { parser: _19.MsgSubmitMisbehaviourResponse, typeUrl: '/ibc.core.client.v1.MsgSubmitMisbehaviourResponse' },
+  { parser: _20.MsgRecoverClient, typeUrl: '/ibc.core.client.v1.MsgRecoverClient' },
+  { parser: _21.MsgRecoverClientResponse, typeUrl: '/ibc.core.client.v1.MsgRecoverClientResponse' },
+  { parser: _22.MsgIBCSoftwareUpgrade, typeUrl: '/ibc.core.client.v1.MsgIBCSoftwareUpgrade' },
+  { parser: _23.MsgIBCSoftwareUpgradeResponse, typeUrl: '/ibc.core.client.v1.MsgIBCSoftwareUpgradeResponse' },
+  { parser: _24.MsgUpdateParams, typeUrl: '/ibc.core.client.v1.MsgUpdateParams' },
+  { parser: _25.MsgUpdateParamsResponse, typeUrl: '/ibc.core.client.v1.MsgUpdateParamsResponse' },
+  { parser: _26.MsgServiceName, typeUrl: '/ibc.core.client.v1.MsgServiceName' },
+  { parser: _27.MsgClientImpl, typeUrl: '/ibc.core.client.v1.MsgClientImpl' },
+  { parser: _28.MsgChannelOpenInit, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenInit' },
+  { parser: _29.MsgChannelOpenInitResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenInitResponse' },
+  { parser: _30.MsgChannelOpenTry, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenTry' },
+  { parser: _31.MsgChannelOpenTryResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenTryResponse' },
+  { parser: _32.MsgChannelOpenAck, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenAck' },
+  { parser: _33.MsgChannelOpenAckResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenAckResponse' },
+  { parser: _34.MsgChannelOpenConfirm, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenConfirm' },
+  { parser: _35.MsgChannelOpenConfirmResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelOpenConfirmResponse' },
+  { parser: _36.MsgChannelCloseInit, typeUrl: '/ibc.core.channel.v1.MsgChannelCloseInit' },
+  { parser: _37.MsgChannelCloseInitResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelCloseInitResponse' },
+  { parser: _38.MsgChannelCloseConfirm, typeUrl: '/ibc.core.channel.v1.MsgChannelCloseConfirm' },
+  { parser: _39.MsgChannelCloseConfirmResponse, typeUrl: '/ibc.core.channel.v1.MsgChannelCloseConfirmResponse' },
+  { parser: _40.MsgRecvPacket, typeUrl: '/ibc.core.channel.v1.MsgRecvPacket' },
+  { parser: _41.MsgRecvPacketResponse, typeUrl: '/ibc.core.channel.v1.MsgRecvPacketResponse' },
+  { parser: _42.MsgTimeout, typeUrl: '/ibc.core.channel.v1.MsgTimeout' },
+  { parser: _43.MsgTimeoutResponse, typeUrl: '/ibc.core.channel.v1.MsgTimeoutResponse' },
+  { parser: _44.MsgTimeoutOnClose, typeUrl: '/ibc.core.channel.v1.MsgTimeoutOnClose' },
+  { parser: _45.MsgTimeoutOnCloseResponse, typeUrl: '/ibc.core.channel.v1.MsgTimeoutOnCloseResponse' },
+  { parser: _46.MsgAcknowledgement, typeUrl: '/ibc.core.channel.v1.MsgAcknowledgement' },
+  { parser: _47.MsgAcknowledgementResponse, typeUrl: '/ibc.core.channel.v1.MsgAcknowledgementResponse' },
+  { parser: _48.MsgServiceName, typeUrl: '/ibc.core.channel.v1.MsgServiceName' },
+  { parser: _49.MsgClientImpl, typeUrl: '/ibc.core.channel.v1.MsgClientImpl' },
+  { parser: _50.MsgTransfer, typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' },
+  { parser: _51.MsgTransferResponse, typeUrl: '/ibc.applications.transfer.v1.MsgTransferResponse' },
+  { parser: _52.MsgUpdateParams, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParams' },
+  { parser: _53.MsgUpdateParamsResponse, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParamsResponse' },
+  { parser: _54.MsgServiceName, typeUrl: '/ibc.applications.transfer.v1.MsgServiceName' },
+  { parser: _55.MsgClientImpl, typeUrl: '/ibc.applications.transfer.v1.MsgClientImpl' },
+  { parser: _56.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParams' },
+  { parser: _57.MsgUpdateParamsResponse, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParamsResponse' },
+  { parser: _58.MsgServiceName, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgServiceName' },
+  { parser: _59.MsgClientImpl, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgClientImpl' },
+  { parser: _60.MsgRegisterInterchainAccount, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount' },
+  { parser: _61.MsgRegisterInterchainAccountResponse, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccountResponse' },
+  { parser: _62.MsgSendTx, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx' },
+  { parser: _63.MsgSendTxResponse, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTxResponse' },
+  { parser: _64.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParams' },
+  { parser: _65.MsgUpdateParamsResponse, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParamsResponse' },
+  { parser: _66.MsgServiceName, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgServiceName' },
+  { parser: _67.MsgClientImpl, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgClientImpl' },
+  { parser: _68.MsgRegisterPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayee' },
+  { parser: _69.MsgRegisterPayeeResponse, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayeeResponse' },
+  { parser: _70.MsgRegisterCounterpartyPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee' },
+  { parser: _71.MsgRegisterCounterpartyPayeeResponse, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayeeResponse' },
+  { parser: _72.MsgPayPacketFee, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFee' },
+  { parser: _73.MsgPayPacketFeeResponse, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeResponse' },
+  { parser: _74.MsgPayPacketFeeAsync, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsync' },
+  { parser: _75.MsgPayPacketFeeAsyncResponse, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsyncResponse' },
+  { parser: _76.MsgServiceName, typeUrl: '/ibc.applications.fee.v1.MsgServiceName' },
+  { parser: _77.MsgClientImpl, typeUrl: '/ibc.applications.fee.v1.MsgClientImpl' },
+  { parser: _78.MsgCreateVestingAccount, typeUrl: '/cosmos.vesting.v1beta1.MsgCreateVestingAccount' },
+  { parser: _79.MsgCreateVestingAccountResponse, typeUrl: '/cosmos.vesting.v1beta1.MsgCreateVestingAccountResponse' },
+  { parser: _80.MsgCreatePermanentLockedAccount, typeUrl: '/cosmos.vesting.v1beta1.MsgCreatePermanentLockedAccount' },
+  { parser: _81.MsgCreatePermanentLockedAccountResponse, typeUrl: '/cosmos.vesting.v1beta1.MsgCreatePermanentLockedAccountResponse' },
+  { parser: _82.MsgCreatePeriodicVestingAccount, typeUrl: '/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccount' },
+  { parser: _83.MsgCreatePeriodicVestingAccountResponse, typeUrl: '/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccountResponse' },
+  { parser: _84.MsgServiceName, typeUrl: '/cosmos.vesting.v1beta1.MsgServiceName' },
+  { parser: _85.MsgClientImpl, typeUrl: '/cosmos.vesting.v1beta1.MsgClientImpl' },
+  { parser: _86.MsgSoftwareUpgrade, typeUrl: '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade' },
+  { parser: _87.MsgSoftwareUpgradeResponse, typeUrl: '/cosmos.upgrade.v1beta1.MsgSoftwareUpgradeResponse' },
+  { parser: _88.MsgCancelUpgrade, typeUrl: '/cosmos.upgrade.v1beta1.MsgCancelUpgrade' },
+  { parser: _89.MsgCancelUpgradeResponse, typeUrl: '/cosmos.upgrade.v1beta1.MsgCancelUpgradeResponse' },
+  { parser: _90.MsgServiceName, typeUrl: '/cosmos.upgrade.v1beta1.MsgServiceName' },
+  { parser: _91.MsgClientImpl, typeUrl: '/cosmos.upgrade.v1beta1.MsgClientImpl' },
+  { parser: _92.MsgData, typeUrl: '/cosmos.base.abci.v1beta1.MsgData' },
+  { parser: _93.MsgCreateValidator, typeUrl: '/cosmos.staking.v1beta1.MsgCreateValidator' },
+  { parser: _94.MsgCreateValidatorResponse, typeUrl: '/cosmos.staking.v1beta1.MsgCreateValidatorResponse' },
+  { parser: _95.MsgEditValidator, typeUrl: '/cosmos.staking.v1beta1.MsgEditValidator' },
+  { parser: _96.MsgEditValidatorResponse, typeUrl: '/cosmos.staking.v1beta1.MsgEditValidatorResponse' },
+  { parser: _97.MsgDelegate, typeUrl: '/cosmos.staking.v1beta1.MsgDelegate' },
+  { parser: _98.MsgDelegateResponse, typeUrl: '/cosmos.staking.v1beta1.MsgDelegateResponse' },
+  { parser: _99.MsgBeginRedelegate, typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate' },
+  { parser: _100.MsgBeginRedelegateResponse, typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegateResponse' },
+  { parser: _101.MsgUndelegate, typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate' },
+  { parser: _102.MsgUndelegateResponse, typeUrl: '/cosmos.staking.v1beta1.MsgUndelegateResponse' },
+  { parser: _103.MsgCancelUnbondingDelegation, typeUrl: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation' },
+  { parser: _104.MsgCancelUnbondingDelegationResponse, typeUrl: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegationResponse' },
+  { parser: _105.MsgServiceName, typeUrl: '/cosmos.staking.v1beta1.MsgServiceName' },
+  { parser: _106.MsgClientImpl, typeUrl: '/cosmos.staking.v1beta1.MsgClientImpl' },
+  { parser: _107.MsgUnjail, typeUrl: '/cosmos.slashing.v1beta1.MsgUnjail' },
+  { parser: _108.MsgUnjailResponse, typeUrl: '/cosmos.slashing.v1beta1.MsgUnjailResponse' },
+  { parser: _109.MsgServiceName, typeUrl: '/cosmos.slashing.v1beta1.MsgServiceName' },
+  { parser: _110.MsgClientImpl, typeUrl: '/cosmos.slashing.v1beta1.MsgClientImpl' },
+  { parser: _111.MsgSend, typeUrl: '/cosmos.nft.v1beta1.MsgSend' },
+  { parser: _112.MsgSendResponse, typeUrl: '/cosmos.nft.v1beta1.MsgSendResponse' },
+  { parser: _113.MsgServiceName, typeUrl: '/cosmos.nft.v1beta1.MsgServiceName' },
+  { parser: _114.MsgClientImpl, typeUrl: '/cosmos.nft.v1beta1.MsgClientImpl' },
+  { parser: _115.MsgCreateGroup, typeUrl: '/cosmos.group.v1.MsgCreateGroup' },
+  { parser: _116.MsgCreateGroupResponse, typeUrl: '/cosmos.group.v1.MsgCreateGroupResponse' },
+  { parser: _117.MsgUpdateGroupMembers, typeUrl: '/cosmos.group.v1.MsgUpdateGroupMembers' },
+  { parser: _118.MsgUpdateGroupMembersResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupMembersResponse' },
+  { parser: _119.MsgUpdateGroupAdmin, typeUrl: '/cosmos.group.v1.MsgUpdateGroupAdmin' },
+  { parser: _120.MsgUpdateGroupAdminResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupAdminResponse' },
+  { parser: _121.MsgUpdateGroupMetadata, typeUrl: '/cosmos.group.v1.MsgUpdateGroupMetadata' },
+  { parser: _122.MsgUpdateGroupMetadataResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupMetadataResponse' },
+  { parser: _123.MsgCreateGroupPolicy, typeUrl: '/cosmos.group.v1.MsgCreateGroupPolicy' },
+  { parser: _124.MsgCreateGroupPolicyResponse, typeUrl: '/cosmos.group.v1.MsgCreateGroupPolicyResponse' },
+  { parser: _125.MsgUpdateGroupPolicyAdmin, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyAdmin' },
+  { parser: _126.MsgCreateGroupWithPolicy, typeUrl: '/cosmos.group.v1.MsgCreateGroupWithPolicy' },
+  { parser: _127.MsgCreateGroupWithPolicyResponse, typeUrl: '/cosmos.group.v1.MsgCreateGroupWithPolicyResponse' },
+  { parser: _128.MsgUpdateGroupPolicyAdminResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyAdminResponse' },
+  { parser: _129.MsgUpdateGroupPolicyDecisionPolicy, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy' },
+  { parser: _130.MsgUpdateGroupPolicyDecisionPolicyResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicyResponse' },
+  { parser: _131.MsgUpdateGroupPolicyMetadata, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyMetadata' },
+  { parser: _132.MsgUpdateGroupPolicyMetadataResponse, typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyMetadataResponse' },
+  { parser: _133.MsgSubmitProposal, typeUrl: '/cosmos.group.v1.MsgSubmitProposal' },
+  { parser: _134.MsgSubmitProposalResponse, typeUrl: '/cosmos.group.v1.MsgSubmitProposalResponse' },
+  { parser: _135.MsgWithdrawProposal, typeUrl: '/cosmos.group.v1.MsgWithdrawProposal' },
+  { parser: _136.MsgWithdrawProposalResponse, typeUrl: '/cosmos.group.v1.MsgWithdrawProposalResponse' },
+  { parser: _137.MsgVote, typeUrl: '/cosmos.group.v1.MsgVote' },
+  { parser: _138.MsgVoteResponse, typeUrl: '/cosmos.group.v1.MsgVoteResponse' },
+  { parser: _139.MsgExec, typeUrl: '/cosmos.group.v1.MsgExec' },
+  { parser: _140.MsgExecResponse, typeUrl: '/cosmos.group.v1.MsgExecResponse' },
+  { parser: _141.MsgLeaveGroup, typeUrl: '/cosmos.group.v1.MsgLeaveGroup' },
+  { parser: _142.MsgLeaveGroupResponse, typeUrl: '/cosmos.group.v1.MsgLeaveGroupResponse' },
+  { parser: _143.MsgServiceName, typeUrl: '/cosmos.group.v1.MsgServiceName' },
+  { parser: _144.MsgClientImpl, typeUrl: '/cosmos.group.v1.MsgClientImpl' },
+  { parser: _145.MsgSubmitProposal, typeUrl: '/cosmos.gov.v1beta1.MsgSubmitProposal' },
+  { parser: _146.MsgSubmitProposalResponse, typeUrl: '/cosmos.gov.v1beta1.MsgSubmitProposalResponse' },
+  { parser: _147.MsgVote, typeUrl: '/cosmos.gov.v1beta1.MsgVote' },
+  { parser: _148.MsgVoteResponse, typeUrl: '/cosmos.gov.v1beta1.MsgVoteResponse' },
+  { parser: _149.MsgVoteWeighted, typeUrl: '/cosmos.gov.v1beta1.MsgVoteWeighted' },
+  { parser: _150.MsgVoteWeightedResponse, typeUrl: '/cosmos.gov.v1beta1.MsgVoteWeightedResponse' },
+  { parser: _151.MsgDeposit, typeUrl: '/cosmos.gov.v1beta1.MsgDeposit' },
+  { parser: _152.MsgDepositResponse, typeUrl: '/cosmos.gov.v1beta1.MsgDepositResponse' },
+  { parser: _153.MsgServiceName, typeUrl: '/cosmos.gov.v1beta1.MsgServiceName' },
+  { parser: _154.MsgClientImpl, typeUrl: '/cosmos.gov.v1beta1.MsgClientImpl' },
+  { parser: _155.MsgSubmitProposal, typeUrl: '/cosmos.gov.v1.MsgSubmitProposal' },
+  { parser: _156.MsgSubmitProposalResponse, typeUrl: '/cosmos.gov.v1.MsgSubmitProposalResponse' },
+  { parser: _157.MsgExecLegacyContent, typeUrl: '/cosmos.gov.v1.MsgExecLegacyContent' },
+  { parser: _158.MsgExecLegacyContentResponse, typeUrl: '/cosmos.gov.v1.MsgExecLegacyContentResponse' },
+  { parser: _159.MsgVote, typeUrl: '/cosmos.gov.v1.MsgVote' },
+  { parser: _160.MsgVoteResponse, typeUrl: '/cosmos.gov.v1.MsgVoteResponse' },
+  { parser: _161.MsgVoteWeighted, typeUrl: '/cosmos.gov.v1.MsgVoteWeighted' },
+  { parser: _162.MsgVoteWeightedResponse, typeUrl: '/cosmos.gov.v1.MsgVoteWeightedResponse' },
+  { parser: _163.MsgDeposit, typeUrl: '/cosmos.gov.v1.MsgDeposit' },
+  { parser: _164.MsgDepositResponse, typeUrl: '/cosmos.gov.v1.MsgDepositResponse' },
+  { parser: _165.MsgServiceName, typeUrl: '/cosmos.gov.v1.MsgServiceName' },
+  { parser: _166.MsgClientImpl, typeUrl: '/cosmos.gov.v1.MsgClientImpl' },
+  { parser: _167.MsgGrantAllowance, typeUrl: '/cosmos.feegrant.v1beta1.MsgGrantAllowance' },
+  { parser: _168.MsgGrantAllowanceResponse, typeUrl: '/cosmos.feegrant.v1beta1.MsgGrantAllowanceResponse' },
+  { parser: _169.MsgRevokeAllowance, typeUrl: '/cosmos.feegrant.v1beta1.MsgRevokeAllowance' },
+  { parser: _170.MsgRevokeAllowanceResponse, typeUrl: '/cosmos.feegrant.v1beta1.MsgRevokeAllowanceResponse' },
+  { parser: _171.MsgServiceName, typeUrl: '/cosmos.feegrant.v1beta1.MsgServiceName' },
+  { parser: _172.MsgClientImpl, typeUrl: '/cosmos.feegrant.v1beta1.MsgClientImpl' },
+  { parser: _173.MsgSubmitEvidence, typeUrl: '/cosmos.evidence.v1beta1.MsgSubmitEvidence' },
+  { parser: _174.MsgSubmitEvidenceResponse, typeUrl: '/cosmos.evidence.v1beta1.MsgSubmitEvidenceResponse' },
+  { parser: _175.MsgServiceName, typeUrl: '/cosmos.evidence.v1beta1.MsgServiceName' },
+  { parser: _176.MsgClientImpl, typeUrl: '/cosmos.evidence.v1beta1.MsgClientImpl' },
+  { parser: _177.MsgSetWithdrawAddress, typeUrl: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddress' },
+  { parser: _178.MsgSetWithdrawAddressResponse, typeUrl: '/cosmos.distribution.v1beta1.MsgSetWithdrawAddressResponse' },
+  { parser: _179.MsgWithdrawDelegatorReward, typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward' },
+  { parser: _180.MsgWithdrawDelegatorRewardResponse, typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewardResponse' },
+  { parser: _181.MsgWithdrawValidatorCommission, typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission' },
+  { parser: _182.MsgWithdrawValidatorCommissionResponse, typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommissionResponse' },
+  { parser: _183.MsgFundCommunityPool, typeUrl: '/cosmos.distribution.v1beta1.MsgFundCommunityPool' },
+  { parser: _184.MsgFundCommunityPoolResponse, typeUrl: '/cosmos.distribution.v1beta1.MsgFundCommunityPoolResponse' },
+  { parser: _185.MsgServiceName, typeUrl: '/cosmos.distribution.v1beta1.MsgServiceName' },
+  { parser: _186.MsgClientImpl, typeUrl: '/cosmos.distribution.v1beta1.MsgClientImpl' },
+  { parser: _187.MsgVerifyInvariant, typeUrl: '/cosmos.crisis.v1beta1.MsgVerifyInvariant' },
+  { parser: _188.MsgVerifyInvariantResponse, typeUrl: '/cosmos.crisis.v1beta1.MsgVerifyInvariantResponse' },
+  { parser: _189.MsgServiceName, typeUrl: '/cosmos.crisis.v1beta1.MsgServiceName' },
+  { parser: _190.MsgClientImpl, typeUrl: '/cosmos.crisis.v1beta1.MsgClientImpl' },
+  { parser: _191.MsgDescriptor, typeUrl: '/cosmos.base.reflection.v2alpha1.MsgDescriptor' },
+  { parser: _192.MsgSend, typeUrl: '/cosmos.bank.v1beta1.MsgSend' },
+  { parser: _193.MsgSendResponse, typeUrl: '/cosmos.bank.v1beta1.MsgSendResponse' },
+  { parser: _194.MsgMultiSend, typeUrl: '/cosmos.bank.v1beta1.MsgMultiSend' },
+  { parser: _195.MsgMultiSendResponse, typeUrl: '/cosmos.bank.v1beta1.MsgMultiSendResponse' },
+  { parser: _196.MsgServiceName, typeUrl: '/cosmos.bank.v1beta1.MsgServiceName' },
+  { parser: _197.MsgClientImpl, typeUrl: '/cosmos.bank.v1beta1.MsgClientImpl' },
+  { parser: _198.MsgGrant, typeUrl: '/cosmos.authz.v1beta1.MsgGrant' },
+  { parser: _199.MsgExecResponse, typeUrl: '/cosmos.authz.v1beta1.MsgExecResponse' },
+  { parser: _200.MsgExec, typeUrl: '/cosmos.authz.v1beta1.MsgExec' },
+  { parser: _201.MsgGrantResponse, typeUrl: '/cosmos.authz.v1beta1.MsgGrantResponse' },
+  { parser: _202.MsgRevoke, typeUrl: '/cosmos.authz.v1beta1.MsgRevoke' },
+  { parser: _203.MsgRevokeResponse, typeUrl: '/cosmos.authz.v1beta1.MsgRevokeResponse' },
+  { parser: _204.MsgServiceName, typeUrl: '/cosmos.authz.v1beta1.MsgServiceName' },
+  { parser: _205.MsgClientImpl, typeUrl: '/cosmos.authz.v1beta1.MsgClientImpl' },
+  { parser: _206.MsgVersionChange, typeUrl: '/celestia.upgrade.v1.MsgVersionChange' },
+  { parser: _207.MsgRegisterEVMAddress, typeUrl: '/celestia.qgb.v1.MsgRegisterEVMAddress' },
+  { parser: _208.MsgRegisterEVMAddressResponse, typeUrl: '/celestia.qgb.v1.MsgRegisterEVMAddressResponse' },
+  { parser: _209.MsgServiceName, typeUrl: '/celestia.qgb.v1.MsgServiceName' },
+  { parser: _210.MsgClientImpl, typeUrl: '/celestia.qgb.v1.MsgClientImpl' },
+  { parser: _211.MsgPayForBlobs, typeUrl: '/celestia.blob.v1.MsgPayForBlobs' },
+  { parser: _212.MsgPayForBlobsResponse, typeUrl: '/celestia.blob.v1.MsgPayForBlobsResponse' },
+  { parser: _213.MsgServiceName, typeUrl: '/celestia.blob.v1.MsgServiceName' },
+  { parser: _214.MsgClientImpl, typeUrl: '/celestia.blob.v1.MsgClientImpl' },
+];
