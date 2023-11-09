@@ -9,10 +9,20 @@ batches = [
         "name": "celestia-app",
         "main_repo": ('https://github.com/celestiaorg/celestia-app', 'proto'),
         "dependencies": [
-            ('https://github.com/cosmos/gogoproto', '.'),
+            ('https://github.com/regen-network/protobuf', '.'),
             ('https://github.com/cosmos/cosmos-proto', 'proto'),
             ('https://github.com/googleapis/googleapis', '.'),
             # Add more dependency tuples as needed
+        ]
+    },
+    {
+        "name": "celestiaorg_cosmos-sdk",
+        "main_repo": ('https://github.com/celestiaorg/cosmos-sdk', 'proto'),
+        "dependencies": [
+            ('https://github.com/celestiaorg/cosmos-sdk', 'third_party/proto/google/protobuf'),
+            ('https://github.com/regen-network/protobuf', '.'),
+            ('https://github.com/cosmos/cosmos-proto', 'proto'),
+            ('https://github.com/googleapis/googleapis', '.'),
         ]
     },
     # Add more batches as needed
