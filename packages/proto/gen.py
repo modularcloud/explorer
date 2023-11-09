@@ -12,7 +12,6 @@ batches = [
             ('https://github.com/regen-network/protobuf', '.'),
             ('https://github.com/cosmos/cosmos-proto', 'proto'),
             ('https://github.com/googleapis/googleapis', '.'),
-            # Add more dependency tuples as needed
         ]
     },
     {
