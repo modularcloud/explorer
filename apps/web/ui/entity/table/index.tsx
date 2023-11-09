@@ -96,7 +96,6 @@ function TableContent({ initialData, route }: Props) {
         pageParams: [undefined],
       },
       initialPageParam: undefined,
-      staleTime: Infinity,
     });
 
   const flatData = React.useMemo(

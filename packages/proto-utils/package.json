@@ -1,0 +1,19 @@
+{
+    "name": "proto-utils",
+    "version": "0.0.0",
+    "license": "MIT",
+    "main": "./index.ts",
+    "types": "./index.ts",
+    "scripts": {
+        "gen": "npm run gen:proto && npm run gen:ts",
+        "gen:proto": "python gen.py",
+        "gen:ts": "tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js"
+    },
+    "devDependencies": {
+        "typescript": "^4.5.2"
+    },
+    "dependencies": {
+        "glob": "^10.3.10",
+        "ts-proto": "^1.139.0"
+    }
+}
