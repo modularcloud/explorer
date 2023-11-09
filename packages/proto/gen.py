@@ -3,9 +3,10 @@ import subprocess
 import shutil
 from git import Repo
 
-# Define your batches with a main repository and dependencies
+# Define your batches with a main repository, dependencies, and a name for the output directory
 batches = [
     {
+        "name": "celestia-app",
         "main_repo": ('https://github.com/celestiaorg/celestia-app', 'proto'),
         "dependencies": [
             ('https://github.com/cosmos/gogoproto', '.'),
@@ -15,12 +16,8 @@ batches = [
     # Add more batches as needed
 ]
 
-# Define the output directory for TypeScript files
-ts_output_dir = 'ts-out'
-os.makedirs(ts_output_dir, exist_ok=True)
-
 # Function to compile .proto files
-def compile_protos(proto_path, import_paths):
+def compile_protos(proto_path, import_paths, ts_output_dir):
     for root, dirs, files in os.walk(proto_path):
         for file in files:
             if file.endswith('.proto'):
@@ -42,8 +39,13 @@ def compile_protos(proto_path, import_paths):
 
 # Process each batch
 for batch in batches:
+    batch_name = batch["name"]
     main_repo_url, main_proto_dir = batch["main_repo"]
     dependencies = batch["dependencies"]
+
+    # Define and create the output directory for this batch
+    ts_output_dir = os.path.join('ts-out', batch_name)
+    os.makedirs(ts_output_dir, exist_ok=True)
 
     # Clone and compile for the main repository
     main_repo_name = main_repo_url.split('/')[-1]
@@ -68,7 +70,7 @@ for batch in batches:
 
     # Compile protobuf files from the main repository
     print(f'Starting compilation of protobuf files in {main_proto_dir}...')
-    compile_protos(os.path.join(main_repo_name, main_proto_dir), import_paths)
+    compile_protos(os.path.join(main_repo_name, main_proto_dir), import_paths, ts_output_dir)
     print(f'Completed compilation of protobuf files in {main_proto_dir}.')
 
-print('All tasks completed. TypeScript files are in the directory:', ts_output_dir)
+print('All tasks completed. Check each batch\'s directory inside ts-out for TypeScript files.')
