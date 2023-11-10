@@ -132,10 +132,6 @@ export const CelestiaNamespaceResolver = createResolver(
             columnLabel: "Transaction",
           },
           {
-            columnLabel: "Data",
-            breakpoint: "lg",
-          },
-          {
             columnLabel: "Rollup",
           },
         ],
