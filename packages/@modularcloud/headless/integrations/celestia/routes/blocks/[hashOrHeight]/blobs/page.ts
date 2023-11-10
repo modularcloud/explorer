@@ -145,10 +145,6 @@ export const CelestiaBlockBlobsResolver = createResolver(
             columnLabel: "Transaction",
           },
           {
-            columnLabel: "Data",
-            breakpoint: "lg",
-          },
-          {
             columnLabel: "Rollup",
           },
         ],

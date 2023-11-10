@@ -56,9 +56,6 @@ export const CelestiaTransactionBlobsResolver = createResolver(
             columnLabel: "Namespace",
           },
           {
-            columnLabel: "Data",
-          },
-          {
             columnLabel: "Rollup",
           },
         ],
@@ -77,21 +74,8 @@ export const CelestiaTransactionBlobsResolver = createResolver(
                 .map((entry) => {
                   const { Transaction, ...properties } =
                     entry.sidebar.properties;
-                  const { Data, ...rest } = entry.row;
                   return {
-                    row: {
-                      Data:
-                        Data.type === "longval"
-                          ? {
-                              type: "longval",
-                              payload: {
-                                value: Data.payload.value,
-                                strategy: "end",
-                              },
-                            }
-                          : Data,
-                      ...rest,
-                    },
+                    row: entry.row,
                     sidebar: {
                       headerKey: "Spotlight",
                       headerValue: "Blob",
