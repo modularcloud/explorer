@@ -30,28 +30,57 @@ export function Treemap(props: Props) {
 
   const treemapData = useMemo(() => {
     const colors = ["#daccff8f", "#d2d4fe8f", "#D6E1FF8F"];
+
     const sortedData = Object.entries(props.data)
       .map(([name, size]) => ({ name, value: size }))
       .sort((a, b) => b.value - a.value);
 
-    const colorCategorizedData = sortedData
+    const data = {
+      name: "All Namespaces",
+      children: sortedData,
+    };
+
+    // A dummy treemap in D3.js is created to pre-calculate layouts, ensuring no gaps in the visualization when dynamically filtering values.
+    const dummyRoot = d3.hierarchy(data).sum((d: any) => d.value);
+    const dummyTreemapRoot = d3.treemap().size([450, 250]).padding(4)(
+      dummyRoot,
+    );
+
+    const filteredChildren = data.children.filter((d: any) => {
+      const node = dummyTreemapRoot
+        .descendants()
+        .find((n: any) => n.data.name === d.name);
+      if (!node) return false;
+      return (
+        node.x1 - node.x0 > labelSkipSize && node.y1 - node.y0 > labelSkipSize
+      );
+    });
+    const filteredData = {
+      name: "All Namespaces",
+      children: filteredChildren,
+    };
+    const segmentLength = Math.floor(filteredChildren.length / 3);
+
+    const colorCategorizedData = filteredChildren
       .map((item, index) => {
-        const colorIndex = Math.floor(
-          index / Math.round(sortedData.length / 3),
-        );
+        // Set tile  to 0, 1, or 2 based on whether index is in the first, second, or third segment of the array, respectively.
+        const colorIndex =
+          index < segmentLength
+            ? 0
+            : index < 2 * segmentLength ||
+              (filteredChildren.length % 3 === 0 && index < 3 * segmentLength)
+            ? 1
+            : 2;
+        console.log(colors[colorIndex]);
+
         return {
           ...item,
           tileColor: colors[colorIndex] || colors[colors.length - 1],
         };
       })
       .slice(0, 25);
-
-    const data = {
-      name: "All Namespaces",
-      children: colorCategorizedData,
-    };
-
-    const root = d3.hierarchy(data).sum((d: any) => d.value);
+    filteredData.children = colorCategorizedData;
+    const root = d3.hierarchy(filteredData).sum((d: any) => d.value);
     const treemapRoot = d3.treemap().size([430, 300]).padding(4)(root);
 
     return treemapRoot
@@ -69,15 +98,24 @@ export function Treemap(props: Props) {
       .join("g")
       .attr("transform", (d) => `translate(${d.x0},${d.y0})`)
       .attr("display", "relative");
-    const tooltip = d3
-      .select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background-color", "white")
-      .style("padding", "5px")
-      .style("border-radius", "4px")
-      .style("opacity", 0);
+    let tooltip = d3.select("body").select(".tooltip") as d3.Selection<
+      HTMLDivElement,
+      unknown,
+      HTMLElement,
+      any
+    >;
+
+    if (tooltip.empty()) {
+      tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("background-color", "white")
+        .style("padding", "5px")
+        .style("border-radius", "4px")
+        .style("opacity", 0);
+    }
     leaf
       .append("rect")
       .attr("stroke", (d: any) => {
@@ -127,13 +165,10 @@ export function Treemap(props: Props) {
           .style("top", event.pageY + 5 + "px")
           .on("mousemove", function (event) {
             const [mouseX, mouseY] = d3.pointer(event);
-
             const tooltipWidth = tooltip.node()?.offsetWidth || 200;
-
             const offset = 10;
             const tooltipX = mouseX - tooltipWidth - offset;
             const tooltipY = mouseY;
-
             tooltip
               .style("left", `${tooltipX}px`)
               .style("top", `${tooltipY}px`);
