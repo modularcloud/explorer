@@ -24,7 +24,6 @@ export function CelestiaWidgetLayout({ network }: Props) {
   if (!network) return null;
 
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
-
   const latestBlocks = useLatestBlocks(network.id);
 
   const latestTransactions = useLatestTransactions(network.id);
@@ -49,13 +48,13 @@ export function CelestiaWidgetLayout({ network }: Props) {
         "--color-primary": network.brandColor,
       }}
       className={cn(
-        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",
+        "grid auto-cols-[145px] auto-rows-[minmax(145px,_1fr)] grid-cols-2 md:grid-cols-4 lg:grid-cols-5",
         "w-full gap-4 font-medium",
         "accent-primary place-items-stretch",
       )}
     >
       <IconCard
-        className="lg:col-span-1 row-span-1 lg:row-start-3"
+        className="row-span-1 lg:col-span-1 lg:row-start-3"
         label="NAMESPACES"
         icon={Folder}
         value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
@@ -70,7 +69,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
 
       <LatestTransactions
         networkSlug={network.id}
-        className="col-span-2 row-span-2 row-start-1 col-start-1"
+        className="col-span-2 col-start-1 row-span-2 row-start-1"
         data={
           latestTransactions?.data?.body?.type === "collection"
             ? latestTransactions?.data?.body?.entries.map((entry: any) => {
@@ -86,21 +85,21 @@ export function CelestiaWidgetLayout({ network }: Props) {
       />
 
       <IconCard
-        className="lg:row-start-2 lg:col-start-3 sm:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-6"
+        className="sm:col-span-2 sm:col-start-1 sm:row-start-6 lg:col-span-1 lg:col-start-3 lg:row-start-2"
         label="TOTAL BLOCKS"
         icon={Disabled}
         value={parseInt(apiResult.blockHeight).toLocaleString("en-US")}
       />
 
       <IconCard
-        className="lg:row-start-3 lg:col-start-1 lg:col-span-2 sm:row-start-1 sm:col-start-3 row-start-3 col-start-1"
+        className="col-start-1 row-start-3 sm:col-start-3 sm:row-start-1 lg:col-span-2 lg:col-start-1 lg:row-start-3"
         label="TOTAL BLOBS"
         icon={Document}
         value={apiResult.metrics.BLOB.toLocaleString("en-US")}
       />
 
       <IconCard
-        className="lg:row-start-1 lg:col-start-3 col-span-2 sm:col-span-1"
+        className="col-span-2 sm:col-span-1 lg:col-start-3 lg:row-start-1"
         label="GAS PRICE"
         icon={Document}
         value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
@@ -110,7 +109,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
 
       <IconCard
         label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-4 lg:col-span-2 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
+        className="col-start-2 row-start-3 sm:col-start-4 sm:row-start-1 lg:col-span-2 lg:col-start-4 lg:row-start-3"
         icon={BarChart}
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
@@ -118,7 +117,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
       <Treemap
         networkId={network.id}
         data={apiResult.metrics.LAST_100_BLOBS_SIZE}
-        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+        className="order-first col-span-2 row-span-2 lg:col-start-4 lg:row-start-1"
       />
 
       {/* <LatestBlocks
@@ -161,31 +160,31 @@ function Placeholder(props: {
 
 export function SvmSkeleton(props: { error?: string }) {
   return (
-    <div className="w-full grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px] relative">
+    <div className="relative grid w-full auto-cols-[145px] auto-rows-[145px] grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
       {props.error && (
-        <div className="absolute inset-0 backdrop-blur-md rounded-lg text-center p-24 border border-red-400">
-          <p className="text-red-400 text-lg">
+        <div className="absolute inset-0 rounded-lg border border-red-400 p-24 text-center backdrop-blur-md">
+          <p className="text-lg text-red-400">
             ⚠️ An Error Occured while loading the widgets :&nbsp;
             <strong className="font-medium">{props.error}</strong>
           </p>
         </div>
       )}
 
-      <Placeholder className="lg:row-start-1 lg:col-start-3" />
+      <Placeholder className="lg:col-start-3 lg:row-start-1" />
 
       <Placeholder className="col-span-2 row-span-2" />
 
-      <Placeholder className="lg:row-start-2 lg:col-start-3" />
+      <Placeholder className="lg:col-start-3 lg:row-start-2" />
 
-      <Placeholder className="lg:row-start-3 lg:col-start-1" />
+      <Placeholder className="lg:col-start-1 lg:row-start-3" />
 
-      <Placeholder className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2" />
+      <Placeholder className="col-start-2 row-start-3 sm:col-start-4 sm:row-start-1 lg:col-start-5 lg:row-start-3" />
 
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
+      <Placeholder className="row-span-1 hidden lg:col-span-1 lg:row-start-3 lg:block" />
+      <Placeholder className="row-span-1 hidden lg:col-span-1 lg:row-start-3 lg:block" />
+      <Placeholder className="row-span-1 hidden lg:col-span-1 lg:row-start-3 lg:block" />
 
-      <Placeholder className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4" />
+      <Placeholder className="order-first col-span-2 row-span-2 lg:col-start-4 lg:row-start-1" />
     </div>
   );
 }

@@ -36,7 +36,9 @@ export function Treemap(props: Props) {
 
     const colorCategorizedData = sortedData
       .map((item, index) => {
-        const colorIndex = Math.floor(index / 10);
+        const colorIndex = Math.floor(
+          index / Math.round(sortedData.length / 3),
+        );
         return {
           ...item,
           tileColor: colors[colorIndex] || colors[colors.length - 1],
@@ -78,7 +80,7 @@ export function Treemap(props: Props) {
       .style("opacity", 0);
     leaf
       .append("rect")
-      .attr("stroke", (d) => {
+      .attr("stroke", (d: any) => {
         return d.data.tileColor;
       }) // Color of the border
       .attr("stroke-width", 1)
@@ -147,7 +149,7 @@ export function Treemap(props: Props) {
       })
       .on("click", (event, d: any) => {
         tooltip.style("opacity", 0);
-        router.push(`/${props.networkId}/namespace/${d.data.name}`);
+        router.push(`/${props.networkId}/namespaces/${d.data.name}`);
       })
       .attr("ry", 5);
 
@@ -195,7 +197,7 @@ export function Treemap(props: Props) {
 
   return (
     <Card className={cn("flex flex-col p-0  ", props.className)}>
-      <header className=" flex items-center  border-b border-mid-dark-100 p-3 justify-between text">
+      <header className=" border-mid-dark-100 text  flex items-center justify-between border-b p-3">
         <p className="text-lg">Data Usage</p>
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
