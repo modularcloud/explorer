@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import * as d3 from "d3";
 import { Card } from "~/ui/card";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ interface Props {
 }
 
 export function Treemap(props: Props) {
+  const [viewBox, setViewBox] = useState("0 0 435 310");
   const router = useRouter();
   const labelSkipSize = 11;
   const formatBytes = (bytes: number | undefined) => {
@@ -27,8 +28,13 @@ export function Treemap(props: Props) {
     }
   };
   const svgRef = useRef(null);
-
+  const screenWidth = window.innerWidth;
   const treemapData = useMemo(() => {
+    let height = 300;
+    if (screenWidth <= 450 || (screenWidth < 780 && screenWidth > 480)) {
+      height = 400;
+    }
+
     const colors = ["#daccff8f", "#d2d4fe8f", "#D6E1FF8F"];
 
     const sortedData = Object.entries(props.data)
@@ -71,8 +77,6 @@ export function Treemap(props: Props) {
               (filteredChildren.length % 3 === 0 && index < 3 * segmentLength)
             ? 1
             : 2;
-        console.log(colors[colorIndex]);
-
         return {
           ...item,
           tileColor: colors[colorIndex] || colors[colors.length - 1],
@@ -81,7 +85,7 @@ export function Treemap(props: Props) {
       .slice(0, 25);
     filteredData.children = colorCategorizedData;
     const root = d3.hierarchy(filteredData).sum((d: any) => d.value);
-    const treemapRoot = d3.treemap().size([430, 300]).padding(4)(root);
+    const treemapRoot = d3.treemap().size([430, height]).padding(4)(root);
 
     return treemapRoot
       .leaves()
@@ -90,6 +94,12 @@ export function Treemap(props: Props) {
       );
   }, [props.data]);
   useEffect(() => {
+    if (screenWidth <= 475 || (screenWidth < 780 && screenWidth > 480)) {
+      setViewBox("0 0 435 400");
+    } else {
+      setViewBox("0 0 435 310");
+    }
+
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
     const leaf = svg
@@ -237,7 +247,11 @@ export function Treemap(props: Props) {
         <span className="text-muted font-normal">Last 10 Days</span>
       </header>
       <div className="h-full">
-        <svg ref={svgRef} width="100%" height="310" className="py-1 pl-2" />
+        <svg
+          ref={svgRef}
+          viewBox={viewBox}
+          preserveAspectRatio="xMidYMid meet"
+        />
       </div>
     </Card>
   );
