@@ -30,7 +30,7 @@ export function Treemap(props: Props) {
   const svgRef = useRef(null);
   const screenWidth = window.innerWidth;
   const treemapData = useMemo(() => {
-    let height = 300;
+    let height = 310;
     if (screenWidth <= 450 || (screenWidth < 780 && screenWidth > 480)) {
       height = 400;
     }
@@ -249,6 +249,7 @@ export function Treemap(props: Props) {
       <div className="h-full">
         <svg
           ref={svgRef}
+          className="py-1 pl-2"
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
         />
