@@ -12,6 +12,15 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
   const optionGroups = integrations.reduce((acc, currentValue) => {
     const brand = currentValue.chainBrand;
 
+    let helpText;
+    switch (currentValue.chainBrand) {
+      case "celestia":
+        helpText = 'Search blocks, transactions, addresses, or namespaces';
+        break;
+      default:
+        helpText = 'Search blocks, transactions, or addresses';
+    }
+  
     const newOption = {
       brandColor: currentValue.config.primaryColor,
       layout: currentValue.config.widgetLayout,
@@ -20,6 +29,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       id: currentValue.slug,
       brandName: currentValue.chainBrand,
       logoURL: currentValue.config.logoUrl,
+      helpText: helpText,
     } satisfies SearchOption;
     if (acc[brand]) {
       if (currentValue.chainName === "mainnet") {

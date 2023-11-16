@@ -122,7 +122,11 @@ export function SearchModal({
                 autoComplete="off"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                helpText="Search blocks, transactions, or addresses"
+                helpText= {
+                  currentNetwork
+                  ? currentNetwork.helpText
+                  : defaultNetwork.value.helpText
+                }
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
                     <div className="flex items-center gap-2 p-1">
