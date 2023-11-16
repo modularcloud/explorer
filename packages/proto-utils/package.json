@@ -6,8 +6,8 @@
     "types": "./index.ts",
     "scripts": {
         "gen": "npm run gen:proto && npm run gen:ts",
-        "gen:proto": "python gen.py",
-        "gen:ts": "tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js"
+        "gen:proto": "python gen.py celestia",
+        "gen:ts": "tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js celestia"
     },
     "devDependencies": {
         "typescript": "^4.5.2"
