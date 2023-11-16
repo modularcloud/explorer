@@ -24,59 +24,59 @@ export default async function BlockLayout({
   return (
     <RQTableProvider>
       <SpotlightProvider>
-      <main
-        className="min-h-screen flex flex-col h-full"
-        style={{
-          // @ts-expect-error this is a CSS variable
-          "--color-primary": network!.config.primaryColor,
-          "--gradient-primary": network!.config.cssGradient,
-        }}
-      >
-        <HideBodyOverflow />
+        <main
+          className="min-h-screen flex flex-col h-full"
+          style={{
+            // @ts-expect-error this is a CSS variable
+            "--color-primary": network!.config.primaryColor,
+            "--gradient-primary": network!.config.cssGradient,
+          }}
+        >
+          <HideBodyOverflow />
 
-        <Header networkSlug={params.network} />
+          <Header networkSlug={params.network} />
 
-        <div className="grid lg:grid-cols-6">
-          <div
-            id="main-content"
-            tabIndex={0}
-            className={cn(
-              "mt-[65px] bg-muted-100 min-h-screen",
-              // style children but not the header nav
-              "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white",
-              {
-                "lg:col-span-4": !!rightpanel,
-                "col-span-6": !rightpanel,
-              },
-            )}
-          >
-            {children}
-          </div>
-
-          {/* Down gradient  */}
-          <div
-            className={cn(
-              "fixed w-full bottom-0 z-30 left-0 h-10 !bg-gradient-to-b !rounded-none from-transparent bg-transparent to-mid-dark-100",
-              {
-                "lg:w-2/3": !!rightpanel,
-              },
-            )}
-          />
-          {rightpanel && (
-            <aside
+          <div className="grid lg:grid-cols-6">
+            <div
+              id="main-content"
+              tabIndex={0}
               className={cn(
-                // the height of the sidebar is the total height of the screen - the height of the <Header /> component
-                "h-[calc(100vh_-_theme('spacing.header'))] max-w-[33.333%] w-1/3",
-                "bg-muted-100 hidden lg:block",
-                "fixed top-[63px] bottom-0 right-0",
-                "overflow-hidden",
+                "mt-[65px] bg-muted-100 min-h-screen",
+                // style children but not the header nav
+                "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white",
+                {
+                  "lg:col-span-4": !!rightpanel,
+                  "col-span-6": !rightpanel,
+                },
               )}
             >
-              {rightpanel}
-            </aside>
-          )}
-        </div>
-      </main>
+              {children}
+            </div>
+
+            {/* Down gradient  */}
+            <div
+              className={cn(
+                "fixed w-full bottom-0 z-30 left-0 h-10 !bg-gradient-to-b !rounded-none from-transparent bg-transparent to-mid-dark-100",
+                {
+                  "lg:w-2/3": !!rightpanel,
+                },
+              )}
+            />
+            {rightpanel && (
+              <aside
+                className={cn(
+                  // the height of the sidebar is the total height of the screen - the height of the <Header /> component
+                  "h-[calc(100vh_-_theme('spacing.header'))] max-w-[33.333%] w-1/3",
+                  "bg-muted-100 hidden lg:block",
+                  "fixed top-[63px] bottom-0 right-0",
+                  "overflow-hidden",
+                )}
+              >
+                {rightpanel}
+              </aside>
+            )}
+          </div>
+        </main>
       </SpotlightProvider>
     </RQTableProvider>
   );
