@@ -1,13 +1,12 @@
 import * as React from "react";
 // components
 import Link from "next/link";
-import { Button } from "~/ui/button";
-import { Grid, List } from "~/ui/icons";
 import { HeaderSearchButton } from "./header-search-button";
 
 // utils
 import { getSearchOptionGroups } from "~/lib/search-options";
 import { cn } from "~/ui/shadcn/utils";
+import { FeedbackButton } from "../cta-button";
 
 // types
 type Props = {
@@ -40,22 +39,9 @@ export async function Header({ networkSlug }: Props) {
 
       <HeaderSearchButton optionGroups={optionGroups} />
 
-      {/* Mobile */}
-      <div className="tab:hidden flex-shrink-0">
-        <Button isSquared>
-          <List className="text-muted" />
-        </Button>
-      </div>
-
       {/* Bigger screens */}
-      <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0">
-        <Button isSquared>
-          <Grid className="text-muted" />
-        </Button>
-        <div className="h-8 w-[1px] bg-muted/20" aria-hidden="true" />
-        <Button isSquared>
-          <List className="text-muted" />
-        </Button>
+      <div className="flex-shrink-0 hidden sm:block">
+        <FeedbackButton />
       </div>
     </header>
   );
