@@ -88,7 +88,6 @@ export type SearchOption = {
   layout?: SingleNetwork["config"]["widgetLayout"];
   logoURL: string;
   id: string;
-  helpText: string;
 };
 export type OptionGroups = {
   [groupDisplayName: string]: SearchOption[];
