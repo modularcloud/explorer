@@ -56,7 +56,8 @@ export const TransactionResolver = createResolver(
     }
     const hash = match[1];
     const response = await fetchResolver({
-      url: `${input.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`,
+      // rollapp rpc fails if tx hash appends 0x
+      url: `${input.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`,
     });
     if (response.type === "success") return response.result;
     NotFound();

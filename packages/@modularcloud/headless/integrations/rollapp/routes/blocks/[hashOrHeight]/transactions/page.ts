@@ -1,4 +1,5 @@
 import * as Celestia from "@modularcloud-resolver/celestia";
+import * as RollApp from "@modularcloud-resolver/rollapp";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getTransactionProperties,
@@ -21,9 +22,9 @@ export const RollappBlockTransctionsResolver = createResolver(
       context,
       hashOrHeight,
     }: { context: PageContext & PaginationContext; hashOrHeight: string },
-    getBlock: typeof Celestia.BlockHeightResolver,
-    getBlockByHash: typeof Celestia.BlockHashResolver,
-    getTransaction: typeof Celestia.TransactionResolver,
+    getBlock: typeof RollApp.BlockHeightResolver,
+    getBlockByHash: typeof RollApp.BlockHashResolver,
+    getTransaction: typeof RollApp.TransactionResolver,
   ) => {
     const pageToken = context.after ?? "0";
     const limit = 30;
@@ -154,8 +155,8 @@ export const RollappBlockTransctionsResolver = createResolver(
     return page;
   },
   [
-    Celestia.BlockHeightResolver,
-    Celestia.BlockHashResolver,
-    Celestia.TransactionResolver,
+    RollApp.BlockHeightResolver,
+    RollApp.BlockHashResolver,
+    RollApp.TransactionResolver,
   ],
 );
