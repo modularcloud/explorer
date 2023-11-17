@@ -27,9 +27,25 @@ export async function TransactionExtract(
   //     params: [query, "json"],
   //   }),
   // });
-  const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/tx?signature=${query}`)
-
-  const data = await response.json();
+  let data;
+  try {
+    const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/tx?signature=${query}`);
+    data = await response.json();
+  } catch(e) {
+    const response = await fetch(metadata.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getTransaction",
+        params: [query, "json"],
+      }),
+    });
+    data = await response.json();
+  }
 
   return {
     signature: query,

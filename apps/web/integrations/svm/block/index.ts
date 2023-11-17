@@ -38,7 +38,6 @@ export async function BlockExtract(
   const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/block?slotNumber=${query}`)
 
   const data = await response.json();
-  console.log(data);
   return {
     slot: query,
     ...(data.result as PartialDeep<
