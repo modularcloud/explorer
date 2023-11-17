@@ -35,9 +35,33 @@ export async function BlockExtract(
   //     ],
   //   }),
   // });
-  const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/block?slotNumber=${query}`)
-
-  const data = await response.json();
+  let data;
+  try {
+    const response = await fetch(`${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/block?slotNumber=${query}`);
+    data = await response.json();
+  } catch(e) {
+    const response = await fetch(metadata.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getBlock",
+        params: [
+          Number(query),
+          {
+            encoding: "json",
+            maxSupportedTransactionVersion: 0,
+            transactionDetails: "full",
+            rewards: true,
+          },
+        ],
+      }),
+    });
+    data = await response.json();
+  }
   return {
     slot: query,
     ...(data.result as PartialDeep<
