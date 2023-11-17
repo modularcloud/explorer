@@ -13,7 +13,6 @@ import { EXPLORER_CONFIG } from "~/config/explorers";
 
 // types
 import type { Metadata } from "next";
-import { UsersnapScript } from "./usersnap";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,7 +41,6 @@ export default async function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <UsersnapScript />
       </head>
       <body
         className={`${inter.variable} font-sans text-foreground`}
