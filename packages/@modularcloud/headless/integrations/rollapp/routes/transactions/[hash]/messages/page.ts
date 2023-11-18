@@ -1,6 +1,7 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../schemas/page";
 import * as Celestia from "@modularcloud-resolver/celestia";
+import * as RollApp from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../types";
 import { getDefaultSidebar } from "../../../../../../helpers";
 import { Standard } from "../../../../utils/values";
@@ -12,7 +13,7 @@ export const RollappTransactionMessagesResolver = createResolver(
   },
   async (
     { context, hash }: { context: PageContext; hash: string },
-    getTransaction: typeof Celestia.TransactionResolver,
+    getTransaction: typeof RollApp.TransactionResolver,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -78,5 +79,5 @@ export const RollappTransactionMessagesResolver = createResolver(
     };
     return page;
   },
-  [Celestia.TransactionResolver],
+  [RollApp.TransactionResolver],
 );
