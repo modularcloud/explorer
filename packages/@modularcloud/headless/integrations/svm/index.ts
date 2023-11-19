@@ -392,8 +392,9 @@ export const transactionOverviewResolver = createResolver(
     if (transactionResponse.type !== "success") {
       throw Error("Failure retrieving transaction");
     }
-
+    
     const MinimalTransactionSchema = z.object({
+      blockTime: z.number(),
       transaction: z.object({
         signatures: z.string().array(),
         message: z.object({
@@ -434,6 +435,13 @@ export const transactionOverviewResolver = createResolver(
             type: "standard",
             payload: transaction.slot,
           },
+          Timestamp: {
+            type: "timestamp",
+            payload: {
+              original: transaction.blockTime,
+              value: transaction.blockTime * 1000,
+            }
+          },
           Status: {
             type: "status",
             payload: !transaction.meta.err,
@@ -441,7 +449,7 @@ export const transactionOverviewResolver = createResolver(
           Fee: {
             type: "standard",
             payload:
-              (transaction.meta.fee / Math.pow(10, 9)).toFixed(2) +
+              (transaction.meta.fee / Math.pow(10, 9)) +
               " " +
               context.nativeToken,
           },
