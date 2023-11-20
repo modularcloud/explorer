@@ -15,6 +15,7 @@ export type IntegrationResponse = ResolutionResponse | null;
 export function createSVMIntegration(context: PageContext) {
   registerResolvers();
 
+  addRoute(["transactions"], "sealevel-latest-transactions-page-0.0.0");
   addRoute(["addresses", "[address]"], "svm-address-0.0.0", {
     enabled: true,
     regex: /[1-9A-HJ-NP-Za-km-z]{32,44}/,
@@ -138,6 +139,7 @@ export const latestTransactionsResolver = createResolver(
     slotResolver: typeof Sealevel.SlotResolver,
     transactionResolver: typeof Sealevel.TransactionResolver,
   ) => {
+    console.log("hiiiiii");
     const limit = context?.limit ?? 30;
     const transactions = [];
     let slot;
