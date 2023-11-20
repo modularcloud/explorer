@@ -3,6 +3,15 @@ import { Column, PageContext, Value } from "../../../schemas/page";
 import * as Block from "./block";
 import { BlockSchema, TransactionSchema } from "./schemas";
 
+const typeMap: Record<string, string> = {
+  AddressLookupTab1e1111111111111111111111111: "Address Lookup Table",
+  ComputeBudget111111111111111111111111111111: "Compute Budget",
+  Config1111111111111111111111111111111111111: "Config",
+  Stake11111111111111111111111111111111111111: "Stake",
+  "11111111111111111111111111111111": "System",
+  Vote111111111111111111111111111111111111111: "Vote",
+};
+
 export function createEntity(
   context: PageContext,
   transaction: any,
@@ -118,7 +127,7 @@ export function createEntity(
     },
     Type: {
       type: "standard",
-      payload: "TODO",
+      payload: typeMap[parsedTransaction.transaction.message.accountKeys[parsedTransaction.transaction.message.instructions[0].programIdIndex]] ?? "Unknown",
     },
   };
   return properties;
@@ -163,12 +172,12 @@ export function Columns(includeSlot?: boolean): Column[] {
       breakpoint: "sm",
     },
     ...(includeSlot
-        ? [
-            {
-              columnLabel: "Slot",
-            },
-          ]
-        : []),
+      ? [
+          {
+            columnLabel: "Slot",
+          },
+        ]
+      : []),
   ];
 }
 
@@ -180,11 +189,11 @@ export function Row(context: PageContext, transaction: any) {
       payload: entity.Status.payload ? "SUCCESS" : "FAILURE",
     },
     Transactions: {
-        type: "longval",
-        payload: {
-            value: String(entity.Signature.payload),
-            maxLength: 48,
-        }
+      type: "longval",
+      payload: {
+        value: String(entity.Signature.payload),
+        maxLength: 48,
+      },
     },
     ...(entity.Slot ? { Slot: entity.Slot } : {}),
     Type: entity.Type,

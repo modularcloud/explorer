@@ -2,10 +2,7 @@ import { createResolver } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../schemas/page";
 import * as Sealevel from "@modularcloud-resolver/sealevel";
 import * as Instruction from "../../../../entities/instruction";
-import {
-  getDefaultNestedSidebar,
-  getDefaultSidebar,
-} from "../../../../../../helpers";
+import { getDefaultNestedSidebar } from "../../../../../../helpers";
 
 export const instructionResolver = createResolver(
   {
