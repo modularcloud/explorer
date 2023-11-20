@@ -4,8 +4,7 @@ import {
   ResolutionResponse,
 } from "@modularcloud-resolver/core";
 import * as Sealevel from "@modularcloud-resolver/sealevel";
-import { z } from "zod";
-import { Page, PageContext, Value } from "../../schemas/page";
+import { PageContext } from "../../schemas/page";
 import { addRoute, matchRoute } from "../../router";
 import { PaginationContext } from "../../schemas/context";
 import { registerResolvers } from "..";
@@ -16,6 +15,7 @@ export function createSVMIntegration(context: PageContext) {
   registerResolvers();
 
   addRoute(["transactions"], "sealevel-latest-transactions-page-0.0.0");
+  addRoute(["blocks"], "sealevel-latest-blocks-page-0.0.0");
   addRoute(["addresses", "[address]"], "svm-address-0.0.0", {
     enabled: true,
     regex: /[1-9A-HJ-NP-Za-km-z]{32,44}/,
@@ -139,7 +139,6 @@ export const latestTransactionsResolver = createResolver(
     slotResolver: typeof Sealevel.SlotResolver,
     transactionResolver: typeof Sealevel.TransactionResolver,
   ) => {
-    console.log("hiiiiii");
     const limit = context?.limit ?? 30;
     const transactions = [];
     let slot;

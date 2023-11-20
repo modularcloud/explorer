@@ -97,7 +97,7 @@ export function Sidebar(
   block: any,
 ): Sidebar["properties"] {
   const entity = createEntity(context, slot, block);
-  
+
   return {
     Timestamp: entity.Timestamp,
     Hash: entity.Hash,
@@ -109,19 +109,19 @@ export function Sidebar(
 
 export function Columns() {
   return [
+    { columnLabel: "Blocks" },
     { columnLabel: "Hash" },
-    { columnLabel: "Slot" },
     { columnLabel: "Txs" },
-    { columnLabel: "Timestamp" },
+    // { columnLabel: "Timestamp" },
   ];
 }
 
 export function Row(context: PageContext, slot: string, block: any) {
   const entity = createEntity(context, slot, block);
   return {
-    Block: entity.Slot,
+    Blocks: entity.Slot,
     Hash: entity.Hash,
     Txs: entity["Transaction Count"],
-    Timestamp: entity.Timestamp,
+    // Timestamp: entity.Timestamp,
   };
 }
