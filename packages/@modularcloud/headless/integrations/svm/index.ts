@@ -737,19 +737,22 @@ export const blockOverviewResolver = createResolver(
       body: {
         type: "notebook",
         properties: {
-          Block: {
+          Slot: {
             type: "standard",
             payload: slot,
           },
-          "Block Time": {
-            type: "standard",
-            payload: new Date(block.blockTime * 1000).toISOString(),
+          Timestamp: {
+            type: "timestamp",
+            payload: {
+              original: block.blockTime,
+              value: block.blockTime * 1000,
+            },
           },
-          "Block Hash": {
+          Hash: {
             type: "standard",
             payload: block.blockhash,
           },
-          "Block Height": {
+          Height: {
             type: "standard",
             payload: block.blockHeight,
           },
@@ -761,9 +764,14 @@ export const blockOverviewResolver = createResolver(
             type: "standard",
             payload: block.previousBlockhash,
           },
-          Rewards: {
+          Reward: {
             type: "standard",
-            payload: block.rewards.length,
+            payload: `${
+              block.rewards.reduce(
+                (total, reward) => total + reward.lamports,
+                0,
+              ) / Math.pow(10, 9)
+            } ${context.nativeToken}`,
           },
         },
       },
@@ -892,7 +900,7 @@ export const blockTransactionsResolver = createResolver(
             Fee: {
               type: "standard",
               payload:
-                (transaction.meta.fee / Math.pow(10, 9)).toFixed(2) +
+                transaction.meta.fee / Math.pow(10, 9) +
                 " " +
                 context.nativeToken,
             },
