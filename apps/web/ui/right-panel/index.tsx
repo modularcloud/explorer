@@ -98,7 +98,7 @@ export function RightPanel({ data, network }: Props) {
         {/* <Image src={data.logo} alt="Logo" /> */}
         <Image
           // FIXME : this is hardcoded, but it needs to be returned from the API
-          src={`/images/celestia-logo-small.png`}
+          src={network.config.logoUrl}
           width={24}
           height={24}
           alt={`Logo ${network.chainBrand}`}
