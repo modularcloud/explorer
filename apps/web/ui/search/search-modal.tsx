@@ -22,6 +22,7 @@ import { cn } from "~/ui/shadcn/utils";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
+import Image from "next/image";
 interface Props {
   defaultNetwork: {
     value: SearchOption;
@@ -129,10 +130,12 @@ export function SearchModal({
                       {isLoading ? (
                         <LoadingIndicator className="h-4 w-4 text-primary" />
                       ) : (
-                        <GlobeCyber
-                          className="h-4 w-4 text-primary"
-                          aria-hidden="true"
-                        />
+                        <Image
+                          src={currentNetwork.logoURL}
+                          width={16}
+                          height={16}
+                          alt={`${currentNetwork.displayName} logo`}
+                          />
                       )}
 
                       <span className="whitespace-nowrap">
