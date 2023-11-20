@@ -727,6 +727,14 @@ export const blockOverviewResolver = createResolver(
       rewards: z.object({ lamports: z.number() }).array(),
     });
     const block = MinimalBlockSchema.parse(blockResponse.result);
+    const parentBlockResponse = await getBlock({
+      endpoint: context.rpcEndpoint,
+      slot: block.parentSlot,
+    });
+    let parentBlock: any = null;
+    if (parentBlockResponse.type === "success") {
+      parentBlock = MinimalBlockSchema.parse(parentBlockResponse.result);
+    }
 
     const PageResponse: Page = {
       context,
@@ -756,10 +764,45 @@ export const blockOverviewResolver = createResolver(
             type: "standard",
             payload: block.blockHeight,
           },
-          "Parent Slot": {
-            type: "standard",
-            payload: block.parentSlot,
-          },
+          ...(block.parentSlot !== null ? {
+            "Parent Slot": {
+              type: "link",
+              payload: {
+                text: String(block.parentSlot),
+                route: [
+                  `${context.chainBrand}-${context.chainName}`,
+                  "blocks",
+                  String(block.parentSlot),
+                ],
+                sidebar: {
+                  headerKey: "Block",
+                  headerValue: String(block.parentSlot),
+                  properties: {
+                    "Block Hash": {
+                      type: "standard",
+                      payload: parentBlock.blockhash,
+                    },
+                    "Block Height": {
+                      type: "standard",
+                      payload: parentBlock.blockHeight,
+                    },
+                    "Parent Slot": {
+                      type: "standard",
+                      payload: parentBlock.parentSlot,
+                    },
+                    "Previous Block Hash": {
+                      type: "standard",
+                      payload: parentBlock.previousBlockhash,
+                    },
+                    Rewards: {
+                      type: "standard",
+                      payload: parentBlock.rewards.length,
+                    },
+                  },
+                },
+              }
+            },
+          } : {}),
           "Previous Block Hash": {
             type: "standard",
             payload: block.previousBlockhash,
