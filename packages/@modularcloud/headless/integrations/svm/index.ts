@@ -382,7 +382,8 @@ export const transactionOverviewResolver = createResolver(
   },
   async (
     { context, signature }: { context: PageContext; signature: string },
-    getTransaction,
+    getTransaction: typeof Sealevel.TransactionResolver,
+    getBlock: typeof Sealevel.BlockResolver,
   ) => {
     const transactionResponse = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -392,7 +393,7 @@ export const transactionOverviewResolver = createResolver(
     if (transactionResponse.type !== "success") {
       throw Error("Failure retrieving transaction");
     }
-    
+
     const MinimalTransactionSchema = z.object({
       blockTime: z.number(),
       transaction: z.object({
@@ -418,6 +419,25 @@ export const transactionOverviewResolver = createResolver(
       transactionResponse.result,
     );
 
+    const blockResponse = await getBlock({
+      endpoint: context.rpcEndpoint,
+      slot: transaction.slot,
+    });
+
+    if (blockResponse.type !== "success") {
+      throw Error("Failure retrieving block");
+    }
+
+    const MinimalBlockSchema = z.object({
+      blockTime: z.number(),
+      blockHeight: z.number(),
+      blockhash: z.string(),
+      parentSlot: z.number(),
+      previousBlockhash: z.string(),
+      rewards: z.object({ lamports: z.number() }).array(),
+    });
+    const block = MinimalBlockSchema.parse(blockResponse.result);
+
     const PageResponse: Page = {
       context,
       metadata: {
@@ -432,15 +452,48 @@ export const transactionOverviewResolver = createResolver(
             payload: transaction.transaction.signatures[0],
           },
           Slot: {
-            type: "standard",
-            payload: transaction.slot,
+            type: "link",
+            payload: {
+              text: String(transaction.slot),
+              route: [
+                `${context.chainBrand}-${context.chainName}`,
+                "blocks",
+                String(transaction.slot),
+              ],
+              sidebar: {
+                headerKey: "Block",
+                headerValue: String(transaction.slot),
+                properties: {
+                  "Block Hash": {
+                    type: "standard",
+                    payload: block.blockhash,
+                  },
+                  "Block Height": {
+                    type: "standard",
+                    payload: block.blockHeight,
+                  },
+                  "Parent Slot": {
+                    type: "standard",
+                    payload: block.parentSlot,
+                  },
+                  "Previous Block Hash": {
+                    type: "standard",
+                    payload: block.previousBlockhash,
+                  },
+                  Rewards: {
+                    type: "standard",
+                    payload: block.rewards.length,
+                  },
+                },
+              },
+            },
           },
           Timestamp: {
             type: "timestamp",
             payload: {
               original: transaction.blockTime,
               value: transaction.blockTime * 1000,
-            }
+            },
           },
           Status: {
             type: "status",
@@ -449,7 +502,7 @@ export const transactionOverviewResolver = createResolver(
           Fee: {
             type: "standard",
             payload:
-              (transaction.meta.fee / Math.pow(10, 9)) +
+              transaction.meta.fee / Math.pow(10, 9) +
               " " +
               context.nativeToken,
           },
@@ -494,7 +547,7 @@ export const transactionOverviewResolver = createResolver(
     };
     return PageResponse;
   },
-  [Sealevel.TransactionResolver],
+  [Sealevel.TransactionResolver, Sealevel.BlockResolver],
 );
 export const transactionInstructionsResolver = createResolver(
   {
