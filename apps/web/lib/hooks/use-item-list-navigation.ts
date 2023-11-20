@@ -82,17 +82,6 @@ export function useItemListNavigation<T>({
     [],
   );
 
-  /**
-   * 1- Navigating up/down has 3 cases :
-   *    - inside of the same column
-   *       ⮑ if the selectedOption index is between 0 and less than groupIndex - 1
-   *    - between rows
-   *       ⮑ when the selectedOption index is equal to groupIndex - 1, when change rows
-   *          and select the first item of the next row  if the key is ArrowDown
-   *          or the last item of previous row if the key is ArrowUp
-   *    - Stuck
-   *       ⮑  when there is no next row (for `ArrowDown`) or previous row (for `ArrowUp`)
-   */
   const moveSelectionDown = React.useCallback(() => {
     const { index } = selectedItemPositionRef.current;
     if (!items[index]) return; // don't do anything if undefined
@@ -249,17 +238,22 @@ export function useItemListNavigation<T>({
         id: itemId,
         onClick: () => onClickItem?.(item, index),
         onMouseMove: () => {
-          const element = document.getElementById(itemId);
-          element?.focus();
-          selectItem({ item, index });
-          onSelectItem?.({
-            item: item,
-            index: index,
-            inputMethod: "mouse",
-          });
+          // prevent triggering the select event every time the mouse move
+          if (selectedItemId !== currentItemId) {
+            const element = document.getElementById(itemId);
+            element?.focus();
+            selectItem({ item, index });
+            onSelectItem?.({
+              item: item,
+              index: index,
+              inputMethod: "mouse",
+            });
+          }
         },
         onFocus: () => {
-          selectItem({ item, index });
+          if (selectedItemId !== currentItemId) {
+            selectItem({ item, index });
+          }
         },
         onBlur: () => {
           selectItem({

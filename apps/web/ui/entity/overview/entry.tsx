@@ -10,7 +10,10 @@ import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
-import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
+import {
+  OnSelectItemArgs,
+  useItemListNavigation,
+} from "~/lib/hooks/use-item-list-navigation";
 import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
@@ -24,7 +27,7 @@ interface Props {
 export function OverviewEntryList({ entries }: Props) {
   const router = useRouter();
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
-  const { spotlight, setSpotlight } = React.useContext(SpotlightContext);
+  const { setSpotlight } = React.useContext(SpotlightContext);
 
   const items = React.useMemo(() => {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
@@ -34,6 +37,54 @@ export function OverviewEntryList({ entries }: Props) {
     (item: (typeof items)[number]) => item.id,
     [],
   );
+
+  const onSelectItem = React.useCallback(
+    ({ item }: OnSelectItemArgs<(typeof items)[number]>) => {
+      const extraFields: Record<string, Value> = {};
+
+      // some payloads like dates are rendered differently depending on certain context
+      // we can provide the original value as well
+      if (
+        typeof item.value.payload === "object" &&
+        "original" in item.value.payload
+      ) {
+        extraFields["Original"] = {
+          type: "standard",
+          payload: item.value.payload.original,
+        };
+      }
+
+      if (item.value.type === "link") {
+        setSpotlight?.(item.value.payload.sidebar);
+      } else if (item.value.type === "blob") {
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Property",
+          properties: {
+            Key: {
+              type: "standard",
+              payload: item.id,
+            },
+          },
+        });
+      } else {
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Property",
+          properties: {
+            Key: {
+              type: "standard",
+              payload: item.id,
+            },
+            Value: item.value,
+            ...extraFields,
+          },
+        });
+      }
+    },
+    [setSpotlight],
+  );
+
   const { registerItemProps, selectedItem, selectedItemIndex } =
     useItemListNavigation({
       items: items,
@@ -42,52 +93,7 @@ export function OverviewEntryList({ entries }: Props) {
       onClickItem: ({ value }) => {
         /** TODO: should navigate to link if value type is `link` */
       },
-      onSelectItem: ({ item }) => {
-        // sometimes this fires many times on hover
-        if (item.id === spotlight?.headerValue) return;
-
-        const extraFields: Record<string, Value> = {};
-
-        // some payloads like dates are rendered differently depending on certain context
-        // we can provide the original value as well
-        if (
-          typeof item.value.payload === "object" &&
-          "original" in item.value.payload
-        ) {
-          extraFields["Original"] = {
-            type: "standard",
-            payload: item.value.payload.original,
-          };
-        }
-
-        if (item.value.type === "link") {
-          setSpotlight?.(item.value.payload.sidebar);
-        } else if (item.value.type === "blob") {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Property",
-            properties: {
-              Key: {
-                type: "standard",
-                payload: item.id,
-              },
-            },
-          });
-        } else {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Property",
-            properties: {
-              Key: {
-                type: "standard",
-                payload: item.id,
-              },
-              Value: item.value,
-              ...extraFields,
-            },
-          });
-        }
-      },
+      onSelectItem,
     });
 
   useHotkeyListener({
