@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 type Props = {
   datetime: number;
@@ -7,13 +7,14 @@ type Props = {
 };
 
 export function CompactDate({ datetime, classes }: Props) {
-  const currentDate = new Date();
-  const date = new Date(datetime);
+  const date = useMemo(() => new Date(datetime), [datetime]);
 
   const [compactTime, setCompactTime] = useState<string | null>(null);
 
   // run once to get locale time and start timeout
   useEffect(() => {
+    const currentDate = new Date();
+
     // if it's less than 1 minutes ago, show "Xs ago"
     if (currentDate.getTime() - date.getTime() < 1000 * 60) {
       setCompactTime(
@@ -59,7 +60,7 @@ export function CompactDate({ datetime, classes }: Props) {
         }),
       );
     }
-  }, []);
+  }, [date]);
 
   if (!compactTime) return null;
 

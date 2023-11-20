@@ -12,7 +12,7 @@ import { cn } from "~/ui/shadcn/utils";
 // types
 import type { Sidebar, Value } from "@modularcloud/headless";
 import { SpotlightContext } from "./spotlight-context";
-import { DateTime, formatDateTime } from "../date";
+import { DateTime, formatDateTime } from "~/ui/date";
 
 export function SpotlightComponentList() {
   const { spotlight } = React.useContext(SpotlightContext);
