@@ -35,6 +35,10 @@ export function createSVMIntegration(context: PageContext) {
     ["transactions", "[signature]", "instructions"],
     "svm-transaction-instructions-0.0.0",
   );
+  addRoute(
+    ["transactions", "[signature]", "instructions", "[index]"],
+    "svm-instruction-0.0.0",
+  );
   addRoute(["blocks", "[slot]"], "svm-block-0.0.0", {
     enabled: true,
     regex: /\d+/,

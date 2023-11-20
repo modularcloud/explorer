@@ -19,6 +19,7 @@ import { transactionOverviewResolver } from "./svm/transactions/[signature]/page
 import { transactionInstructionsResolver } from "./svm/transactions/[signature]/instructions/page";
 import { blockOverviewResolver } from "./svm/blocks/[slot]/page";
 import { blockTransactionsResolver } from "./svm/blocks/[slot]/transactions/page";
+import { instructionResolver } from "./svm/transactions/[signature]/instructions/[index]/page";
 
 export function registerResolvers() {
   registerResolver(addressOverviewResolver);
@@ -27,6 +28,7 @@ export function registerResolvers() {
   registerResolver(transactionInstructionsResolver);
   registerResolver(blockOverviewResolver);
   registerResolver(blockTransactionsResolver);
+  registerResolver(instructionResolver);
   registerResolver(SVM.latestBlocksResolver);
   registerResolver(SVM.latestTransactionsResolver);
 

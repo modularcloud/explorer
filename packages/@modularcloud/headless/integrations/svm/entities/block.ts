@@ -97,6 +97,7 @@ export function Sidebar(
   block: any,
 ): Sidebar["properties"] {
   const entity = createEntity(context, slot, block);
+  
   return {
     Timestamp: entity.Timestamp,
     Hash: entity.Hash,

@@ -15,7 +15,13 @@ const TransactionMetaSchema = z.object({
   preBalances: z.array(z.number()),
   preTokenBalances: z.array(z.any()), // Adjust this based on the actual structure
   rewards: z.array(z.any()), // Adjust this based on the actual structure
-  status: z.object({ Ok: z.union([z.any(), z.null()]) }), // Adjust this based on the actual structure
+//   status: z.object({ Ok: z.union([z.any(), z.null()]) }), // Adjust this based on the actual structure
+});
+
+export const InstructionSchema = z.object({
+  accounts: z.array(z.number()),
+  data: z.string(),
+  programIdIndex: z.number(),
 });
 
 export const TransactionSchema = z.object({
@@ -30,13 +36,7 @@ export const TransactionSchema = z.object({
         numReadonlyUnsignedAccounts: z.number(),
         numRequiredSignatures: z.number(),
       }),
-      instructions: z.array(
-        z.object({
-          accounts: z.array(z.number()),
-          data: z.string(),
-          programIdIndex: z.number(),
-        }),
-      ),
+      instructions: z.array(InstructionSchema),
       recentBlockhash: z.string(),
     }),
     signatures: z.array(z.string()),

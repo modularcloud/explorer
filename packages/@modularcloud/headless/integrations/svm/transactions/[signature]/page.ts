@@ -1,7 +1,6 @@
 import { createResolver } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../schemas/page";
 import * as Sealevel from "@modularcloud-resolver/sealevel";
-import { z } from "zod";
 import { createEntity } from "../../entities/transaction";
 
 export const transactionOverviewResolver = createResolver(
