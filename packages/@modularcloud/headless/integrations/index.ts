@@ -13,14 +13,20 @@ import { CelestiaAddressBalancesResolver } from "./celestia/routes/addresses/[ad
 import { CelestiaBlobResolver } from "./celestia/routes/transactions/[hash]/blobs/[index]/page";
 import { CelestiaMessageResolver } from "./celestia/routes/transactions/[hash]/messages/[index]/page";
 import { CelestiaAddressTransactionsResolver } from "./celestia/routes/addresses/[address]/transactions/page";
+import { addressOverviewResolver } from "./svm/addresses/[address]/page";
+import { addressTransactionsResolver } from "./svm/addresses/[address]/transactions/page";
+import { transactionOverviewResolver } from "./svm/transactions/[signature]/page";
+import { transactionInstructionsResolver } from "./svm/transactions/[signature]/instructions/page";
+import { blockOverviewResolver } from "./svm/blocks/[slot]/page";
+import { blockTransactionsResolver } from "./svm/blocks/[slot]/transactions/page";
 
 export function registerResolvers() {
-  registerResolver(SVM.addressOverviewResolver);
-  registerResolver(SVM.addressTransactionsResolver);
-  registerResolver(SVM.transactionOverviewResolver);
-  registerResolver(SVM.transactionInstructionsResolver);
-  registerResolver(SVM.blockOverviewResolver);
-  registerResolver(SVM.blockTransactionsResolver);
+  registerResolver(addressOverviewResolver);
+  registerResolver(addressTransactionsResolver);
+  registerResolver(transactionOverviewResolver);
+  registerResolver(transactionInstructionsResolver);
+  registerResolver(blockOverviewResolver);
+  registerResolver(blockTransactionsResolver);
   registerResolver(SVM.latestBlocksResolver);
   registerResolver(SVM.latestTransactionsResolver);
 
