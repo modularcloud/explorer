@@ -133,15 +133,12 @@ function TableContent({ initialData, route }: Props) {
     fetchMoreOnBottomReached(parentRef.current);
   }, [fetchMoreOnBottomReached]);
 
-  const getScrollElement = React.useCallback(() => parentRef.current, []);
-  const estimateSize = React.useCallback(() => ITEM_SIZE, []);
-
   const PADDING_END = 160;
   const ITEM_SIZE = 65;
   const virtualizer = useVirtualizer({
     count: flatData.length,
-    getScrollElement,
-    estimateSize,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ITEM_SIZE,
     overscan: 20,
     paddingEnd: PADDING_END,
     scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
@@ -197,6 +194,7 @@ function TableContent({ initialData, route }: Props) {
     (col) => !col.hideColumnLabel,
   )[0].columnLabel;
 
+  // the `TableRow` component is wrapped in a `React.memo`, so every callback passed to it should be memoized
   const registerOptionProps = React.useCallback(
     (item: TableEntry, index: number) => registerItemProps(index, item),
     [registerItemProps],
