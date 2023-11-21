@@ -10,12 +10,12 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Sidebar, Value } from "@modularcloud/headless";
-import { SpotlightContext } from "./spotlight-context";
+import type { Value } from "@modularcloud/headless";
 import { DateTime, formatDateTime } from "~/ui/date";
+import { useSpotlightStore } from "./spotlight-store";
 
 export function SpotlightComponentList() {
-  const { spotlight } = React.useContext(SpotlightContext);
+  const spotlight = useSpotlightStore((state) => state.spotlight);
   if (!spotlight) {
     return null;
   }
