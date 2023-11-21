@@ -20,7 +20,7 @@ type UseItemListNavigationArgs<T> = {
   scrollOnSelection?: boolean;
   /**
    * Callback for when the item is clicked, either with the mouse
-   * or with Enter key
+   * or with Enter key, This function should also be memoized
    */
   onClickItem?: (item: T, index: number) => void;
   /**
@@ -65,21 +65,68 @@ export function useItemListNavigation<T>({
     item: selectedItem,
   });
 
-  const selectItem = React.useCallback(
-    ({ index, item }: { item: T | null; index?: number }) => {
-      // we default to the ref values as they have the previous values in store
-      const newRowIndex = index ?? selectedItemPositionRef.current.index;
+  const getOptionId = React.useCallback(
+    (index: number, item: T) => {
+      return `${itemRootId}-${index}-item-${getItemId(item)}`;
+    },
+    [itemRootId, getItemId],
+  );
 
-      setSelectedIndex(newRowIndex);
+  const selectItem = React.useCallback(
+    ({ index, item }: { item: T | null; index: number }) => {
+      const { item: previousSelectedItem, index: previousSelectedIndex } =
+        selectedItemPositionRef.current;
+
+      // we default to the ref values as they have the previous values in store
+      setSelectedIndex(index);
       setSelectedItem(item);
 
       // Sync this ref state, so that the values we use inside of the `useEffect` are up to date
       selectedItemPositionRef.current = {
         item,
-        index: newRowIndex,
+        index,
       };
+
+      // update items attributes
+      let currentlySelectedElement: HTMLElement | null = null;
+      let previouslySelectedElement: HTMLElement | null = null;
+
+      if (item !== null) {
+        currentlySelectedElement = document.getElementById(
+          getOptionId(index, item),
+        );
+      }
+      if (previousSelectedItem !== null) {
+        previouslySelectedElement = document.getElementById(
+          getOptionId(previousSelectedIndex, previousSelectedItem),
+        );
+      }
+
+      currentlySelectedElement?.setAttribute("aria-selected", "true");
+      currentlySelectedElement?.setAttribute("tabindex", "0");
+
+      previouslySelectedElement?.setAttribute("aria-selected", "false");
+      previouslySelectedElement?.setAttribute("tabindex", "-1");
+
+      // remove the style on the siblings of the previous element
+      previouslySelectedElement?.previousElementSibling?.removeAttribute(
+        "data-next-selected",
+      );
+      previouslySelectedElement?.nextElementSibling?.removeAttribute(
+        "data-previous-selected",
+      );
+
+      // style the next & previous siblings of the current element
+      currentlySelectedElement?.previousElementSibling?.setAttribute(
+        "data-next-selected",
+        "true",
+      );
+      currentlySelectedElement?.nextElementSibling?.setAttribute(
+        "data-previous-selected",
+        "true",
+      );
     },
-    [],
+    [getOptionId],
   );
 
   const moveSelectionDown = React.useCallback(() => {
@@ -116,13 +163,6 @@ export function useItemListNavigation<T>({
       });
     }
   }, [selectItem, onSelectItem, items]);
-
-  const getOptionId = React.useCallback(
-    (index: number, item: T) => {
-      return `${itemRootId}-${index}-item-${getItemId(item)}`;
-    },
-    [itemRootId, getItemId],
-  );
 
   const scrollItemIntoView = React.useCallback(() => {
     const { index, item } = selectedItemPositionRef.current;
@@ -228,21 +268,23 @@ export function useItemListNavigation<T>({
 
   const registerItemProps = React.useCallback(
     (index: number, item: T) => {
-      const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
-      const currentItemId = getItemId(item);
-      const isSelected =
-        selectedItemId === currentItemId && selectedItemIndex === index;
       const itemId = getOptionId(index, item);
 
       return {
         id: itemId,
         onClick: () => onClickItem?.(item, index),
         onMouseMove: () => {
+          const { item: selectedItem } = selectedItemPositionRef.current;
+
+          const currentItemId = getItemId(item);
+          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+
           // prevent triggering the select event every time the mouse move
           if (selectedItemId !== currentItemId) {
-            const element = document.getElementById(itemId);
-            element?.focus();
             selectItem({ item, index });
+
+            const element = document.getElementById(getOptionId(index, item));
+            element?.focus();
             onSelectItem?.({
               item: item,
               index: index,
@@ -251,6 +293,11 @@ export function useItemListNavigation<T>({
           }
         },
         onFocus: () => {
+          const { item: selectedItem } = selectedItemPositionRef.current;
+
+          const currentItemId = getItemId(item);
+          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+
           if (selectedItemId !== currentItemId) {
             selectItem({ item, index });
           }
@@ -262,19 +309,9 @@ export function useItemListNavigation<T>({
           });
         },
         role: "option",
-        "aria-selected": isSelected,
-        tabIndex: isSelected ? -1 : 0,
       };
     },
-    [
-      onClickItem,
-      selectedItem,
-      getItemId,
-      selectedItemIndex,
-      getOptionId,
-      onSelectItem,
-      selectItem,
-    ],
+    [onClickItem, getItemId, getOptionId, onSelectItem, selectItem],
   );
 
   return {

@@ -5,15 +5,15 @@ import { cn } from "~/ui/shadcn/utils";
 
 import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter } from "next/navigation";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { HeadlessRoute } from "~/lib/headless-utils";
 import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
-import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
-import NotFound from "../../not-found";
+import { NotFound } from "~/ui/not-found";
+import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 
 interface Props {
   initialData: Page;
@@ -126,19 +126,22 @@ function TableContent({ initialData, route }: Props) {
     [fetchNextPage, isFetching, hasNextPage],
   );
 
-  const { setSpotlight } = React.useContext(SpotlightContext);
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
   //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
   React.useEffect(() => {
     fetchMoreOnBottomReached(parentRef.current);
   }, [fetchMoreOnBottomReached]);
 
+  const getScrollElement = React.useCallback(() => parentRef.current, []);
+  const estimateSize = React.useCallback(() => ITEM_SIZE, []);
+
   const PADDING_END = 160;
   const ITEM_SIZE = 65;
   const virtualizer = useVirtualizer({
     count: flatData.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => ITEM_SIZE,
+    getScrollElement,
+    estimateSize,
     overscan: 20,
     paddingEnd: PADDING_END,
     scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
@@ -156,22 +159,26 @@ function TableContent({ initialData, route }: Props) {
       }
       setSpotlight?.(entry.sidebar);
     },
-    [virtualizer],
+    [virtualizer, setSpotlight],
   );
 
-  const { registerItemProps, selectedItemIndex, selectItem } =
-    useItemListNavigation({
-      getItemId,
-      onSelectItem,
-      items: flatData,
-      scrollOnSelection: false,
-      parentRef: parentRef,
-      onClickItem(entry) {
-        if (entry.link) {
-          router.push(entry.link);
-        }
-      },
-    });
+  const onClickItem = React.useCallback(
+    (entry: TableEntry) => {
+      if (entry.link) {
+        router.push(entry.link);
+      }
+    },
+    [router],
+  );
+
+  const { registerItemProps, selectItem } = useItemListNavigation({
+    getItemId,
+    onSelectItem,
+    items: flatData,
+    scrollOnSelection: false,
+    parentRef: parentRef,
+    onClickItem,
+  });
 
   const hasAlreadyFocusedFirstItem = React.useRef(false);
   /**
@@ -189,6 +196,11 @@ function TableContent({ initialData, route }: Props) {
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
   )[0].columnLabel;
+
+  const registerOptionProps = React.useCallback(
+    (item: TableEntry, index: number) => registerItemProps(index, item),
+    [registerItemProps],
+  );
 
   if (isLoading) {
     return <>Loading...</>;
@@ -272,17 +284,9 @@ function TableContent({ initialData, route }: Props) {
                       key={index}
                       columns={columns}
                       entry={entry}
-                      registerOptionProps={() =>
-                        registerItemProps(virtualRow.index, entry)
-                      }
-                      currentItemIndex={virtualRow.index}
-                      selectedItemIndex={selectedItemIndex}
-                      style={{
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${
-                          virtualRow.start - index * virtualRow.size
-                        }px)`,
-                      }}
+                      virtualRow={virtualRow}
+                      currentIndex={virtualRow.index}
+                      registerOptionProps={registerOptionProps}
                     />
                   );
                 })}
@@ -303,30 +307,20 @@ function TableContent({ initialData, route }: Props) {
 type TableRowProps = {
   columns: TableColumns;
   entry: TableEntry;
-  style: any;
-  currentItemIndex: number;
-  selectedItemIndex: number;
-  registerOptionProps?: () => {};
+  currentIndex: number;
+  virtualRow: VirtualItem;
+  registerOptionProps?: (item: TableEntry, index: number) => void;
 };
-function TableRow({
+
+const TableRow = React.memo(function TableRow({
   columns,
   entry,
-  style,
+  currentIndex,
+  virtualRow,
   registerOptionProps,
-  selectedItemIndex,
-  currentItemIndex,
 }: TableRowProps) {
   const router = useRouter();
-  const optionProps = registerOptionProps?.() ?? {};
-
-  const isPreviousSelected =
-    selectedItemIndex !== undefined &&
-    selectedItemIndex !== -1 &&
-    currentItemIndex === selectedItemIndex + 1;
-  const isNextSelected =
-    selectedItemIndex !== undefined &&
-    selectedItemIndex !== -1 &&
-    currentItemIndex === selectedItemIndex - 1;
+  const optionProps = registerOptionProps?.(entry, currentIndex) ?? {};
 
   React.useEffect(() => {
     if (entry.link) {
@@ -346,7 +340,13 @@ function TableRow({
         "aria-[selected=true]:bg-muted-100": entry.link,
         "aria-[selected=true]:bg-muted-50": !entry.link,
       })}
-      style={style}
+      style={{
+        height: `${virtualRow.size}px`,
+        transform: `translateY(${
+          virtualRow.start - currentIndex * virtualRow.size
+        }px)`,
+      }}
+      aria-selected="false"
       {...optionProps}
     >
       <td
@@ -380,8 +380,8 @@ function TableRow({
           "group-aria-[selected=true]:border-b-transparent",
           `group-aria-[selected="false"]:bg-white`,
           {
-            "lg:rounded-br-xl": entry.link && isNextSelected,
-            "lg:rounded-tr-xl": entry.link && isPreviousSelected,
+            "group-data-[next-selected=true]:lg:rounded-br-xl": entry.link,
+            "group-data-[previous-selected=true]:lg:rounded-tr-xl": entry.link,
           },
         )}
         aria-hidden={true}
@@ -390,4 +390,4 @@ function TableRow({
       </td>
     </tr>
   );
-}
+});

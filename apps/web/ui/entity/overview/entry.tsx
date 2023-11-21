@@ -14,20 +14,25 @@ import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
-import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Blob } from "./blob";
+import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
 }
 
+type Entry = {
+  id: string;
+  value: Value;
+};
+
 export function OverviewEntryList({ entries }: Props) {
   const router = useRouter();
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
-  const { setSpotlight } = React.useContext(SpotlightContext);
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
   const items = React.useMemo(() => {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
@@ -39,7 +44,7 @@ export function OverviewEntryList({ entries }: Props) {
   );
 
   const onSelectItem = React.useCallback(
-    ({ item }: OnSelectItemArgs<(typeof items)[number]>) => {
+    ({ item }: OnSelectItemArgs<Entry>) => {
       const extraFields: Record<string, Value> = {};
 
       // some payloads like dates are rendered differently depending on certain context
@@ -85,16 +90,12 @@ export function OverviewEntryList({ entries }: Props) {
     [setSpotlight],
   );
 
-  const { registerItemProps, selectedItem, selectedItemIndex } =
-    useItemListNavigation({
-      items: items,
-      getItemId,
-      parentRef: listRef,
-      onClickItem: ({ value }) => {
-        /** TODO: should navigate to link if value type is `link` */
-      },
-      onSelectItem,
-    });
+  const { registerItemProps, selectedItem } = useItemListNavigation({
+    items: items,
+    getItemId,
+    parentRef: listRef,
+    onSelectItem,
+  });
 
   useHotkeyListener({
     keys: ["c"],
@@ -154,6 +155,11 @@ export function OverviewEntryList({ entries }: Props) {
     },
   });
 
+  const registerOptionProps = React.useCallback(
+    (item: Entry, index: number) => registerItemProps(index, item),
+    [registerItemProps],
+  );
+
   return (
     <dl
       ref={listRef}
@@ -162,12 +168,10 @@ export function OverviewEntryList({ entries }: Props) {
       {items.map((item, index) => (
         <OverviewEntry
           key={item.id}
-          label={item.id}
-          value={item.value}
+          entry={item}
           currentIndex={index}
-          selectedIndex={selectedItemIndex}
           lasItemIndex={items.length - 1}
-          registerOptionProps={() => registerItemProps(index, item)}
+          registerOptionProps={registerOptionProps}
         />
       ))}
     </dl>
@@ -175,13 +179,11 @@ export function OverviewEntryList({ entries }: Props) {
 }
 
 interface EntryProps {
-  label: string;
-  value: Value;
+  entry: Entry;
   notCopyable?: boolean;
-  currentIndex?: number;
-  selectedIndex?: number;
+  currentIndex: number;
   lasItemIndex?: number;
-  registerOptionProps?: () => {};
+  registerOptionProps?: (item: Entry, index: number) => void;
 }
 
 function getChildrenForStringPayload(payload: string) {
@@ -192,29 +194,16 @@ function getChildrenForStringPayload(payload: string) {
   return <code className="text-muted/80 text-sm">&lt;Empty&gt;</code>;
 }
 
-export function OverviewEntry({
-  label,
-  value,
+export const OverviewEntry = React.memo(function OverviewEntry({
+  entry,
   notCopyable = false,
   registerOptionProps,
   currentIndex,
-  selectedIndex,
-  lasItemIndex,
 }: EntryProps) {
-  const { type, payload } = value;
+  const { type, payload } = entry.value;
   if (payload === null || payload === undefined) return null;
 
-  const optionProps = registerOptionProps?.() ?? {};
-  // TODO : this is for links types
-  const isPreviousSelected =
-    selectedIndex !== undefined &&
-    selectedIndex !== -1 &&
-    currentIndex === selectedIndex + 1;
-  const isNextSelected =
-    selectedIndex !== undefined &&
-    selectedIndex !== -1 &&
-    currentIndex === selectedIndex - 1;
-
+  const optionProps = registerOptionProps?.(entry, currentIndex) ?? {};
   return (
     <div
       tabIndex={0}
@@ -227,20 +216,11 @@ export function OverviewEntry({
         "border-l-2 border-l-transparent",
         "border-b border-r focus:outline-none",
         "scroll-m-10",
-        {
-          "aria-[selected=true]:bg-muted-50": true,
-          //   // TODO : this is only for links
-          // "border-r": currentIndex === selectedIndex,
-          // "aria-[selected=true]:bg-muted-100": true,
-          // "border-b":
-          //   currentIndex !== selectedIndex || currentIndex === lasItemIndex,
-          // "lg:rounded-br-xl": isNextSelected,
-          // "lg:rounded-tr-xl border-t": isPreviousSelected,
-        },
+        "aria-[selected=true]:bg-muted-50",
       )}
       {...optionProps}
     >
-      <dt className="col-span-2 font-medium">{label}</dt>
+      <dt className="col-span-2 font-medium">{entry.id}</dt>
 
       {type === "standard" && (
         <dd className="col-span-3">
@@ -293,7 +273,7 @@ export function OverviewEntry({
 
       {type === "timestamp" && (
         <dd className="col-span-3">
-          <CopyableValue value={formatDateTime(value.payload.value)}>
+          <CopyableValue value={formatDateTime(entry.value.payload.value)}>
             <DateTime value={payload.value!} />
           </CopyableValue>
         </dd>
@@ -316,4 +296,4 @@ export function OverviewEntry({
       {/* TODO : handle "image" type */}
     </div>
   );
-}
+});
