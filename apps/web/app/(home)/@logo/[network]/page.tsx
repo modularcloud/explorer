@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
-import type { FetchLoadArgs } from "~/lib/shared-utils";
 
+import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
-  params: Pick<FetchLoadArgs, "network">;
+  params: Pick<HeadlessRoute, "network">;
 }
 export default async function NetworkLogo(props: Props) {
   const network = await getSingleNetworkCached(props.params.network);
@@ -11,7 +11,9 @@ export default async function NetworkLogo(props: Props) {
 
   return (
     <div className="flex flex-col gap-8 items-center mt-44">
-      <small className="uppercase text-lg ">MODULAR CLOUD</small>
+      <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white">
+        MODULAR CLOUD
+      </small>
 
       <p className="font-logo text-5xl font-medium md:text-6xl capitalize">
         <span
