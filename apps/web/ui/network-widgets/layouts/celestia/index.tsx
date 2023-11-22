@@ -17,11 +17,13 @@ interface Props {
   network: SearchOption;
 }
 
-// TODO : transform this into a client component
 export function CelestiaWidgetLayout({ network }: Props) {
   // for some reason this is still necessary despite even https://github.com/modularcloud/explorer/pull/221/files#diff-c69978f5b3968360f90c0512cc7d7e2b73d184e4b4aa1b70dccaee69465000f2R33
   if (!network) return null;
+  return <CelestiaWidgetLayoutContent network={network} />;
+}
 
+function CelestiaWidgetLayoutContent({ network }: Props) {
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 
   const latestBlocks = useLatestBlocks(network.id);
@@ -55,11 +57,13 @@ export function CelestiaWidgetLayout({ network }: Props) {
       )}
     >
       <IconCard
-        className="lg:col-span-1 row-span-1 lg:row-start-3"
+        className="lg:col-span-1 row-span-1 lg:row-start-3 lg:col-start-3"
         label="NAMESPACES"
         icon={Folder}
         value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
       />
+
+      <Placeholder className="hidden lg:block lg:col-start-2" />
 
       {/* <IconCard
         className="lg:row-start-3 lg:col-start-3"
@@ -93,7 +97,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
       />
 
       <IconCard
-        className="lg:row-start-3 lg:col-start-1 lg:col-span-2 tab:row-start-1 tab:col-span-2 tab:col-start-3 row-start-3 col-start-1"
+        className="lg:row-start-3 lg:col-start-1 lg:col-span-1 tab:row-start-1 tab:col-span-2 tab:col-start-3 row-start-3 col-start-1"
         label="TOTAL BLOBS"
         icon={Document}
         value={apiResult.metrics.BLOB.toLocaleString("en-US")}
@@ -108,9 +112,11 @@ export function CelestiaWidgetLayout({ network }: Props) {
         )}
       />
 
+      <Placeholder className="hidden lg:block lg:col-start-4" />
+
       <IconCard
         label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-4 lg:col-span-2 tab:col-start-3 tab:row-start-4 tab:col-span-2 row-start-3 col-start-2"
+        className="lg:row-start-3 lg:col-start-5 lg:col-span-1 tab:col-start-3 tab:row-start-4 tab:col-span-2 row-start-3 col-start-2"
         icon={BarChart}
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
