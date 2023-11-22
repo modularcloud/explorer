@@ -21,7 +21,7 @@ const SvgCubesOn = (props: SVGProps<SVGSVGElement>) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeOpacity={0.72}
-      d="M14.5 3.5H10V10h6.5V5.5a2 2 0 0 0-2-2Z"
+      d="M14.5 3.5H10V10h6.5V5.5a2 2 0 0 0-2-2"
     />
   </svg>
 );
