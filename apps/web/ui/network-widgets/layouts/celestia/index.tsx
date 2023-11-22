@@ -48,9 +48,10 @@ export function CelestiaWidgetLayout({ network }: Props) {
         "--color-primary": network.brandColor,
       }}
       className={cn(
-        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",
-        "w-full gap-4 font-medium",
+        "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
+        "w-full gap-8 tab:gap-10 font-medium",
         "accent-primary place-items-stretch",
+        "max-w-[1060px] mx-auto",
       )}
     >
       <IconCard
@@ -85,21 +86,21 @@ export function CelestiaWidgetLayout({ network }: Props) {
       />
 
       <IconCard
-        className="lg:row-start-2 lg:col-start-3 sm:col-start-1 sm:col-span-2 lg:col-span-1 sm:row-start-6"
+        className="lg:row-start-2 lg:col-start-3 tab:col-start-1 tab:col-span-2 lg:col-span-1 tab:row-start-4"
         label="TOTAL BLOCKS"
         icon={Disabled}
         value={parseInt(apiResult.blockHeight).toLocaleString("en-US")}
       />
 
       <IconCard
-        className="lg:row-start-3 lg:col-start-1 lg:col-span-2 sm:row-start-1 sm:col-start-3 row-start-3 col-start-1"
+        className="lg:row-start-3 lg:col-start-1 lg:col-span-2 tab:row-start-1 tab:col-span-2 tab:col-start-3 row-start-3 col-start-1"
         label="TOTAL BLOBS"
         icon={Document}
         value={apiResult.metrics.BLOB.toLocaleString("en-US")}
       />
 
       <IconCard
-        className="lg:row-start-1 lg:col-start-3 col-span-2 sm:col-span-1"
+        className="lg:row-start-1 lg:col-start-3 col-span-2 tab:col-span-1"
         label="GAS PRICE"
         icon={Document}
         value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
@@ -109,7 +110,7 @@ export function CelestiaWidgetLayout({ network }: Props) {
 
       <IconCard
         label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-4 lg:col-span-2 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
+        className="lg:row-start-3 lg:col-start-4 lg:col-span-2 tab:col-start-3 tab:row-start-4 tab:col-span-2 row-start-3 col-start-2"
         icon={BarChart}
         value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
       />
@@ -129,8 +130,11 @@ export function CelestiaWidgetLayout({ network }: Props) {
                   number: Number(block.row.Height.payload),
                   noOfTransactions: Number(block.row.Txs.payload),
                   timestamp:
-                    typeof block.sidebar.properties.Timestamp.payload === "string"
-                      ? new Date(block.sidebar.properties.Timestamp.payload).getTime()
+                    typeof block.sidebar.properties.Timestamp.payload ===
+                    "string"
+                      ? new Date(
+                          block.sidebar.properties.Timestamp.payload,
+                        ).getTime()
                       : new Date().getTime(),
                 };
               })
