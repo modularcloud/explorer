@@ -3,7 +3,7 @@ export default function HomeLogo() {
     <div className="flex flex-col gap-8 items-center">
       <small className="uppercase text-lg ">THIS FUTURE IS NOW</small>
 
-      <p className="font-logo text-5xl font-bold md:text-6xl">
+      <p className="font-logo text-5xl font-medium md:text-6xl">
         <span className="bg-gradient-to-r from-[#191930] via-[#525272] to-[#2C2C43] text-transparent bg-clip-text">
           Modular
         </span>

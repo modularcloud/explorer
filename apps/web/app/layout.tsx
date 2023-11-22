@@ -5,19 +5,54 @@ import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
+import { UsersnapScript } from "./usersnap";
 
 // utils
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { getSearchOptionGroups } from "~/lib/search-options";
 import { EXPLORER_CONFIG } from "~/config/explorers";
 
 // types
 import type { Metadata } from "next";
-import { UsersnapScript } from "./usersnap";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    {
+      path: "../fonts/InterVariable/InterVariable.woff2",
+      style: "normal",
+    },
+    {
+      path: "../fonts/InterVariable/InterVariable-Italic.woff2",
+      style: "italic",
+    },
+  ],
   variable: "--font-inter",
+});
+
+const interDisplay = localFont({
+  src: [
+    {
+      path: "../fonts/InterDisplay/InterDisplay-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/InterDisplay/InterDisplay-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../fonts/InterDisplay/InterDisplay-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../fonts/InterDisplay/InterDisplay-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-inter-display",
 });
 
 export const metadata: Metadata = {
@@ -45,7 +80,7 @@ export default async function RootLayout({
         <UsersnapScript />
       </head>
       <body
-        className={`${inter.variable} font-sans text-foreground`}
+        className={`${inter.variable} ${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
         <SkipToMainContent />
