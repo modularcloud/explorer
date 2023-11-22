@@ -14,7 +14,7 @@ export const singleNetworkSchema = z.object({
     }),
     platform: z.string().max(64).optional(),
     // TODO : These are defaulted for now, but it should be returned by the API
-    widgetLayout: z.enum(["EvmWithPrice", "EvmWithoutPrice", "SVM", "Celestia"]).optional(),
+    widgetLayout: z.enum(["EvmWithPrice", "EvmWithoutPrice", "SVM", "Celestia"]).optional().catch(undefined),
     // This is in HSL format, and is used like this : hsl("224 94% 51%")
     primaryColor: z.string().optional().default("256 100% 67%"),
     cssGradient: z

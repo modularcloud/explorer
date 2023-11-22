@@ -9,6 +9,7 @@ import { range } from "~/lib/shared-utils";
 
 import type { Value } from "@modularcloud/headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
+import { FlowChart } from "~/ui/flow";
 
 type Props = {
   properties: Record<string, Value>;
@@ -23,13 +24,16 @@ export async function Overview({ properties }: Props) {
     return Object.entries(properties);
   }, [properties]);
   return (
-    <section className="pb-4 pt-8 h-full overflow-y-auto">
-      <OverviewEntryList entries={entries} />
+    <>
+      <FlowChart />
+      <section className="pb-4 h-full overflow-y-auto">
+        <OverviewEntryList entries={entries} />
 
-      {/* {(asyncAttributes ?? []).map((set) => (
+        {/* {(asyncAttributes ?? []).map((set) => (
           <AsyncEntries resourcePath={set.src} />
         ))} */}
-    </section>
+      </section>
+    </>
   );
 }
 

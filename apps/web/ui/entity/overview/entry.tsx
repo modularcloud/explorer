@@ -16,6 +16,7 @@ import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Blob } from "./blob";
+import { FlowChart } from "~/ui/flow";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
