@@ -81,6 +81,14 @@ module.exports = {
         slideRightAndFade:
           "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
+      fontSize: {
+        xxs: ["10.5px", "14px"],
+        xs: ["12px", "16px"],
+        sm: ["14px", "20px"],
+        base: ["16px", "24px"],
+        lg: ["18px", "28px"],
+        xl: ["24px", "32px"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

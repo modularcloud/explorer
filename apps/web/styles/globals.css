@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    font-size: 14px;
+    font-size: 16px;
     --color-foreground: 236 15% 16%;
     --color-neutral: 224 11% 45%;
     --color-muted: 222 10% 55%;
