@@ -40,7 +40,7 @@ export function LatestTransactions({
               {...tr}
               network={network}
               className={cn(
-                index === 4 && "focus:rounded-b-md [&:not(:focus)]:border-none",
+                index === 4 && "rounded-b-md [&:not(:focus)]:border-none",
               )}
             />
           </li>
