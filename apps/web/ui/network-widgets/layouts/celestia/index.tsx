@@ -53,7 +53,7 @@ function CelestiaWidgetLayoutContent({ network }: Props) {
     <div className="max-w-[1060px] mx-auto flex flex-col gap-4">
       {lastUpdatedTime && (
         <time
-          className="text-sm text-muted/40 block mx-auto font-normal"
+          className="hidden tab:block text-sm text-muted/40 mx-auto font-normal"
           dateTime={lastUpdatedTime.toISOString()}
         >
           Last Updated:&nbsp;
