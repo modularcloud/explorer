@@ -14,7 +14,7 @@ export default function HomeLogo() {
       <HomeBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
       <HomeBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
 
-      <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white">
+      <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white tracking-[0.105rem]">
         THIS FUTURE IS NOW
       </small>
 
