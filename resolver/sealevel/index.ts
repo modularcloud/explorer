@@ -31,21 +31,28 @@ export const BlockResolver = createResolver(
     const parsedSlot = Number(slot);
     if (isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
 
-    const rpcResponse = await jsonRpcResolver({
-      endpoint: endpoint,
-      method: "getBlock",
-      params: [
-        parsedSlot,
-        {
-          encoding,
-          maxSupportedTransactionVersion,
-          transactionDetails,
-          rewards,
-        },
-      ],
-    });
-    if (rpcResponse.type === "success") return rpcResponse.result;
-    if (rpcResponse.type === "error") throw rpcResponse.error;
+    // const rpcResponse: ResolutionResponse = await jsonRpcResolver({
+    //   endpoint: String(process.env.SVM_DEVNET_RPC_ALTERNATIVE),//endpoint,
+    //   method: "getBlock",
+    //   params: [
+    //     parsedSlot,
+    //     {
+    //       encoding,
+    //       maxSupportedTransactionVersion,
+    //       transactionDetails,
+    //       rewards,
+    //     },
+    //   ],
+    // });
+    // if (rpcResponse.type === "success") return rpcResponse.result;
+    // if (rpcResponse.type === "error") throw rpcResponse.error;
+    const response = await fetch(
+      `${String(
+        process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+      )}/block?slotNumber=${parsedSlot}`,
+    );
+    const data = await response.json();
+    return data.result;
   },
   [JSONRPCResolver],
 );
@@ -71,20 +78,29 @@ export const TransactionResolver = createResolver(
     },
     jsonRpcResolver,
   ) => {
-    const rpcResponse = await jsonRpcResolver({
-      endpoint: endpoint,
-      method: "getTransaction",
-      params: [
-        signature,
-        {
-          encoding,
-          commitment,
-          maxSupportedTransactionVersion,
-        },
-      ],
-    });
-    if (rpcResponse.type === "success") return rpcResponse.result;
-    if (rpcResponse.type === "error") throw rpcResponse.error;
+    // const rpcResponse = await jsonRpcResolver({
+    //   endpoint: String(process.env.SVM_DEVNET_RPC_ALTERNATIVE),//endpoint,
+    //   method: "getTransaction",
+    //   params: [
+    //     signature,
+    //     {
+    //       encoding,
+    //       commitment,
+    //       maxSupportedTransactionVersion,
+    //     },
+    //   ],
+    // });
+    // if (rpcResponse.type === "success") return rpcResponse.result;
+    // if (rpcResponse.type === "error") throw rpcResponse.error;
+      const response = await fetch(
+        `${String(
+          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+        )}/tx?signature=${signature}`,
+      )
+      if(!response.ok) throw new Error(`Invalid response: ${response.status}`);
+      const data = await response.json();
+      return data.result;
+  
   },
   [JSONRPCResolver],
 );
