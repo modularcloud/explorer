@@ -1,4 +1,5 @@
 import { HeaderBg } from "~/ui/header-bg";
+import { HeaderBgMobile } from "~/ui/header-bg/mobile";
 
 import { notFound } from "next/navigation";
 import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
@@ -20,6 +21,7 @@ export default async function NetworkLogo(props: Props) {
       }}
     >
       <HeaderBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
+      <HeaderBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
 
       <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white">
         MODULAR CLOUD

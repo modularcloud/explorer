@@ -1,4 +1,6 @@
+import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 import { HeaderBg } from "~/ui/header-bg";
+import { HeaderBgMobile } from "~/ui/header-bg/mobile";
 
 export default function HomeLogo() {
   return (
@@ -6,10 +8,12 @@ export default function HomeLogo() {
       className="flex flex-col gap-8 items-center pt-44"
       style={{
         // @ts-expect-error this is a CSS variable
-        "--color-primary": network.config.primaryColor,
+        "--color-primary": DEFAULT_BRAND_COLOR,
       }}
     >
       <HeaderBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
+      <HeaderBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
+
       <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white">
         THIS FUTURE IS NOW
       </small>
