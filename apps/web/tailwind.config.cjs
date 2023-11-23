@@ -82,12 +82,12 @@ module.exports = {
           "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
       fontSize: {
-        xxs: ["10.5px", "14px"],
-        xs: ["12px", "16px"],
-        sm: ["14px", "20px"],
-        base: ["16px", "24px"],
-        lg: ["18px", "28px"],
-        xl: ["24px", "32px"],
+        xxs: ["0.65625rem", "0.875rem"], // 10px, 14px
+        xs: ["0.75rem", "1rem"], // 12px, 16px
+        sm: ["0.875rem", "1.25rem"], // 14px, 20px
+        base: ["1rem", "1.5rem"], // 16px, 24px
+        lg: ["1.125rem", "1.75rem"], // 18px, 28px
+        xl: ["1.5rem", "2rem"], // 24px, 32px
       },
     },
   },
