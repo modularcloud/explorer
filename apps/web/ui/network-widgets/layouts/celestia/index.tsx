@@ -29,6 +29,12 @@ function CelestiaWidgetLayoutContent({ network }: Props) {
   const latestBlocks = useLatestBlocks(network.id);
 
   const latestTransactions = useLatestTransactions(network.id);
+  const lastUpdatedTime = React.useMemo(() => {
+    if (apiResult && latestBlocks.data && latestTransactions.data) {
+      return new Date();
+    }
+    return null;
+  }, [apiResult, latestBlocks.data, latestTransactions.data]);
 
   if (error) {
     return <SvmSkeleton error={"".toString()} />;
@@ -44,109 +50,124 @@ function CelestiaWidgetLayoutContent({ network }: Props) {
   }
 
   return (
-    <div
-      style={{
-        // @ts-expect-error this is a CSS variable
-        "--color-primary": network.brandColor,
-      }}
-      className={cn(
-        "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
-        "w-full gap-8 tab:gap-10 font-medium",
-        "accent-primary place-items-stretch",
-        "max-w-[1060px] mx-auto",
+    <div className="max-w-[1060px] mx-auto flex flex-col gap-4">
+      {lastUpdatedTime && (
+        <time
+          className="text-sm text-muted/40 block mx-auto font-normal"
+          dateTime={lastUpdatedTime.toISOString()}
+        >
+          Last Updated:&nbsp;
+          {new Intl.DateTimeFormat("en-US", {
+            dateStyle: "full",
+            timeStyle: "long",
+            hour12: true,
+            timeZone: "America/Los_Angeles",
+          }).format(lastUpdatedTime)}
+        </time>
       )}
-    >
-      <IconCard
-        className="lg:col-span-1 row-span-1 lg:row-start-3 lg:col-start-3"
-        label="NAMESPACES"
-        icon={Folder}
-        value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
-      />
+      <div
+        style={{
+          // @ts-expect-error this is a CSS variable
+          "--color-primary": network.brandColor,
+        }}
+        className={cn(
+          "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
+          "w-full gap-8 tab:gap-10 font-medium",
+          "accent-primary place-items-stretch",
+        )}
+      >
+        <IconCard
+          className="lg:col-span-1 row-span-1 lg:row-start-3 lg:col-start-3"
+          label="NAMESPACES"
+          icon={Folder}
+          value={apiResult.metrics.NAMESPACE.toLocaleString("en-US")}
+        />
 
-      <Placeholder className="hidden lg:block lg:col-start-2" />
+        <Placeholder className="hidden lg:block lg:col-start-2" />
 
-      {/* <IconCard
+        {/* <IconCard
         className="lg:row-start-3 lg:col-start-3"
         label="BANDWIDTH"
         icon={Folder}
         value={apiResult.metrics.AVG_BlOCK_BLOB_SIZE.toLocaleString("en-US")}
       /> */}
 
-      <LatestTransactions
-        networkSlug={network.id}
-        className="col-span-2 row-span-2 row-start-1 col-start-1"
-        data={
-          latestTransactions?.data?.body?.type === "collection"
-            ? latestTransactions?.data?.body?.entries.map((entry: any) => {
-                return {
-                  hash: entry.row.Transactions.payload.value,
-                  success: entry.row.Status.payload,
-                  // temporary!!
-                  type: entry.row.Type.payload,
-                };
-              })
-            : []
-        }
-      />
+        <LatestTransactions
+          networkSlug={network.id}
+          className="col-span-2 row-span-2 row-start-1 col-start-1"
+          data={
+            latestTransactions?.data?.body?.type === "collection"
+              ? latestTransactions?.data?.body?.entries.map((entry: any) => {
+                  return {
+                    hash: entry.row.Transactions.payload.value,
+                    success: entry.row.Status.payload,
+                    // temporary!!
+                    type: entry.row.Type.payload,
+                  };
+                })
+              : []
+          }
+        />
 
-      <IconCard
-        className="lg:row-start-2 lg:col-start-3 tab:col-start-1 tab:col-span-2 lg:col-span-1 tab:row-start-4"
-        label="TOTAL BLOCKS"
-        icon={Disabled}
-        value={parseInt(apiResult.blockHeight).toLocaleString("en-US")}
-      />
+        <IconCard
+          className="lg:row-start-2 lg:col-start-3 tab:col-start-1 tab:col-span-2 lg:col-span-1 tab:row-start-4"
+          label="TOTAL BLOCKS"
+          icon={Disabled}
+          value={parseInt(apiResult.blockHeight).toLocaleString("en-US")}
+        />
 
-      <IconCard
-        className="lg:row-start-3 lg:col-start-1 lg:col-span-1 tab:row-start-1 tab:col-span-2 tab:col-start-3 row-start-3 col-start-1"
-        label="TOTAL BLOBS"
-        icon={Document}
-        value={apiResult.metrics.BLOB.toLocaleString("en-US")}
-      />
+        <IconCard
+          className="lg:row-start-3 lg:col-start-1 lg:col-span-1 tab:row-start-1 tab:col-span-2 tab:col-start-3 row-start-3 col-start-1"
+          label="TOTAL BLOBS"
+          icon={Document}
+          value={apiResult.metrics.BLOB.toLocaleString("en-US")}
+        />
 
-      <IconCard
-        className="lg:row-start-1 lg:col-start-3 col-span-2 tab:col-span-1"
-        label="GAS PRICE"
-        icon={Document}
-        value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
-          "en-US",
-        )}
-      />
+        <IconCard
+          className="lg:row-start-1 lg:col-start-3 col-span-2 tab:col-span-1"
+          label="GAS PRICE"
+          icon={Document}
+          value={apiResult.metrics.LAST_10_BLOCKS_AVG_GAS_PRICE.toLocaleString(
+            "en-US",
+          )}
+        />
 
-      <Placeholder className="hidden lg:block lg:col-start-4" />
+        <Placeholder className="hidden lg:block lg:col-start-4" />
 
-      <IconCard
-        label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-5 lg:col-span-1 tab:col-start-3 tab:row-start-4 tab:col-span-2 row-start-3 col-start-2"
-        icon={BarChart}
-        value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
-      />
+        <IconCard
+          label="TOTAL TRANSACTIONS"
+          className="lg:row-start-3 lg:col-start-5 lg:col-span-1 tab:col-start-3 tab:row-start-4 tab:col-span-2 row-start-3 col-start-2"
+          icon={BarChart}
+          value={apiResult.metrics.TRANSACTION.toLocaleString("en-US")}
+        />
 
-      {/* <Treemap
+        {/* <Treemap
         data={apiResult.metrics.LAST_10_BLOCKS_BLOB_SIZES}
         className="h-[20.5rem] col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
       /> */}
 
-      <LatestBlocks
-        networkSlug={network.id}
-        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-        data={
-          latestBlocks?.data?.body?.type === "collection"
-            ? latestBlocks?.data?.body?.entries.map((block) => {
-                return {
-                  number: Number(block.row.Height.payload),
-                  noOfTransactions: Number(block.row.Txs.payload),
-                  timestamp:
-                    typeof block.sidebar.properties.Timestamp.payload ===
-                    "string"
-                      ? new Date(
-                          block.sidebar.properties.Timestamp.payload,
-                        ).getTime()
-                      : new Date().getTime(),
-                };
-              })
-            : []
-        }
-      />
+        <LatestBlocks
+          networkSlug={network.id}
+          className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
+          data={
+            latestBlocks?.data?.body?.type === "collection"
+              ? latestBlocks?.data?.body?.entries.map((block) => {
+                  return {
+                    number: Number(block.row.Height.payload),
+                    noOfTransactions: Number(block.row.Txs.payload),
+                    timestamp:
+                      typeof block.sidebar.properties.Timestamp.payload ===
+                      "string"
+                        ? new Date(
+                            block.sidebar.properties.Timestamp.payload,
+                          ).getTime()
+                        : new Date().getTime(),
+                  };
+                })
+              : []
+          }
+        />
+      </div>
     </div>
   );
 }
