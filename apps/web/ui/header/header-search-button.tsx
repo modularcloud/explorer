@@ -57,7 +57,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
         className={cn(
           "inline-flex items-center gap-4 md:gap-6",
           "md:min-w-fit min-w-0 flex-shrink",
-          "shadow-sm",
+          "shadow-sm text-sm",
         )}
         variant="bordered"
         style={{

@@ -105,7 +105,7 @@ export function RightPanel({ data, network }: Props) {
           className="object-center object-contain flex-shrink-0"
         />
 
-        <h2 className="text-xl font-medium">
+        <h2 className="text-lg font-medium">
           {capitalize(network.chainBrand)} {capitalize(network.chainName)}
         </h2>
 

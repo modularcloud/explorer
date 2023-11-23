@@ -1,6 +1,6 @@
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
-import { HeaderBg } from "~/ui/header-bg";
-import { HeaderBgMobile } from "~/ui/header-bg/mobile";
+import { HomeBg } from "~/ui/home-bg";
+import { HomeBgMobile } from "~/ui/home-bg/mobile";
 
 export default function HomeLogo() {
   return (
@@ -11,8 +11,8 @@ export default function HomeLogo() {
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
     >
-      <HeaderBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
-      <HeaderBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
+      <HomeBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
+      <HomeBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
 
       <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white">
         THIS FUTURE IS NOW

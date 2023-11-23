@@ -23,7 +23,7 @@ export function AssociatedComponentList({
 }: Props) {
   return (
     <dl className="w-full">
-      <div className="grid gap-4 text-lg w-full grid-cols-5">
+      <div className="grid gap-4 text-base w-full grid-cols-5">
         <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
           <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
           {headerKey}
@@ -62,7 +62,7 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
   const { type, payload } = value;
 
   return (
-    <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative">
+    <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative text-sm">
       {/* Left indentation marker */}
       <div
         className="grid items-start h-full absolute left-1 top-0 bottom-0"

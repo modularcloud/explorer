@@ -217,7 +217,7 @@ function TableContent({ initialData, route }: Props) {
               className="w-full max-w-full border-separate bg-muted-100"
               style={{ borderSpacing: "0 1px" }}
             >
-              <thead className="sticky top-0 bg-white z-10">
+              <thead className="sticky top-0 bg-white z-10 text-sm">
                 <tr className="h-12 text-left hidden sm:table-row">
                   <th
                     className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
@@ -333,7 +333,7 @@ const TableRow = React.memo(function TableRow({
           router.push(entry.link);
         }
       }}
-      className={cn("group focus:outline-none", {
+      className={cn("group focus:outline-none text-xs", {
         "cursor-pointer": entry.link,
         "aria-[selected=true]:bg-muted-100": entry.link,
         "aria-[selected=true]:bg-muted-50": !entry.link,

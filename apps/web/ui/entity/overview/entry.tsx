@@ -217,6 +217,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
         "border-b border-r focus:outline-none",
         "scroll-m-10",
         "aria-[selected=true]:bg-muted-50",
+        "text-sm",
       )}
       {...optionProps}
     >

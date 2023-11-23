@@ -34,7 +34,7 @@ export async function Header({ networkSlug }: Props) {
           className="h-5 w-5"
         />
 
-        <h1 className="font-medium text-xl hidden lg:block">Modular Cloud</h1>
+        <h1 className="font-medium text-lg hidden lg:block">Modular Cloud</h1>
       </Link>
 
       <HeaderSearchButton optionGroups={optionGroups} />

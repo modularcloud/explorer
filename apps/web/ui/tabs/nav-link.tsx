@@ -48,7 +48,7 @@ export function NavLink({
       tabIndex={isDummy ? -1 : 0}
       aria-hidden={isDummy}
       className={cn(
-        "flex text-center flex-col group h-full items-center group outline-none",
+        "flex text-center flex-col group h-full items-center group outline-none text-sm",
         {
           "text-foreground bg-white": isSelected,
           "text-muted  bg-muted-100": !isSelected,

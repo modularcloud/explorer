@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function HeaderBg(props: React.SVGProps<SVGSVGElement>) {
+export function HomeBg(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
