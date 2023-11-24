@@ -55,9 +55,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
     >
       <Button
         className={cn(
-          "inline-flex items-center gap-4 md:gap-6",
+          "inline-flex items-center justify-between gap-4 md:gap-5",
           "md:min-w-fit min-w-0 flex-shrink",
           "shadow-sm text-sm",
+          "py-2 px-3.5",
         )}
         variant="bordered"
         style={{

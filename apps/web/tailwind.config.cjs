@@ -21,8 +21,8 @@ module.exports = {
         },
       },
       spacing: {
-        header: `4.5rem`,
-        "header-tabs": `3rem`,
+        header: `4rem`,
+        "header-tabs": `2.625rem`,
       },
       colors: {
         ...config.theme.extend.colors,

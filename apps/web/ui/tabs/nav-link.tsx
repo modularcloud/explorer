@@ -55,7 +55,7 @@ export function NavLink({
           "pointer-events-none": isDummy,
           "rounded-bl-lg": currentIndex === activeTabIndex + 1,
           "rounded-br-lg": currentIndex === activeTabIndex - 1,
-          "w-52": !isDummy,
+          "w-48": !isDummy,
           "flex-grow flex-shrink": isDummy,
         },
       )}

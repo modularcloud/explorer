@@ -24,7 +24,7 @@ export function AssociatedComponentList({
   return (
     <dl className="w-full">
       <div className="grid gap-4 text-base w-full grid-cols-5">
-        <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
+        <dt className="text-foreground font-medium flex items-center gap-2 col-span-2">
           <ArrowLeftRight aria-hidden="true" className="flex-shrink-0" />
           {headerKey}
         </dt>

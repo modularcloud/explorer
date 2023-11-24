@@ -209,7 +209,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       tabIndex={0}
       className={cn(
         "group/copyable border-mid-dark-100 bg-white",
-        "grid grid-cols-5 items-baseline gap-4 py-4 px-6",
+        "grid grid-cols-5 items-baseline gap-4 py-2.5 px-6",
         "transition-none duration-0",
         "aria-[selected=true]:text-foreground",
         "aria-[selected=true]:border-l-primary",
