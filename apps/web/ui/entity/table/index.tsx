@@ -135,15 +135,17 @@ function TableContent({ initialData, route }: Props) {
 
   const PADDING_END = 160;
   const ITEM_SIZE = 65;
-  const virtualizer = useVirtualizer({
-    count: flatData.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => ITEM_SIZE,
-    overscan: 20,
-    paddingEnd: PADDING_END,
-    scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
-    scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
-  });
+  // Removed for now as it causes white blank issues.
+  // TODO : reintroduce when we implement the new layout
+  // const virtualizer = useVirtualizer({
+  //   count: flatData.length,
+  //   getScrollElement: () => parentRef.current,
+  //   estimateSize: () => ITEM_SIZE,
+  //   overscan: 20,
+  //   paddingEnd: PADDING_END,
+  //   scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
+  //   scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
+  // });
 
   const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
 
@@ -152,11 +154,14 @@ function TableContent({ initialData, route }: Props) {
   const onSelectItem = React.useCallback(
     ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
       if (entry.link && inputMethod === "keyboard") {
-        virtualizer.scrollToIndex(index);
+        // virtualizer.scrollToIndex(index);
       }
       setSpotlight?.(entry.sidebar);
     },
-    [virtualizer, setSpotlight],
+    [
+      // virtualizer,
+      setSpotlight,
+    ],
   );
 
   const onClickItem = React.useCallback(
@@ -172,7 +177,7 @@ function TableContent({ initialData, route }: Props) {
     getItemId,
     onSelectItem,
     items: flatData,
-    scrollOnSelection: false,
+    scrollOnSelection: true,
     parentRef: parentRef,
     onClickItem,
   });
@@ -212,7 +217,9 @@ function TableContent({ initialData, route }: Props) {
           onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
           className="overflow-y-auto h-screen"
         >
-          <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+          <div
+          //  style={{ height: `${virtualizer.getTotalSize()}px` }}
+          >
             <table
               className="w-full max-w-full border-separate bg-muted-100"
               style={{ borderSpacing: "0 1px" }}
@@ -275,15 +282,14 @@ function TableContent({ initialData, route }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                  const entry = flatData[virtualRow.index];
+                {flatData.map((entry, index) => {
                   return (
                     <TableRow
                       key={index}
                       columns={columns}
                       entry={entry}
-                      virtualRow={virtualRow}
-                      currentIndex={virtualRow.index}
+                      // virtualRow={virtualRow}
+                      currentIndex={index}
                       registerOptionProps={registerOptionProps}
                     />
                   );
@@ -306,7 +312,7 @@ type TableRowProps = {
   columns: TableColumns;
   entry: TableEntry;
   currentIndex: number;
-  virtualRow: VirtualItem;
+  // virtualRow: VirtualItem;
   registerOptionProps?: (item: TableEntry, index: number) => void;
 };
 
@@ -314,7 +320,7 @@ const TableRow = React.memo(function TableRow({
   columns,
   entry,
   currentIndex,
-  virtualRow,
+  // virtualRow,
   registerOptionProps,
 }: TableRowProps) {
   const router = useRouter();
@@ -339,11 +345,14 @@ const TableRow = React.memo(function TableRow({
         "aria-[selected=true]:bg-muted-50": !entry.link,
       })}
       style={{
-        height: `${virtualRow.size}px`,
-        transform: `translateY(${
-          virtualRow.start - currentIndex * virtualRow.size
-        }px)`,
+        height: `65px`,
       }}
+      // style={{
+      //   height: `${virtualRow.size}px`,
+      //   transform: `translateY(${
+      //     virtualRow.start - currentIndex * virtualRow.size
+      //   }px)`,
+      // }}
       aria-selected="false"
       {...optionProps}
     >
