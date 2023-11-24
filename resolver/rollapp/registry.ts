@@ -1,6 +1,6 @@
 import { Any } from "./google/protobuf/any";
-import { Celestia } from "proto-utils"; 
-const parsers = Celestia.Msgs;
+import { Rollapps } from "proto-utils"; 
+const parsers = Rollapps.Msgs;
 
 function decodeAny(anyMessage: Any) {
   const typeUrl = anyMessage.typeUrl;
@@ -18,7 +18,7 @@ export type DecodedAny = { typeUrl: string; decodedValue: any };
 export function getMessages(txRaw: string) {
   const txBuffer = Buffer.from(txRaw, "base64");
 
-  const txBody = Celestia.Tx.decode(txBuffer).body;
+  const txBody = Rollapps.Tx.decode(txBuffer).body;
   if (!txBody) {
     return [];
   }

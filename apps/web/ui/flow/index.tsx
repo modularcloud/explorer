@@ -1,6 +1,9 @@
-import { Value } from "@modularcloud/headless";
+"use client";
+
+import type { Value } from "@modularcloud/headless";
 import Image from "next/image";
 import { cn } from "../shadcn/utils";
+import useSWR from "swr";
 
 type Node =
   | {
@@ -31,7 +34,53 @@ type Props = {
   };
 };
 
-function Node({ node, isNext }: { node: Node; isNext?: boolean }) {
+function Node({ isNext, step }: { node: Node; isNext?: boolean, step: number }) {
+    const body = {
+        resolverId: "rollapp-ibc-0.0.0",
+        input: {
+            hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+            step,
+            slug: "coinhunterstrrollapp_9084503-1"
+        },
+      };
+      const label = [
+        "Transfer",
+        "Received",
+        "Received",
+        "Acknowledgement",
+      ][step]
+    const nodeResponse = useSWR(
+        [
+          "/api/resolve/transactions",
+          body,
+        ],
+        async () => {
+          const response = await fetch("/api/resolve", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+          const data = await response.json();
+          return data;
+        },
+        {
+          //refreshInterval: THIRTY_SECONDS,
+          errorRetryCount: 2,
+          keepPreviousData: true,
+          revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+          placeholderData: {
+            type: "pending",
+            label,
+            waitingFor: "test",
+            //waitingFor: label === "received" ? "receipt" : undefined
+          }
+        },
+      );
+      if (!nodeResponse.data) return null;
+      const node = nodeResponse.data.result;
+      console.log(node);
   let colors =
     "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835]";
   if (isNext) {
@@ -50,13 +99,13 @@ function Node({ node, isNext }: { node: Node; isNext?: boolean }) {
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md">
-          <Image
-            src="https://github.com/dymensionxyz/rollapp-registry/blob/main/modularfam_6209067-1/logos/modularfam_6209067-1.jpg?raw=true"
+          {node.image ? <Image
+            src={node.image}
             width={20}
             height={20}
             alt={`${node.label} chain logo`}
             // className="aspect-square object-contain object-center w-5 overflow-hidden"
-          />
+          /> : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
           {node.label}
@@ -218,7 +267,8 @@ export function FlowChart() {
           <Node
             key={index}
             node={node}
-            isNext={node.type === "pending" && nodes[index - 1].type === "completed"}
+            // isNext={node.type === "pending" && nodes[index - 1].type === "completed"}
+            step={index}
           />
         ))}
       </div>

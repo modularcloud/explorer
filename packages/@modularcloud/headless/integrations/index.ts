@@ -19,6 +19,7 @@ import { RollappLatestBlocksResolver } from "./rollapp/routes/blocks/page";
 import { RollappBlockTransctionsResolver } from "./rollapp/routes/blocks/[hashOrHeight]/transactions/page";
 import { RollappTransactionMessagesResolver } from "./rollapp/routes/transactions/[hash]/messages/page";
 import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/messages/[index]/page";
+import { IBCResolver } from "./rollapp/misc/ibc";
 
 export function registerResolvers() {
   registerResolver(SVM.addressOverviewResolver);
@@ -50,6 +51,7 @@ export function registerResolvers() {
   registerResolver(RollappBlockTransctionsResolver);
   registerResolver(RollappTransactionMessagesResolver);
   registerResolver(RollappMessageResolver);
+  registerResolver(IBCResolver);
   // registerResolver(CelestiaAddressTransactionsResolver);
   // registerResolver(CelestiaLatestTransactionsResolver);
   // registerResolver(CelestiaAddressBalancesResolver);
