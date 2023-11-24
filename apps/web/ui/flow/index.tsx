@@ -4,6 +4,9 @@ import type { Value } from "@modularcloud/headless";
 import Image from "next/image";
 import { cn } from "../shadcn/utils";
 import useSWR from "swr";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useMemo } from "react";
 
 type Node =
   | {
@@ -34,53 +37,63 @@ type Props = {
   };
 };
 
-function Node({ isNext, step }: { node: Node; isNext?: boolean, step: number }) {
-    const body = {
-        resolverId: "rollapp-ibc-0.0.0",
-        input: {
-            hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
-            step,
-            slug: "coinhunterstrrollapp_9084503-1"
+function Node({
+  isNext,
+  step,
+}: {
+  node: Node;
+  isNext?: boolean;
+  step: number;
+}) {
+  const body = {
+    resolverId: "rollapp-ibc-0.0.0",
+    input: {
+      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      step,
+      slug: "coinhunterstrrollapp_9084503-1",
+    },
+  };
+  const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+  const nodeResponse = useSWR(
+    ["/api/resolve/transactions", body],
+    async () => {
+      const response = await fetch("/api/resolve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      };
-      const label = [
-        "Transfer",
-        "Received",
-        "Received",
-        "Acknowledgement",
-      ][step]
-    const nodeResponse = useSWR(
-        [
-          "/api/resolve/transactions",
-          body,
-        ],
-        async () => {
-          const response = await fetch("/api/resolve", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          });
-          const data = await response.json();
-          return data;
-        },
-        {
-          //refreshInterval: THIRTY_SECONDS,
-          errorRetryCount: 2,
-          keepPreviousData: true,
-          revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-          placeholderData: {
-            type: "pending",
-            label,
-            waitingFor: "test",
-            //waitingFor: label === "received" ? "receipt" : undefined
-          }
-        },
-      );
-      if (!nodeResponse.data) return null;
-      const node = nodeResponse.data.result;
-      console.log(node);
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      return data;
+    },
+    {
+      //refreshInterval: THIRTY_SECONDS,
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+      placeholderData: {
+        type: "pending",
+        label,
+        waitingFor: "test",
+        //waitingFor: label === "received" ? "receipt" : undefined
+      },
+    },
+  );
+  const time = useMemo(() => {
+    const node = nodeResponse.data?.result;
+    if (node && node.timestamp) {
+      dayjs.extend(relativeTime);
+      return dayjs(node.timestamp * 1000).fromNow();
+    }
+    return null;
+  }, [nodeResponse.data]);
+  if (!nodeResponse.data) return null;
+  const node = nodeResponse.data.result;
+  if (step === 0) console.log(node.sidebar.Sender.payload);
+  if (step === 0) console.log(node.sidebar.Receiver.payload);
+  if (step === 0) console.log(node.sidebar);
+
   let colors =
     "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835]";
   if (isNext) {
@@ -99,13 +112,17 @@ function Node({ isNext, step }: { node: Node; isNext?: boolean, step: number }) 
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md">
-          {node.image ? <Image
-            src={node.image}
-            width={20}
-            height={20}
-            alt={`${node.label} chain logo`}
-            // className="aspect-square object-contain object-center w-5 overflow-hidden"
-          /> : null}
+          {node.image ? (
+            <div className="rounded-full overflow-hidden">
+              <Image
+                src={node.image}
+                width={20}
+                height={20}
+                alt={`${node.label} chain logo`}
+                // className="aspect-square object-contain object-center w-5 overflow-hidden"
+              />
+            </div>
+          ) : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
           {node.label}
@@ -117,7 +134,7 @@ function Node({ isNext, step }: { node: Node; isNext?: boolean, step: number }) 
             {node.shortId ?? node.id}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
-            {node.timestamp}
+            {time}
           </div>
         </div>
       ) : (
@@ -174,6 +191,86 @@ function Address({ address }: { address: string }) {
   );
 }
 
+function Transfer() {
+    const body = {
+        resolverId: "rollapp-ibc-0.0.0",
+        input: {
+          hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+          step: 0,
+          slug: "coinhunterstrrollapp_9084503-1",
+        },
+      };
+    const nodeResponse = useSWR(
+        ["/api/resolve/transactions", body],
+        async () => {
+          const response = await fetch("/api/resolve", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+          const data = await response.json();
+          return data;
+        },
+        {
+          //refreshInterval: THIRTY_SECONDS,
+          errorRetryCount: 2,
+          keepPreviousData: true,
+          revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+        },
+      );
+        const amount = useMemo(() => {
+            const node = nodeResponse.data?.result;
+            if (node && node.sidebar.Token.payload) {
+                const [value, denom] = node.sidebar.Token.payload.split(" ");
+                return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`
+            }
+            return null;
+        }, [nodeResponse.data]);
+        const node = nodeResponse.data?.result;
+        if (!node) return null;
+        return <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
+        <Address address={node.sidebar.Sender.payload} />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
+            stroke="#272835"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+
+        <div className="text-xs font-medium leading-4 self-center my-auto">
+          {amount}
+        </div>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
+            stroke="#272835"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+
+        <Address address={node.sidebar.Receiver.payload} />
+      </div>
+}
+
 export function FlowChart() {
   const props: Props = {
     title: "IBC Transfer",
@@ -222,45 +319,7 @@ export function FlowChart() {
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
         <div className="text-xs font-medium leading-4">{props.title}</div>
-        <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
-          <Address address={props.transfer.from} />
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
-              stroke="#272835"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          <div className="text-xs font-medium leading-4 self-center my-auto">
-            {`${props.transfer.amount} ${props.transfer.denom}`}
-          </div>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
-              stroke="#272835"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          <Address address={props.transfer.to} />
-        </div>
+        <Transfer />
       </div>
       <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
         {props.nodes.map((node, index, nodes) => (
@@ -275,3 +334,4 @@ export function FlowChart() {
     </div>
   );
 }
+
