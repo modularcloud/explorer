@@ -1,6 +1,6 @@
 import { PageArchetype } from "~/ecs/archetypes/page";
 import { Code } from "bright";
-import { Entity } from "@modularcloud/ecs";
+import { Entity } from "ecs";
 import { tabs } from "./extension";
 
 type Props = { entity: Entity<typeof PageArchetype> };

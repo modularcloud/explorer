@@ -2,7 +2,7 @@ import { Badge } from "~/ui/badge";
 import { truncateString } from "~/lib/shared-utils";
 import Web3 from "web3";
 import Link from "next/link";
-//import { createModularCloud } from "@modularcloud/sdk";
+//import { createModularCloud } from "sdk";
 import { ClientTime } from "./time";
 import SvgBlocksIcon from "~/ui/icons/BlocksIcon";
 import SvgBarChartIcon from "~/ui/icons/BarChartIcon";

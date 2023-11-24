@@ -1,4 +1,4 @@
-import type { Value } from "@modularcloud/headless";
+import type { Value } from "headless";
 import { Status } from "~/ui/status";
 import { LongVal } from "~/ui/long-val";
 import { CheckCircle, XCircle } from "~/ui/icons";

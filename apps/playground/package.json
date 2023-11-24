@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@modularcloud-resolver/core": "*",
+    "core": "*",
     "ethers": "^6.7.1"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Value } from "@modularcloud/headless";
+import type { Value } from "headless";
 import Image from "next/image";
 import { cn } from "../shadcn/utils";
 import useSWR from "swr";

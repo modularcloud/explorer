@@ -1,4 +1,4 @@
-import { createComponentSchema } from "@modularcloud/ecs";
+import { createComponentSchema } from "ecs";
 import { z } from "zod";
 
 const TopbarSchema = z.object({

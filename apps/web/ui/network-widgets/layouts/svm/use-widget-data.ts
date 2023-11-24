@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { z } from "zod";
-import { PageContext } from "@modularcloud/headless";
+import { PageContext } from "headless";
 
 const widgetDataSchema = z.object({
   metrics: z.object({

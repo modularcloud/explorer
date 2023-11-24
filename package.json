@@ -4,9 +4,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "packages/@modularcloud/*",
-    "resolver/*"
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",

@@ -10,7 +10,7 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Page, Value } from "@modularcloud/headless";
+import type { Page, Value } from "headless";
 
 type Props = Pick<Page["sidebar"], "headerValue" | "headerKey"> & {
   defaultAttributes: Array<[string, Value]>;

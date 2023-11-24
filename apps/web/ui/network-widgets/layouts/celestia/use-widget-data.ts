@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { z } from "zod";
-import { PageContext } from "@modularcloud/headless";
-import type { Page } from "@modularcloud/headless";
+import { PageContext } from "headless";
+import type { Page } from "headless";
 
 const widgetDataSchema = z.object({
   metrics: z.object({

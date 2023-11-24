@@ -1,4 +1,4 @@
-import { AnyArchetypeSchema } from "@modularcloud/ecs";
+import { AnyArchetypeSchema } from "ecs";
 import { fetchLoad } from "~/lib/shared-utils";
 import useSWRImmutable from "swr/immutable";
 import { asyncUseEntity } from "./server";

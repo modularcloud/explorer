@@ -1,4 +1,4 @@
-import { createArchetype } from "@modularcloud/ecs";
+import { createArchetype } from "ecs";
 import { CardComponent } from "~/ecs/components/card";
 import { RowComponent } from "~/ecs/components/row";
 

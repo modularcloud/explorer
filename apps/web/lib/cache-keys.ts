@@ -1,4 +1,4 @@
-import type { PaginationContext } from "@modularcloud/headless";
+import type { PaginationContext } from "headless";
 import type { HeadlessRoute } from "./headless-utils";
 
 /**

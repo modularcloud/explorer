@@ -3,7 +3,7 @@ import {
   NotFound,
   ResolutionResponse,
   Trace,
-} from "@modularcloud-resolver/core";
+} from "core";
 
 function Resolution({ trace, raw }: { trace: Trace; raw?: string }) {
   console.log(raw);

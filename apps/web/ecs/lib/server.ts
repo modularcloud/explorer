@@ -1,4 +1,4 @@
-import { AnyArchetypeSchema, verifyArchetype } from "@modularcloud/ecs";
+import { AnyArchetypeSchema, verifyArchetype } from "ecs";
 import { cache } from "react";
 import { fetchLoad } from "~/lib/shared-utils";
 

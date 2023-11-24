@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import type { Sidebar } from "@modularcloud/headless";
+import type { Sidebar } from "headless";
 
 export const SpotlightContext = React.createContext<{
   spotlight?: Sidebar | null;

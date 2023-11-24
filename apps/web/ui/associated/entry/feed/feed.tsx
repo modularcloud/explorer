@@ -1,4 +1,4 @@
-import { Entity } from "@modularcloud/ecs";
+import { Entity } from "ecs";
 import { AssociatedArchetype } from "~/ecs/archetypes/associated";
 import { Badge } from "~/ui/badge";
 import { KeyValueList } from "~/ui/key-value-list";

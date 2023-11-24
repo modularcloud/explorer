@@ -10,7 +10,7 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Sidebar, Value } from "@modularcloud/headless";
+import type { Sidebar, Value } from "headless";
 import { SpotlightContext } from "./spotlight-context";
 import { DateTime, formatDateTime } from "../date";
 

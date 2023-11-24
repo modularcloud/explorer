@@ -6,7 +6,7 @@ import { asyncUseEntity } from "~/ecs/hooks/use-entity/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { Suspense } from "react";
 import { PageArchetype } from "~/ecs/archetypes/page";
-import { Entity } from "@modularcloud/ecs";
+import { Entity } from "ecs";
 import { OldCopyableValue } from "~/ui/old-copyable";
 
 import type { FetchLoadArgs } from "~/lib/shared-utils";

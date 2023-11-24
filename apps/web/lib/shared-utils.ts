@@ -1,4 +1,4 @@
-import { EntityBaseSchema } from "@modularcloud/ecs";
+import { EntityBaseSchema } from "ecs";
 import { z } from "zod";
 import _slugify from "slugify";
 import type { SingleNetwork } from "./network";

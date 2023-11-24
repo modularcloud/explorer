@@ -5,7 +5,7 @@ import {
   PaginationContext,
   SearchBuilders,
   createRollappIntegration,
-} from "@modularcloud/headless";
+} from "headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
 import { parseHeadlessRouteVercelFix } from "./shared-utils";

@@ -1,4 +1,4 @@
-import { registerResolvers, resolve } from "@modularcloud/headless";
+import { registerResolvers, resolve } from "headless";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

@@ -1,4 +1,4 @@
-import { createArchetype } from "@modularcloud/ecs";
+import { createArchetype } from "ecs";
 import { PaginationComponent } from "~/ecs/components/pagination";
 
 export const PaginationArchetype = createArchetype()

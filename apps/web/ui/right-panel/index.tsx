@@ -24,7 +24,7 @@ import { headers } from "next/headers";
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
 import type { SingleNetwork } from "~/lib/network";
-import type { Page } from "@modularcloud/headless";
+import type { Page } from "headless";
 import { SpotlightComponentList } from "./spotlight";
 
 interface HotkeyEntryProps {

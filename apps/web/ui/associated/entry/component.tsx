@@ -1,6 +1,6 @@
 "use client";
 
-import { Entity } from "@modularcloud/ecs";
+import { Entity } from "ecs";
 import { AssociatedArchetype } from "~/ecs/archetypes/associated";
 import { useContext } from "react";
 import { ViewContext } from "~/ui/view-context/client";

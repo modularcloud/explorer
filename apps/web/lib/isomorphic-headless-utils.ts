@@ -2,7 +2,7 @@ import {
   Page,
   createSVMIntegration,
   PaginationContext,
-} from "@modularcloud/headless";
+} from "headless";
 import type { SingleNetwork } from "./network";
 import type { HeadlessRoute } from "./headless-utils";
 

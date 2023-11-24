@@ -3,7 +3,7 @@ import * as React from "react";
 import { TableCell } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
-import type { Page, Collection, Column } from "@modularcloud/headless";
+import type { Page, Collection, Column } from "headless";
 import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery } from "@tanstack/react-query";

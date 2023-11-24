@@ -8,7 +8,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
-import type { Value } from "@modularcloud/headless";
+import type { Value } from "headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
 import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 import { SpotlightContext } from "~/ui/right-panel/spotlight-context";

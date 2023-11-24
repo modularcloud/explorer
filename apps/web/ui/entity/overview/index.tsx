@@ -7,7 +7,7 @@ import { fetchEntity } from "~/ecs/lib/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { range } from "~/lib/shared-utils";
 
-import type { Value } from "@modularcloud/headless";
+import type { Value } from "headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
 import { FlowChart } from "~/ui/flow";
 
