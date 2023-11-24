@@ -1,9 +1,7 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import * as RollApp from "@modularcloud-resolver/rollapp";
 import { Page, PageContext, Value } from "../../../../../schemas/page";
-import * as Celestia from "@modularcloud-resolver/celestia";
-import { BlockResponse, TransactionResponse } from "../../../types";
-import { z } from "zod";
+import { TransactionResponse } from "../../../types";
 import {
   getBlockProperties,
   getTransactionProperties,

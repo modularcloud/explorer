@@ -6,7 +6,7 @@ import { getBlobTx } from "./parse-tx";
 
 export const BlockHashResolver = createResolver(
   {
-    id: "celestia-block-hash-0.0.0",
+    id: "rollapp-block-hash-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; hash: string }, fetchResolver) => {
@@ -26,7 +26,7 @@ export const BlockHashResolver = createResolver(
 
 export const BlockHeightResolver = createResolver(
   {
-    id: "celestia-block-height-0.0.0",
+    id: "rollapp-block-height-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; height?: string }, fetchResolver) => {
@@ -46,7 +46,7 @@ export const BlockHeightResolver = createResolver(
 
 export const TransactionResolver = createResolver(
   {
-    id: "celestia-transaction-0.0.0",
+    id: "rollapp-transaction-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; hash: string }, fetchResolver) => {
