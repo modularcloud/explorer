@@ -43,7 +43,6 @@ function Node({
   isNext,
   step,
 }: {
-  node: Node;
   isNext?: boolean;
   step: number;
 }) {
@@ -286,62 +285,19 @@ function Transfer() {
 }
 
 export function FlowChart() {
-  const props: Props = {
-    title: "IBC Transfer",
-    transfer: {
-      from: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      to: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      amount: "14",
-      denom: "ATOM",
-    },
-    nodes: [
-      {
-        type: "completed",
-        id: "1",
-        shortId: "1",
-        label: "Transfer",
-        timestamp: "7 Min Ago",
-        link: "https://google.com",
-        //sidebar: {},
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Acknowledgement",
-        waitingFor: "acknowledgement",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-    ],
-  } as any;
+  
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
-        <div className="text-xs font-medium leading-4">{props.title}</div>
+        <div className="text-xs font-medium leading-4">IBC Transfer</div>
         <Transfer />
       </div>
       <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-        {props.nodes.map((node, index, nodes) => (
+        {[0,1,2,3].map((step) => (
           <Node
-            key={index}
-            node={node}
+            key={step}
             // isNext={node.type === "pending" && nodes[index - 1].type === "completed"}
-            step={index}
+            step={step}
           />
         ))}
       </div>
