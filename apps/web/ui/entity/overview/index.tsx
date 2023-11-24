@@ -13,19 +13,20 @@ import { FlowChart } from "~/ui/flow";
 
 type Props = {
   properties: Record<string, Value>;
+  isIBC?: boolean;
 };
 
 async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   return null;
 }
 
-export async function Overview({ properties }: Props) {
+export async function Overview({ properties, isIBC }: Props) {
   const entries = React.useMemo(() => {
     return Object.entries(properties);
   }, [properties]);
   return (
     <>
-      <FlowChart />
+      {isIBC ? <FlowChart /> : null}
       <section className="pb-4 h-full overflow-y-auto">
         <OverviewEntryList entries={entries} />
 

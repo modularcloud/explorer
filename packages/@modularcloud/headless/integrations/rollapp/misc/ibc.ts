@@ -112,7 +112,7 @@ export const IBCResolver = createResolver(
       id,
       shortId: id.slice(0, 3) + "..." + id.slice(-3),
       timestamp: data.result.ibc.steps[0].transaction.timeStamp,
-      link: `/${slug}/trasansactions/${id}/messages/${messageIndex}`,
+      link: `/${rpcIntegration.slug}/transactions/${id}/messages/${messageIndex}`,
       sidebar: Object.entries(
         Rollapp.helpers.convertMessageToKeyValue(message),
       ).reduce((acc, [key, value]) => {

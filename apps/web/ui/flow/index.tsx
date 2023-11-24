@@ -6,7 +6,9 @@ import { cn } from "../shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import Link from "next/link";
+import { SpotlightContext } from "../right-panel/spotlight-context";
 
 type Node =
   | {
@@ -72,14 +74,17 @@ function Node({
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-      placeholderData: {
-        type: "pending",
-        label,
-        waitingFor: "test",
-        //waitingFor: label === "received" ? "receipt" : undefined
+      fallbackData: {
+        result: {
+          type: "pending",
+          label,
+          waitingFor: "test",
+          //waitingFor: label === "received" ? "receipt" : undefined
+        },
       },
     },
   );
+  console.log(nodeResponse.data);
   const time = useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.timestamp) {
@@ -88,30 +93,37 @@ function Node({
     }
     return null;
   }, [nodeResponse.data]);
+  const { setSpotlight } = useContext(SpotlightContext);
   if (!nodeResponse.data) return null;
   const node = nodeResponse.data.result;
-  if (step === 0) console.log(node.sidebar.Sender.payload);
-  if (step === 0) console.log(node.sidebar.Receiver.payload);
-  if (step === 0) console.log(node.sidebar);
 
   let colors =
-    "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835]";
+    "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
   if (isNext) {
     colors =
-      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900";
+      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]";
   }
   if (node.type === "completed") {
-    colors = "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900";
+    colors =
+      "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]";
   }
   return (
-    <div
+    <Link
+      href={`${node.link}`}
+      onMouseEnter={() =>
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Message",
+          properties: node.sidebar,
+        })
+      }
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
         colors,
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
-        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md">
+        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-5 h-5">
           {node.image ? (
             <div className="rounded-full overflow-hidden">
               <Image
@@ -142,7 +154,7 @@ function Node({
           {`Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -192,83 +204,85 @@ function Address({ address }: { address: string }) {
 }
 
 function Transfer() {
-    const body = {
-        resolverId: "rollapp-ibc-0.0.0",
-        input: {
-          hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
-          step: 0,
-          slug: "coinhunterstrrollapp_9084503-1",
+  const body = {
+    resolverId: "rollapp-ibc-0.0.0",
+    input: {
+      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      step: 0,
+      slug: "coinhunterstrrollapp_9084503-1",
+    },
+  };
+  const nodeResponse = useSWR(
+    ["/api/resolve/transactions", body],
+    async () => {
+      const response = await fetch("/api/resolve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      };
-    const nodeResponse = useSWR(
-        ["/api/resolve/transactions", body],
-        async () => {
-          const response = await fetch("/api/resolve", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          });
-          const data = await response.json();
-          return data;
-        },
-        {
-          //refreshInterval: THIRTY_SECONDS,
-          errorRetryCount: 2,
-          keepPreviousData: true,
-          revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-        },
-      );
-        const amount = useMemo(() => {
-            const node = nodeResponse.data?.result;
-            if (node && node.sidebar.Token.payload) {
-                const [value, denom] = node.sidebar.Token.payload.split(" ");
-                return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`
-            }
-            return null;
-        }, [nodeResponse.data]);
-        const node = nodeResponse.data?.result;
-        if (!node) return null;
-        return <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
-        <Address address={node.sidebar.Sender.payload} />
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
-            stroke="#272835"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      return data;
+    },
+    {
+      //refreshInterval: THIRTY_SECONDS,
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+    },
+  );
+  const amount = useMemo(() => {
+    const node = nodeResponse.data?.result;
+    if (node && node.sidebar.Token.payload) {
+      const [value, denom] = node.sidebar.Token.payload.split(" ");
+      return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`;
+    }
+    return null;
+  }, [nodeResponse.data]);
+  const node = nodeResponse.data?.result;
+  if (!node) return null;
+  return (
+    <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
+      <Address address={node.sidebar.Sender.payload} />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
+          stroke="#272835"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
 
-        <div className="text-xs font-medium leading-4 self-center my-auto">
-          {amount}
-        </div>
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
-            stroke="#272835"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-
-        <Address address={node.sidebar.Receiver.payload} />
+      <div className="text-xs font-medium leading-4 self-center my-auto">
+        {amount}
       </div>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9.33341 5.33317L11.6465 7.64628C11.8418 7.84155 11.8418 8.15813 11.6465 8.35339L9.33341 10.6665M4.66674 5.33317L6.97986 7.64628C7.17512 7.84155 7.17512 8.15813 6.97986 8.35339L4.66674 10.6665"
+          stroke="#272835"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
+      <Address address={node.sidebar.Receiver.payload} />
+    </div>
+  );
 }
 
 export function FlowChart() {
@@ -334,4 +348,3 @@ export function FlowChart() {
     </div>
   );
 }
-
