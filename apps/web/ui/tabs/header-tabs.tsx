@@ -141,7 +141,7 @@ export function HeaderTabsSkeleton() {
       )}
     >
       <ol className="flex min-w-max items-stretch w-full h-full">
-        {range(0, 3).map((_, index) => {
+        {range(0, 2).map((_, index) => {
           return (
             <li key={index} className="h-full">
               <NavLinkSkeleton isAfterOverview={index === 0}>
