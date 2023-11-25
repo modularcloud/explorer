@@ -13,7 +13,7 @@ const SvgLoading = (props: SVGProps<SVGSVGElement>) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeOpacity={0.24}
-      d="M16.5 10a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"
+      d="M16.5 10a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"
     />
     <path
       stroke="url(#Loading_svg__a)"

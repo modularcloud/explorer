@@ -22,29 +22,29 @@ export function LatestBlocks({ className, data, networkSlug: network }: Props) {
   const allData = React.useMemo(() => data.slice(0, 5), [data]);
   return (
     <Card className={cn(className, "p-0")}>
-      <header className="flex items-center border-b border-mid-dark-100 p-3 justify-between">
-        <p className="text-lg">Latest Blocks</p>
+      <header className="flex items-center border-b border-mid-dark-100 px-4 py-2.5 justify-between">
+        <p className="text-base">Latest Blocks</p>
         <Link
           href={`/${network}/blocks`}
           className={cn(
-            "rounded-md border border-mid-dark-100 py-2 px-3",
+            "rounded-md border border-mid-dark-100 py-1.5 px-2",
             "focus:border-primary outline-none",
             "hover:bg-muted/5",
             "inline-flex items-center gap-2",
           )}
         >
-          <span className="text-sm">View all</span>
+          <span className="text-xs">View all</span>
           <ArrowOut className="flex-shrink-0" />
         </Link>
       </header>
-      <ul className="flex flex-col">
+      <ul className="flex flex-col text-xs">
         {allData.map((tr, index) => (
           <li key={tr.number} className="flex-1">
             <BlockRow
               {...tr}
               network={network}
               className={cn(
-                index === 4 && "focus:rounded-b-md [&:not(:focus)]:border-none",
+                index === 4 && "rounded-b-md [&:not(:focus)]:border-none",
               )}
             />
           </li>
@@ -67,7 +67,7 @@ function BlockRow(props: TransactionRowProps) {
       className={cn(
         props.className,
         "h-full",
-        "px-4 py-5 bg-white border-mid-dark-100 flex items-center gap-14 justify-between",
+        "px-4 py-5 h-14 bg-white border-mid-dark-100 flex items-center gap-14 justify-between",
         "hover:bg-muted/5",
         "[&:not(:focus)]:border-b",
         "focus:border focus:border-primary outline-none",

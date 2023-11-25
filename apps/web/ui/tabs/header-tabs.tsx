@@ -99,7 +99,7 @@ export async function HeaderTabs({ params }: Props) {
                 >
                   <span
                     className={cn(
-                      "inline-flex items-center justify-center gap-2 p-1 m-1",
+                      "inline-flex items-center justify-center gap-2 p-0.5 m-1",
                       "ring-primary rounded-lg",
                       "group-focus:ring-2",
                     )}

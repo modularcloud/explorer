@@ -93,7 +93,7 @@ export function RightPanel({ data, network }: Props) {
     >
       <section
         id="header"
-        className="border-b px-8 py-6 gap-4 flex items-center w-full flex-shrink"
+        className="border-b px-6 py-5 gap-4 flex items-center w-full flex-shrink"
       >
         {/* <Image src={data.logo} alt="Logo" /> */}
         <Image
@@ -105,7 +105,7 @@ export function RightPanel({ data, network }: Props) {
           className="object-center object-contain flex-shrink-0"
         />
 
-        <h2 className="text-xl font-medium">
+        <h2 className="text-lg font-medium">
           {capitalize(network.chainBrand)} {capitalize(network.chainName)}
         </h2>
 
@@ -119,7 +119,7 @@ export function RightPanel({ data, network }: Props) {
       </section>
       <section
         id="components"
-        className="pt-4 pb-12 px-8 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
+        className="pt-4 pb-12 px-6 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
       >
         <AssociatedComponentList
           headerValue={headerValue}

@@ -24,7 +24,7 @@ export async function Overview({ properties }: Props) {
     return Object.entries(properties);
   }, [properties]);
   return (
-    <section className="pb-4 pt-8 h-full overflow-y-auto">
+    <section className="pb-4 pt-6 h-full overflow-y-auto">
       <OverviewEntryList entries={entries} />
 
       {/* {(asyncAttributes ?? []).map((set) => (

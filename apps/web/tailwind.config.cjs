@@ -21,8 +21,8 @@ module.exports = {
         },
       },
       spacing: {
-        header: `4.5rem`,
-        "header-tabs": `3rem`,
+        header: `4rem`,
+        "header-tabs": `2.625rem`,
       },
       colors: {
         ...config.theme.extend.colors,
@@ -80,6 +80,14 @@ module.exports = {
         slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideRightAndFade:
           "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      fontSize: {
+        xxs: ["0.65625rem", "0.875rem"], // 10px, 14px
+        xs: ["0.75rem", "1rem"], // 12px, 16px
+        sm: ["0.875rem", "1.25rem"], // 14px, 20px
+        base: ["1rem", "1.5rem"], // 16px, 24px
+        lg: ["1.125rem", "1.75rem"], // 18px, 28px
+        xl: ["1.5rem", "2rem"], // 24px, 32px
       },
     },
   },
