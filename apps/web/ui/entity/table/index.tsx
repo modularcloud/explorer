@@ -173,7 +173,6 @@ export function Table({ initialData, route }: Props) {
     getItemId,
     onSelectItem,
     items: flatData,
-    parentRef: parentRef,
     onClickItem,
   });
 

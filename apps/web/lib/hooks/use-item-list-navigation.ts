@@ -8,7 +8,6 @@ export type OnSelectItemArgs<T> = {
 };
 
 type UseItemListNavigationArgs<T> = {
-  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
    * The ref of the parent to attach keyboard events to,
    * defaults to window
@@ -45,7 +44,6 @@ type UseItemListNavigationArgs<T> = {
  */
 export function useItemListNavigation<T>({
   items,
-  parentRef,
   onSelectItem,
   onClickItem,
   getItemId,
@@ -252,6 +250,8 @@ export function useItemListNavigation<T>({
     [selectedItemIndex, selectedItem, getItemId],
   );
 
+  const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
+
   const registerItemProps = React.useCallback(
     (index: number, item: T) => {
       const itemId = getOptionId(index, item);
@@ -259,7 +259,21 @@ export function useItemListNavigation<T>({
       return {
         id: itemId,
         onClick: () => onClickItem?.(item, index),
-        onMouseMove: () => {
+        onMouseMove: (event: React.MouseEvent) => {
+          // This is to fix a bug in SAFARI,
+          // In safari the `MouseMove` Event is triggered even on scroll
+          // So we manually check if the mouse has really moved, and if it is not the case
+          // we just ignore the event
+          const currentMousePosition = { x: event.clientX, y: event.clientY };
+          const lastMousePosition = lastMousePositionRef.current;
+          const hasMoved =
+            currentMousePosition.x !== lastMousePosition.x ||
+            currentMousePosition.y !== lastMousePosition.y;
+
+          if (!hasMoved) return;
+
+          lastMousePositionRef.current = currentMousePosition;
+
           const { item: selectedItem } = selectedItemPositionRef.current;
 
           const currentItemId = getItemId(item);

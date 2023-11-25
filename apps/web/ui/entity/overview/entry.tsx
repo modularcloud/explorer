@@ -93,7 +93,6 @@ export function OverviewEntryList({ entries }: Props) {
   const { registerItemProps, selectedItem } = useItemListNavigation({
     items: items,
     getItemId,
-    parentRef: listRef,
     onSelectItem,
   });
 
