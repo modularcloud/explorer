@@ -157,6 +157,8 @@ export function useItemListNavigation<T>({
     }
   }, [selectItem, onSelectItem, items]);
 
+  // Scroll the item into the view if it isn't visible
+  // In the case where the element is visible, it will do nothing.
   const scrollItemIntoView = React.useCallback(() => {
     const { index, item } = selectedItemPositionRef.current;
 
