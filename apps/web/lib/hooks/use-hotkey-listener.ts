@@ -54,7 +54,6 @@ export function useHotkeyListener({
       ) {
         const consumed = listener(event.key);
 
-        console.log({ consumed });
         if (consumed) {
           event.stopPropagation();
           event.preventDefault();
