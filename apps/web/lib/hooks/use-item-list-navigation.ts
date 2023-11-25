@@ -15,10 +15,6 @@ type UseItemListNavigationArgs<T> = {
    */
   scopeRef?: React.RefObject<HTMLElement | null>;
   /**
-   * Wether or not to scroll to the item when we navigate with the up/down arrows
-   */
-  scrollOnSelection?: boolean;
-  /**
    * Callback for when the item is clicked, either with the mouse
    * or with Enter key, This function should also be memoized
    */
@@ -53,7 +49,6 @@ export function useItemListNavigation<T>({
   onSelectItem,
   onClickItem,
   getItemId,
-  scrollOnSelection = true,
   scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
@@ -167,21 +162,18 @@ export function useItemListNavigation<T>({
   const scrollItemIntoView = React.useCallback(() => {
     const { index, item } = selectedItemPositionRef.current;
 
-    if (item && scrollOnSelection) {
+    if (item) {
       const element = document.getElementById(
         getOptionId(index, item),
       ) as HTMLDivElement | null;
 
-      if (element && parentRef?.current) {
-        if (isElementOverflowing(parentRef.current, element)) {
-          element?.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-        }
+      if (element) {
+        element?.scrollIntoView({
+          block: "nearest",
+        });
       }
     }
-  }, [parentRef, getOptionId, scrollOnSelection]);
+  }, [getOptionId]);
 
   // Listen for keyboard events
   React.useEffect(() => {
@@ -223,12 +215,6 @@ export function useItemListNavigation<T>({
           break;
       }
 
-      const { item, index } = selectedItemPositionRef.current;
-      if (!eventIgnored && item) {
-        const element = document.getElementById(getOptionId(index, item));
-        element?.focus();
-      }
-
       // we don't want this event to be propagated to the whole page
       // so that element that listen globally (for hotkey for ex.) don't react accordingly,
       if (!eventIgnored) {
@@ -251,10 +237,10 @@ export function useItemListNavigation<T>({
   }, [
     moveSelectionDown,
     moveSelectionUp,
-    scrollItemIntoView,
     onClickItem,
     getOptionId,
     scopeRef,
+    scrollItemIntoView,
   ]);
 
   const isOptionSelected = React.useCallback(
@@ -283,8 +269,6 @@ export function useItemListNavigation<T>({
           if (selectedItemId !== currentItemId) {
             selectItem({ item, index });
 
-            const element = document.getElementById(getOptionId(index, item));
-            element?.focus();
             onSelectItem?.({
               item: item,
               index: index,

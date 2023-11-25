@@ -52,11 +52,7 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
   }
 };
 
-export function Table(props: Props) {
-  return <TableContent {...props} />;
-}
-
-function TableContent({ initialData, route }: Props) {
+export function Table({ initialData, route }: Props) {
   let containsData = false;
   // @ts-ignore: Property 'entries' does not exist on type
   if (initialData && initialData.body?.entries?.length > 0) {
@@ -133,8 +129,8 @@ function TableContent({ initialData, route }: Props) {
     fetchMoreOnBottomReached(parentRef.current);
   }, [fetchMoreOnBottomReached]);
 
-  const PADDING_END = 160;
-  const ITEM_SIZE = 65;
+  // const PADDING_END = 160;
+  // const ITEM_SIZE = 65;
   // Removed for now as it causes white blank issues.
   // TODO : reintroduce when we implement the new layout
   // const virtualizer = useVirtualizer({
@@ -177,7 +173,6 @@ function TableContent({ initialData, route }: Props) {
     getItemId,
     onSelectItem,
     items: flatData,
-    scrollOnSelection: true,
     parentRef: parentRef,
     onClickItem,
   });
@@ -288,7 +283,6 @@ function TableContent({ initialData, route }: Props) {
                       key={index}
                       columns={columns}
                       entry={entry}
-                      // virtualRow={virtualRow}
                       currentIndex={index}
                       registerOptionProps={registerOptionProps}
                     />
@@ -339,11 +333,18 @@ const TableRow = React.memo(function TableRow({
           router.push(entry.link);
         }
       }}
-      className={cn("group focus:outline-none text-xs", {
-        "cursor-pointer": entry.link,
-        "aria-[selected=true]:bg-muted-100": entry.link,
-        "aria-[selected=true]:bg-muted-50": !entry.link,
-      })}
+      className={cn(
+        "group focus:outline-none text-xs scroll-mt-[65px]",
+        // this is so that at least one item is shown when scrolling down,
+        // the bottom margin is calculated like this :
+        // size of the <header> (106px) + size of one item (65px) + 10px (additionnal margin)
+        "scroll-mb-[calc(106px_+_65px_+_10px)]",
+        {
+          "cursor-pointer": entry.link,
+          "aria-[selected=true]:bg-muted-100": entry.link,
+          "aria-[selected=true]:bg-muted-50": !entry.link,
+        },
+      )}
       style={{
         height: `65px`,
       }}
