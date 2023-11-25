@@ -4,7 +4,7 @@ import "./env.mjs";
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-  transpilePackages: ["service-manager"],
+  transpilePackages: ["service-manager", "@modularcloud/ecs", "@modularcloud/sdk", "@modularcloud/headless"],
   experimental: {
     useDeploymentId: true,
   },
