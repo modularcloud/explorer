@@ -7,6 +7,7 @@ import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
+import Long from "long";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -137,9 +138,10 @@ function getMessageDisplayName(typeUrl: string): string {
 function convertMessageToKeyValue(message: any, prefix?: string) {
   const KV: Record<string, string> = {};
   Object.entries(message).forEach(([key, value]) => {
-    const activeKey = prefix
-      ? `${prefix} ${fixCapsAndSpacing(key)}`
-      : fixCapsAndSpacing(key);
+    if (Long.isLong(value)) {
+      KV[fixCapsAndSpacing(key)] = value.toString();
+      return;
+    }
     if (Buffer.isBuffer(value)) {
       KV[fixCapsAndSpacing(key)] = value.toString("base64");
       return;

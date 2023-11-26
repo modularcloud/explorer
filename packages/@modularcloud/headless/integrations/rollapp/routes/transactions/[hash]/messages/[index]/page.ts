@@ -40,7 +40,9 @@ export const RollappMessageResolver = createResolver(
       ),
     );
 
-    const isIBC = !!(/MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(message.typeUrl));
+    const isIBC = !!/MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(
+      message.typeUrl,
+    );
 
     const page: Page = {
       isIBC,
