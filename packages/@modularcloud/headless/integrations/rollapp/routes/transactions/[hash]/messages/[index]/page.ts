@@ -56,7 +56,7 @@ export const RollappMessageResolver = createResolver(
           Transaction: Link({
             text: hash,
             route: [
-              `${context.chainBrand}-${context.chainName}`,
+              context.slug,
               "transactions",
               hash,
             ],

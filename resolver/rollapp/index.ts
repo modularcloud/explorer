@@ -15,11 +15,22 @@ const RollappBlockHashResolver = createResolver(
       throw new Error("Invalid hash");
     }
     const hash = match[1];
-    const response = await fetchResolver({
-      url: `${input.endpoint}/block_by_hash?hash=0x${hash.toUpperCase()}`,
-    });
-    if (response.type === "success") return response.result;
-    NotFound();
+    const tryHash = async (hash: string) => {
+      const response = await fetchResolver({
+        url: `${input.endpoint}/block_by_hash?hash=${hash}`,
+      });
+      if (response.type !== "success") {
+        throw new Error("Failed to fetch block");
+      }
+      if (response.type === "success" && response.result.error) {
+        throw new Error(response.result.error);
+      }
+      return response.result;
+    }
+    return await Promise.any([
+      tryHash("0x" + hash.toUpperCase()),
+      tryHash(hash.toUpperCase()),
+    ]);
   },
   [FetchResolver],
 );

@@ -38,7 +38,7 @@ export const RollappTransactionMessagesResolver = createResolver(
           },
         ],
         entries: messages.map((message, index) => {
-          const link: string = `/${context.chainBrand}-${context.chainName}/transactions/${hash}/messages/${index}`;
+          const link: string = `/${context.slug}/transactions/${hash}/messages/${index}`;
           return {
             key: link,
             link,

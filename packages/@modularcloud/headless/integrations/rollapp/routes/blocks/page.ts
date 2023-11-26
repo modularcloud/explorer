@@ -80,7 +80,7 @@ export const RollappLatestBlocksResolver = createResolver(
           if (resolution.type !== "success")
             throw new Error("Failed to resolve one or more blocks");
           const block: BlockResponse = resolution.result;
-          const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
+          const link = `/${context.slug}/blocks/${block.result.block.header.height}`;
           return {
             sidebar: {
               headerKey: "Spotlight",

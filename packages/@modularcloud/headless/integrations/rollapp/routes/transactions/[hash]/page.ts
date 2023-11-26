@@ -46,7 +46,7 @@ export const RollappTransactionResolver = createResolver(
         Height.payload.sidebar.properties =
           selectSidebarBlockProperties(parsedBlockResponse);
         Height.payload.route.unshift(
-          `${context.chainBrand}-${context.chainName}`,
+          context.slug,
         );
       }
     }

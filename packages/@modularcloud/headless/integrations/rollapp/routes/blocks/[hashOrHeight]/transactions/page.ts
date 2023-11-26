@@ -120,7 +120,7 @@ export const RollappBlockTransctionsResolver = createResolver(
             });
             const messages = await response.json();
             const type = messages[0]?.uniqueIdentifier ?? "Unknown";
-            const link = `/${context.chainBrand}-${context.chainName}/transactions/${resolution.result.hash}`;
+            const link = `/${context.slug}/transactions/${resolution.result.hash}`;
             const properties = getTransactionProperties(resolution);
             const { Height, ...row } = selectRowTransactionProperties(
               properties,
