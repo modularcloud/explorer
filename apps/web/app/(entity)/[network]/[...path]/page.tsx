@@ -46,12 +46,15 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
     }
   }
 
-  // TODO : skip cache as of now until collection doesn't return
-  const page = await loadPage({ route: params });
+  try {
+    const page = await loadPage({ route: params });
 
-  if (page.body.type === "notebook") {
-    return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
+    if (page.body.type === "notebook") {
+      return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
+    }
+
+    return <Table initialData={page} route={params} />;
+  } catch (error) {
+    notFound();
   }
-
-  return <Table initialData={page} route={params} />;
 }

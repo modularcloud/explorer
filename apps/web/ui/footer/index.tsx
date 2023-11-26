@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="py-10 text-center w-full flex flex-col gap-5">
+    <footer className="py-10 text-center w-full flex flex-col gap-5 text-xs">
       <hr />
       <span className="text-muted">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.

@@ -20,7 +20,7 @@ const SvgCubesOff = (props: SVGProps<SVGSVGElement>) => (
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M14.5 3.5H10V10h6.5V5.5a2 2 0 0 0-2-2Z"
+      d="M14.5 3.5H10V10h6.5V5.5a2 2 0 0 0-2-2"
     />
   </svg>
 );

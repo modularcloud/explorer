@@ -3,7 +3,7 @@ interface Props {
   description: String;
 }
 
-export default function NotFound({ heading, description }: Props) {
+export function NotFound({ heading, description }: Props) {
   return (
     <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-y-3 text-center">
       <svg

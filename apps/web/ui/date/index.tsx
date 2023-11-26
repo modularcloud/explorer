@@ -26,7 +26,7 @@ export function DateTime({ value, compact }: Props) {
   React.useEffect(() => {
     if (compact) return;
     setDateTime(formatDateTime(value));
-  }, [date]);
+  }, [compact, value]);
 
   if (compact) {
     return <CompactDate datetime={value} />;

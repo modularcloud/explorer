@@ -14,9 +14,11 @@ import {
 } from "~/ui/icons";
 import { ShortcutKey } from "~/ui/shortcut-key";
 import { AssociatedComponentList } from "./associated";
+import { SpotlightComponentList } from "./spotlight";
+import { Skeleton } from "~/ui/skeleton";
 
 // utils
-import { capitalize } from "~/lib/shared-utils";
+import { capitalize, range } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import { isMacLike } from "~/lib/shared-utils";
 import { headers } from "next/headers";
@@ -25,7 +27,6 @@ import { headers } from "next/headers";
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
 import type { SingleNetwork } from "~/lib/network";
 import type { Page } from "@modularcloud/headless";
-import { SpotlightComponentList } from "./spotlight";
 
 interface HotkeyEntryProps {
   label: string;
@@ -93,7 +94,8 @@ export function RightPanel({ data, network }: Props) {
     >
       <section
         id="header"
-        className="border-b px-8 py-6 gap-4 flex items-center w-full flex-shrink"
+        className="border-b px-6 py-5 gap-4 flex items-center w-full flex-shrink"
+        className="border-b px-6 py-5 gap-4 flex items-center w-full flex-shrink"
       >
         {/* <Image src={data.logo} alt="Logo" /> */}
         <Image
@@ -105,7 +107,8 @@ export function RightPanel({ data, network }: Props) {
           className="object-center object-contain flex-shrink-0"
         />
 
-        <h2 className="text-xl font-medium">
+        <h2 className="text-lg font-medium">
+        <h2 className="text-lg font-medium">
           {capitalize(network.chainBrand)} {capitalize(network.chainName)}
         </h2>
 
@@ -119,7 +122,8 @@ export function RightPanel({ data, network }: Props) {
       </section>
       <section
         id="components"
-        className="pt-4 pb-12 px-8 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
+        className="pt-4 pb-12 px-6 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
+        className="pt-4 pb-12 px-6 w-full h-full overflow-y-scroll flex flex-col gap-6 relative"
       >
         <AssociatedComponentList
           headerValue={headerValue}
@@ -215,6 +219,106 @@ export function RightPanel({ data, network }: Props) {
             />
           </div>
         </dl> */}
+      </section>
+    </div>
+  );
+}
+
+export function RightPanelSkeleton() {
+  return (
+    <div
+      className="w-full grid h-full max-h-full auto-rows-min"
+      style={{
+        backgroundImage: "url(/images/grid-layout-vector.svg)",
+        backgroundPosition: "bottom center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+      }}
+    >
+      <section
+        id="header"
+        className="border-b px-6 py-5 gap-4 flex items-center w-full flex-shrink"
+      >
+        <Skeleton shape="circle" className="h-8 w-8" />
+        <Skeleton className="h-6 w-56" />
+      </section>
+
+      <section
+        id="components"
+        className="pt-4 pb-12 px-6 w-full h-full overflow-y-scroll flex flex-col gap-8 relative"
+      >
+        <div className="w-full">
+          <div className="grid gap-4 text-base w-full grid-cols-5 mb-2">
+            <div className="flex items-center gap-2 col-span-2">
+              <Skeleton className="h-6 w-6" />
+              <Skeleton className="h-6 w-full" />
+            </div>
+            <dd className="col-span-3 flex justify-end">
+              <Skeleton className="h-6 w-32" />
+            </dd>
+          </div>
+
+          <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative">
+            {/* Left indentation marker */}
+            <div
+              className="grid items-start h-full absolute left-2 top-0 bottom-0"
+              aria-hidden="true"
+            >
+              <div
+                className={cn(
+                  "w-[1px] bg-muted/25 absolute top-0 bottom-1/2 rounded-t-md",
+                )}
+              />
+              <div className="w-3 h-[1px] bg-muted/25 rounded-r-md absolute top-1/2 left-[1px]" />
+            </div>
+
+            <div className="col-span-2 py-2">
+              <Skeleton className="h-6 w-full" />
+            </div>
+
+            <div className="col-span-3 py-2 flex justify-end">
+              <Skeleton className="h-6 w-32" />
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full">
+          <div className="grid gap-4 text-base w-full grid-cols-5 mb-2">
+            <div className="flex items-center gap-2 col-span-2">
+              <Skeleton className="h-6 w-6" />
+              <Skeleton className="h-6 w-full" />
+            </div>
+            <dd className="col-span-3 flex justify-end">
+              <Skeleton className="h-6 w-32" />
+            </dd>
+          </div>
+
+          {range(0, 3).map((index) => (
+            <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative">
+              {/* Left indentation marker */}
+              <div
+                className="grid items-start h-full absolute left-2 top-0 bottom-0"
+                aria-hidden="true"
+              >
+                <div
+                  className={cn("w-[1px] bg-muted/25 absolute top-0", {
+                    "bottom-0 rounded-md": index !== 3,
+                    "bottom-1/2 rounded-t-md": index === 3,
+                  })}
+                />
+                <div className="w-3 h-[1px] bg-muted/25 rounded-r-md absolute top-1/2 left-[1px]" />
+              </div>
+
+              <div className="col-span-2 py-2">
+                <Skeleton className="h-6 w-full" />
+              </div>
+
+              <div className="col-span-3 py-2 flex justify-end">
+                <Skeleton className="h-6 w-32" />
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

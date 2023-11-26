@@ -41,7 +41,7 @@ export function SearchForm({ optionGroups }: Props) {
       className={cn(
         "flex items-stretch rounded-lg border border-mid-dark-100 bg-white max-w-[450px] w-full mx-auto",
         "focus-within:border-primary focus-within:border-1.5",
-        "shadow-sm h-12",
+        "shadow-sm h-12 text-sm",
       )}
     >
       <SearchModal
