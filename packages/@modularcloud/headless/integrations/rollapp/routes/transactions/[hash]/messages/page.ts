@@ -24,7 +24,14 @@ export const RollappTransactionMessagesResolver = createResolver(
     const transacitonResponse: TransactionResponse = response.result;
     const messages = helpers.getMessages(transacitonResponse.result.tx);
 
+    const isIBC = !!(
+      messages.findIndex((m: any) =>
+        /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
+      ) + 1
+    );
+
     const page: Page = {
+      isIBC,
       context,
       metadata: {
         title: `Messages - Transaction ${hash}`,
