@@ -28,9 +28,11 @@ export const CelestiaAddressTransactionsResolver = createResolver(
 
     // using modular cloud custom endpoint
     const response = await fetch(
-        `${process.env.NAMESPACE_ENDPOINT}/${chain}/txs?address=${address}&maxResults=${
-            limit
-          }${context.after ? `&nextToken=${context.after}` : ""}`,
+      `${
+        process.env.NAMESPACE_ENDPOINT
+      }/${chain}/txs?address=${address}&maxResults=${limit}${
+        context.after ? `&nextToken=${context.after}` : ""
+      }`,
     );
     const data = await response.json();
     const list = await Promise.all(

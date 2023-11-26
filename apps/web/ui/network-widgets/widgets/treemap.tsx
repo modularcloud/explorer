@@ -11,7 +11,11 @@ interface Props {
 
 export function Treemap(props: Props) {
   const data = React.useMemo(() => {
-    const colors = ["hsl(256, 100%, 60%)", "hsl(223, 100%, 60%)", "hsl(202, 100%, 60%)"];
+    const colors = [
+      "hsl(256, 100%, 60%)",
+      "hsl(223, 100%, 60%)",
+      "hsl(202, 100%, 60%)",
+    ];
     return Object.entries(props.data).map(([id, value]) => {
       const color = colors[Math.floor(Math.random() * colors.length)];
       return {
@@ -29,7 +33,11 @@ export function Treemap(props: Props) {
       </header>
       <div className="h-full">
         <ResponsiveTreeMap
-          data={{ id: "All Namespaces", color: "hsl(256, 100%, 60%)", children: data }}
+          data={{
+            id: "All Namespaces",
+            color: "hsl(256, 100%, 60%)",
+            children: data,
+          }}
           valueFormat=".02s"
           labelSkipSize={12}
           labelTextColor={{
@@ -45,7 +53,7 @@ export function Treemap(props: Props) {
             from: "color",
             modifiers: [["darker", 0.1]],
           }}
-          colors={node => node.data.color}
+          colors={(node) => node.data.color}
         />
       </div>
     </Card>

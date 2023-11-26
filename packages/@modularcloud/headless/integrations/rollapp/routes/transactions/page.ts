@@ -170,4 +170,4 @@
 //   [Celestia.TransactionResolver],
 // );
 
-export {}
+export {};

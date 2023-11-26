@@ -1,4 +1,8 @@
-import { createResolver, NotFound, ResolutionResponse } from "@modularcloud-resolver/core";
+import {
+  createResolver,
+  NotFound,
+  ResolutionResponse,
+} from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages } from "./registry";
@@ -26,7 +30,7 @@ const RollappBlockHashResolver = createResolver(
         throw new Error(response.result.error);
       }
       return response.result;
-    }
+    };
     return await Promise.any([
       tryHash("0x" + hash.toUpperCase()),
       tryHash(hash.toUpperCase()),
@@ -77,7 +81,7 @@ const RollappTransactionResolver = createResolver(
         throw new Error(response.result.error);
       }
       return response.result;
-    }
+    };
     return await Promise.any([
       tryHash("0x" + hash.toUpperCase()),
       tryHash(hash.toUpperCase()),
@@ -90,7 +94,7 @@ export const resolvers = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
-}
+};
 
 // export const BalanceResolver = createResolver({
 //     id: "celestia-balance-0.0.0",

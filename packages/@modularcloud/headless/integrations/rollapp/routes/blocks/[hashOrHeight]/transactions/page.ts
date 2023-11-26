@@ -77,9 +77,10 @@ export const RollappBlockTransctionsResolver = createResolver(
           }),
       )
     ).filter((tx) => tx !== null) as TransactionResponse[];
-    console.log("nextToken", block.result.block.data.txs.length > endIndex
-    ? pageToken + 1
-    : undefined,)
+    console.log(
+      "nextToken",
+      block.result.block.data.txs.length > endIndex ? pageToken + 1 : undefined,
+    );
     const page: Page = {
       context,
       metadata: {
@@ -153,9 +154,5 @@ export const RollappBlockTransctionsResolver = createResolver(
     };
     return page;
   },
-  [
-    resolvers.getBlock,
-    resolvers.getBlockByHash,
-    resolvers.getTx,
-  ],
+  [resolvers.getBlock, resolvers.getBlockByHash, resolvers.getTx],
 );

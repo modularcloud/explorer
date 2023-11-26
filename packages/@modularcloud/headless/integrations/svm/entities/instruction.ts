@@ -48,7 +48,7 @@ export function createEntity(
     },
     ...(parsedTransaction
       ? {
-          "Transaction": {
+          Transaction: {
             type: "link",
             payload: {
               text: parsedTransaction.transaction.signatures[0],
@@ -60,10 +60,7 @@ export function createEntity(
               sidebar: {
                 headerKey: "Transaction",
                 headerValue: parsedTransaction.transaction.signatures[0],
-                properties: Transaction.Sidebar(
-                  context,
-                  transaction
-                ) as any,
+                properties: Transaction.Sidebar(context, transaction) as any,
               },
             },
           },
@@ -71,7 +68,7 @@ export function createEntity(
       : {}),
     ...(block && parsedTransaction.slot
       ? {
-          "Block": {
+          Block: {
             type: "link",
             payload: {
               text: String(parsedTransaction.slot),

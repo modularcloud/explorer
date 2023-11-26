@@ -2,9 +2,7 @@ import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../../schemas/page";
 import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../../types";
-import {
-  getDefaultNestedSidebar,
-} from "../../../../../../../helpers";
+import { getDefaultNestedSidebar } from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
 import {
   getTransactionProperties,
@@ -32,9 +30,7 @@ export const RollappMessageResolver = createResolver(
     if (response.type === "pending") throw PendingException;
 
     const transacitonResponse: TransactionResponse = response.result;
-    const messages = helpers.getMessages(
-      transacitonResponse.result.tx,
-    );
+    const messages = helpers.getMessages(transacitonResponse.result.tx);
     const message = messages[parseInt(index)];
     if (!message) throw new Error("Message not found");
 
@@ -55,11 +51,7 @@ export const RollappMessageResolver = createResolver(
         properties: {
           Transaction: Link({
             text: hash,
-            route: [
-              context.slug,
-              "transactions",
-              hash,
-            ],
+            route: [context.slug, "transactions", hash],
             sidebar: {
               headerKey: "Spotlight",
               headerValue: "Transaction",

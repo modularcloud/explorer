@@ -15,7 +15,7 @@ const TransactionMetaSchema = z.object({
   preBalances: z.array(z.number()),
   preTokenBalances: z.array(z.any()), // Adjust this based on the actual structure
   rewards: z.array(z.any()), // Adjust this based on the actual structure
-//   status: z.object({ Ok: z.union([z.any(), z.null()]) }), // Adjust this based on the actual structure
+  //   status: z.object({ Ok: z.union([z.any(), z.null()]) }), // Adjust this based on the actual structure
 });
 
 export const InstructionSchema = z.object({

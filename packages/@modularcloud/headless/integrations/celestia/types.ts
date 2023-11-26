@@ -103,7 +103,7 @@ type Block = {
 export type TransactionResponse = JSONRPCResponse<Transaction>;
 export type BlockResponse = JSONRPCResponse<Block>;
 
-type LegacyValueSchemaType = 
+type LegacyValueSchemaType =
   | { type: "string"; payload: string }
   | { type: "status"; payload: boolean }
   | { type: "list"; payload: string[] }
