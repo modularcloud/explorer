@@ -1,5 +1,5 @@
 import { getSingleNetworkCached } from "~/lib/network";
-import { RightPanel } from "~/ui/right-panel";
+import { RightPanel, RightPanelSkeleton } from "~/ui/right-panel";
 import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
 import { notFound } from "next/navigation";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
@@ -12,9 +12,8 @@ export default async function RightPanelPage({ params }: Props) {
   const pathParams = parseHeadlessRouteVercelFix(params);
   const entityType = pathParams.path[0];
 
-  // TODO : add a proper fallback
   if (entityType === "search") {
-    return <>loading...</>;
+    return <RightPanelSkeleton />;
   }
 
   const network = await getSingleNetworkCached(params.network);

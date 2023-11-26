@@ -73,7 +73,7 @@ export function CopyableValue({
       ) : (
         <Tooltip label="Click to Copy" side={tooltipPosition}>
           <Button
-            className="max-w-full bg-transparent font-normal"
+            className="max-w-full bg-transparent font-normal py-1 px-3"
             onClick={async () => {
               const copied = await copyValueToClipboard(value);
 

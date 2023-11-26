@@ -12,7 +12,7 @@ const SvgCardOff = (props: SVGProps<SVGSVGElement>) => (
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M7.5 3.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"
+      d="M7.5 3.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"
     />
     <path
       fill="#888A90"
@@ -20,13 +20,13 @@ const SvgCardOff = (props: SVGProps<SVGSVGElement>) => (
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M7.5 11.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"
+      d="M7.5 11.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"
     />
     <path
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M15.5 3.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1ZM15.5 11.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"
+      d="M15.5 3.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1M15.5 11.5h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"
     />
   </svg>
 );

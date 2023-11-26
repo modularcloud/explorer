@@ -10,22 +10,29 @@ import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
-import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
-import { SpotlightContext } from "~/ui/right-panel/spotlight-context";
+import {
+  OnSelectItemArgs,
+  useItemListNavigation,
+} from "~/lib/hooks/use-item-list-navigation";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Blob } from "./blob";
-import { FlowChart } from "~/ui/flow";
+import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 
 interface Props {
   entries: Array<[key: string, value: Value]>;
 }
 
+type Entry = {
+  id: string;
+  value: Value;
+};
+
 export function OverviewEntryList({ entries }: Props) {
   const router = useRouter();
   const listRef = React.useRef<React.ElementRef<"dl">>(null);
-  const { spotlight, setSpotlight } = React.useContext(SpotlightContext);
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
   const items = React.useMemo(() => {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
@@ -35,61 +42,60 @@ export function OverviewEntryList({ entries }: Props) {
     (item: (typeof items)[number]) => item.id,
     [],
   );
-  const { registerItemProps, selectedItem, selectedItemIndex } =
-    useItemListNavigation({
-      items: items,
-      getItemId,
-      parentRef: listRef,
-      onClickItem: ({ value }) => {
-        /** TODO: should navigate to link if value type is `link` */
-      },
-      onSelectItem: ({ item }) => {
-        // sometimes this fires many times on hover
-        if (item.id === spotlight?.headerValue) return;
 
-        const extraFields: Record<string, Value> = {};
+  const onSelectItem = React.useCallback(
+    ({ item }: OnSelectItemArgs<Entry>) => {
+      const extraFields: Record<string, Value> = {};
 
-        // some payloads like dates are rendered differently depending on certain context
-        // we can provide the original value as well
-        if (
-          typeof item.value.payload === "object" &&
-          "original" in item.value.payload
-        ) {
-          extraFields["Original"] = {
-            type: "standard",
-            payload: item.value.payload.original,
-          };
-        }
+      // some payloads like dates are rendered differently depending on certain context
+      // we can provide the original value as well
+      if (
+        typeof item.value.payload === "object" &&
+        "original" in item.value.payload
+      ) {
+        extraFields["Original"] = {
+          type: "standard",
+          payload: item.value.payload.original,
+        };
+      }
 
-        if (item.value.type === "link") {
-          setSpotlight?.(item.value.payload.sidebar);
-        } else if (item.value.type === "blob") {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Property",
-            properties: {
-              Key: {
-                type: "standard",
-                payload: item.id,
-              },
+      if (item.value.type === "link") {
+        setSpotlight?.(item.value.payload.sidebar);
+      } else if (item.value.type === "blob") {
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Property",
+          properties: {
+            Key: {
+              type: "standard",
+              payload: item.id,
             },
-          });
-        } else {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Property",
-            properties: {
-              Key: {
-                type: "standard",
-                payload: item.id,
-              },
-              Value: item.value,
-              ...extraFields,
+          },
+        });
+      } else {
+        setSpotlight?.({
+          headerKey: "Spotlight",
+          headerValue: "Property",
+          properties: {
+            Key: {
+              type: "standard",
+              payload: item.id,
             },
-          });
-        }
-      },
-    });
+            Value: item.value,
+            ...extraFields,
+          },
+        });
+      }
+    },
+    [setSpotlight],
+  );
+
+  const { registerItemProps, selectedItem } = useItemListNavigation({
+    items: items,
+    getItemId,
+    parentRef: listRef,
+    onSelectItem,
+  });
 
   useHotkeyListener({
     keys: ["c"],
@@ -149,6 +155,11 @@ export function OverviewEntryList({ entries }: Props) {
     },
   });
 
+  const registerOptionProps = React.useCallback(
+    (item: Entry, index: number) => registerItemProps(index, item),
+    [registerItemProps],
+  );
+
   return (
     <dl
       ref={listRef}
@@ -157,12 +168,10 @@ export function OverviewEntryList({ entries }: Props) {
       {items.map((item, index) => (
         <OverviewEntry
           key={item.id}
-          label={item.id}
-          value={item.value}
+          entry={item}
           currentIndex={index}
-          selectedIndex={selectedItemIndex}
           lasItemIndex={items.length - 1}
-          registerOptionProps={() => registerItemProps(index, item)}
+          registerOptionProps={registerOptionProps}
         />
       ))}
     </dl>
@@ -170,13 +179,11 @@ export function OverviewEntryList({ entries }: Props) {
 }
 
 interface EntryProps {
-  label: string;
-  value: Value;
+  entry: Entry;
   notCopyable?: boolean;
-  currentIndex?: number;
-  selectedIndex?: number;
+  currentIndex: number;
   lasItemIndex?: number;
-  registerOptionProps?: () => {};
+  registerOptionProps?: (item: Entry, index: number) => void;
 }
 
 function getChildrenForStringPayload(payload: string) {
@@ -187,55 +194,34 @@ function getChildrenForStringPayload(payload: string) {
   return <code className="text-muted/80 text-sm">&lt;Empty&gt;</code>;
 }
 
-export function OverviewEntry({
-  label,
-  value,
+export const OverviewEntry = React.memo(function OverviewEntry({
+  entry,
   notCopyable = false,
   registerOptionProps,
   currentIndex,
-  selectedIndex,
-  lasItemIndex,
 }: EntryProps) {
-  const { type, payload } = value;
+  const { type, payload } = entry.value;
   if (payload === null || payload === undefined) return null;
 
-  const optionProps = registerOptionProps?.() ?? {};
-  // TODO : this is for links types
-  const isPreviousSelected =
-    selectedIndex !== undefined &&
-    selectedIndex !== -1 &&
-    currentIndex === selectedIndex + 1;
-  const isNextSelected =
-    selectedIndex !== undefined &&
-    selectedIndex !== -1 &&
-    currentIndex === selectedIndex - 1;
-
+  const optionProps = registerOptionProps?.(entry, currentIndex) ?? {};
   return (
     <div
       tabIndex={0}
       className={cn(
         "group/copyable border-mid-dark-100 bg-white",
-        "grid grid-cols-5 items-baseline gap-4 py-4 px-6",
+        "grid grid-cols-5 items-baseline gap-4 py-2.5 px-6",
         "transition-none duration-0",
         "aria-[selected=true]:text-foreground",
         "aria-[selected=true]:border-l-primary",
         "border-l-2 border-l-transparent",
         "border-b border-r focus:outline-none",
         "scroll-m-10",
-        {
-          "aria-[selected=true]:bg-muted-50": true,
-          //   // TODO : this is only for links
-          // "border-r": currentIndex === selectedIndex,
-          // "aria-[selected=true]:bg-muted-100": true,
-          // "border-b":
-          //   currentIndex !== selectedIndex || currentIndex === lasItemIndex,
-          // "lg:rounded-br-xl": isNextSelected,
-          // "lg:rounded-tr-xl border-t": isPreviousSelected,
-        },
+        "aria-[selected=true]:bg-muted-50",
+        "text-sm",
       )}
       {...optionProps}
     >
-      <dt className="col-span-2 font-medium">{label}</dt>
+      <dt className="col-span-2 font-medium">{entry.id}</dt>
 
       {type === "standard" && (
         <dd className="col-span-3">
@@ -288,7 +274,7 @@ export function OverviewEntry({
 
       {type === "timestamp" && (
         <dd className="col-span-3">
-          <CopyableValue value={formatDateTime(value.payload.value)}>
+          <CopyableValue value={formatDateTime(entry.value.payload.value)}>
             <DateTime value={payload.value!} />
           </CopyableValue>
         </dd>
@@ -311,4 +297,4 @@ export function OverviewEntry({
       {/* TODO : handle "image" type */}
     </div>
   );
-}
+});

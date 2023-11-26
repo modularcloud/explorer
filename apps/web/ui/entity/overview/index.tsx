@@ -1,7 +1,8 @@
+import "server-only";
 import * as React from "react";
 
 import { Skeleton } from "~/ui/skeleton";
-import { OverviewEntryList, OverviewEntry } from "./entry";
+import { OverviewEntryList } from "./entry";
 
 import { fetchEntity } from "~/ecs/lib/server";
 import { AttributesArchetype } from "~/ecs/archetypes/attributes";
