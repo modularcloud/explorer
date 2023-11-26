@@ -135,7 +135,7 @@ export function SearchModal({
                           width={16}
                           height={16}
                           alt={`${currentNetwork.displayName} logo`}
-                          />
+                        />
                       )}
 
                       <span className="whitespace-nowrap">

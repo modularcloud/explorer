@@ -123,7 +123,7 @@ export function getBlockTxString(txstr: string) {
       raw = MalleatedTx.decode(raw).tx;
     }
   }
-  
+
   return Buffer.from(raw).toString("base64");
 }
 

@@ -127,7 +127,12 @@ export function createEntity(
     },
     Type: {
       type: "standard",
-      payload: typeMap[parsedTransaction.transaction.message.accountKeys[parsedTransaction.transaction.message.instructions[0].programIdIndex]] ?? "Unknown",
+      payload:
+        typeMap[
+          parsedTransaction.transaction.message.accountKeys[
+            parsedTransaction.transaction.message.instructions[0].programIdIndex
+          ]
+        ] ?? "Unknown",
     },
   };
   return properties;

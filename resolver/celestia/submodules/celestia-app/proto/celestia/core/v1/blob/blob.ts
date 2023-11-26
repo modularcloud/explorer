@@ -28,7 +28,12 @@ export interface BlobTx {
 }
 
 function createBaseBlob(): Blob {
-  return { namespaceId: new Uint8Array(0), data: new Uint8Array(0), shareVersion: 0, namespaceVersion: 0 };
+  return {
+    namespaceId: new Uint8Array(0),
+    data: new Uint8Array(0),
+    shareVersion: 0,
+    namespaceVersion: 0,
+  };
 }
 
 export const Blob = {
@@ -49,7 +54,8 @@ export const Blob = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Blob {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBlob();
     while (reader.pos < end) {
@@ -94,10 +100,18 @@ export const Blob = {
 
   fromJSON(object: any): Blob {
     return {
-      namespaceId: isSet(object.namespaceId) ? bytesFromBase64(object.namespaceId) : new Uint8Array(0),
-      data: isSet(object.data) ? bytesFromBase64(object.data) : new Uint8Array(0),
-      shareVersion: isSet(object.shareVersion) ? globalThis.Number(object.shareVersion) : 0,
-      namespaceVersion: isSet(object.namespaceVersion) ? globalThis.Number(object.namespaceVersion) : 0,
+      namespaceId: isSet(object.namespaceId)
+        ? bytesFromBase64(object.namespaceId)
+        : new Uint8Array(0),
+      data: isSet(object.data)
+        ? bytesFromBase64(object.data)
+        : new Uint8Array(0),
+      shareVersion: isSet(object.shareVersion)
+        ? globalThis.Number(object.shareVersion)
+        : 0,
+      namespaceVersion: isSet(object.namespaceVersion)
+        ? globalThis.Number(object.namespaceVersion)
+        : 0,
     };
   },
 
@@ -136,7 +150,10 @@ function createBaseBlobTx(): BlobTx {
 }
 
 export const BlobTx = {
-  encode(message: BlobTx, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: BlobTx,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.tx.length !== 0) {
       writer.uint32(10).bytes(message.tx);
     }
@@ -150,7 +167,8 @@ export const BlobTx = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BlobTx {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBlobTx();
     while (reader.pos < end) {
@@ -189,7 +207,9 @@ export const BlobTx = {
   fromJSON(object: any): BlobTx {
     return {
       tx: isSet(object.tx) ? bytesFromBase64(object.tx) : new Uint8Array(0),
-      blobs: globalThis.Array.isArray(object?.blobs) ? object.blobs.map((e: any) => Blob.fromJSON(e)) : [],
+      blobs: globalThis.Array.isArray(object?.blobs)
+        ? object.blobs.map((e: any) => Blob.fromJSON(e))
+        : [],
       typeId: isSet(object.typeId) ? globalThis.String(object.typeId) : "",
     };
   },
@@ -245,17 +265,31 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends globalThis.Array<infer U>
+  ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U>
+  ? ReadonlyArray<DeepPartial<U>>
+  : T extends {}
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

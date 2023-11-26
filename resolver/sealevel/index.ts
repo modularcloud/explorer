@@ -92,15 +92,14 @@ export const TransactionResolver = createResolver(
     // });
     // if (rpcResponse.type === "success") return rpcResponse.result;
     // if (rpcResponse.type === "error") throw rpcResponse.error;
-      const response = await fetch(
-        `${String(
-          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
-        )}/tx?signature=${signature}`,
-      )
-      if(!response.ok) throw new Error(`Invalid response: ${response.status}`);
-      const data = await response.json();
-      return data.result;
-  
+    const response = await fetch(
+      `${String(
+        process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+      )}/tx?signature=${signature}`,
+    );
+    if (!response.ok) throw new Error(`Invalid response: ${response.status}`);
+    const data = await response.json();
+    return data.result;
   },
   [JSONRPCResolver],
 );

@@ -59,7 +59,7 @@ export const CelestiaBlockResolver = createResolver(
         {
           text: "Blobs",
           route: ["blocks", hashOrHeight, "blobs"],
-        }
+        },
       ],
     };
     return page;

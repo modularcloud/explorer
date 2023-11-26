@@ -1,5 +1,5 @@
 import { Any } from "./google/protobuf/any";
-import { Rollapps } from "proto-utils"; 
+import { Rollapps } from "proto-utils";
 const parsers = Rollapps.Msgs;
 
 function decodeAny(anyMessage: Any) {

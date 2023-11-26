@@ -24,7 +24,14 @@ export const RollappTransactionMessagesResolver = createResolver(
     const transacitonResponse: TransactionResponse = response.result;
     const messages = helpers.getMessages(transacitonResponse.result.tx);
 
+    const isIBC = !!(
+      messages.findIndex((m: any) =>
+        /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
+      ) + 1
+    );
+
     const page: Page = {
+      isIBC,
       context,
       metadata: {
         title: `Messages - Transaction ${hash}`,
@@ -38,7 +45,7 @@ export const RollappTransactionMessagesResolver = createResolver(
           },
         ],
         entries: messages.map((message, index) => {
-          const link: string = `/${context.chainBrand}-${context.chainName}/transactions/${hash}/messages/${index}`;
+          const link: string = `/${context.slug}/transactions/${hash}/messages/${index}`;
           return {
             key: link,
             link,

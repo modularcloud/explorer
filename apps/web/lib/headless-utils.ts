@@ -42,6 +42,7 @@ export async function loadIntegration(networkSlug: string) {
         chainLogo: network.config.logoUrl,
         rpcEndpoint: network.config.rpcUrls["svm"],
         nativeToken: network.config.token.name,
+        slug: networkSlug,
       })
     : createRollappIntegration({
         chainBrand: network.chainBrand,
@@ -49,6 +50,7 @@ export async function loadIntegration(networkSlug: string) {
         chainLogo: network.config.logoUrl,
         rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
         nativeToken: network.config.token.name,
+        slug: networkSlug,
       });
 
   return {

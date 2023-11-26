@@ -156,7 +156,7 @@ export const BlockSummaryTable = async () => {
 };
 
 export const TransactionsSummaryTable = async () => {
-  return null
+  return null;
   // const web3 = new Web3("https://api.evm.zebec.eclipsenetwork.xyz/solana");
   // const mc = createModularCloud(env.EVM_CHAIN_DATA_SERVICE);
   // const txRefs = await mc.evm.getRecentTransactions("triton", 8);

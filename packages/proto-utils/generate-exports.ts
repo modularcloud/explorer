@@ -105,9 +105,12 @@ const importLines = msgExports
       `import * as _${index} from './${exp.fileName.replace(/\.ts$/, "")}';`,
   )
   .join("\n");
-const typeLines = `export type MsgType = ${msgExports.map(
-  (exp, index) => `  | { parser: typeof _${index}.${exp.parser}, typeUrl: '/${exp.type}.${exp.parser}' }`,
-).join("\n")};`;
+const typeLines = `export type MsgType = ${msgExports
+  .map(
+    (exp, index) =>
+      `  | { parser: typeof _${index}.${exp.parser}, typeUrl: '/${exp.type}.${exp.parser}' }`,
+  )
+  .join("\n")};`;
 
 const exportLines = `export const Msgs: MsgType[] = [\n${msgExports
   .map(

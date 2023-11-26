@@ -1,8 +1,13 @@
-import { createResolver, NotFound, ResolutionResponse } from "@modularcloud-resolver/core";
+import {
+  createResolver,
+  NotFound,
+  ResolutionResponse,
+} from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
+import Long from "long";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -15,11 +20,22 @@ const RollappBlockHashResolver = createResolver(
       throw new Error("Invalid hash");
     }
     const hash = match[1];
-    const response = await fetchResolver({
-      url: `${input.endpoint}/block_by_hash?hash=0x${hash.toUpperCase()}`,
-    });
-    if (response.type === "success") return response.result;
-    NotFound();
+    const tryHash = async (hash: string) => {
+      const response = await fetchResolver({
+        url: `${input.endpoint}/block_by_hash?hash=${hash}`,
+      });
+      if (response.type !== "success") {
+        throw new Error("Failed to fetch block");
+      }
+      if (response.type === "success" && response.result.error) {
+        throw new Error(response.result.error);
+      }
+      return response.result;
+    };
+    return await Promise.any([
+      tryHash("0x" + hash.toUpperCase()),
+      tryHash(hash.toUpperCase()),
+    ]);
   },
   [FetchResolver],
 );
@@ -66,7 +82,7 @@ const RollappTransactionResolver = createResolver(
         throw new Error(response.result.error);
       }
       return response.result;
-    }
+    };
     return await Promise.any([
       tryHash("0x" + hash.toUpperCase()),
       tryHash(hash.toUpperCase()),
@@ -79,7 +95,7 @@ export const resolvers = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
-}
+};
 
 // export const BalanceResolver = createResolver({
 //     id: "celestia-balance-0.0.0",
@@ -122,9 +138,10 @@ function getMessageDisplayName(typeUrl: string): string {
 function convertMessageToKeyValue(message: any, prefix?: string) {
   const KV: Record<string, string> = {};
   Object.entries(message).forEach(([key, value]) => {
-    const activeKey = prefix
-      ? `${prefix} ${fixCapsAndSpacing(key)}`
-      : fixCapsAndSpacing(key);
+    if (Long.isLong(value)) {
+      KV[fixCapsAndSpacing(key)] = value.toString();
+      return;
+    }
     if (Buffer.isBuffer(value)) {
       KV[fixCapsAndSpacing(key)] = value.toString("base64");
       return;

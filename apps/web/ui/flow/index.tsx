@@ -78,8 +78,7 @@ function Node({
         result: {
           type: "pending",
           label,
-          waitingFor: "test",
-          //waitingFor: label === "received" ? "receipt" : undefined
+          waitingFor: label === "Received" ? "receipt" : undefined,
         },
       },
     },
