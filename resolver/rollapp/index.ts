@@ -55,12 +55,22 @@ export const TransactionResolver = createResolver(
       throw new Error("Invalid hash");
     }
     const hash = match[1];
-    const response = await fetchResolver({
-      // rollapp rpc fails if tx hash appends 0x
-      url: `${input.endpoint}/tx?hash=${hash.toUpperCase()}&prove=false`,
-    });
-    if (response.type === "success") return response.result;
-    NotFound();
+    const tryHash = async (hash: string) => {
+      const response = await fetchResolver({
+        url: `${input.endpoint}/tx?hash=${hash}&prove=false`,
+      });
+      if (response.type !== "success") {
+        throw new Error("Failed to fetch transaction");
+      }
+      if (response.type === "success" && response.result.error) {
+        throw new Error(response.result.error);
+      }
+      return response.result;
+    }
+    return await Promise.any([
+      tryHash("0x" + hash.toUpperCase()),
+      tryHash(hash.toUpperCase()),
+    ]);
   },
   [FetchResolver],
 );
