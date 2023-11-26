@@ -50,7 +50,7 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
     const page = await loadPage({ route: params });
 
     if (page.body.type === "notebook") {
-      return <Overview properties={page.body.properties} />;
+      return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
     }
 
     return <Table initialData={page} route={params} />;

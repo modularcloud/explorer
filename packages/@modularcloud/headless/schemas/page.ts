@@ -172,6 +172,7 @@ export const PageSchema = z.object({
   }),
   body: z.discriminatedUnion("type", [NotebookSchema, CollectionSchema]),
   sidebar: SidebarSchema,
+  isIBC: z.boolean().optional(),
   tabs: z
     .object({
       text: z.string(),

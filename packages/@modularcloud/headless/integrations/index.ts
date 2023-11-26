@@ -13,6 +13,13 @@ import { CelestiaAddressBalancesResolver } from "./celestia/routes/addresses/[ad
 import { CelestiaBlobResolver } from "./celestia/routes/transactions/[hash]/blobs/[index]/page";
 import { CelestiaMessageResolver } from "./celestia/routes/transactions/[hash]/messages/[index]/page";
 import { CelestiaAddressTransactionsResolver } from "./celestia/routes/addresses/[address]/transactions/page";
+import { RollappTransactionResolver } from "./rollapp/routes/transactions/[hash]/page";
+import { RollappBlockResolver } from "./rollapp/routes/blocks/[hashOrHeight]/page";
+import { RollappLatestBlocksResolver } from "./rollapp/routes/blocks/page";
+import { RollappBlockTransctionsResolver } from "./rollapp/routes/blocks/[hashOrHeight]/transactions/page";
+import { RollappTransactionMessagesResolver } from "./rollapp/routes/transactions/[hash]/messages/page";
+import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/messages/[index]/page";
+import { IBCResolver } from "./rollapp/misc/ibc";
 
 export function registerResolvers() {
   registerResolver(SVM.addressOverviewResolver);
@@ -37,4 +44,15 @@ export function registerResolvers() {
   registerResolver(CelestiaBlobResolver);
   registerResolver(CelestiaMessageResolver);
   registerResolver(CelestiaAddressTransactionsResolver);
+
+  registerResolver(RollappTransactionResolver);
+  registerResolver(RollappBlockResolver);
+  registerResolver(RollappLatestBlocksResolver);
+  registerResolver(RollappBlockTransctionsResolver);
+  registerResolver(RollappTransactionMessagesResolver);
+  registerResolver(RollappMessageResolver);
+  registerResolver(IBCResolver);
+  // registerResolver(CelestiaAddressTransactionsResolver);
+  // registerResolver(CelestiaLatestTransactionsResolver);
+  // registerResolver(CelestiaAddressBalancesResolver);
 }

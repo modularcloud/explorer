@@ -10,27 +10,32 @@ import { range } from "~/lib/shared-utils";
 
 import type { Value } from "@modularcloud/headless";
 import type { FetchLoadArgs } from "~/lib/shared-utils";
+import { FlowChart } from "~/ui/flow";
 
 type Props = {
   properties: Record<string, Value>;
+  isIBC?: boolean;
 };
 
 async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
   return null;
 }
 
-export async function Overview({ properties }: Props) {
+export async function Overview({ properties, isIBC }: Props) {
   const entries = React.useMemo(() => {
     return Object.entries(properties);
   }, [properties]);
   return (
-    <section className="pb-4 pt-6 h-full overflow-y-auto">
-      <OverviewEntryList entries={entries} />
+    <>
+      {isIBC ? <FlowChart /> : null}
+      <section className="pb-4 h-full overflow-y-auto">
+        <OverviewEntryList entries={entries} />
 
-      {/* {(asyncAttributes ?? []).map((set) => (
+        {/* {(asyncAttributes ?? []).map((set) => (
           <AsyncEntries resourcePath={set.src} />
         ))} */}
-    </section>
+      </section>
+    </>
   );
 }
 

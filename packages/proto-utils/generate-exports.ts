@@ -3,6 +3,8 @@ import { glob } from "glob";
 import fs from "fs";
 import path from "path";
 
+const directoryPrefix = process.argv[2];
+
 function getProtobufPackage(
   checker: ts.TypeChecker,
   sourceFile: ts.SourceFile,
@@ -88,7 +90,7 @@ function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
   return exportObjects;
 }
 
-const files = glob.sync("ts-out/**/*.ts");
+const files = glob.sync(`${directoryPrefix}-out/**/*.ts`);
 const options = {
   module: ts.ModuleKind.CommonJS,
   target: ts.ScriptTarget.ES2015,
@@ -116,7 +118,7 @@ const exportLines = `export const Msgs: MsgType[] = [\n${msgExports
 
 const fileContent = `${importLines}\n\n${typeLines}\n${exportLines}`;
 
-const outputPath = path.join(__dirname, "msgs.ts");
+const outputPath = path.join(__dirname, `${directoryPrefix}-msgs.ts`);
 fs.writeFileSync(outputPath, fileContent);
 
-console.log("Exports generated in msgs.ts");
+console.log(`Exports generated in ${directoryPrefix}-msgs.ts`);
