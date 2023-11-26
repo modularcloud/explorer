@@ -102,7 +102,7 @@ export function SearchModal({
           "--color-primary": brandColor,
         }}
         className={cn(
-          "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-20rem)] min-h-0",
+          "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-20rem)] min-h-0 text-sm",
           {
             "top-[20rem]": position === "top",
           },

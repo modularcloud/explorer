@@ -10,12 +10,12 @@ import { Status } from "~/ui/status";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { Sidebar, Value } from "@modularcloud/headless";
-import { SpotlightContext } from "./spotlight-context";
-import { DateTime, formatDateTime } from "../date";
+import type { Value } from "@modularcloud/headless";
+import { DateTime, formatDateTime } from "~/ui/date";
+import { useSpotlightStore } from "./spotlight-store";
 
 export function SpotlightComponentList() {
-  const { spotlight } = React.useContext(SpotlightContext);
+  const spotlight = useSpotlightStore((state) => state.spotlight);
   if (!spotlight) {
     return null;
   }
@@ -24,7 +24,7 @@ export function SpotlightComponentList() {
 
   return (
     <dl className="w-full">
-      <div className="grid gap-4 text-lg w-full grid-cols-5">
+      <div className="grid gap-4 text-base w-full grid-cols-5">
         <dt className="text-foreground font-medium flex items-center gap-4 col-span-2">
           <Search aria-hidden="true" className="flex-shrink-0" />
           {spotlight.headerKey}
@@ -63,7 +63,7 @@ function AssociatedEntry({ label, value, isLast }: AssociatedEntryProps) {
   const { type, payload } = value;
 
   return (
-    <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative">
+    <div className="grid gap-4 w-full grid-cols-5 pl-7 items-baseline relative text-sm">
       {/* Left indentation marker */}
       <div
         className="grid items-start h-full absolute left-1 top-0 bottom-0"

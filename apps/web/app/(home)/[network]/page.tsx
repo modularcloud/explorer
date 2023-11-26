@@ -7,14 +7,14 @@ import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 import { getSearchOptionGroups } from "~/lib/search-options";
 
-import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
+import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 
 interface Props {
-  params: Pick<FetchLoadArgs, "network">;
+  params: Pick<HeadlessRoute, "network">;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

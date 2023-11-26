@@ -1,0 +1,61 @@
+{
+  "celestia": [
+    {
+      "name": "celestia-app",
+      "main_repo": ["https://github.com/celestiaorg/celestia-app", "proto"],
+      "dependencies": [
+        ["https://github.com/regen-network/protobuf", "."],
+        ["https://github.com/cosmos/cosmos-proto", "proto"],
+        ["https://github.com/googleapis/googleapis", "."]
+      ]
+    },
+    {
+      "name": "celestiaorg_cosmos-sdk",
+      "main_repo": ["https://github.com/celestiaorg/cosmos-sdk", "proto"],
+      "dependencies": [
+        [
+          "https://github.com/celestiaorg/cosmos-sdk",
+          "third_party/proto/google/protobuf"
+        ],
+        ["https://github.com/regen-network/protobuf", "."],
+        ["https://github.com/cosmos/cosmos-proto", "proto"],
+        ["https://github.com/googleapis/googleapis", "."]
+      ]
+    },
+    {
+      "name": "go-ibc",
+      "main_repo": ["https://github.com/cosmos/ibc-go", "proto"],
+      "dependencies": [
+        ["https://github.com/cosmos/cosmos-sdk", "proto"],
+        ["https://github.com/cosmos/gogoproto", "."],
+        ["https://github.com/cosmos/cosmos-proto", "proto"],
+        ["https://github.com/googleapis/googleapis", "."],
+        ["https://github.com/cosmos/ics23", "proto"]
+      ]
+    }
+  ],
+  "rollapps": [
+    {
+      "name": "dymension-rdk",
+      "main_repo": ["https://github.com/dymensionxyz/dymension-rdk", "proto"],
+      "dependencies": [
+        [
+          "https://github.com/dymensionxyz/dymension-rdk",
+          "third_party/proto"
+        ],
+        ["https://github.com/regen-network/protobuf", "."]
+      ]
+    },
+    {
+      "name": "go-ibc",
+      "main_repo": ["https://github.com/cosmos/ibc-go", "proto"],
+      "dependencies": [
+        ["https://github.com/cosmos/cosmos-sdk", "proto"],
+        ["https://github.com/cosmos/gogoproto", "."],
+        ["https://github.com/cosmos/cosmos-proto", "proto"],
+        ["https://github.com/googleapis/googleapis", "."],
+        ["https://github.com/cosmos/ics23", "proto"]
+      ]
+    }
+  ]
+}

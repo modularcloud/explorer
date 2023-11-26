@@ -12,7 +12,7 @@ const SvgEyeOff = (props: SVGProps<SVGSVGElement>) => (
       stroke="#888A90"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M17.5 10s-2 5.5-7.5 5.5S2.5 10 2.5 10s2-5.5 7.5-5.5 7.5 5.5 7.5 5.5Z"
+      d="M17.5 10s-2 5.5-7.5 5.5S2.5 10 2.5 10s2-5.5 7.5-5.5 7.5 5.5 7.5 5.5"
     />
     <circle
       cx={10}
