@@ -1,4 +1,4 @@
-import { createResolver, NotFound } from "@modularcloud-resolver/core";
+import { createResolver, NotFound, ResolutionResponse } from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages } from "./registry";
@@ -30,7 +30,7 @@ export const BlockHeightResolver = createResolver(
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; height?: string }, fetchResolver) => {
-    const response = await fetchResolver({
+    const response: ResolutionResponse = await fetchResolver({
       url: input.height
         ? `${input.endpoint}/block?height=${input.height}`
         : `${input.endpoint}/block`,
