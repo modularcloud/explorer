@@ -25,6 +25,7 @@ export async function isomorphicLoadPage(
     chainLogo: network.config.logoUrl,
     rpcEndpoint: network.config.rpcUrls["svm"],
     nativeToken: network.config.token.name,
+    slug: network.slug,
   });
 
   // this is the most ridiculous thing ever
