@@ -1,7 +1,6 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../schemas/page";
-import * as Celestia from "@modularcloud-resolver/celestia";
-import * as RollApp from "@modularcloud-resolver/rollapp";
+import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../types";
 import { getDefaultSidebar } from "../../../../../../helpers";
 import { Standard } from "../../../../utils/values";
@@ -13,7 +12,7 @@ export const RollappTransactionMessagesResolver = createResolver(
   },
   async (
     { context, hash }: { context: PageContext; hash: string },
-    getTransaction: typeof RollApp.TransactionResolver,
+    getTransaction: typeof resolvers.getTx,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -23,9 +22,7 @@ export const RollappTransactionMessagesResolver = createResolver(
     if (response.type === "pending") throw PendingException;
 
     const transacitonResponse: TransactionResponse = response.result;
-    const messages = Celestia.helpers.getMessages(
-      transacitonResponse.result.tx,
-    );
+    const messages = helpers.getMessages(transacitonResponse.result.tx);
 
     const page: Page = {
       context,
@@ -46,20 +43,18 @@ export const RollappTransactionMessagesResolver = createResolver(
             key: link,
             link,
             row: {
-              Message: Standard(
-                Celestia.helpers.getMessageDisplayName(message.typeUrl),
-              ),
+              Message: Standard(helpers.getMessageDisplayName(message.typeUrl)),
             },
 
             sidebar: {
               headerKey: "Spotlight",
               headerValue: "Message",
               properties: Object.fromEntries(
-                Object.entries(
-                  Celestia.helpers.convertMessageToKeyValue(messages),
-                ).map(([key, value]) => {
-                  return [key, Standard(value)];
-                }),
+                Object.entries(helpers.convertMessageToKeyValue(messages)).map(
+                  ([key, value]) => {
+                    return [key, Standard(value)];
+                  },
+                ),
               ),
             },
           };
@@ -79,5 +74,5 @@ export const RollappTransactionMessagesResolver = createResolver(
     };
     return page;
   },
-  [RollApp.TransactionResolver],
+  [resolvers.getTx],
 );

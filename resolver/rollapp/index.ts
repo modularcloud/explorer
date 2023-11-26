@@ -4,9 +4,9 @@ import { z } from "zod";
 import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
 
-export const BlockHashResolver = createResolver(
+const RollappBlockHashResolver = createResolver(
   {
-    id: "celestia-block-hash-0.0.0",
+    id: "rollapp-get-block-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; hash: string }, fetchResolver) => {
@@ -24,9 +24,9 @@ export const BlockHashResolver = createResolver(
   [FetchResolver],
 );
 
-export const BlockHeightResolver = createResolver(
+const RollappBlockHeightResolver = createResolver(
   {
-    id: "celestia-block-height-0.0.0",
+    id: "rollapp-get-block-by-height-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; height?: string }, fetchResolver) => {
@@ -44,9 +44,9 @@ export const BlockHeightResolver = createResolver(
   [FetchResolver],
 );
 
-export const TransactionResolver = createResolver(
+const RollappTransactionResolver = createResolver(
   {
-    id: "celestia-transaction-0.0.0",
+    id: "rollapp-get-transactions-0.0.0",
     cache: false, // all cache is disabled for now
   },
   async (input: { endpoint: string; hash: string }, fetchResolver) => {
@@ -75,11 +75,11 @@ export const TransactionResolver = createResolver(
   [FetchResolver],
 );
 
-const publicRPCMap = {
-  "3": "http://consensus-full-arabica-9.celestia-arabica.com:26657",
-  "4": "https://rpc-mocha.pops.one",
-  "5": "http://consensus-validator.celestia-arabica-10.com:26657",
-};
+export const resolvers = {
+  getBlockByHash: RollappBlockHashResolver,
+  getBlock: RollappBlockHeightResolver,
+  getTx: RollappTransactionResolver,
+}
 
 // export const BalanceResolver = createResolver({
 //     id: "celestia-balance-0.0.0",

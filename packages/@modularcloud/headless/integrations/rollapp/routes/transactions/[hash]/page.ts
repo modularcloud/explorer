@@ -1,9 +1,7 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import * as RollApp from "@modularcloud-resolver/rollapp";
+import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { Page, PageContext, Value } from "../../../../../schemas/page";
-import * as Celestia from "@modularcloud-resolver/celestia";
-import { BlockResponse, TransactionResponse } from "../../../types";
-import { z } from "zod";
+import { TransactionResponse } from "../../../types";
 import {
   getBlockProperties,
   getTransactionProperties,
@@ -18,8 +16,8 @@ export const RollappTransactionResolver = createResolver(
   },
   async (
     { context, hash }: { context: PageContext; hash: string },
-    getTransaction: typeof RollApp.TransactionResolver,
-    getBlock: typeof RollApp.BlockHeightResolver,
+    getTransaction: typeof resolvers.getTx,
+    getBlock: typeof resolvers.getBlock,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -53,7 +51,7 @@ export const RollappTransactionResolver = createResolver(
       }
     }
 
-    const messages = RollApp.helpers.getMessages(response.result.result.tx);
+    const messages = helpers.getMessages(response.result.result.tx);
     const isIBC = !!(
       messages.findIndex((m: any) =>
         /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
@@ -91,5 +89,5 @@ export const RollappTransactionResolver = createResolver(
     };
     return page;
   },
-  [RollApp.TransactionResolver, RollApp.BlockHeightResolver],
+  [resolvers.getTx, resolvers.getBlock],
 );

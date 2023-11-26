@@ -1,5 +1,4 @@
-import * as Celestia from "@modularcloud-resolver/celestia";
-import * as RollApp from "@modularcloud-resolver/rollapp";
+import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getTransactionProperties,
@@ -22,9 +21,9 @@ export const RollappBlockTransctionsResolver = createResolver(
       context,
       hashOrHeight,
     }: { context: PageContext & PaginationContext; hashOrHeight: string },
-    getBlock: typeof RollApp.BlockHeightResolver,
-    getBlockByHash: typeof RollApp.BlockHashResolver,
-    getTransaction: typeof RollApp.TransactionResolver,
+    getBlock: typeof resolvers.getBlock,
+    getBlockByHash: typeof resolvers.getBlockByHash,
+    getTransaction: typeof resolvers.getTx,
   ) => {
     const pageToken = context.after ?? "0";
     const limit = 30;
@@ -68,7 +67,7 @@ export const RollappBlockTransctionsResolver = createResolver(
               "SHA-256",
               Buffer.from(txstr, "base64"),
             );
-            const blobTx = Celestia.helpers.getBlobTx(txstr);
+            const blobTx = helpers.getBlobTx(txstr);
             if (blobTx.typeId === "BLOB")
               hashBuffer = await crypto.subtle.digest("SHA-256", blobTx.tx);
             return getTransaction({
@@ -155,8 +154,8 @@ export const RollappBlockTransctionsResolver = createResolver(
     return page;
   },
   [
-    RollApp.BlockHeightResolver,
-    RollApp.BlockHashResolver,
-    RollApp.TransactionResolver,
+    resolvers.getBlock,
+    resolvers.getBlockByHash,
+    resolvers.getTx,
   ],
 );

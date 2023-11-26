@@ -1,11 +1,9 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../../schemas/page";
-import * as Celestia from "@modularcloud-resolver/celestia";
-import * as RollApp from "@modularcloud-resolver/rollapp";
+import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../../types";
 import {
   getDefaultNestedSidebar,
-  getDefaultSidebar,
 } from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
 import {
@@ -24,7 +22,7 @@ export const RollappMessageResolver = createResolver(
       hash,
       index,
     }: { context: PageContext; hash: string; index: string },
-    getTransaction: typeof RollApp.TransactionResolver,
+    getTransaction: typeof resolvers.getTx,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -34,14 +32,14 @@ export const RollappMessageResolver = createResolver(
     if (response.type === "pending") throw PendingException;
 
     const transacitonResponse: TransactionResponse = response.result;
-    const messages = Celestia.helpers.getMessages(
+    const messages = helpers.getMessages(
       transacitonResponse.result.tx,
     );
     const message = messages[parseInt(index)];
     if (!message) throw new Error("Message not found");
 
     const properties = Object.fromEntries(
-      Object.entries(Celestia.helpers.convertMessageToKeyValue(message)).map(
+      Object.entries(helpers.convertMessageToKeyValue(message)).map(
         ([key, value]) => [key, Standard(value)],
       ),
     );
@@ -91,5 +89,5 @@ export const RollappMessageResolver = createResolver(
     };
     return page;
   },
-  [RollApp.TransactionResolver],
+  [resolvers.getTx],
 );

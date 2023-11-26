@@ -1,4 +1,4 @@
-import * as Celestia from "@modularcloud-resolver/celestia";
+import { resolvers } from "@modularcloud-resolver/rollapp";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { getBlockProperties } from "../../../helpers";
 import { getDefaultSidebar } from "../../../../../helpers";
@@ -12,8 +12,8 @@ export const RollappBlockResolver = createResolver(
   },
   async (
     { context, hashOrHeight }: { context: PageContext; hashOrHeight: string },
-    getBlock: typeof Celestia.BlockHeightResolver,
-    getBlockByHash: typeof Celestia.BlockHashResolver,
+    getBlock: typeof resolvers.getBlock,
+    getBlockByHash: typeof resolvers.getBlockByHash,
   ) => {
     let type: "hash" | "height" | undefined;
     if (hashOrHeight.match(/^\d+$/)) {
@@ -60,5 +60,5 @@ export const RollappBlockResolver = createResolver(
     };
     return page;
   },
-  [Celestia.BlockHeightResolver, Celestia.BlockHashResolver],
+  [resolvers.getBlock, resolvers.getBlockByHash],
 );
