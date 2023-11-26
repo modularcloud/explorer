@@ -8,16 +8,11 @@ export type OnSelectItemArgs<T> = {
 };
 
 type UseItemListNavigationArgs<T> = {
-  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
    * The ref of the parent to attach keyboard events to,
    * defaults to window
    */
   scopeRef?: React.RefObject<HTMLElement | null>;
-  /**
-   * Wether or not to scroll to the item when we navigate with the up/down arrows
-   */
-  scrollOnSelection?: boolean;
   /**
    * Callback for when the item is clicked, either with the mouse
    * or with Enter key, This function should also be memoized
@@ -49,11 +44,9 @@ type UseItemListNavigationArgs<T> = {
  */
 export function useItemListNavigation<T>({
   items,
-  parentRef,
   onSelectItem,
   onClickItem,
   getItemId,
-  scrollOnSelection = true,
   scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
@@ -164,24 +157,23 @@ export function useItemListNavigation<T>({
     }
   }, [selectItem, onSelectItem, items]);
 
+  // Scroll the item into the view if it isn't visible
+  // In the case where the element is visible, it will do nothing.
   const scrollItemIntoView = React.useCallback(() => {
     const { index, item } = selectedItemPositionRef.current;
 
-    if (item && scrollOnSelection) {
+    if (item) {
       const element = document.getElementById(
         getOptionId(index, item),
       ) as HTMLDivElement | null;
 
-      if (element && parentRef?.current) {
-        if (isElementOverflowing(parentRef.current, element)) {
-          element?.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-        }
+      if (element) {
+        element?.scrollIntoView({
+          block: "nearest",
+        });
       }
     }
-  }, [parentRef, getOptionId, scrollOnSelection]);
+  }, [getOptionId]);
 
   // Listen for keyboard events
   React.useEffect(() => {
@@ -223,12 +215,6 @@ export function useItemListNavigation<T>({
           break;
       }
 
-      const { item, index } = selectedItemPositionRef.current;
-      if (!eventIgnored && item) {
-        const element = document.getElementById(getOptionId(index, item));
-        element?.focus();
-      }
-
       // we don't want this event to be propagated to the whole page
       // so that element that listen globally (for hotkey for ex.) don't react accordingly,
       if (!eventIgnored) {
@@ -251,10 +237,10 @@ export function useItemListNavigation<T>({
   }, [
     moveSelectionDown,
     moveSelectionUp,
-    scrollItemIntoView,
     onClickItem,
     getOptionId,
     scopeRef,
+    scrollItemIntoView,
   ]);
 
   const isOptionSelected = React.useCallback(
@@ -266,6 +252,8 @@ export function useItemListNavigation<T>({
     [selectedItemIndex, selectedItem, getItemId],
   );
 
+  const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
+
   const registerItemProps = React.useCallback(
     (index: number, item: T) => {
       const itemId = getOptionId(index, item);
@@ -273,7 +261,21 @@ export function useItemListNavigation<T>({
       return {
         id: itemId,
         onClick: () => onClickItem?.(item, index),
-        onMouseMove: () => {
+        onMouseMove: (event: React.MouseEvent) => {
+          // This is to fix a bug in SAFARI,
+          // In safari the `MouseMove` Event is triggered even on scroll
+          // So we manually check if the mouse has really moved, and if it is not the case
+          // we just ignore the event
+          const currentMousePosition = { x: event.clientX, y: event.clientY };
+          const lastMousePosition = lastMousePositionRef.current;
+          const hasMoved =
+            currentMousePosition.x !== lastMousePosition.x ||
+            currentMousePosition.y !== lastMousePosition.y;
+
+          if (!hasMoved) return;
+
+          lastMousePositionRef.current = currentMousePosition;
+
           const { item: selectedItem } = selectedItemPositionRef.current;
 
           const currentItemId = getItemId(item);
@@ -283,8 +285,6 @@ export function useItemListNavigation<T>({
           if (selectedItemId !== currentItemId) {
             selectItem({ item, index });
 
-            const element = document.getElementById(getOptionId(index, item));
-            element?.focus();
             onSelectItem?.({
               item: item,
               index: index,
