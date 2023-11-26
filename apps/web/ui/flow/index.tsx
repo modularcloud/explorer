@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useContext, useMemo } from "react";
 import Link from "next/link";
-import { SpotlightContext } from "../right-panel/spotlight-context";
+import { useSpotlightStore } from "../right-panel/spotlight-store";
 
 type Node =
   | {
@@ -93,7 +93,7 @@ function Node({
     }
     return null;
   }, [nodeResponse.data]);
-  const { setSpotlight } = useContext(SpotlightContext);
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
   if (!nodeResponse.data) return null;
   const node = nodeResponse.data.result;
 
