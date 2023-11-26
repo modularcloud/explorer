@@ -110,13 +110,15 @@ function Node({
   return (
     <Link
       href={`${node.link}`}
-      onMouseEnter={() =>
-        setSpotlight?.({
-          headerKey: "Spotlight",
-          headerValue: "Message",
-          properties: node.sidebar,
-        })
-      }
+      onMouseEnter={() => {
+        if (node.sidebar) {
+          setSpotlight?.({
+            headerKey: "Spotlight",
+            headerValue: "Message",
+            properties: node.sidebar,
+          });
+        }
+      }}
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
         colors,
