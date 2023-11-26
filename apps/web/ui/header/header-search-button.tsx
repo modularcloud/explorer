@@ -76,7 +76,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           <span className="inline-flex gap-2 items-center">
             <Image
               // FIXME : this is hardcoded, but it needs to be returned from the API
-              src={`/images/celestia-logo-small.png`}
+              src={network.logoURL}
               width={16}
               height={16}
               alt={`Logo ${network.brandName}`}

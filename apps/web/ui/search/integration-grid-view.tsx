@@ -7,6 +7,7 @@ import { capitalize } from "~/lib/shared-utils";
 import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
+import Image from "next/image";
 interface Props {
   className?: string;
   optionGroups: OptionGroups;
@@ -83,9 +84,11 @@ export function IntegrationGridView({
                       id={`row-${rowIndex}-col-${colIndex}-header`}
                     >
                       <span>{capitalize(groupName)}</span>
-                      <GlobeCyber
-                        className="h-4 w-4 text-primary"
-                        aria-hidden="true"
+                      <Image
+                        src={options[0].logoURL}
+                        height="16"
+                        width="16"
+                        alt={`${groupName} logo`}
                       />
                     </div>
 

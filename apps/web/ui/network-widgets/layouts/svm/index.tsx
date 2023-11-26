@@ -113,7 +113,7 @@ export function SVMWidgetLayout({ network }: Props) {
         networkSlug={network.id}
         className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
         data={
-          latestBlocks.data
+          latestBlocks.data?.result
             ? latestBlocks.data.result.map((block: any) => ({
                 number: block.parentSlot + 1,
                 noOfTransactions: block.transactions.length,

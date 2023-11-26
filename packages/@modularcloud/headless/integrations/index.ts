@@ -13,6 +13,15 @@ import { CelestiaAddressBalancesResolver } from "./celestia/routes/addresses/[ad
 import { CelestiaBlobResolver } from "./celestia/routes/transactions/[hash]/blobs/[index]/page";
 import { CelestiaMessageResolver } from "./celestia/routes/transactions/[hash]/messages/[index]/page";
 import { CelestiaAddressTransactionsResolver } from "./celestia/routes/addresses/[address]/transactions/page";
+import { addressOverviewResolver } from "./svm/addresses/[address]/page";
+import { addressTransactionsResolver } from "./svm/addresses/[address]/transactions/page";
+import { transactionOverviewResolver } from "./svm/transactions/[signature]/page";
+import { transactionInstructionsResolver } from "./svm/transactions/[signature]/instructions/page";
+import { blockOverviewResolver } from "./svm/blocks/[slot]/page";
+import { blockTransactionsResolver } from "./svm/blocks/[slot]/transactions/page";
+import { instructionResolver } from "./svm/transactions/[signature]/instructions/[index]/page";
+import { latestTransactionsPageResolver } from "./svm/transactions/page";
+import { latestBlocksPageResolver } from "./svm/blocks/page";
 import { RollappTransactionResolver } from "./rollapp/routes/transactions/[hash]/page";
 import { RollappBlockResolver } from "./rollapp/routes/blocks/[hashOrHeight]/page";
 import { RollappLatestBlocksResolver } from "./rollapp/routes/blocks/page";
@@ -22,12 +31,15 @@ import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/mes
 import { IBCResolver } from "./rollapp/misc/ibc";
 
 export function registerResolvers() {
-  registerResolver(SVM.addressOverviewResolver);
-  registerResolver(SVM.addressTransactionsResolver);
-  registerResolver(SVM.transactionOverviewResolver);
-  registerResolver(SVM.transactionInstructionsResolver);
-  registerResolver(SVM.blockOverviewResolver);
-  registerResolver(SVM.blockTransactionsResolver);
+  registerResolver(addressOverviewResolver);
+  registerResolver(addressTransactionsResolver);
+  registerResolver(transactionOverviewResolver);
+  registerResolver(transactionInstructionsResolver);
+  registerResolver(blockOverviewResolver);
+  registerResolver(blockTransactionsResolver);
+  registerResolver(instructionResolver);
+  registerResolver(latestTransactionsPageResolver);
+  registerResolver(latestBlocksPageResolver);
   registerResolver(SVM.latestBlocksResolver);
   registerResolver(SVM.latestTransactionsResolver);
 
