@@ -1,5 +1,6 @@
 import {
   createResolver,
+  NotFound,
   PendingException,
   ResolutionResponse,
 } from "@modularcloud-resolver/core";
@@ -49,6 +50,9 @@ export const BlockResolver = createResolver(
           throw new Error("Failed to fetch block");
         if (rpcResponse.type === "success" && rpcResponse.result.error)
           throw new Error(rpcResponse.result.error);
+        if (rpcResponse.result === null) {
+          NotFound();
+        }
         return rpcResponse;
       }),
       fetch(
@@ -58,6 +62,9 @@ export const BlockResolver = createResolver(
       ).then(async (response) => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);
+        if (json.result === null) {
+          NotFound();
+        }
         return json;
       }),
     ]);
@@ -104,6 +111,9 @@ export const TransactionResolver = createResolver(
           throw new Error("Failed to fetch block");
         if (rpcResponse.type === "success" && rpcResponse.result.error)
           throw new Error(rpcResponse.result.error);
+        if (rpcResponse.result === null) {
+          NotFound();
+        }
         return rpcResponse;
       }),
       fetch(
@@ -113,6 +123,9 @@ export const TransactionResolver = createResolver(
       ).then(async (response) => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);
+        if (json.result === null) {
+          NotFound();
+        }
         return json;
       }),
     ]);
