@@ -82,8 +82,8 @@ export const latestBlocksPageResolver = createResolver(
     const PageResponse: Page = {
       context,
       metadata: {
-        title: `Latest Transactions`,
-        description: `Latest transactions on ${context.chainBrand} ${context.chainName}`,
+        title: `Latest Blocks`,
+        description: `Latest blocks on ${context.chainBrand} ${context.chainName}`,
       },
       body: {
         type: "collection",

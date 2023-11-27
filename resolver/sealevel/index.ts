@@ -31,7 +31,7 @@ export const BlockResolver = createResolver(
     const parsedSlot = Number(slot);
     if (isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
 
-    const response = await Promise.any([
+    const response: any = await Promise.any([
       jsonRpcResolver({
         endpoint: endpoint,
         method: "getBlock",
@@ -55,7 +55,11 @@ export const BlockResolver = createResolver(
         `${String(
           process.env.SVM_DEVNET_RPC_ALTERNATIVE,
         )}/block?slotNumber=${parsedSlot}`,
-      ).then((response) => response.json()),
+      ).then(async (response) => {
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
+        return json;
+      }),
     ]);
     return response.result;
   },
@@ -106,7 +110,11 @@ export const TransactionResolver = createResolver(
         `${String(
           process.env.SVM_DEVNET_RPC_ALTERNATIVE,
         )}/tx?signature=${signature}`,
-      ).then((response) => response.json()),
+      ).then(async (response) => {
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
+        return json;
+      }),
     ]);
     return response.result;
   },
