@@ -3,7 +3,6 @@ import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;
-  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
    * The ref of the parent to attach keyboard events
    */
@@ -33,7 +32,6 @@ export function useItemGrid<
 >({
   noOfColumns,
   optionGroups,
-  parentRef,
   defaultOptionGroupKeyToSortFirst,
   onSelectOption,
   scopeRef,
@@ -266,16 +264,11 @@ export function useItemGrid<
         `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
       ) as HTMLDivElement | null;
 
-      if (element && parentRef?.current) {
-        if (isElementOverflowing(parentRef.current, element)) {
-          element?.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-        }
-      }
+      element?.scrollIntoView({
+        block: "nearest",
+      });
     }
-  }, [parentRef, itemRootId]);
+  }, [itemRootId]);
 
   const getOptionId = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {

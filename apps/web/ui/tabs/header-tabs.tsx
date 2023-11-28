@@ -117,7 +117,9 @@ export async function HeaderTabs({ params }: Props) {
                       "group-focus:ring-2",
                     )}
                   >
-                    {tab.Icon && <tab.Icon aria-hidden="true" />}
+                    {tab.Icon && (
+                      <tab.Icon aria-hidden="true" className="h-3 w-3" />
+                    )}
                     {tab.text}
 
                     {tab.totalCount !== null && (

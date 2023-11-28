@@ -28,13 +28,10 @@ export function IntegrationGridView({
     "(min-width: 595px) and (max-width: 800px)",
   );
 
-  const gridRef = React.useRef<React.ElementRef<"div">>(null);
-
   const noOfColumns = isOneColumn ? 1 : isTwoColumns ? 2 : 3;
 
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
-    parentRef: gridRef,
     optionGroups,
     scopeRef: parentDialogRef,
     onSelectOption,
@@ -45,7 +42,6 @@ export function IntegrationGridView({
     <div
       className={cn("flex flex-col gap-4 h-full flex-1", className)}
       role="grid"
-      ref={gridRef}
       tabIndex={0}
     >
       {groupedByLines.map((rowGroups, rowIndex) => (

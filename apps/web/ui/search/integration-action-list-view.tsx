@@ -44,13 +44,16 @@ export function IntegrationActionListView({
         `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
       );
     }
+  }, [router, selectedNetwork.id, query]);
 
+  // prefetch the searcheableTypes routes as they appear
+  React.useEffect(() => {
     for (const [type, query] of searcheableTypes) {
       router.prefetch(
         `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
       );
     }
-  }, [router, selectedNetwork, query, searcheableTypes]);
+  }, [router, searcheableTypes, selectedNetwork.id]);
 
   const items = React.useMemo(() => {
     let items: {
@@ -162,20 +165,20 @@ export function IntegrationActionListView({
     searcheableTypes,
   ]);
 
-  const listRef = React.useRef<React.ElementRef<"div">>(null);
+  const onSelectOption = React.useCallback((option: ListItemType) => {
+    option.onSelect();
+  }, []);
 
   const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
     noOfColumns: 1,
     optionGroups: items,
-    parentRef: listRef,
-    onSelectOption: (option) => option.onSelect(),
+    onSelectOption,
     scopeRef: parentDialogRef,
   });
 
   return (
     <div
       role="listbox"
-      ref={listRef}
       className={cn(
         "h-full flex-1 flex flex-col items-start w-full text-muted",
         className,
@@ -205,7 +208,10 @@ export function IntegrationActionListView({
                     "flex items-center gap-4",
                   )}
                 >
-                  <ArrowRight aria-hidden="true" className="flex-shrink-0" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-3 w-3 flex-none"
+                  />
                   <Icon className="flex-shrink-0" />
                   <span className="w-[97%]">{item.label}</span>
                 </div>

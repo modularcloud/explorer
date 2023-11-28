@@ -3,14 +3,15 @@ import type { SVGProps } from "react";
 const SvgArrowRight = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={6}
-    height={8}
     fill="none"
+    viewBox="0 0 24 24"
     {...props}
   >
     <path
       fill="currentColor"
-      d="M3.78 4 .953 1.172a.667.667 0 1 1 .943-.943L4.96 3.293a1 1 0 0 1 0 1.415L1.895 7.772a.667.667 0 1 1-.943-.943L3.781 4Z"
+      fillRule="evenodd"
+      d="M8.293 3.293a1 1 0 0 1 1.414 0l8 8a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414-1.414L15.586 12 8.293 4.707a1 1 0 0 1 0-1.414"
+      clipRule="evenodd"
     />
   </svg>
 );
