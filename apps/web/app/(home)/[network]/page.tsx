@@ -39,10 +39,10 @@ export default async function NetworkWidgetPage({ params }: Props) {
   const searchOption = values.find((network) => network.id === params.network);
 
   switch (network.config.widgetLayout) {
-    case "EvmWithPrice":
-      return <EvmWithPriceWidgetLayout network={searchOption!} />;
-    case "SVM":
-      return <SVMWidgetLayout network={searchOption!} />;
+    // case "EvmWithPrice":
+    //   return <EvmWithPriceWidgetLayout network={searchOption!} />;
+    // case "SVM":
+    //   return <SVMWidgetLayout network={searchOption!} />;
     case "Celestia":
       return <CelestiaWidgetLayout network={searchOption!} />;
     default:

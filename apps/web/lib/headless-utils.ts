@@ -24,7 +24,10 @@ export const HeadlessRouteSchema = z.object({
 
 export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
-export async function loadIntegration(networkSlug: string) {
+export async function loadIntegration(
+  networkSlug: string,
+  revalidateTimeInSeconds: number = 2,
+) {
   const network = await getSingleNetworkCached(networkSlug);
 
   if (!network) {
@@ -96,7 +99,7 @@ export async function loadIntegration(networkSlug: string) {
             },
             additionalContext,
           ),
-          revalidateTimeInSeconds: 2,
+          revalidateTimeInSeconds,
         },
       );
 
@@ -112,11 +115,16 @@ export async function loadIntegration(networkSlug: string) {
 export async function loadPage({
   route,
   context,
+  revalidateTimeInSeconds,
 }: {
   route: HeadlessRoute;
   context?: PaginationContext;
+  revalidateTimeInSeconds?: number;
 }): Promise<Page> {
-  const integration = await loadIntegration(route.network);
+  const integration = await loadIntegration(
+    route.network,
+    revalidateTimeInSeconds,
+  );
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
