@@ -135,6 +135,7 @@ export function SearchModal({
                           width={16}
                           height={16}
                           alt={`${currentNetwork.displayName} logo`}
+                          className="h-4 w-4 inline-block"
                         />
                       )}
 
@@ -144,7 +145,12 @@ export function SearchModal({
                         {capitalize(currentNetwork.displayName)}
                       </span>
 
-                      <ArrowRight className="text-muted" aria-hidden="true" />
+                      <div className="h-4 w-4 flex items-center justify-center flex-none">
+                        <ArrowRight
+                          className="text-muted h-3 w-3 flex-none"
+                          aria-hidden="true"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <Search className={cn(cls)} />

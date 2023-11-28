@@ -92,7 +92,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
             </span>
           </span>
 
-          <ArrowRight className="text-muted flex-shrink-0" aria-hidden="true" />
+          <ArrowRight
+            className="text-muted flex-none h-3 w-3"
+            aria-hidden="true"
+          />
 
           {/* Query */}
           <span
@@ -119,7 +122,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           </span>
         </span>
 
-        <ArrowRight className="text-muted flex-shrink-0" aria-hidden="true" />
+        <ArrowRight
+          className="text-muted flex-none h-3 w-3"
+          aria-hidden="true"
+        />
       </Button>
     </SearchModal>
   );
