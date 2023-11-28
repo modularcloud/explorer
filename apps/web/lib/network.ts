@@ -7,7 +7,7 @@ import { CACHE_KEYS } from "./cache-keys";
 export const singleNetworkSchema = z.object({
   config: z.object({
     logoUrl: z.string().url(),
-    rpcUrls: z.record(z.enum(["evm", "cosmos", "svm"]), z.string().url()),
+    rpcUrls: z.record(z.enum(["evm", "cosmos", "svm", "celestia"]), z.string().url()),
     token: z.object({
       name: z.string().max(128),
       decimals: z.number(),

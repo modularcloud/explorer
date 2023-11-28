@@ -4,6 +4,7 @@ import {
   createSVMIntegration,
   PaginationContext,
   SearchBuilders,
+  createCelestiaIntegration,
   createRollappIntegration,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
@@ -35,24 +36,35 @@ export async function loadIntegration(networkSlug: string) {
     notFound();
   }
 
-  const integration = network.config.rpcUrls["svm"]
-    ? createSVMIntegration({
-        chainBrand: network.chainBrand,
-        chainName: network.chainName,
-        chainLogo: network.config.logoUrl,
-        rpcEndpoint: network.config.rpcUrls["svm"],
-        nativeToken: network.config.token.name,
-        slug: networkSlug,
-      })
-    : createRollappIntegration({
-        chainBrand: network.chainBrand,
-        chainName: network.chainName,
-        chainLogo: network.config.logoUrl,
-        rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
-        nativeToken: network.config.token.name,
-        slug: networkSlug,
-      });
-
+  let integration: ReturnType<typeof createSVMIntegration | typeof createRollappIntegration | typeof createCelestiaIntegration>;
+  if (network.config.rpcUrls["svm"]) {
+    integration = createSVMIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["svm"],
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else if (network.config.rpcUrls["cosmos"]) {
+    integration = createRollappIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else if (network.config.rpcUrls["celestia"]) {
+    integration = createCelestiaIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  }
   return {
     resolveRoute: async (
       path: string[],
