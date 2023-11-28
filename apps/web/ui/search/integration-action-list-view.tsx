@@ -165,8 +165,6 @@ export function IntegrationActionListView({
     searcheableTypes,
   ]);
 
-  const listRef = React.useRef<React.ElementRef<"div">>(null);
-
   const onSelectOption = React.useCallback((option: ListItemType) => {
     option.onSelect();
   }, []);
@@ -174,7 +172,6 @@ export function IntegrationActionListView({
   const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
     noOfColumns: 1,
     optionGroups: items,
-    parentRef: listRef,
     onSelectOption,
     scopeRef: parentDialogRef,
   });
@@ -182,7 +179,6 @@ export function IntegrationActionListView({
   return (
     <div
       role="listbox"
-      ref={listRef}
       className={cn(
         "h-full flex-1 flex flex-col items-start w-full text-muted",
         className,
@@ -212,7 +208,10 @@ export function IntegrationActionListView({
                     "flex items-center gap-4",
                   )}
                 >
-                  <ArrowRight aria-hidden="true" className="flex-shrink-0" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-3 w-3 flex-none"
+                  />
                   <Icon className="flex-shrink-0" />
                   <span className="w-[97%]">{item.label}</span>
                 </div>
