@@ -31,12 +31,11 @@ export async function loadIntegration(networkSlug: string) {
     notFound();
   }
 
-  // TODO: Right now, we only can resolve SVM and Cosmos chains.
-  if (network.config.rpcUrls["evm"]) {
-    notFound();
-  }
-
-  let integration: ReturnType<typeof createSVMIntegration | typeof createRollappIntegration | typeof createCelestiaIntegration>;
+  let integration: ReturnType<
+    | typeof createSVMIntegration
+    | typeof createRollappIntegration
+    | typeof createCelestiaIntegration
+  >;
   if (network.config.rpcUrls["svm"]) {
     integration = createSVMIntegration({
       chainBrand: network.chainBrand,
@@ -60,11 +59,14 @@ export async function loadIntegration(networkSlug: string) {
       chainBrand: network.chainBrand,
       chainName: network.chainName,
       chainLogo: network.config.logoUrl,
-      rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
+      rpcEndpoint: network.config.rpcUrls["celestia"] as string,
       nativeToken: network.config.token.name,
       slug: networkSlug,
     });
+  } else {
+    notFound();
   }
+
   return {
     resolveRoute: async (
       path: string[],
