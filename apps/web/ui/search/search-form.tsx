@@ -6,6 +6,7 @@ import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { SearchModal } from "./search-modal";
 import { Button } from "~/ui/button";
+import { LoadingIndicator } from "~/ui/loading-indicator";
 
 // utils
 import { useParams, useRouter } from "next/navigation";
@@ -22,6 +23,7 @@ interface Props {
 export function SearchForm({ optionGroups }: Props) {
   const params = useParams();
   const router = useRouter();
+  const [isPending, startTransition] = React.useTransition();
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();
@@ -89,8 +91,10 @@ export function SearchForm({ optionGroups }: Props) {
           const searchQuery = formData.get("q")?.toString();
           // this makes sure we don't navigate to an empty search route (which would throw a 404)
           if (searchQuery) {
-            router.push(
-              `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+            startTransition(() =>
+              router.push(
+                `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+              ),
             );
           }
         }}
@@ -114,7 +118,14 @@ export function SearchForm({ optionGroups }: Props) {
           className="h-full rounded-r-lg px-4 py-2 inline-flex items-center justify-center"
           type="submit"
         >
-          <ArrowRight className="text-muted" aria-hidden="true" />
+          {isPending ? (
+            <LoadingIndicator className="h-4 w-4 text-muted" />
+          ) : (
+            <ArrowRight
+              className="text-muted flex-none h-3 w-3"
+              aria-hidden="true"
+            />
+          )}
         </button>
       </form>
     </div>
