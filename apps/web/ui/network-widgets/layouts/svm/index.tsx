@@ -39,7 +39,14 @@ export function SVMWidgetLayout({ network }: Props) {
     return <SvmSkeleton error={error.toString()} />;
   }
 
-  if (!apiResult || isLoading) {
+  if (
+    !apiResult ||
+    isLoading ||
+    !latestBlocks.data ||
+    latestBlocks.isLoading ||
+    !latestTransactions.data ||
+    latestTransactions.isLoading
+  ) {
     return <SvmSkeleton />;
   }
 
