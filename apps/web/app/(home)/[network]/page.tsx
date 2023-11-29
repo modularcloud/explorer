@@ -38,10 +38,6 @@ export default async function NetworkWidgetPage({ params }: Props) {
   const values = Object.values(searchOptionGroups).flat();
   const searchOption = values.find((network) => network.id === params.network);
 
-  console.log({
-    network: params.network,
-    layout: network.config.widgetLayout,
-  });
   switch (network.config.widgetLayout) {
     // TODO : When EVM is ready, we should follow the same code structure as the other layouts
     // case "EvmWithPrice":
