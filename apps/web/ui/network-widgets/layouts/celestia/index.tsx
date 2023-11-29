@@ -104,6 +104,7 @@ async function CelestiaWidgetLayoutContent({ network }: Props) {
           "[grid-template-areas:var(--grid-area-mobile)]",
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
+          "auto-rows-[153px] tab:auto-rows-[146.5px] auto-cols-[145px]",
           "w-full gap-8 tab:gap-10 font-medium max-w-full",
           "accent-primary",
         )}

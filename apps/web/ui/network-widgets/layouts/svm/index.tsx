@@ -103,6 +103,7 @@ export async function SVMWidgetLayoutContent({ network }: Props) {
           "[grid-template-areas:var(--grid-area-mobile)]",
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
+          "auto-rows-[160px] auto-cols-[145px]",
           "w-full gap-4 font-medium",
           "accent-primary place-items-stretch",
         )}

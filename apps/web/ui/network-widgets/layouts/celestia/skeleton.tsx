@@ -10,7 +10,8 @@ export function CelestiaWidgetSkeleton(props: { error?: { message: string } }) {
         "[grid-template-areas:var(--grid-area-mobile)]",
         "tab:[grid-template-areas:var(--grid-area-tab)]",
         "lg:[grid-template-areas:var(--grid-area-lg)]",
-        "w-full gap-8 tab:gap-10 max-w-full auto-rows-[145px] auto-cols-[145px] relative",
+        "auto-rows-[153px] tab:auto-rows-[146.5px] auto-cols-[145px]",
+        "w-full gap-8 tab:gap-10 max-w-full relative",
       )}
     >
       {props.error && (
