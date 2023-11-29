@@ -5,6 +5,8 @@
     "main": "./index.ts",
     "types": "./index.ts",
     "scripts": {
+        "build": "tsc --target ESNext --esModuleInterop true --module commonjs ./index.ts",
+        "start": "node ./index.js",
         "gen": "[ \"$npm_config_name\" ] && (npm run gen:proto --name=$npm_config_name && npm run gen:ts --name=$npm_config_name) || node ./runGenForKeys.js",
         "gen:proto": "python gen.py $npm_config_name",
         "gen:ts": "tsc --target ESNext --esModuleInterop true --module commonjs ./generate-exports.ts && node ./generate-exports.js $npm_config_name"
