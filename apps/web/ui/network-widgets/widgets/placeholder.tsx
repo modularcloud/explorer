@@ -7,7 +7,7 @@ export function Placeholder(props: {
 }) {
   return (
     <div
-      className={cn(props.className, "rounded-lg", {
+      className={cn(props.className, "rounded-lg w-full h-full", {
         "animate-pulse": props.isLoading,
         "bg-muted-100": !props.isError,
         "bg-red-100": props.isError,
