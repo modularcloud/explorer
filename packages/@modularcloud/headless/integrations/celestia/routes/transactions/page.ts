@@ -66,22 +66,7 @@ export const CelestiaLatestTransactionsResolver = createResolver(
         ],
         entries: await Promise.all(
           transactions.map(async (tx) => {
-            let baseUrl = "http://localhost:3000";
-            if (process.env.VERCEL_URL) {
-              baseUrl = `https://${process.env.VERCEL_URL}`;
-            }
-            if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-              baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-            }
-
-            const response = await fetch(baseUrl + "/api/node/get-messages", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ str: tx.result.tx }),
-            });
-            const messages = await response.json();
+            const messages = Celestia.helpers.getMessages(tx.result.tx);
             const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
             return {
               sidebar: {
@@ -102,7 +87,11 @@ export const CelestiaLatestTransactionsResolver = createResolver(
                   },
                   Type: {
                     type: "standard",
-                    payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                    payload: messages[0]
+                      ? Celestia.helpers.getMessageDisplayName(
+                          messages[0].typeUrl,
+                        )
+                      : "Unknown",
                   },
                   Index: {
                     type: "standard",
@@ -137,7 +126,11 @@ export const CelestiaLatestTransactionsResolver = createResolver(
                 },
                 Type: {
                   type: "standard",
-                  payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                  payload: messages[0]
+                    ? Celestia.helpers.getMessageDisplayName(
+                        messages[0].typeUrl,
+                      )
+                    : "Unknown",
                 },
               },
             };
