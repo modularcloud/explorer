@@ -30,12 +30,13 @@ export function CelestiaWidgetLayout({ network }: Props) {
         /**
          * Grid areas, each area corresponds to a widget and is abbreviated in a two chars name :
          * - LT : latest transactions
-         * - Lb : latest blocks
+         * - LB: latest blocks
          * - BL : total blobs
          * - TR : total transactions
          * - BK : total blocks
          * - GP : gas price
-         * - P1, P2 : placeholder 1 & placeholder 2 (shown only on desktop)
+         * - NS : namespaces
+         * - P1, P2 : placeholders (shown only on desktop)
          *
          * We define them as variables here because we use the same layout in the skeleton,
          * For more infos about how to use grid-template-areas see here :https://developer.mozilla.org/fr/docs/Web/CSS/grid-template-areas
@@ -126,7 +127,6 @@ async function CelestiaWidgetLayoutContent({ network }: Props) {
                   return {
                     hash: entry.row.Transactions.payload.value,
                     success: entry.row.Status.payload,
-                    // temporary!!
                     type: entry.row.Type.payload,
                   };
                 })
