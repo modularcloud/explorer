@@ -13,9 +13,17 @@ export function ClientTime({ time, className }: Props) {
   const [text, setText] = React.useState("");
   React.useEffect(() => {
     dayjs.extend(relativeTime);
-    setText(dayjs(time).fromNow());
+    let currentRelativeTime = dayjs(time).fromNow();
+    if (currentRelativeTime === "a few seconds ago") {
+      currentRelativeTime = "just now";
+    }
+    setText(currentRelativeTime);
     const interval = setInterval(() => {
-      setText(dayjs(time).fromNow());
+      let currentRelativeTime = dayjs(time).fromNow();
+      if (currentRelativeTime === "a few seconds ago") {
+        currentRelativeTime = "just now";
+      }
+      setText(currentRelativeTime);
     }, 1000);
     return () => clearInterval(interval);
   }, [time]);
