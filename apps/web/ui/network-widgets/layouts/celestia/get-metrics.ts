@@ -1,9 +1,7 @@
-import "server-only";
 import { z } from "zod";
 import { DEFAULT_WIDGET_REVALIDATE_TIME } from "~/lib/constants";
-import { loadPage } from "~/lib/headless-utils";
 
-const metricsSchema = z.object({
+export const celestiaMetricsSchema = z.object({
   metrics: z.object({
     TRANSACTION: z.number(),
     NAMESPACE: z.number(),
@@ -15,23 +13,9 @@ const metricsSchema = z.object({
   blockHeight: z.string(),
 });
 
-export async function getLatestBlocks(network: string) {
-  return await loadPage({
-    route: { network: network, path: ["blocks"] },
-    context: { limit: 6 },
-    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
-  });
-}
+export type CelestiaMetrics = z.TypeOf<typeof celestiaMetricsSchema>;
 
-export async function getLatestTransactions(network: string) {
-  return await loadPage({
-    route: { network: network, path: ["transactions"] },
-    context: { limit: 5 },
-    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
-  });
-}
-
-export async function getMetrics(networkSlug: string) {
+export async function getCelestiaWidgetMetrics(networkSlug: string) {
   let id = 7;
   if (networkSlug.indexOf("mocha") !== -1) id = 6;
   else if (networkSlug.indexOf("arabica") !== -1) id = 5;
@@ -45,5 +29,5 @@ export async function getMetrics(networkSlug: string) {
     },
   )
     .then((r) => r.json())
-    .then((data) => metricsSchema.parse(data.result));
+    .then((data) => celestiaMetricsSchema.parse(data.result));
 }

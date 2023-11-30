@@ -108,6 +108,12 @@ export async function loadIntegration(
   };
 }
 
+export type LoadPageArgs = {
+  route: HeadlessRoute;
+  context?: PaginationContext;
+  revalidateTimeInSeconds?: number;
+};
+
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
@@ -116,11 +122,7 @@ export async function loadPage({
   route,
   context,
   revalidateTimeInSeconds,
-}: {
-  route: HeadlessRoute;
-  context?: PaginationContext;
-  revalidateTimeInSeconds?: number;
-}): Promise<Page> {
+}: LoadPageArgs): Promise<Page> {
   const integration = await loadIntegration(
     route.network,
     revalidateTimeInSeconds,

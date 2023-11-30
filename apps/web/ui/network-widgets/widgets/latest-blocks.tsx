@@ -5,6 +5,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { ArrowOut } from "~/ui/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { ClientTime } from "~/ui/tables/time";
 
 export type BlockRow = {
   number: number;
@@ -80,16 +81,7 @@ function BlockRow(props: TransactionRowProps) {
         {props.noOfTransactions > 1 ? "s" : ""}
       </p>
 
-      {/* 
-        We render the time directly in the server because we are in edge runtime,
-        and most of the time, the edge location is not far from the user
-       */}
-      <time
-        dateTime={new Date(props.timestamp).toISOString()}
-        className="flex-shrink-0 text-muted"
-      >
-        {dayjs(props.timestamp).fromNow()}
-      </time>
+      <ClientTime time={props.timestamp} className="flex-shrink-0 text-muted" />
     </Link>
   );
 }

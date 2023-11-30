@@ -5,6 +5,8 @@ import { env } from "~/env.mjs";
 import Web3 from "web3";
 import { z } from "zod";
 import { fetchLoad, getEventSignatureName } from "./shared-utils";
+import { DEFAULT_WIDGET_REVALIDATE_TIME } from "./constants";
+import { loadPage } from "./headless-utils";
 
 export const APICORSHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -101,7 +103,7 @@ export async function getTransactionVolumeHistory(integrationUuid: string) {
     });
 }
 
-export async function getLatestBlocks(networkSlug: string, rpcURL: string) {
+export async function getEVMLatestBlocks(networkSlug: string, rpcURL: string) {
   const latestBlocks = await fetchLoad({
     network: networkSlug,
     type: "pagination",
@@ -131,7 +133,7 @@ export async function getLatestBlocks(networkSlug: string, rpcURL: string) {
   return [];
 }
 
-export async function getLatestTransactions(
+export async function getEVMLatestTransactions(
   networkSlug: string,
   rpcURL: string,
 ) {
@@ -187,4 +189,20 @@ export async function getLatestTransactions(
   }
 
   return [];
+}
+
+export async function getLatestBlocks(network: string) {
+  return await loadPage({
+    route: { network: network, path: ["blocks"] },
+    context: { limit: 6 },
+    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
+  });
+}
+
+export async function getLatestTransactions(network: string) {
+  return await loadPage({
+    route: { network: network, path: ["transactions"] },
+    context: { limit: 5 },
+    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
+  });
 }

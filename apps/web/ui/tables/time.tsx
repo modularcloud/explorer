@@ -6,7 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { cn } from "~/ui/shadcn/utils";
 
 type Props = {
-  time: number;
+  time: number | string;
   className?: string;
 };
 export function ClientTime({ time, className }: Props) {
@@ -21,7 +21,11 @@ export function ClientTime({ time, className }: Props) {
   }, [time]);
 
   return (
-    <time dateTime={new Date(time).toISOString()} className={cn(className)}>
+    <time
+      suppressHydrationWarning
+      dateTime={new Date(time).toISOString()}
+      className={cn(className)}
+    >
       {text}
     </time>
   );
