@@ -5,7 +5,6 @@ import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
-import { UsersnapScript } from "./usersnap";
 
 // utils
 import localFont from "next/font/local";
