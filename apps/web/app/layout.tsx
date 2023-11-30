@@ -77,7 +77,6 @@ export default async function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <UsersnapScript />
       </head>
       <body
         className={`${inter.variable} ${interDisplay.variable} font-sans text-foreground`}
