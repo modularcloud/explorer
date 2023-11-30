@@ -55,20 +55,23 @@ export function CelestiaWidgetLayoutContent({
 
   return (
     <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
-      {lastUpdatedTime && (
-        <time
-          className="hidden tab:block text-sm text-muted/40 mx-auto font-normal"
-          dateTime={lastUpdatedTime.toISOString()}
-        >
-          Last Updated:&nbsp;
-          {new Intl.DateTimeFormat("en-US", {
-            dateStyle: "long",
-            timeStyle: "long",
-            hour12: true,
-            timeZone: "America/Los_Angeles",
-          }).format(lastUpdatedTime)}
-        </time>
-      )}
+      <div className="hidden tab:inline-block h-4 mx-auto text-center">
+        {lastUpdatedTime && (
+          <time
+            className="text-xs text-muted/40  font-normal"
+            dateTime={lastUpdatedTime.toISOString()}
+          >
+            Last Updated:&nbsp;
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "long",
+              timeStyle: "long",
+              hour12: true,
+              timeZone: "America/Los_Angeles",
+            }).format(lastUpdatedTime)}
+          </time>
+        )}
+      </div>
+
       <div
         style={{
           // @ts-expect-error this is a CSS variable
