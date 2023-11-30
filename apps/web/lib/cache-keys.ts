@@ -12,6 +12,7 @@ export const CACHE_KEYS = {
   },
   widgets: {
     evmWithPrice: (networkSlug: string) => ["EVM_WITH_PRICE", networkSlug],
+    data: (networkSlug: string) => ["WIDGET_DATA", networkSlug],
   },
   search: {
     query: (network: string, query: string) => ["SEARCH_QUERY", network, query],

@@ -24,7 +24,10 @@ export const HeadlessRouteSchema = z.object({
 
 export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
-export async function loadIntegration(networkSlug: string) {
+export async function loadIntegration(
+  networkSlug: string,
+  revalidateTimeInSeconds: number = 2,
+) {
   const network = await getSingleNetworkCached(networkSlug);
 
   if (!network) {
@@ -96,7 +99,7 @@ export async function loadIntegration(networkSlug: string) {
             },
             additionalContext,
           ),
-          revalidateTimeInSeconds: 2,
+          revalidateTimeInSeconds,
         },
       );
 
@@ -105,6 +108,12 @@ export async function loadIntegration(networkSlug: string) {
   };
 }
 
+export type LoadPageArgs = {
+  route: HeadlessRoute;
+  context?: PaginationContext;
+  revalidateTimeInSeconds?: number;
+};
+
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
@@ -112,11 +121,12 @@ export async function loadIntegration(networkSlug: string) {
 export async function loadPage({
   route,
   context,
-}: {
-  route: HeadlessRoute;
-  context?: PaginationContext;
-}): Promise<Page> {
-  const integration = await loadIntegration(route.network);
+  revalidateTimeInSeconds,
+}: LoadPageArgs): Promise<Page> {
+  const integration = await loadIntegration(
+    route.network,
+    revalidateTimeInSeconds,
+  );
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 

@@ -1,0 +1,205 @@
+"use client";
+import * as React from "react";
+import { Disabled, Folder, BarChart, Document } from "~/ui/icons";
+import { cn } from "~/ui/shadcn/utils";
+import { IconCard } from "~/ui/network-widgets/widgets/icon-card";
+import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
+import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
+import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
+import { SvmMetrics } from "./get-metrics";
+import { useSvmWidgetData } from "./use-widget-data";
+
+import type { Page } from "@modularcloud/headless";
+import type { SearchOption } from "~/lib/shared-utils";
+
+interface Props {
+  network: SearchOption;
+  initialLatestTransactions: Page;
+  initialLatestBlocks: Page;
+  initialMetrics: SvmMetrics;
+}
+
+export function SVMWidgetLayoutContent({
+  network,
+  initialLatestBlocks,
+  initialLatestTransactions,
+  initialMetrics,
+}: Props) {
+  const { error, data } = useSvmWidgetData({
+    networkSlug: network.id,
+    initialLatestBlocks,
+    initialLatestTransactions,
+    initialMetrics,
+  });
+
+  const [lastUpdatedTime, setLastUpdatedTime] = React.useState<Date | null>(
+    null,
+  );
+
+  React.useEffect(() => {
+    if (data) {
+      return setLastUpdatedTime(new Date());
+    }
+  }, [data]);
+
+  if (error) {
+    return (
+      <SVMWidgetSkeleton
+        error={{
+          message: error.toString(),
+        }}
+      />
+    );
+  }
+
+  if (!data) {
+    return <SVMWidgetSkeleton />;
+  }
+
+  const [apiResult, latestBlocks, latestTransactions] = data;
+
+  const {
+    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
+    slotNumber,
+  } = apiResult;
+
+  return (
+    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+      <div className="hidden tab:inline-block h-4 mx-auto text-center">
+        {lastUpdatedTime && (
+          <time
+            className="text-xs text-muted/40 mx-auto font-normal"
+            dateTime={lastUpdatedTime.toISOString()}
+          >
+            Last Updated:&nbsp;
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "long",
+              timeStyle: "long",
+              hour12: true,
+              timeZone: "America/Los_Angeles",
+            }).format(lastUpdatedTime)}
+          </time>
+        )}
+      </div>
+      <div
+        style={{
+          // @ts-expect-error this is a CSS variable
+          "--color-primary": network.brandColor,
+        }}
+        className={cn(
+          "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
+          "[grid-template-areas:var(--grid-area-mobile)]",
+          "tab:[grid-template-areas:var(--grid-area-tab)]",
+          "lg:[grid-template-areas:var(--grid-area-lg)]",
+          "auto-rows-[160px] auto-cols-[145px]",
+          "w-full gap-4 font-medium",
+          "accent-primary place-items-stretch",
+        )}
+      >
+        <LatestTransactions
+          networkSlug={network.id}
+          className="[grid-area:LT]"
+          data={
+            latestTransactions.body.type === "collection"
+              ? latestTransactions.body.entries.map((transaction: any) => {
+                  return {
+                    hash: transaction.row.Transactions.payload.value,
+                    success: transaction.row.Status.payload,
+                    type: transaction.row.Type.payload,
+                  };
+                })
+              : []
+          }
+        />
+
+        <IconCard
+          className="[grid-area:WA]"
+          label="WALLET ADRESSES"
+          icon={Folder}
+          value={UNIQUE_ADDRESS.toLocaleString("en-US")}
+        />
+        <IconCard
+          className="[grid-area:BK]"
+          label="TOTAL BLOCKS"
+          icon={Disabled}
+          value={parseInt(slotNumber).toLocaleString("en-US")}
+        />
+
+        <IconCard
+          className="[grid-area:CD]"
+          label="CONTRACTS DEPLOYED"
+          icon={Document}
+          value={CONTRACT.toLocaleString("en-US")}
+        />
+
+        <IconCard
+          label="TOTAL TRANSACTIONS"
+          className="[grid-area:TR]"
+          icon={BarChart}
+          value={TRANSACTION.toLocaleString("en-US")}
+        />
+
+        <Placeholder className="hidden lg:block [grid-area:P1]" />
+        <Placeholder className="hidden lg:block [grid-area:P2]" />
+        <Placeholder className="hidden lg:block [grid-area:P3]" />
+
+        <LatestBlocks
+          networkSlug={network.id}
+          className="[grid-area:LB]"
+          data={
+            latestBlocks.body.type === "collection"
+              ? latestBlocks.body.entries.map((block: any) => {
+                  return {
+                    number: Number(block.row.Blocks.payload),
+                    noOfTransactions: Number(block.row.Txs.payload),
+                    timestamp:
+                      typeof block.sidebar.properties.Timestamp.payload ===
+                      "string"
+                        ? new Date(
+                            block.sidebar.properties.Timestamp.payload,
+                          ).getTime()
+                        : new Date().getTime(),
+                  };
+                })
+              : []
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+function SVMWidgetSkeleton(props: { error?: { message: string } }) {
+  return (
+    <div
+      className={cn(
+        "w-full",
+        "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
+        "[grid-template-areas:var(--grid-area-mobile)]",
+        "tab:[grid-template-areas:var(--grid-area-tab)]",
+        "lg:[grid-template-areas:var(--grid-area-lg)]",
+        "auto-rows-[160px] auto-cols-[145px]",
+        "w-full gap-4 max-w-full relative",
+      )}
+    >
+      {props.error && (
+        <div className="absolute inset-0 backdrop-blur-md rounded-lg text-center p-24 border border-red-400">
+          <p className="text-red-400 text-lg">
+            ⚠️ An Error Occured while loading the widgets :&nbsp;
+            <strong className="font-medium">{props.error?.message}</strong>
+          </p>
+        </div>
+      )}
+
+      <Placeholder className="[grid-area:LT]" />
+      <Placeholder className="[grid-area:TR]" />
+      <Placeholder className="[grid-area:LB]" />
+      <Placeholder className="[grid-area:WA]" />
+      <Placeholder className="[grid-area:CD]" />
+      <Placeholder className="[grid-area:BK]" />
+      <Placeholder className="hidden lg:block [grid-area:P1]" />
+      <Placeholder className="hidden lg:block [grid-area:P2]" />
+      <Placeholder className="hidden lg:block [grid-area:P3]" />
+    </div>
+  );
+}

@@ -24,7 +24,7 @@ interface Props {
   network: SearchOption;
 }
 
-// TODO : transform this into a client component
+// TODO : adapt this to `grid-template-areas` when available
 export function EvmWithPriceWidgetLayout({ network }: Props) {
   const { data: apiResult, isLoading, error } = useWidgetData(network.id);
 

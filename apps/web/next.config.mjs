@@ -7,6 +7,7 @@ const config = {
   transpilePackages: ["service-manager"],
   experimental: {
     useDeploymentId: true,
+    esmExternals: "loose",
   },
   logging: {
     fetches: {
@@ -34,7 +35,7 @@ const config = {
       {
         protocol: "https",
         hostname: "github.com",
-      }
+      },
     ],
   },
 };

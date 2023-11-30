@@ -13,7 +13,7 @@ export function IconCard({ icon: Icon, label, value, className }: Props) {
   return (
     <Card
       className={cn(
-        "flex flex-col items-start gap-[1.125rem] md:gap-5 max-h-36 h-auto",
+        "flex flex-col items-start gap-[1.125rem] md:gap-5 min-h-36 h-full",
         className,
       )}
     >

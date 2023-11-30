@@ -38,13 +38,15 @@ export function IntegrationActionListView({
     router.prefetch(`/${selectedNetwork.id}`);
     router.prefetch(`/${selectedNetwork.id}/blocks`);
     router.prefetch(`/${selectedNetwork.id}/transactions`);
+  }, [router, selectedNetwork.id]);
 
+  React.useEffect(() => {
     if (query) {
       router.prefetch(
         `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
       );
     }
-  }, [router, selectedNetwork.id, query]);
+  }, [router, query, selectedNetwork.id]);
 
   // prefetch the searcheableTypes routes as they appear
   React.useEffect(() => {
