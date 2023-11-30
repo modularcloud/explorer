@@ -62,7 +62,7 @@ export function CelestiaWidgetLayoutContent({
         >
           Last Updated:&nbsp;
           {new Intl.DateTimeFormat("en-US", {
-            dateStyle: "full",
+            dateStyle: "long",
             timeStyle: "long",
             hour12: true,
             timeZone: "America/Los_Angeles",
