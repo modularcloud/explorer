@@ -6,42 +6,38 @@ import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 
+import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
 import { useCelestiaWidgetData } from "./use-widget-data";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { CelestiaMetrics } from "./get-metrics";
-import type { SearchOption } from "~/lib/shared-utils";
 import type { Page } from "@modularcloud/headless";
 
 interface Props {
-  network: SearchOption;
+  networkSlug: string;
+  networkBrandColor: string;
   initialLatestTransactions: Page;
   initialLatestBlocks: Page;
   initialMetrics: CelestiaMetrics;
+  initialUpdatedAt: Date;
 }
 
 export function CelestiaWidgetLayoutContent({
-  network,
+  networkSlug,
+  networkBrandColor,
   initialLatestBlocks,
   initialLatestTransactions,
   initialMetrics,
+  initialUpdatedAt,
 }: Props) {
   const { error, data } = useCelestiaWidgetData({
-    networkSlug: network.id,
+    networkSlug,
     initialMetrics,
     initialLatestBlocks,
     initialLatestTransactions,
   });
 
-  const [lastUpdatedTime, setLastUpdatedTime] = React.useState<Date | null>(
-    null,
-  );
-
-  React.useEffect(() => {
-    if (data) {
-      return setLastUpdatedTime(new Date());
-    }
-  }, [data]);
+  const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
   if (error) {
     return <CelestiaWidgetSkeleton error={error} />;
@@ -75,7 +71,7 @@ export function CelestiaWidgetLayoutContent({
       <div
         style={{
           // @ts-expect-error this is a CSS variable
-          "--color-primary": network.brandColor,
+          "--color-primary": networkBrandColor,
         }}
         className={cn(
           "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
@@ -98,7 +94,7 @@ export function CelestiaWidgetLayoutContent({
         <Placeholder className="hidden lg:block [grid-area:P2]" />
 
         <LatestTransactions
-          networkSlug={network.id}
+          networkSlug={networkSlug}
           className="[grid-area:LT]"
           data={
             latestTransactions.body.type === "collection"
@@ -144,7 +140,7 @@ export function CelestiaWidgetLayoutContent({
         />
 
         <LatestBlocks
-          networkSlug={network.id}
+          networkSlug={networkSlug}
           className="[grid-area:LB]"
           data={
             latestBlocks.body.type === "collection"

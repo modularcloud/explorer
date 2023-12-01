@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_REVALIDATE_TIME } from "~/lib/constants";
+import { DEFAULT_WIDGET_REFETCH_TIME } from "~/lib/constants";
 import { CelestiaMetrics, getCelestiaWidgetMetrics } from "./get-metrics";
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
@@ -23,10 +23,12 @@ export function useCelestiaWidgetData({
   const loadLatestTransactionArgs: LoadPageArgs = {
     route: { network: networkSlug, path: ["transactions"] },
     context: { limit: 5 },
+    revalidateTimeInSeconds: 0,
   };
   const loadLatestBlocksArgs: LoadPageArgs = {
     route: { network: networkSlug, path: ["blocks"] },
     context: { limit: 6 },
+    revalidateTimeInSeconds: 0,
   };
   return useSWR<[CelestiaMetrics, Page, Page]>(
     CACHE_KEYS.widgets.data(networkSlug),
@@ -43,7 +45,7 @@ export function useCelestiaWidgetData({
         }),
       ]),
     {
-      refreshInterval: DEFAULT_WIDGET_REVALIDATE_TIME * 1000,
+      refreshInterval: DEFAULT_WIDGET_REFETCH_TIME * 1000,
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false,

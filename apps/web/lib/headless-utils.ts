@@ -76,6 +76,18 @@ export async function loadIntegration(
       additionalContext?: PaginationContext | undefined,
       includeTrace: boolean = false,
     ) => {
+      if (revalidateTimeInSeconds === 0) {
+        const response = await integration.resolveRoute(
+          path,
+          additionalContext,
+        );
+        if (!includeTrace && response !== null) {
+          const { trace, ...rest } = response;
+          return rest;
+        }
+        return response;
+      }
+
       const resolveRouteFn = nextCache(
         async function cachedResolveRoute(
           path: string[],
@@ -111,12 +123,14 @@ export async function loadIntegration(
 export type LoadPageArgs = {
   route: HeadlessRoute;
   context?: PaginationContext;
+  // passing a revalidate of 0 = bypass the cache
   revalidateTimeInSeconds?: number;
 };
 
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
+ * @param param0 LoadPageArgs
  */
 export async function loadPage({
   route,
