@@ -24,10 +24,12 @@ export function useSvmWidgetData({
   const loadLatestBlocksArgs: LoadPageArgs = {
     route: { network: networkSlug, path: ["blocks"] },
     context: { limit: 6 },
+    revalidateTimeInSeconds: 0,
   };
   const loadLatestTransactionArgs: LoadPageArgs = {
     route: { network: networkSlug, path: ["transactions"] },
     context: { limit: 5 },
+    revalidateTimeInSeconds: 0,
   };
   return useSWR<[SvmMetrics, Page, Page]>(
     CACHE_KEYS.widgets.data(networkSlug),
