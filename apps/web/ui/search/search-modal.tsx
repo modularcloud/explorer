@@ -16,13 +16,14 @@ import { IntegrationGridView } from "./integration-grid-view";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
-import { useFilteredOptionGroup } from "./use-filtered-option-group";
+import { filterOptionGroups } from "./filter-option-group";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
+import Image from "next/image";
+import { useDebouncedCallBack } from "~/lib/hooks/use-debounced-callback";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
-import Image from "next/image";
 interface Props {
   defaultNetwork: {
     value: SearchOption;
@@ -63,9 +64,20 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  console.log({
+    integrations: Object.values(optionGroups).length,
+  });
+  const [filteredOptionGroups, setFilteredOptionGroups] =
+    React.useState(optionGroups);
+
+  // const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  const filterGroups = useDebouncedCallBack((filter: string) => {
+    const newOptionGroups = filterOptionGroups(optionGroups, filter);
+    setFilteredOptionGroups(newOptionGroups);
+  });
+
   const isNetworkQuery =
-    !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
+    !selectedNetwork && Object.keys(filteredOptionGroups).length > 0;
 
   let currentNetwork = selectedNetwork;
   if (!selectedNetwork && !isNetworkQuery) {
@@ -122,7 +134,10 @@ export function SearchModal({
                 }
                 autoComplete="off"
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                  filterGroups(e.target.value);
+                }}
                 helpText="Search blocks, transactions, addresses, or namespaces"
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
@@ -163,7 +178,7 @@ export function SearchModal({
           {!currentNetwork && isNetworkQuery && (
             <IntegrationGridView
               parentDialogRef={dialogRef}
-              optionGroups={filteredOptionGroup}
+              optionGroups={filteredOptionGroups}
               defaultChainBrand={defaultNetwork.value.brandName}
               onSelectOption={onSelectOption}
               className="max-h-[calc(100%-60px)] overflow-y-auto"

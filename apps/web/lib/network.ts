@@ -7,7 +7,10 @@ import { CACHE_KEYS } from "./cache-keys";
 export const singleNetworkSchema = z.object({
   config: z.object({
     logoUrl: z.string().url(),
-    rpcUrls: z.record(z.enum(["evm", "cosmos", "svm", "celestia"]), z.string().url()),
+    rpcUrls: z.record(
+      z.enum(["evm", "cosmos", "svm", "celestia"]),
+      z.string().url(),
+    ),
     token: z.object({
       name: z.string().max(128),
       decimals: z.number(),
@@ -42,36 +45,43 @@ export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   try {
     let allIntegrations: Array<z.infer<typeof singleNetworkSchema>> = [];
-    let nextToken = "";
+    let nextToken: string | undefined = "";
 
     do {
       const response = await fetch(
-        `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?nextToken=${nextToken}`,
+        `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
       );
 
       const integrationSummaryAPISchema = z.object({
-        result: z.object({
-          integrations: z.array(singleNetworkSchema),
-          nextToken: z.string(),
-        }),
+        result: z
+          .object({
+            integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+            nextToken: z.string(),
+          })
+          .nullish(),
       });
-      const {
-        result: { integrations },
-      } = integrationSummaryAPISchema.parse(await response.json());
+      const { result } = integrationSummaryAPISchema.parse(
+        await response.json(),
+      );
+      nextToken = result?.nextToken;
 
-      allIntegrations = allIntegrations.concat(integrations);
+      if (result?.integrations) {
+        // @ts-expect-error
+        allIntegrations = [
+          ...allIntegrations,
+          ...result.integrations.filter(Boolean),
+        ];
+      }
     } while (nextToken);
 
     return allIntegrations;
   } catch (error) {
-    console.error("Error fetching networks : ", error);
+    console.dir({ "Error fetching networks : ": error }, { depth: null });
     return [];
   }
 }
 
-export async function getSingleNetwork(
-  slug: string,
-): Promise<SingleNetwork | null> {
+export async function getSingleNetwork(slug: string) {
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -110,7 +120,7 @@ export async function getSingleNetwork(
   }
 }
 
-export async function getAllNetworksCached(): Promise<Array<SingleNetwork>> {
+export async function getAllNetworksCached() {
   const getAllIntegrationsFn = nextCache(getAllNetworks, {
     tags: CACHE_KEYS.networks.summary(),
   });
@@ -118,11 +128,17 @@ export async function getAllNetworksCached(): Promise<Array<SingleNetwork>> {
   return await getAllIntegrationsFn();
 }
 
-export async function getSingleNetworkCached(
-  slug: string,
-): Promise<SingleNetwork | null> {
+export async function getSingleNetworkCached(slug: string) {
   const getSingleIntegrationFn = nextCache(getSingleNetwork, {
     tags: CACHE_KEYS.networks.single(slug),
   });
   return await getSingleIntegrationFn(slug);
+}
+
+export async function getAllPaidNetworks() {
+  // `getAllNetworksCached` doesn't work during `next build`, so we manually call `getAllNetworks()`
+  const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
+    ? getAllNetworksCached()
+    : getAllNetworks());
+  return allNetworks.filter((network) => network.paidVersion);
 }

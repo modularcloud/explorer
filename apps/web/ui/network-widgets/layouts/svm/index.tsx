@@ -5,18 +5,19 @@ import { SVMWidgetLayoutContent } from "./svm-widget-content";
 import { getSvmWidgetMetrics } from "./get-metrics";
 import { getLatestBlocks, getLatestTransactions } from "~/lib/server-utils";
 
-import type { SearchOption } from "~/lib/shared-utils";
 interface Props {
-  network: SearchOption;
+  networkSlug: string;
+  networkBrandColor: string;
 }
 
-export async function SVMWidgetLayout({ network }: Props) {
-  if (!network) return null;
-
+export async function SVMWidgetLayout({
+  networkSlug,
+  networkBrandColor,
+}: Props) {
   const [metrics, latestBlocks, latestTransactions] = await Promise.all([
-    getSvmWidgetMetrics(network.id),
-    getLatestBlocks(network.id),
-    getLatestTransactions(network.id),
+    getSvmWidgetMetrics(networkSlug),
+    getLatestBlocks(networkSlug),
+    getLatestTransactions(networkSlug),
   ]);
 
   return (
@@ -57,7 +58,8 @@ export async function SVMWidgetLayout({ network }: Props) {
       }}
     >
       <SVMWidgetLayoutContent
-        network={network}
+        networkSlug={networkSlug}
+        networkBrandColor={networkBrandColor}
         initialLatestBlocks={latestBlocks}
         initialLatestTransactions={latestTransactions}
         initialMetrics={metrics}

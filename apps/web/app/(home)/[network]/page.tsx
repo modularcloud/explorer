@@ -1,17 +1,15 @@
 import * as React from "react";
 
-import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-price";
-
 import { notFound } from "next/navigation";
-import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
+import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
-import { getSearchOptionGroups } from "~/lib/search-options";
 
 import type { Metadata } from "next";
 import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
+import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -34,24 +32,32 @@ export default async function NetworkWidgetPage({ params }: Props) {
   // exist (even though technically it should always exist)
   if (!network) notFound();
 
-  const searchOptionGroups = await getSearchOptionGroups();
-  const values = Object.values(searchOptionGroups).flat();
-  const searchOption = values.find((network) => network.id === params.network);
-
   switch (network.config.widgetLayout) {
     // TODO : When EVM is ready, we should follow the same code structure as the other layouts
     // case "EvmWithPrice":
     //   return <EvmWithPriceWidgetLayout network={searchOption!} />;
     case "SVM":
-      return <SVMWidgetLayout network={searchOption!} />;
+      return (
+        <SVMWidgetLayout
+          networkSlug={network.slug}
+          networkBrandColor={network.config.primaryColor}
+        />
+      );
     case "Celestia":
-      return <CelestiaWidgetLayout network={searchOption!} />;
+      return (
+        <CelestiaWidgetLayout
+          networkSlug={network.slug}
+          networkBrandColor={network.config.primaryColor}
+        />
+      );
     default:
       return null;
   }
 }
 
 export async function generateStaticParams() {
-  const allNetworks = await getAllNetworks();
-  return allNetworks.map((network) => ({ network: network.slug }));
+  const paidNetworks = await getAllPaidNetworks();
+  return paidNetworks.map((network) => ({ network: network.slug }));
 }
+
+export const revalidate = 10;

@@ -44,7 +44,7 @@ export function IntegrationGridView({
       role="grid"
       tabIndex={0}
     >
-      {groupedByLines.map((rowGroups, rowIndex) => (
+      {groupedByLines.slice(0, 3).map((rowGroups, rowIndex) => (
         <React.Fragment key={`row-${rowIndex}`}>
           <div
             role="row"
@@ -80,11 +80,20 @@ export function IntegrationGridView({
                       id={`row-${rowIndex}-col-${colIndex}-header`}
                     >
                       <span>{capitalize(groupName)}</span>
+                      <span
+                        className="sr-only"
+                        aria-hidden="true"
+                        id={`${groupName}-logo`}
+                      >
+                        {groupName} logo
+                      </span>
                       <Image
                         src={options[0].logoURL}
                         height="16"
                         width="16"
-                        alt={`${groupName} logo`}
+                        alt={``}
+                        aria-describedby={`${groupName}-logo`}
+                        className="border-none"
                       />
                     </div>
 
