@@ -140,5 +140,6 @@ export async function getAllPaidNetworks() {
   const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
     ? getAllNetworksCached()
     : getAllNetworks());
-  return allNetworks.filter((network) => network.paidVersion);
+  // only the 1st 30
+  return allNetworks.slice(0, 30).filter((network) => network.paidVersion);
 }
