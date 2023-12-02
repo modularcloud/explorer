@@ -8,6 +8,7 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 import Image from "next/image";
+import { useVirtualizer } from "@tanstack/react-virtual";
 interface Props {
   className?: string;
   optionGroups: OptionGroups;
@@ -30,6 +31,19 @@ export function IntegrationGridView({
 
   const noOfColumns = isOneColumn ? 1 : isTwoColumns ? 2 : 3;
 
+  // const onSelectItem = React.useCallback(
+  //   ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
+  //     if (entry.link && inputMethod === "keyboard") {
+  //       // virtualizer.scrollToIndex(index);
+  //     }
+  //     setSpotlight?.(entry.sidebar);
+  //   },
+  //   [
+  //     // virtualizer,
+  //     setSpotlight,
+  //   ],
+  // );
+
   const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
     noOfColumns,
     optionGroups,
@@ -38,11 +52,26 @@ export function IntegrationGridView({
     defaultOptionGroupKeyToSortFirst: defaultChainBrand,
   });
 
+  const parentRef = React.useRef<React.ElementRef<"div">>(null);
+
+  // const PADDING_END = 160;
+  const ITEM_SIZE = 176;
+  const virtualizer = useVirtualizer({
+    count: groupedByLines.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ITEM_SIZE,
+    overscan: 5,
+    // paddingEnd: PADDING_END,
+    // scrollPaddingEnd: PADDING_END + ITEM_SIZE + 10, // always let one item visible in the viewport
+    // scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
+  });
+
   return (
     <div
       className={cn("flex flex-col gap-4 h-full flex-1", className)}
       role="grid"
       tabIndex={0}
+      ref={parentRef}
     >
       {groupedByLines.slice(0, 3).map((rowGroups, rowIndex) => (
         <React.Fragment key={`row-${rowIndex}`}>

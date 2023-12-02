@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "~/ui/shadcn/components/ui/dialog";
 import { Input } from "~/ui/input";
-import { ArrowRight, GlobeCyber, Search } from "~/ui/icons";
+import { ArrowRight, Search } from "~/ui/icons";
 import { LoadingIndicator } from "~/ui/loading-indicator";
 import { IntegrationActionListView } from "./integration-action-list-view";
 import { useSearcheableEntities } from "./use-searcheable-entities";
@@ -70,11 +70,9 @@ export function SearchModal({
   const [filteredOptionGroups, setFilteredOptionGroups] =
     React.useState(optionGroups);
 
-  // const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
-  const filterGroups = useDebouncedCallBack((filter: string) => {
-    const newOptionGroups = filterOptionGroups(optionGroups, filter);
-    setFilteredOptionGroups(newOptionGroups);
-  });
+  const filterGroups = useDebouncedCallBack((filter: string) =>
+    setFilteredOptionGroups(filterOptionGroups(optionGroups, filter)),
+  );
 
   const isNetworkQuery =
     !selectedNetwork && Object.keys(filteredOptionGroups).length > 0;
