@@ -7,40 +7,37 @@ import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 import { SvmMetrics } from "./get-metrics";
+
 import { useSvmWidgetData } from "./use-widget-data";
+import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
 
 import type { Page } from "@modularcloud/headless";
-import type { SearchOption } from "~/lib/shared-utils";
 
 interface Props {
-  network: SearchOption;
+  networkSlug: string;
+  networkBrandColor: string;
   initialLatestTransactions: Page;
   initialLatestBlocks: Page;
   initialMetrics: SvmMetrics;
+  initialUpdatedAt: Date;
 }
 
 export function SVMWidgetLayoutContent({
-  network,
+  networkSlug,
+  networkBrandColor,
   initialLatestBlocks,
   initialLatestTransactions,
   initialMetrics,
+  initialUpdatedAt,
 }: Props) {
   const { error, data } = useSvmWidgetData({
-    networkSlug: network.id,
+    networkSlug,
     initialLatestBlocks,
     initialLatestTransactions,
     initialMetrics,
   });
 
-  const [lastUpdatedTime, setLastUpdatedTime] = React.useState<Date | null>(
-    null,
-  );
-
-  React.useEffect(() => {
-    if (data) {
-      return setLastUpdatedTime(new Date());
-    }
-  }, [data]);
+  const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
   if (error) {
     return (
@@ -84,7 +81,7 @@ export function SVMWidgetLayoutContent({
       <div
         style={{
           // @ts-expect-error this is a CSS variable
-          "--color-primary": network.brandColor,
+          "--color-primary": networkBrandColor,
         }}
         className={cn(
           "grid grid-cols-2 tab:grid-cols-4 lg:grid-cols-5",
@@ -97,7 +94,7 @@ export function SVMWidgetLayoutContent({
         )}
       >
         <LatestTransactions
-          networkSlug={network.id}
+          networkSlug={networkSlug}
           className="[grid-area:LT]"
           data={
             latestTransactions.body.type === "collection"
@@ -144,7 +141,7 @@ export function SVMWidgetLayoutContent({
         <Placeholder className="hidden lg:block [grid-area:P3]" />
 
         <LatestBlocks
-          networkSlug={network.id}
+          networkSlug={networkSlug}
           className="[grid-area:LB]"
           data={
             latestBlocks.body.type === "collection"
