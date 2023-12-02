@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
@@ -53,7 +54,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
           <ButtonBody>Download</ButtonBody>
         </Link>
       </div>
-      {mimeType.startsWith("image/") && <img src={url} />}
+      {mimeType.startsWith("image/") && <img src={url} alt="" />}
       {mimeType.startsWith("video/") && (
         <video controls src={url} className="w-full" />
       )}

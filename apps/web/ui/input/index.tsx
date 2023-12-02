@@ -52,7 +52,7 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
             },
           )}
         >
-          <div className="inline-grid place-items-center">
+          <div className="inline-grid place-items-center flex-shrink-0">
             {renderLeadingIcon?.(
               cn("text-muted flex-shrink-0 m-1.5", {
                 "h-4 w-4": size !== "large",

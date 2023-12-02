@@ -9,3 +9,6 @@ export const VMDisplayNames = {
 
 export type VMDisplayName =
   (typeof VMDisplayNames)[keyof typeof VMDisplayNames];
+
+export const DEFAULT_WIDGET_REVALIDATE_TIME = 1;
+export const DEFAULT_WIDGET_REFETCH_TIME = 5;

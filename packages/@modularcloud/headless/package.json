@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@modularcloud-resolver/celestia": "*",
+        "@modularcloud-resolver/rollapp": "*",
         "@modularcloud-resolver/core": "*",
         "@modularcloud-resolver/sealevel": "*",
         "@modularcloud/sdk": "*",

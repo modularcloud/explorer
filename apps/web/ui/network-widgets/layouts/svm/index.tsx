@@ -1,174 +1,70 @@
-"use client";
+import "server-only";
 import * as React from "react";
-import { BarChart, Disabled, Document, Folder } from "~/ui/icons";
-import { IconCard } from "~/ui/network-widgets/widgets/icon-card";
-import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
-import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
+import { SVMWidgetLayoutContent } from "./svm-widget-content";
 
-import { cn } from "~/ui/shadcn/utils";
-import {
-  useLatestBlocks,
-  useLatestTransactions,
-  useWidgetData,
-} from "./use-widget-data";
+import { getSvmWidgetMetrics } from "./get-metrics";
+import { getLatestBlocks, getLatestTransactions } from "~/lib/server-utils";
 
-import type { SearchOption } from "~/lib/shared-utils";
 interface Props {
-  network: SearchOption;
+  networkSlug: string;
+  networkBrandColor: string;
 }
 
-// TODO : transform this into a client component
-export function SVMWidgetLayout({ network }: Props) {
-  const { data: apiResult, isLoading, error } = useWidgetData(network.id);
-
-  const latestBlocks = useLatestBlocks({
-    context: {
-      limit: 5,
-      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
-    },
-  } as any);
-
-  const latestTransactions = useLatestTransactions({
-    context: {
-      limit: 5,
-      rpcEndpoint: "https://staging-rpc.dev.eclipsenetwork.xyz",
-    },
-  } as any);
-
-  if (error) {
-    return <SvmSkeleton error={error.toString()} />;
-  }
-
-  if (!apiResult || isLoading) {
-    return <SvmSkeleton />;
-  }
-
-  const {
-    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
-    slotNumber,
-  } = apiResult;
+export async function SVMWidgetLayout({
+  networkSlug,
+  networkBrandColor,
+}: Props) {
+  const [metrics, latestBlocks, latestTransactions] = await Promise.all([
+    getSvmWidgetMetrics(networkSlug),
+    getLatestBlocks(networkSlug),
+    getLatestTransactions(networkSlug),
+  ]);
 
   return (
     <div
       style={{
+        /**
+         * Grid areas, each area corresponds to a widget and is abbreviated in a two chars name :
+         * - LT : latest transactions
+         * - LB : latest blocks
+         * - CD : contracts deployed
+         * - WA : wallet adresses
+         * - TR : total transactions
+         * - BK : total blocks
+         * - P1, P2, P3 : placeholders (shown only on desktop)
+         *
+         * We define them as variables here because we use the same layout in the skeleton,
+         * For more infos about how to use grid-template-areas see here :https://developer.mozilla.org/fr/docs/Web/CSS/grid-template-areas
+         */
         // @ts-expect-error this is a CSS variable
-        "--color-primary": network.brandColor,
+        "--grid-area-mobile": `
+            "LT LT"
+            "LT LT"
+            "WA TR"
+            "LB LB"
+            "LB LB"
+            "CD BK"
+          `,
+        "--grid-area-tab": `
+            "LT LT WA TR"
+            "LT LT LB LB"
+            "BK CD LB LB"
+          `,
+        "--grid-area-lg": `
+            "LT LT WA LB LB"
+            "LT LT BK LB LB"
+            "CD P1 P2 P3 TR"
+          `,
       }}
-      className={cn(
-        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 auto-rows-[minmax(145px,_1fr)] auto-cols-[145px]",
-        "w-full gap-4 font-medium",
-        "accent-primary place-items-stretch",
-      )}
     >
-      <IconCard
-        className="lg:row-start-1 lg:col-start-3"
-        label="WALLET ADRESSES"
-        icon={Folder}
-        value={UNIQUE_ADDRESS.toLocaleString("en-US")}
+      <SVMWidgetLayoutContent
+        networkSlug={networkSlug}
+        networkBrandColor={networkBrandColor}
+        initialLatestBlocks={latestBlocks}
+        initialLatestTransactions={latestTransactions}
+        initialMetrics={metrics}
+        initialUpdatedAt={new Date()}
       />
-
-      <LatestTransactions
-        networkSlug={network.id}
-        className="col-span-2 row-span-2"
-        data={
-          latestTransactions?.data?.result
-            ? latestTransactions.data.result.map((transaction: any) => {
-                return {
-                  hash: transaction.transaction.signatures[0],
-                  success: !transaction.meta.err,
-                  // temporary!!
-                  type: "Vote",
-                };
-              })
-            : []
-        }
-      />
-
-      <IconCard
-        className="lg:row-start-2 lg:col-start-3"
-        label="TOTAL BLOCKS"
-        icon={Disabled}
-        value={parseInt(slotNumber).toLocaleString("en-US")}
-      />
-
-      <IconCard
-        className="lg:row-start-3 lg:col-start-1"
-        label="CONTRACTS DEPLOYED"
-        icon={Document}
-        value={CONTRACT.toLocaleString("en-US")}
-      />
-
-      <IconCard
-        label="TOTAL TRANSACTIONS"
-        className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2"
-        icon={BarChart}
-        value={TRANSACTION.toLocaleString("en-US")}
-      />
-
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-
-      <LatestBlocks
-        networkSlug={network.id}
-        className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4"
-        data={
-          latestBlocks.data
-            ? latestBlocks.data.result.map((block: any) => ({
-                number: block.parentSlot + 1,
-                noOfTransactions: block.transactions.length,
-                timestamp: block.blockTime * 1000,
-              }))
-            : []
-        }
-      />
-    </div>
-  );
-}
-
-function Placeholder(props: {
-  className?: string;
-  isLoading?: boolean;
-  isError?: boolean;
-}) {
-  return (
-    <div
-      className={cn(props.className, "rounded-lg", {
-        "animate-pulse": props.isLoading,
-        "bg-muted-100": !props.isError,
-        "bg-red-100": props.isError,
-      })}
-    />
-  );
-}
-
-export function SvmSkeleton(props: { error?: string }) {
-  return (
-    <div className="w-full grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5 auto-rows-[145px] auto-cols-[145px] relative">
-      {props.error && (
-        <div className="absolute inset-0 backdrop-blur-md rounded-lg text-center p-24 border border-red-400">
-          <p className="text-red-400 text-lg">
-            ⚠️ An Error Occured while loading the widgets :&nbsp;
-            <strong className="font-medium">{props.error}</strong>
-          </p>
-        </div>
-      )}
-
-      <Placeholder className="lg:row-start-1 lg:col-start-3" />
-
-      <Placeholder className="col-span-2 row-span-2" />
-
-      <Placeholder className="lg:row-start-2 lg:col-start-3" />
-
-      <Placeholder className="lg:row-start-3 lg:col-start-1" />
-
-      <Placeholder className="lg:row-start-3 lg:col-start-5 sm:col-start-4 sm:row-start-1 row-start-3 col-start-2" />
-
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-      <Placeholder className="lg:col-span-1 row-span-1 hidden lg:block lg:row-start-3" />
-
-      <Placeholder className="col-span-2 row-span-2 order-first lg:row-start-1 lg:col-start-4" />
     </div>
   );
 }

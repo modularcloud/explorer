@@ -20,7 +20,7 @@ export async function Header({ networkSlug }: Props) {
   return (
     <header
       className={cn(
-        "bg-white flex justify-between items-center px-6 py-4 gap-4 h-header",
+        "bg-white flex justify-between items-center px-6 py-3 gap-4 h-header",
         "fixed left-0 right-0 top-0 z-10",
       )}
     >
@@ -32,10 +32,10 @@ export async function Header({ networkSlug }: Props) {
         <img
           src="/images/mc-logo.svg"
           alt="ModularCloud Logo"
-          className="h-5 w-5"
+          className="h-[1.125rem] w-[1.125rem]"
         />
 
-        <h1 className="font-medium text-xl hidden lg:block">Modular Cloud</h1>
+        <h1 className="font-medium text-lg hidden lg:block">Modular Cloud</h1>
       </Link>
 
       <HeaderSearchButton optionGroups={optionGroups} />

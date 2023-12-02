@@ -1,5 +1,5 @@
 import { Any } from "./google/protobuf/any";
-import { Celestia } from "proto-utils"; 
+import { Celestia } from "proto-utils";
 const parsers = Celestia.Msgs;
 
 function decodeAny(anyMessage: Any) {

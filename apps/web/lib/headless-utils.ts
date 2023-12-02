@@ -5,6 +5,7 @@ import {
   PaginationContext,
   SearchBuilders,
   createCelestiaIntegration,
+  createRollappIntegration,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
@@ -23,33 +24,51 @@ export const HeadlessRouteSchema = z.object({
 
 export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
-export async function loadIntegration(networkSlug: string) {
+export async function loadIntegration(
+  networkSlug: string,
+  revalidateTimeInSeconds: number = 2,
+) {
   const network = await getSingleNetworkCached(networkSlug);
 
   if (!network) {
     notFound();
   }
 
-  // TODO: Right now, we only can resolve SVM and Cosmos chains.
-  if (network.config.rpcUrls["evm"]) {
+  let integration: ReturnType<
+    | typeof createSVMIntegration
+    | typeof createRollappIntegration
+    | typeof createCelestiaIntegration
+  >;
+  if (network.config.rpcUrls["svm"]) {
+    integration = createSVMIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["svm"],
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else if (network.config.rpcUrls["cosmos"]) {
+    integration = createRollappIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else if (network.config.rpcUrls["celestia"]) {
+    integration = createCelestiaIntegration({
+      chainBrand: network.chainBrand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["celestia"] as string,
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else {
     notFound();
   }
-
-  const integration = network.config.rpcUrls["svm"]
-    ? createSVMIntegration({
-        chainBrand: network.chainBrand,
-        chainName: network.chainName,
-        chainLogo: network.config.logoUrl,
-        rpcEndpoint: network.config.rpcUrls["svm"],
-        nativeToken: network.config.token.name,
-      })
-    : createCelestiaIntegration({
-        chainBrand: network.chainBrand,
-        chainName: network.chainName,
-        chainLogo: network.config.logoUrl,
-        rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
-        nativeToken: network.config.token.name,
-      });
 
   return {
     resolveRoute: async (
@@ -57,6 +76,18 @@ export async function loadIntegration(networkSlug: string) {
       additionalContext?: PaginationContext | undefined,
       includeTrace: boolean = false,
     ) => {
+      if (revalidateTimeInSeconds === 0) {
+        const response = await integration.resolveRoute(
+          path,
+          additionalContext,
+        );
+        if (!includeTrace && response !== null) {
+          const { trace, ...rest } = response;
+          return rest;
+        }
+        return response;
+      }
+
       const resolveRouteFn = nextCache(
         async function cachedResolveRoute(
           path: string[],
@@ -80,7 +111,7 @@ export async function loadIntegration(networkSlug: string) {
             },
             additionalContext,
           ),
-          revalidateTimeInSeconds: 2,
+          revalidateTimeInSeconds,
         },
       );
 
@@ -89,18 +120,27 @@ export async function loadIntegration(networkSlug: string) {
   };
 }
 
+export type LoadPageArgs = {
+  route: HeadlessRoute;
+  context?: PaginationContext;
+  // passing a revalidate of 0 = bypass the cache
+  revalidateTimeInSeconds?: number;
+};
+
 /**
  * This is helpful because it ties the functions from the headless library to next.js specific functionality.
  * These include throwing errors, caching, and rendering 404 pages.
+ * @param param0 LoadPageArgs
  */
 export async function loadPage({
   route,
   context,
-}: {
-  route: HeadlessRoute;
-  context?: PaginationContext;
-}): Promise<Page> {
-  const integration = await loadIntegration(route.network);
+  revalidateTimeInSeconds,
+}: LoadPageArgs): Promise<Page> {
+  const integration = await loadIntegration(
+    route.network,
+    revalidateTimeInSeconds,
+  );
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 

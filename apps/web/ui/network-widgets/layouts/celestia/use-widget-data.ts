@@ -1,95 +1,60 @@
+import { DEFAULT_WIDGET_REFETCH_TIME } from "~/lib/constants";
+import { CelestiaMetrics, getCelestiaWidgetMetrics } from "./get-metrics";
+import { jsonFetch } from "~/lib/shared-utils";
+import { CACHE_KEYS } from "~/lib/cache-keys";
 import useSWR from "swr";
-import { z } from "zod";
-import { PageContext } from "@modularcloud/headless";
+
+import type { LoadPageArgs } from "~/lib/headless-utils";
 import type { Page } from "@modularcloud/headless";
 
-const widgetDataSchema = z.object({
-  metrics: z.object({
-    TRANSACTION: z.number(),
-    NAMESPACE: z.number(),
-    BLOB: z.number(),
-    AVG_BlOCK_BLOB_SIZE: z.number(),
-    LAST_10_BLOCKS_BLOB_SIZES: z.record(z.number()),
-    LAST_10_BLOCKS_AVG_GAS_PRICE: z.number(),
-  }),
-  blockHeight: z.string(),
-});
+type UseCelestiaWidgetDataArgs = {
+  networkSlug: string;
+  initialLatestTransactions: Page;
+  initialLatestBlocks: Page;
+  initialMetrics: CelestiaMetrics;
+};
 
-const THIRTY_SECONDS = 30 * 1000;
-
-export function useLatestBlocks(network: string) {
-  const loadPageArgs = {
-    route: { network: network, path: ["blocks"] },
-    context: { limit: 6 },
-    skipCache: true,
-  };
-  return useSWR<Page>(
-    ["/api/load-page", loadPageArgs],
-    async () => {
-      const response = await fetch("/api/load-page", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loadPageArgs),
-      });
-      const data = await response.json();
-      return data;
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-    },
-  );
-}
-
-export function useLatestTransactions(network: string) {
-  const loadPageArgs = {
-    route: { network: network, path: ["transactions"] },
+export function useCelestiaWidgetData({
+  networkSlug,
+  initialMetrics,
+  initialLatestBlocks,
+  initialLatestTransactions,
+}: UseCelestiaWidgetDataArgs) {
+  const loadLatestTransactionArgs: LoadPageArgs = {
+    route: { network: networkSlug, path: ["transactions"] },
     context: { limit: 5 },
-    skipCache: true,
+    revalidateTimeInSeconds: 0,
   };
-  return useSWR<Page>(
-    ["/api/load-page", loadPageArgs],
-    async () => {
-      const response = await fetch("/api/load-page", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loadPageArgs),
-      });
-      const data = await response.json();
-      return data;
-    },
+  const loadLatestBlocksArgs: LoadPageArgs = {
+    route: { network: networkSlug, path: ["blocks"] },
+    context: { limit: 6 },
+    revalidateTimeInSeconds: 0,
+  };
+  return useSWR<[CelestiaMetrics, Page, Page]>(
+    CACHE_KEYS.widgets.data(networkSlug),
+    () =>
+      Promise.all([
+        getCelestiaWidgetMetrics(networkSlug),
+        jsonFetch<Page>("/api/load-page", {
+          method: "POST",
+          body: loadLatestBlocksArgs,
+        }),
+        jsonFetch<Page>("/api/load-page", {
+          method: "POST",
+          body: loadLatestTransactionArgs,
+        }),
+      ]),
     {
-      refreshInterval: THIRTY_SECONDS,
+      refreshInterval: DEFAULT_WIDGET_REFETCH_TIME * 1000,
       errorRetryCount: 2,
       keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-    },
-  );
-}
-
-export function useWidgetData(networkSlug: string) {
-  let id = 7;
-  if (networkSlug.indexOf("mocha") !== -1) id = 6;
-  else if (networkSlug.indexOf("arabica") !== -1) id = 5;
-
-  return useSWR(
-    `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/${id}/metrics`,
-    async (url: string) => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return widgetDataSchema.parse(data.result);
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      fallbackData: [
+        initialMetrics,
+        initialLatestBlocks,
+        initialLatestTransactions,
+      ],
     },
   );
 }

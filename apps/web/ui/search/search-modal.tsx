@@ -22,6 +22,7 @@ import { cn } from "~/ui/shadcn/utils";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
+import Image from "next/image";
 interface Props {
   defaultNetwork: {
     value: SearchOption;
@@ -101,7 +102,7 @@ export function SearchModal({
           "--color-primary": brandColor,
         }}
         className={cn(
-          "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-20rem)] min-h-0",
+          "max-w-[900px] max-h-[545px] md:h-full h-[calc(100%-20rem)] min-h-0 text-sm",
           {
             "top-[20rem]": position === "top",
           },
@@ -129,9 +130,12 @@ export function SearchModal({
                       {isLoading ? (
                         <LoadingIndicator className="h-4 w-4 text-primary" />
                       ) : (
-                        <GlobeCyber
-                          className="h-4 w-4 text-primary"
-                          aria-hidden="true"
+                        <Image
+                          src={currentNetwork.logoURL}
+                          width={16}
+                          height={16}
+                          alt={`${currentNetwork.displayName} logo`}
+                          className="h-4 w-4 inline-block"
                         />
                       )}
 
@@ -141,7 +145,12 @@ export function SearchModal({
                         {capitalize(currentNetwork.displayName)}
                       </span>
 
-                      <ArrowRight className="text-muted" aria-hidden="true" />
+                      <div className="h-4 w-4 flex items-center justify-center flex-none">
+                        <ArrowRight
+                          className="text-muted h-3 w-3 flex-none"
+                          aria-hidden="true"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <Search className={cn(cls)} />

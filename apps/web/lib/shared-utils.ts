@@ -261,3 +261,38 @@ export function parseHeadlessRouteVercelFix(params: HeadlessRoute) {
 export function isMacLike(userAgent: string | null) {
   return !!userAgent && /(Mac|iPhone|iPod|iPad)/i.test(userAgent);
 }
+
+export async function jsonFetch<T>(
+  url: string,
+  options: Omit<RequestInit, "body"> & {
+    body?: Record<string, any>;
+  } = {},
+): Promise<T> {
+  // Set the default headers correctly
+  const headers: HeadersInit = new Headers(options.headers);
+  headers.set("Accept", "application/json");
+  headers.set("Content-Type", "application/json");
+
+  // do not cache mutative methods (POST, PUT, DELETE) by default, unless if explicitly cached
+  if (
+    !options.cache &&
+    ["POST", "PUT", "DELETE"].includes(options.method ?? "GET")
+  ) {
+    options.cache = "no-store";
+  }
+
+  return fetch(url, {
+    ...options,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+    headers,
+    credentials: "include",
+  })
+    .then((response) => response.json() as Promise<T>)
+    .catch((error) => {
+      console.error(
+        `[jsonFetch ${options.method ?? "GET"} ${url}] There was an error :`,
+        error,
+      );
+      throw error;
+    });
+}

@@ -1,41 +1,17 @@
 import os
 import subprocess
+import json
 from git import Repo
 from urllib.parse import urlparse
+import sys
 
-# Define your batches with a main repository, dependencies, and a name for the output directory
-batches = [
-    {
-        "name": "celestia-app",
-        "main_repo": ('https://github.com/celestiaorg/celestia-app', 'proto'),
-        "dependencies": [
-            ('https://github.com/regen-network/protobuf', '.'),
-            ('https://github.com/cosmos/cosmos-proto', 'proto'),
-            ('https://github.com/googleapis/googleapis', '.'),
-        ]
-    },
-    {
-        "name": "celestiaorg_cosmos-sdk",
-        "main_repo": ('https://github.com/celestiaorg/cosmos-sdk', 'proto'),
-        "dependencies": [
-            ('https://github.com/celestiaorg/cosmos-sdk', 'third_party/proto/google/protobuf'),
-            ('https://github.com/regen-network/protobuf', '.'),
-            ('https://github.com/cosmos/cosmos-proto', 'proto'),
-            ('https://github.com/googleapis/googleapis', '.'),
-        ]
-    },
-    {
-        "name": "go-ibc",
-        "main_repo": ('https://github.com/cosmos/ibc-go', 'proto'),
-        "dependencies": [
-            ('https://github.com/cosmos/cosmos-sdk', 'proto'),
-            ('https://github.com/cosmos/gogoproto', '.'),
-            ('https://github.com/cosmos/cosmos-proto', 'proto'),
-            ('https://github.com/googleapis/googleapis', '.'),
-            ('https://github.com/cosmos/ics23', 'proto'),
-        ]
-    },
-]
+# Read batches from the file @protobufs.json
+with open('protobufs.json') as f:
+    data = json.load(f)
+
+# Allow the data (i.e. "celestia") to be selected when the script is run
+selected_data = sys.argv[1]
+batches = data[selected_data]
 
 # Create a .cached-repos directory if it does not exist
 cached_repos_dir = '.cached-repos'
@@ -90,7 +66,7 @@ for batch in batches:
     dependencies = batch["dependencies"]
 
     # Define and create the output directory for this batch
-    ts_output_dir = os.path.join('ts-out', batch_name)
+    ts_output_dir = os.path.join(selected_data + '-out', batch_name)
     os.makedirs(ts_output_dir, exist_ok=True)
 
     # Clone or use cached for the main repository

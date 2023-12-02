@@ -8,19 +8,14 @@ export type OnSelectItemArgs<T> = {
 };
 
 type UseItemListNavigationArgs<T> = {
-  parentRef?: React.RefObject<React.ElementRef<"div" | "ul" | "ol" | "dl">>;
   /**
    * The ref of the parent to attach keyboard events to,
    * defaults to window
    */
   scopeRef?: React.RefObject<HTMLElement | null>;
   /**
-   * Wether or not to scroll to the item when we navigate with the up/down arrows
-   */
-  scrollOnSelection?: boolean;
-  /**
    * Callback for when the item is clicked, either with the mouse
-   * or with Enter key
+   * or with Enter key, This function should also be memoized
    */
   onClickItem?: (item: T, index: number) => void;
   /**
@@ -49,11 +44,9 @@ type UseItemListNavigationArgs<T> = {
  */
 export function useItemListNavigation<T>({
   items,
-  parentRef,
   onSelectItem,
   onClickItem,
   getItemId,
-  scrollOnSelection = true,
   scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
@@ -65,34 +58,70 @@ export function useItemListNavigation<T>({
     item: selectedItem,
   });
 
-  const selectItem = React.useCallback(
-    ({ index, item }: { item: T | null; index?: number }) => {
-      // we default to the ref values as they have the previous values in store
-      const newRowIndex = index ?? selectedItemPositionRef.current.index;
+  const getOptionId = React.useCallback(
+    (index: number, item: T) => {
+      return `${itemRootId}-${index}-item-${getItemId(item)}`;
+    },
+    [itemRootId, getItemId],
+  );
 
-      setSelectedIndex(newRowIndex);
+  const selectItem = React.useCallback(
+    ({ index, item }: { item: T | null; index: number }) => {
+      const { item: previousSelectedItem, index: previousSelectedIndex } =
+        selectedItemPositionRef.current;
+
+      // we default to the ref values as they have the previous values in store
+      setSelectedIndex(index);
       setSelectedItem(item);
 
       // Sync this ref state, so that the values we use inside of the `useEffect` are up to date
       selectedItemPositionRef.current = {
         item,
-        index: newRowIndex,
+        index,
       };
+
+      // update items attributes
+      let currentlySelectedElement: HTMLElement | null = null;
+      let previouslySelectedElement: HTMLElement | null = null;
+
+      if (item !== null) {
+        currentlySelectedElement = document.getElementById(
+          getOptionId(index, item),
+        );
+      }
+      if (previousSelectedItem !== null) {
+        previouslySelectedElement = document.getElementById(
+          getOptionId(previousSelectedIndex, previousSelectedItem),
+        );
+      }
+
+      currentlySelectedElement?.setAttribute("aria-selected", "true");
+      currentlySelectedElement?.setAttribute("tabindex", "0");
+
+      previouslySelectedElement?.setAttribute("aria-selected", "false");
+      previouslySelectedElement?.setAttribute("tabindex", "-1");
+
+      // remove the style on the siblings of the previous element
+      previouslySelectedElement?.previousElementSibling?.removeAttribute(
+        "data-next-selected",
+      );
+      previouslySelectedElement?.nextElementSibling?.removeAttribute(
+        "data-previous-selected",
+      );
+
+      // style the next & previous siblings of the current element
+      currentlySelectedElement?.previousElementSibling?.setAttribute(
+        "data-next-selected",
+        "true",
+      );
+      currentlySelectedElement?.nextElementSibling?.setAttribute(
+        "data-previous-selected",
+        "true",
+      );
     },
-    [],
+    [getOptionId],
   );
 
-  /**
-   * 1- Navigating up/down has 3 cases :
-   *    - inside of the same column
-   *       ⮑ if the selectedOption index is between 0 and less than groupIndex - 1
-   *    - between rows
-   *       ⮑ when the selectedOption index is equal to groupIndex - 1, when change rows
-   *          and select the first item of the next row  if the key is ArrowDown
-   *          or the last item of previous row if the key is ArrowUp
-   *    - Stuck
-   *       ⮑  when there is no next row (for `ArrowDown`) or previous row (for `ArrowUp`)
-   */
   const moveSelectionDown = React.useCallback(() => {
     const { index } = selectedItemPositionRef.current;
     if (!items[index]) return; // don't do anything if undefined
@@ -128,31 +157,23 @@ export function useItemListNavigation<T>({
     }
   }, [selectItem, onSelectItem, items]);
 
-  const getOptionId = React.useCallback(
-    (index: number, item: T) => {
-      return `${itemRootId}-${index}-item-${getItemId(item)}`;
-    },
-    [itemRootId, getItemId],
-  );
-
+  // Scroll the item into the view if it isn't visible
+  // In the case where the element is visible, it will do nothing.
   const scrollItemIntoView = React.useCallback(() => {
     const { index, item } = selectedItemPositionRef.current;
 
-    if (item && scrollOnSelection) {
+    if (item) {
       const element = document.getElementById(
         getOptionId(index, item),
       ) as HTMLDivElement | null;
 
-      if (element && parentRef?.current) {
-        if (isElementOverflowing(parentRef.current, element)) {
-          element?.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-        }
+      if (element) {
+        element?.scrollIntoView({
+          block: "nearest",
+        });
       }
     }
-  }, [parentRef, getOptionId, scrollOnSelection]);
+  }, [getOptionId]);
 
   // Listen for keyboard events
   React.useEffect(() => {
@@ -194,12 +215,6 @@ export function useItemListNavigation<T>({
           break;
       }
 
-      const { item, index } = selectedItemPositionRef.current;
-      if (!eventIgnored && item) {
-        const element = document.getElementById(getOptionId(index, item));
-        element?.focus();
-      }
-
       // we don't want this event to be propagated to the whole page
       // so that element that listen globally (for hotkey for ex.) don't react accordingly,
       if (!eventIgnored) {
@@ -222,10 +237,10 @@ export function useItemListNavigation<T>({
   }, [
     moveSelectionDown,
     moveSelectionUp,
-    scrollItemIntoView,
     onClickItem,
     getOptionId,
     scopeRef,
+    scrollItemIntoView,
   ]);
 
   const isOptionSelected = React.useCallback(
@@ -237,29 +252,55 @@ export function useItemListNavigation<T>({
     [selectedItemIndex, selectedItem, getItemId],
   );
 
+  const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
+
   const registerItemProps = React.useCallback(
     (index: number, item: T) => {
-      const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
-      const currentItemId = getItemId(item);
-      const isSelected =
-        selectedItemId === currentItemId && selectedItemIndex === index;
       const itemId = getOptionId(index, item);
 
       return {
         id: itemId,
         onClick: () => onClickItem?.(item, index),
-        onMouseMove: () => {
-          const element = document.getElementById(itemId);
-          element?.focus();
-          selectItem({ item, index });
-          onSelectItem?.({
-            item: item,
-            index: index,
-            inputMethod: "mouse",
-          });
+        onMouseMove: (event: React.MouseEvent) => {
+          // This is to fix a bug in SAFARI,
+          // In safari the `MouseMove` Event is triggered even on scroll
+          // So we manually check if the mouse has really moved, and if it is not the case
+          // we just ignore the event
+          const currentMousePosition = { x: event.clientX, y: event.clientY };
+          const lastMousePosition = lastMousePositionRef.current;
+          const hasMoved =
+            currentMousePosition.x !== lastMousePosition.x ||
+            currentMousePosition.y !== lastMousePosition.y;
+
+          if (!hasMoved) return;
+
+          lastMousePositionRef.current = currentMousePosition;
+
+          const { item: selectedItem } = selectedItemPositionRef.current;
+
+          const currentItemId = getItemId(item);
+          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+
+          // prevent triggering the select event every time the mouse move
+          if (selectedItemId !== currentItemId) {
+            selectItem({ item, index });
+
+            onSelectItem?.({
+              item: item,
+              index: index,
+              inputMethod: "mouse",
+            });
+          }
         },
         onFocus: () => {
-          selectItem({ item, index });
+          const { item: selectedItem } = selectedItemPositionRef.current;
+
+          const currentItemId = getItemId(item);
+          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+
+          if (selectedItemId !== currentItemId) {
+            selectItem({ item, index });
+          }
         },
         onBlur: () => {
           selectItem({
@@ -268,19 +309,9 @@ export function useItemListNavigation<T>({
           });
         },
         role: "option",
-        "aria-selected": isSelected,
-        tabIndex: isSelected ? -1 : 0,
       };
     },
-    [
-      onClickItem,
-      selectedItem,
-      getItemId,
-      selectedItemIndex,
-      getOptionId,
-      onSelectItem,
-      selectItem,
-    ],
+    [onClickItem, getItemId, getOptionId, onSelectItem, selectItem],
   );
 
   return {

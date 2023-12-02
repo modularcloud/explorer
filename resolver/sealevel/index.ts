@@ -1,5 +1,6 @@
 import {
   createResolver,
+  NotFound,
   PendingException,
   ResolutionResponse,
 } from "@modularcloud-resolver/core";
@@ -31,21 +32,43 @@ export const BlockResolver = createResolver(
     const parsedSlot = Number(slot);
     if (isNaN(parsedSlot)) throw new Error(`Invalid slot: ${slot}`);
 
-    const rpcResponse = await jsonRpcResolver({
-      endpoint: endpoint,
-      method: "getBlock",
-      params: [
-        parsedSlot,
-        {
-          encoding,
-          maxSupportedTransactionVersion,
-          transactionDetails,
-          rewards,
-        },
-      ],
-    });
-    if (rpcResponse.type === "success") return rpcResponse.result;
-    if (rpcResponse.type === "error") throw rpcResponse.error;
+    const response: any = await Promise.any([
+      jsonRpcResolver({
+        endpoint: endpoint,
+        method: "getBlock",
+        params: [
+          parsedSlot,
+          {
+            encoding,
+            maxSupportedTransactionVersion,
+            transactionDetails,
+            rewards,
+          },
+        ],
+      }).then((rpcResponse) => {
+        if (rpcResponse.type !== "success")
+          throw new Error("Failed to fetch block");
+        if (rpcResponse.type === "success" && rpcResponse.result.error)
+          throw new Error(rpcResponse.result.error);
+        if (rpcResponse.result === null) {
+          NotFound();
+        }
+        return rpcResponse;
+      }),
+      fetch(
+        `${String(
+          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+        )}/block?slotNumber=${parsedSlot}`,
+      ).then(async (response) => {
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
+        if (json.result === null) {
+          NotFound();
+        }
+        return json;
+      }),
+    ]);
+    return response.result;
   },
   [JSONRPCResolver],
 );
@@ -71,20 +94,42 @@ export const TransactionResolver = createResolver(
     },
     jsonRpcResolver,
   ) => {
-    const rpcResponse = await jsonRpcResolver({
-      endpoint: endpoint,
-      method: "getTransaction",
-      params: [
-        signature,
-        {
-          encoding,
-          commitment,
-          maxSupportedTransactionVersion,
-        },
-      ],
-    });
-    if (rpcResponse.type === "success") return rpcResponse.result;
-    if (rpcResponse.type === "error") throw rpcResponse.error;
+    const response = await Promise.any([
+      jsonRpcResolver({
+        endpoint: endpoint,
+        method: "getTransaction",
+        params: [
+          signature,
+          {
+            encoding,
+            commitment,
+            maxSupportedTransactionVersion,
+          },
+        ],
+      }).then((rpcResponse) => {
+        if (rpcResponse.type !== "success")
+          throw new Error("Failed to fetch block");
+        if (rpcResponse.type === "success" && rpcResponse.result.error)
+          throw new Error(rpcResponse.result.error);
+        if (rpcResponse.result === null) {
+          NotFound();
+        }
+        return rpcResponse;
+      }),
+      fetch(
+        `${String(
+          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+        )}/tx?signature=${signature}`,
+      ).then(async (response) => {
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
+        if (json.result === null) {
+          NotFound();
+        }
+        return json;
+      }),
+    ]);
+    return response.result;
   },
   [JSONRPCResolver],
 );

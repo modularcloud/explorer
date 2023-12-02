@@ -14,13 +14,13 @@ const SvgCopyOn = (props: SVGProps<SVGSVGElement>) => (
       stroke="#2A2B2E"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M8 3.5H5.5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2H8Z"
+      d="M8 3.5H5.5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z"
     />
     <path
       stroke="#2A2B2E"
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M14.5 7.5v0a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v0"
+      d="M14.5 7.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v0"
     />
   </svg>
 );

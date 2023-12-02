@@ -25,6 +25,7 @@ export async function isomorphicLoadPage(
     chainLogo: network.config.logoUrl,
     rpcEndpoint: network.config.rpcUrls["svm"],
     nativeToken: network.config.token.name,
+    slug: network.slug,
   });
 
   // this is the most ridiculous thing ever
@@ -38,7 +39,7 @@ export async function isomorphicLoadPage(
   const resolution = await integration.resolveRoute(fixedPath, context);
   // If the resolution is null, that means it could not match the path to any resolver. Therefore, the page is not found.
   if (!resolution) {
-    throw IsomorphicNotFoundError; 
+    throw IsomorphicNotFoundError;
   }
 
   if (resolution.type === "pending") {

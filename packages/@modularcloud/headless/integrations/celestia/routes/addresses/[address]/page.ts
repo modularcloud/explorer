@@ -33,7 +33,7 @@ export const CelestiaAddressBalancesResolver = createResolver(
         };
       };
     };
-    
+
     const response = await fetch(
       `${process.env.NAMESPACE_ENDPOINT}/${id}/acc-address/${address}/balances`,
     );

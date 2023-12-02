@@ -5,8 +5,8 @@ import {
   getGasPrice,
   getBlockMetrics,
   getRealTimeMetrics,
-  getLatestBlocks,
-  getLatestTransactions,
+  getEVMLatestBlocks,
+  getEVMLatestTransactions,
   getTransactionVolumeHistory,
   APICORSHeaders,
 } from "~/lib/server-utils";
@@ -43,8 +43,8 @@ export async function GET(_: Request, ctx: { params: { network: string } }) {
       getBlockMetrics(network.config.rpcUrls.evm!),
       getRealTimeMetrics(network.integrationId),
       getTransactionVolumeHistory(network.integrationId),
-      getLatestBlocks(network.slug, network.config.rpcUrls.evm!),
-      getLatestTransactions(network.slug, network.config.rpcUrls.evm!),
+      getEVMLatestBlocks(network.slug, network.config.rpcUrls.evm!),
+      getEVMLatestTransactions(network.slug, network.config.rpcUrls.evm!),
     ]);
 
     return NextResponse.json(
