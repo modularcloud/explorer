@@ -7,7 +7,9 @@ import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 import { SvmMetrics } from "./get-metrics";
+
 import { useSvmWidgetData } from "./use-widget-data";
+import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
 
 import type { Page } from "@modularcloud/headless";
 
@@ -17,6 +19,7 @@ interface Props {
   initialLatestTransactions: Page;
   initialLatestBlocks: Page;
   initialMetrics: SvmMetrics;
+  initialUpdatedAt: Date;
 }
 
 export function SVMWidgetLayoutContent({
@@ -25,6 +28,7 @@ export function SVMWidgetLayoutContent({
   initialLatestBlocks,
   initialLatestTransactions,
   initialMetrics,
+  initialUpdatedAt,
 }: Props) {
   const { error, data } = useSvmWidgetData({
     networkSlug,
@@ -33,15 +37,7 @@ export function SVMWidgetLayoutContent({
     initialMetrics,
   });
 
-  const [lastUpdatedTime, setLastUpdatedTime] = React.useState<Date | null>(
-    null,
-  );
-
-  React.useEffect(() => {
-    if (data) {
-      return setLastUpdatedTime(new Date());
-    }
-  }, [data]);
+  const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
   if (error) {
     return (

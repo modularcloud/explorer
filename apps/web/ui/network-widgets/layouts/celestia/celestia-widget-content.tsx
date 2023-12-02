@@ -6,6 +6,7 @@ import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 
+import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
 import { useCelestiaWidgetData } from "./use-widget-data";
 import { cn } from "~/ui/shadcn/utils";
 
@@ -18,6 +19,7 @@ interface Props {
   initialLatestTransactions: Page;
   initialLatestBlocks: Page;
   initialMetrics: CelestiaMetrics;
+  initialUpdatedAt: Date;
 }
 
 export function CelestiaWidgetLayoutContent({
@@ -26,6 +28,7 @@ export function CelestiaWidgetLayoutContent({
   initialLatestBlocks,
   initialLatestTransactions,
   initialMetrics,
+  initialUpdatedAt,
 }: Props) {
   const { error, data } = useCelestiaWidgetData({
     networkSlug,
@@ -34,15 +37,7 @@ export function CelestiaWidgetLayoutContent({
     initialLatestTransactions,
   });
 
-  const [lastUpdatedTime, setLastUpdatedTime] = React.useState<Date | null>(
-    null,
-  );
-
-  React.useEffect(() => {
-    if (data) {
-      return setLastUpdatedTime(new Date());
-    }
-  }, [data]);
+  const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
   if (error) {
     return <CelestiaWidgetSkeleton error={error} />;

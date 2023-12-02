@@ -63,6 +63,7 @@ export async function SVMWidgetLayout({
         initialLatestBlocks={latestBlocks}
         initialLatestTransactions={latestTransactions}
         initialMetrics={metrics}
+        initialUpdatedAt={new Date()}
       />
     </div>
   );

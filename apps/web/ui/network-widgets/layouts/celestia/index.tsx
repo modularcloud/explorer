@@ -67,6 +67,7 @@ export async function CelestiaWidgetLayout({
         initialLatestBlocks={latestBlocks}
         initialLatestTransactions={latestTransactions}
         initialMetrics={metrics}
+        initialUpdatedAt={new Date()}
       />
     </div>
   );

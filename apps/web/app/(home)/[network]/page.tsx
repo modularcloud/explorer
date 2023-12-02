@@ -26,7 +26,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
-  const network = (await getSingleNetworkCached(params.network))!;
+  const network = await getSingleNetworkCached(params.network);
 
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
