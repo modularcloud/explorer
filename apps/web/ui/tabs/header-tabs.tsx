@@ -11,7 +11,9 @@ import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 import { cn } from "~/ui/shadcn/utils";
 import { range } from "~/lib/shared-utils";
 import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
+import { notFound } from "next/navigation";
 
+import type { Page } from "@modularcloud/headless";
 interface Props {
   params: HeadlessRoute;
 }
@@ -27,9 +29,20 @@ type Tab = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const { tabs: resolvedTabs } = await loadPage({
-    route: params,
-  });
+  let page: Page | null = null;
+  try {
+    page = await loadPage({
+      route: params,
+    });
+  } catch (error) {
+    // pass
+  }
+
+  if (!page) {
+    notFound();
+  }
+
+  const { tabs: resolvedTabs } = page;
 
   // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
@@ -99,12 +112,14 @@ export async function HeaderTabs({ params }: Props) {
                 >
                   <span
                     className={cn(
-                      "inline-flex items-center justify-center gap-2 p-1 m-1",
+                      "inline-flex items-center justify-center gap-2 p-0.5 m-1",
                       "ring-primary rounded-lg",
                       "group-focus:ring-2",
                     )}
                   >
-                    {tab.Icon && <tab.Icon aria-hidden="true" />}
+                    {tab.Icon && (
+                      <tab.Icon aria-hidden="true" className="h-3 w-3" />
+                    )}
                     {tab.text}
 
                     {tab.totalCount !== null && (
@@ -141,7 +156,7 @@ export function HeaderTabsSkeleton() {
       )}
     >
       <ol className="flex min-w-max items-stretch w-full h-full">
-        {range(0, 3).map((_, index) => {
+        {range(0, 2).map((_, index) => {
           return (
             <li key={index} className="h-full">
               <NavLinkSkeleton isAfterOverview={index === 0}>

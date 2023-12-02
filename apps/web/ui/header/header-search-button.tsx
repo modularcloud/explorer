@@ -55,9 +55,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
     >
       <Button
         className={cn(
-          "inline-flex items-center gap-4 md:gap-6",
+          "inline-flex items-center justify-between gap-4 md:gap-5",
           "md:min-w-fit min-w-0 flex-shrink",
-          "shadow-sm",
+          "shadow-sm text-sm",
+          "py-2 px-3.5",
         )}
         variant="bordered"
         style={{
@@ -75,7 +76,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           <span className="inline-flex gap-2 items-center">
             <Image
               // FIXME : this is hardcoded, but it needs to be returned from the API
-              src={`/images/celestia-logo-small.png`}
+              src={network.logoURL}
               width={16}
               height={16}
               alt={`Logo ${network.brandName}`}
@@ -91,7 +92,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
             </span>
           </span>
 
-          <ArrowRight className="text-muted flex-shrink-0" aria-hidden="true" />
+          <ArrowRight
+            className="text-muted flex-none h-3 w-3"
+            aria-hidden="true"
+          />
 
           {/* Query */}
           <span
@@ -118,7 +122,10 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           </span>
         </span>
 
-        <ArrowRight className="text-muted flex-shrink-0" aria-hidden="true" />
+        <ArrowRight
+          className="text-muted flex-none h-3 w-3"
+          aria-hidden="true"
+        />
       </Button>
     </SearchModal>
   );

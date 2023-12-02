@@ -5,16 +5,15 @@ import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-
 import { notFound } from "next/navigation";
 import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
-import { getSearchOptionGroups } from "~/lib/search-options";
 
-import type { FetchLoadArgs } from "~/lib/shared-utils";
 import type { Metadata } from "next";
+import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 
 interface Props {
-  params: Pick<FetchLoadArgs, "network">;
+  params: Pick<HeadlessRoute, "network">;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -28,23 +27,30 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
-  const network = (await getSingleNetworkCached(params.network))!;
+  const network = await getSingleNetworkCached(params.network);
 
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
 
-  const searchOptionGroups = await getSearchOptionGroups();
-  const values = Object.values(searchOptionGroups).flat();
-  const searchOption = values.find((network) => network.id === params.network);
-
   switch (network.config.widgetLayout) {
-    case "EvmWithPrice":
-      return <EvmWithPriceWidgetLayout network={searchOption!} />;
+    // TODO : When EVM is ready, we should follow the same code structure as the other layouts
+    // case "EvmWithPrice":
+    //   return <EvmWithPriceWidgetLayout network={searchOption!} />;
     case "SVM":
-      return <SVMWidgetLayout network={searchOption!} />;
+      return (
+        <SVMWidgetLayout
+          networkSlug={network.slug}
+          networkBrandColor={network.config.primaryColor}
+        />
+      );
     case "Celestia":
-      return <CelestiaWidgetLayout network={searchOption!} />;
+      return (
+        <CelestiaWidgetLayout
+          networkSlug={network.slug}
+          networkBrandColor={network.config.primaryColor}
+        />
+      );
     default:
       return null;
   }

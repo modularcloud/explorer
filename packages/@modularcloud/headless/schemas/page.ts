@@ -106,6 +106,7 @@ const PageContext = z.object({
   chainBrand: z.string(),
   chainName: z.string(),
   chainLogo: z.string(),
+  slug: z.string(),
   rpcEndpoint: z.string(),
   nativeToken: z.string(),
 });
@@ -172,6 +173,7 @@ export const PageSchema = z.object({
   }),
   body: z.discriminatedUnion("type", [NotebookSchema, CollectionSchema]),
   sidebar: SidebarSchema,
+  isIBC: z.boolean().optional(),
   tabs: z
     .object({
       text: z.string(),

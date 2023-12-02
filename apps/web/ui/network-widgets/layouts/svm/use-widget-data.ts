@@ -1,95 +1,61 @@
+import { DEFAULT_WIDGET_REFETCH_TIME } from "~/lib/constants";
+import { getSvmWidgetMetrics } from "./get-metrics";
+import { jsonFetch } from "~/lib/shared-utils";
+import { CACHE_KEYS } from "~/lib/cache-keys";
 import useSWR from "swr";
-import { z } from "zod";
-import { PageContext } from "@modularcloud/headless";
 
-const widgetDataSchema = z.object({
-  metrics: z.object({
-    CONTRACT: z.number(),
-    TRANSACTION: z.number(),
-    UNIQUE_ADDRESS: z.number(),
-  }),
-  slotNumber: z.string(),
-});
+import type { SvmMetrics } from "./get-metrics";
+import type { LoadPageArgs } from "~/lib/headless-utils";
+import type { Page } from "@modularcloud/headless";
 
-const THIRTY_SECONDS = 30 * 1000;
+type UseSvmWidgetDataArgs = {
+  networkSlug: string;
+  initialLatestTransactions: Page;
+  initialLatestBlocks: Page;
+  initialMetrics: SvmMetrics;
+};
 
-export function useLatestBlocks(context: PageContext) {
-  return useSWR(
-    [
-      "/api/resolve/blocks",
-      {
-        resolverId: "sealevel-latest-blocks-0.0.0",
-        input: context,
-      },
-    ],
-    async () => {
-      const response = await fetch("/api/resolve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          resolverId: "sealevel-latest-blocks-0.0.0",
-          input: context,
+export function useSvmWidgetData({
+  networkSlug,
+  initialMetrics,
+  initialLatestBlocks,
+  initialLatestTransactions,
+}: UseSvmWidgetDataArgs) {
+  const loadLatestBlocksArgs: LoadPageArgs = {
+    route: { network: networkSlug, path: ["blocks"] },
+    context: { limit: 6 },
+    revalidateTimeInSeconds: 0,
+  };
+  const loadLatestTransactionArgs: LoadPageArgs = {
+    route: { network: networkSlug, path: ["transactions"] },
+    context: { limit: 5 },
+    revalidateTimeInSeconds: 0,
+  };
+  return useSWR<[SvmMetrics, Page, Page]>(
+    CACHE_KEYS.widgets.data(networkSlug),
+    () =>
+      Promise.all([
+        getSvmWidgetMetrics(networkSlug),
+        jsonFetch<Page>("/api/load-page", {
+          method: "POST",
+          body: loadLatestBlocksArgs,
         }),
-      });
-      const data = await response.json();
-      return data;
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-    },
-  );
-}
-
-export function useLatestTransactions(context: PageContext) {
-  return useSWR(
-    [
-      "/api/resolve/transactions",
-      {
-        resolverId: "sealevel-latest-transactions-0.0.0",
-        input: context,
-      },
-    ],
-    async () => {
-      const response = await fetch("/api/resolve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          resolverId: "sealevel-latest-transactions-0.0.0",
-          input: context,
+        jsonFetch<Page>("/api/load-page", {
+          method: "POST",
+          body: loadLatestTransactionArgs,
         }),
-      });
-      const data = await response.json();
-      return data;
-    },
+      ]),
     {
-      refreshInterval: THIRTY_SECONDS,
+      refreshInterval: DEFAULT_WIDGET_REFETCH_TIME * 1000,
       errorRetryCount: 2,
       keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-    },
-  );
-}
-
-export function useWidgetData(networkSlug: string) {
-  return useSWR(
-    `https://svm.preview-api.modular.cloud/${networkSlug}/metrics`,
-    async (url) => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return widgetDataSchema.parse(data.result);
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      fallbackData: [
+        initialMetrics,
+        initialLatestBlocks,
+        initialLatestTransactions,
+      ],
     },
   );
 }

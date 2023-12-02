@@ -52,7 +52,7 @@ module.exports = {
         bold: "656",
       },
       fontFamily: {
-        logo: ["logo", ...fontFamily.sans],
+        logo: ["var(--font-inter-display)", ...fontFamily.sans],
         sans: ["var(--font-inter)", ...fontFamily.sans],
       },
       backgroundImage: () => ({
