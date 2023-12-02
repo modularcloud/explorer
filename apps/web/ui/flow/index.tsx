@@ -9,6 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useContext, useMemo } from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
+import { useParams } from "next/navigation";
 
 type Node =
   | {
@@ -19,6 +20,12 @@ type Node =
       timestamp: string | number;
       link: string;
       //sidebar: Record<string, Value>;
+      image: string;
+    }
+  | {
+      type: "error";
+      label: string;
+      message: string;
       image: string;
     }
   | {
@@ -42,17 +49,20 @@ type Props = {
 function Node({
   isNext,
   step,
+  hash,
+  slug,
 }: {
-  node: Node;
   isNext?: boolean;
   step: number;
+  hash: string;
+  slug: string;
 }) {
   const body = {
     resolverId: "rollapp-ibc-0.0.0",
     input: {
-      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      hash,
       step,
-      slug: "coinhunterstrrollapp_9084503-1",
+      slug,
     },
   };
   const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
@@ -83,7 +93,6 @@ function Node({
       },
     },
   );
-  console.log(nodeResponse.data);
   const time = useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.timestamp) {
@@ -93,9 +102,11 @@ function Node({
     return null;
   }, [nodeResponse.data]);
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-  if (!nodeResponse.data) return null;
   const node = nodeResponse.data.result;
-
+  if (nodeResponse.error || !nodeResponse.data || !nodeResponse.data.result) {
+    //console.log("ERROR:", nodeResponse);
+    return null;
+  }
   let colors =
     "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
   if (isNext) {
@@ -105,6 +116,9 @@ function Node({
   if (node.type === "completed") {
     colors =
       "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]";
+  }
+  if (node.type === "error") {
+    colors = "border-[#FADBE1] bg-[#FFF0F3] text-[#710E21] hover:bg-[#FFE5EB]";
   }
   return (
     <Link
@@ -152,7 +166,9 @@ function Node({
         </div>
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
-          {`Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
+          {node.type === "error"
+            ? node.message
+            : `Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
         </div>
       )}
     </Link>
@@ -204,13 +220,13 @@ function Address({ address }: { address: string }) {
   );
 }
 
-function Transfer() {
+function Transfer({ hash, slug }: { hash: string; slug: string }) {
   const body = {
     resolverId: "rollapp-ibc-0.0.0",
     input: {
-      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      hash,
       step: 0,
-      slug: "coinhunterstrrollapp_9084503-1",
+      slug,
     },
   };
   const nodeResponse = useSWR(
@@ -235,14 +251,14 @@ function Transfer() {
   );
   const amount = useMemo(() => {
     const node = nodeResponse.data?.result;
-    if (node && node.sidebar.Token.payload) {
+    if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
       const [value, denom] = node.sidebar.Token.payload.split(" ");
       return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`;
     }
     return null;
   }, [nodeResponse.data]);
   const node = nodeResponse.data?.result;
-  if (!node) return null;
+  if (!node || !node.sidebar) return null;
   return (
     <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
       <Address address={node.sidebar.Sender.payload} />
@@ -287,64 +303,21 @@ function Transfer() {
 }
 
 export function FlowChart() {
-  const props: Props = {
-    title: "IBC Transfer",
-    transfer: {
-      from: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      to: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      amount: "14",
-      denom: "ATOM",
-    },
-    nodes: [
-      {
-        type: "completed",
-        id: "1",
-        shortId: "1",
-        label: "Transfer",
-        timestamp: "7 Min Ago",
-        link: "https://google.com",
-        //sidebar: {},
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Acknowledgement",
-        waitingFor: "acknowledgement",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-    ],
-  } as any;
+  const params = useParams();
+  const slug = params?.network;
+  const txHash = params?.path?.[1];
+  if (!slug || typeof slug !== "string" || !txHash) return null;
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
-        <div className="text-xs font-medium leading-4">{props.title}</div>
-        <Transfer />
+        <div className="text-xs font-medium leading-4">IBC Transfer</div>
+        <Transfer hash={txHash} slug={slug} />
       </div>
       <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-        {props.nodes.map((node, index, nodes) => (
-          <Node
-            key={index}
-            node={node}
-            // isNext={node.type === "pending" && nodes[index - 1].type === "completed"}
-            step={index}
-          />
-        ))}
+        <Node step={0} hash={txHash} slug={slug} />
+        <Node step={1} hash={txHash} slug={slug} />
+        <Node step={2} hash={txHash} slug={slug} />
+        <Node step={3} hash={txHash} slug={slug} />
       </div>
     </div>
   );
