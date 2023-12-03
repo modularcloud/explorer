@@ -138,17 +138,15 @@ function Node({
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
-        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-5 h-5">
+        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
           {node.image ? (
-            <div className="rounded-full overflow-hidden">
-              <Image
-                src={node.image}
-                width={20}
-                height={20}
-                alt={`${node.label} chain logo`}
-                // className="aspect-square object-contain object-center w-5 overflow-hidden"
-              />
-            </div>
+            <Image
+              src={node.image}
+              width={20}
+              height={20}
+              alt={`${node.label} chain logo`}
+              className="rounded-full"
+            />
           ) : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
@@ -313,7 +311,7 @@ export function FlowChart() {
         <div className="text-xs font-medium leading-4">IBC Transfer</div>
         <Transfer hash={txHash} slug={slug} />
       </div>
-      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
+      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
         <Node step={0} hash={txHash} slug={slug} />
         <Node step={1} hash={txHash} slug={slug} />
         <Node step={2} hash={txHash} slug={slug} />

@@ -105,15 +105,14 @@ export const IBCResolver = createResolver(
     ).then((res) => res.json());
     const data = Result.parse(response);
     const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+    const targetSlug = data.result.metadata.integrationConfigs.find(
+      (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
+    )?.slug;
     const image = `${data.result.metadata.integrationConfigs.find(
       (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
     )?.config.logoUrl}`;
     const rpcIntegration = await fetch(
-      `${
-        process.env.INTERNAL_INTEGRATION_API_URL
-      }/integrations/slug/${data.result.metadata.integrationConfigs.find(
-        (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
-      )?.slug}`,
+      `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations/slug/${targetSlug}`,
     ).then((res) => res.json());
     if (
       data.result.ibc.steps[0].data?.error ||
@@ -151,7 +150,7 @@ export const IBCResolver = createResolver(
       id,
       shortId: id.slice(0, 3) + "..." + id.slice(-3),
       timestamp: data.result.ibc.steps[0].transaction.timeStamp,
-      link: `/${rpcIntegration.slug}/transactions/${id}/messages/${messageIndex}`,
+      link: `/${targetSlug}/transactions/${id}/messages/${messageIndex}`,
       sidebar: Object.entries(
         Rollapp.helpers.convertMessageToKeyValue(message),
       ).reduce((acc, [key, value]) => {
