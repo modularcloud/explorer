@@ -6,7 +6,7 @@ import { cn } from "../shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
 import { useParams } from "next/navigation";
@@ -57,6 +57,7 @@ function Node({
   hash: string;
   slug: string;
 }) {
+  const [isHovered, setIsHovered] = React.useState(false);
   const body = {
     resolverId: "rollapp-ibc-0.0.0",
     input: {
@@ -66,6 +67,13 @@ function Node({
     },
   };
   const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+  const fallbackData = {
+    result: {
+      type: "pending",
+      label,
+      waitingFor: label === "Received" ? "receipt" : undefined,
+    },
+  };
   const nodeResponse = useSWR(
     ["/api/resolve/transactions", body],
     async () => {
@@ -84,13 +92,7 @@ function Node({
       errorRetryCount: 2,
       keepPreviousData: true,
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-      fallbackData: {
-        result: {
-          type: "pending",
-          label,
-          waitingFor: label === "Received" ? "receipt" : undefined,
-        },
-      },
+      fallbackData,
     },
   );
   const time = useMemo(() => {
@@ -111,19 +113,26 @@ function Node({
     "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
   if (isNext) {
     colors =
-      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]";
+      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC] hover:scale-105 transition-transform duration-100";
   }
   if (node.type === "completed") {
     colors =
-      "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]";
+      "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4] hover:scale-105 transition-transform duration-100";
   }
   if (node.type === "error") {
-    colors = "border-[#FADBE1] bg-[#FFF0F3] text-[#710E21] hover:bg-[#FFE5EB]";
+    colors =
+      "border-[#FADBE1] bg-[#FFF0F3] text-[#710E21] hover:bg-[#FFE5EB] hover:scale-105 transition-transform duration-100";
   }
   return (
     <Link
-      href={`${node.link}`}
+      href={`${node.type === "completed" ? node.link : "#"}`}
+      onClick={(e) => {
+        if (node.type === "error") {
+          nodeResponse.mutate(fallbackData);
+        }
+      }}
       onMouseEnter={() => {
+        setIsHovered(true);
         if (node.sidebar) {
           setSpotlight?.({
             headerKey: "Spotlight",
@@ -131,6 +140,9 @@ function Node({
             properties: node.sidebar,
           });
         }
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
       }}
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
@@ -165,7 +177,9 @@ function Node({
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
           {node.type === "error"
-            ? node.message
+            ? isHovered
+              ? "Try Again"
+              : node.message
             : `Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
         </div>
       )}
