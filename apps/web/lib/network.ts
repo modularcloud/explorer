@@ -3,6 +3,7 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
+import { jsonFetch } from "./shared-utils";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -43,42 +44,75 @@ export const singleNetworkSchema = z.object({
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
 export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
-  try {
-    let allIntegrations: Array<z.infer<typeof singleNetworkSchema>> = [];
-    let nextToken: string | undefined = "";
+  let allIntegrations: Array<SingleNetwork> = [];
 
-    do {
-      const response = await fetch(
-        `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
-      );
-
-      const integrationSummaryAPISchema = z.object({
-        result: z
-          .object({
-            integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-            nextToken: z.string(),
-          })
-          .nullish(),
-      });
-      const { result } = integrationSummaryAPISchema.parse(
-        await response.json(),
-      );
-      nextToken = result?.nextToken;
-
-      if (result?.integrations) {
-        // @ts-expect-error
-        allIntegrations = [
-          ...allIntegrations,
-          ...result.integrations.filter(Boolean),
-        ];
-      }
-    } while (nextToken);
-
-    return allIntegrations;
-  } catch (error) {
-    console.dir({ "Error fetching networks : ": error }, { depth: null });
-    return [];
+  if (process.env.NODE_ENV === "development") {
+    const value = await jsonFetch<{
+      data: Array<SingleNetwork> | null;
+    }>(`http://localhost:3000/api/fs-cache?key=all-networks`);
+    if (value.data) {
+      allIntegrations = value.data;
+      return allIntegrations;
+    }
   }
+
+  if (allIntegrations.length === 0) {
+    try {
+      let nextToken: string | undefined = "";
+
+      do {
+        const response = await fetch(
+          `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
+        ).then(async (r) => {
+          const text = await r.text();
+          const status = r.status;
+          if (status !== 200) {
+            console.log({
+              res: text,
+              status: r.status,
+              statusText: r.statusText,
+            });
+          }
+          return JSON.parse(text);
+        });
+
+        const integrationSummaryAPISchema = z.object({
+          result: z
+            .object({
+              integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+              nextToken: z.string(),
+            })
+            .nullish(),
+        });
+        const { result } = integrationSummaryAPISchema.parse(response);
+        nextToken = result?.nextToken;
+
+        if (result?.integrations) {
+          // @ts-expect-error
+          allIntegrations = [
+            ...allIntegrations,
+            ...result.integrations.filter(Boolean),
+          ];
+        }
+      } while (nextToken);
+    } catch (error) {
+      console.dir({ "Error fetching networks : ": error }, { depth: null });
+    }
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    await jsonFetch<{
+      data: Array<SingleNetwork> | null;
+    }>(`http://localhost:3000/api/fs-cache`, {
+      method: "POST",
+      body: {
+        key: "all-networks",
+        value: allIntegrations,
+      },
+    });
+  }
+
+  return allIntegrations;
 }
 
 export async function getSingleNetwork(slug: string) {
