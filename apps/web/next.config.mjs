@@ -8,7 +8,6 @@ const config = {
   experimental: {
     useDeploymentId: true,
     esmExternals: "loose",
-    ppr: true,
   },
   logging: {
     fetches: {
