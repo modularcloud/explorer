@@ -48,13 +48,12 @@ export function IntegrationGridView({
 
   const parentRef = React.useRef<React.ElementRef<"div">>(null);
 
-  const PADDING_END = 100;
-  const ROW_SIZE = 192; // size of one row, manually calculated
+  const ROW_SIZE = 192; // size of one row, measured visually by inspecting the DOM in the browsers' devtools
   const virtualizer = useVirtualizer({
     count: groupedByLines.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_SIZE,
-    overscan: 5,
+    overscan: 3,
     // paddingEnd: PADDING_END,
     scrollPaddingEnd: 0, // always let one item visible in the viewport
     scrollPaddingStart: 0, // always show one item when scrolling on top
@@ -72,7 +71,7 @@ export function IntegrationGridView({
       ref={parentRef}
     >
       <div
-        className="flex flex-col gap-4 h-full flex-1 relative"
+        className="relative"
         style={{ height: `${virtualizer.getTotalSize()}px` }}
       >
         {virtualizer.getVirtualItems().map((virtualRow) => {
