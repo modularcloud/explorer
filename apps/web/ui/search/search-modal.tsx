@@ -67,11 +67,8 @@ export function SearchModal({
   const [filteredOptionGroups, setFilteredOptionGroups] =
     React.useState(optionGroups);
 
-  const filterGroups = useDebouncedCallBack(
-    (filter: string) =>
-      setFilteredOptionGroups(filterOptionGroups(optionGroups, filter)),
-    100,
-  );
+  const filterGroups = (filter: string) =>
+    setFilteredOptionGroups(filterOptionGroups(optionGroups, filter));
 
   const isNetworkQuery =
     !selectedNetwork && Object.keys(filteredOptionGroups).length > 0;
