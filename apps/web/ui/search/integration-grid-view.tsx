@@ -62,7 +62,7 @@ export function IntegrationGridView({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 h-full flex-1",
+        "h-full flex-1",
         "max-h-[calc(100%-60px)] overflow-y-auto",
         className,
       )}
