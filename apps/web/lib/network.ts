@@ -122,16 +122,46 @@ export async function getSingleNetwork(slug: string) {
     }),
   });
 
-  const response = await fetch(
-    `${env.INTERNAL_INTEGRATION_API_URL}/integrations/slug/${encodeURIComponent(
-      slug,
-    )}`,
-  );
-
   try {
-    const {
-      result: { integration },
-    } = describeIntegrationBySlugAPISchema.parse(await response.json());
+    let integration: SingleNetwork | null = null;
+
+    // Get the cached data in the File System Cache in DEV
+    if (process.env.NODE_ENV === "development") {
+      const value = await jsonFetch<{
+        data: SingleNetwork | null;
+      }>(
+        `http://localhost:3000/api/fs-cache?key=single-network-${encodeURIComponent(
+          slug,
+        )}`,
+      );
+      if (value.data) {
+        integration = value.data;
+      }
+    }
+
+    if (!integration) {
+      let { result } = await fetch(
+        `${
+          env.INTERNAL_INTEGRATION_API_URL
+        }/integrations/slug/${encodeURIComponent(slug)}`,
+      )
+        .then((r) => r.json())
+        .then((data) => describeIntegrationBySlugAPISchema.parse(data));
+      integration = result.integration;
+
+      // Cache the data in the File System Cache in DEV
+      if (process.env.NODE_ENV === "development") {
+        await jsonFetch<{
+          data: Array<SingleNetwork> | null;
+        }>(`http://localhost:3000/api/fs-cache`, {
+          method: "POST",
+          body: {
+            key: `single-network-slug`,
+            value: integration,
+          },
+        });
+      }
+    }
 
     // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
