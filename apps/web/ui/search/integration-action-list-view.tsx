@@ -174,7 +174,7 @@ export function IntegrationActionListView({
   const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
     noOfColumns: 1,
     optionGroups: items,
-    onSelectOption,
+    onClickOption: onSelectOption,
     scopeRef: parentDialogRef,
   });
 

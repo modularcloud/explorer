@@ -64,9 +64,6 @@ export function SearchModal({
     [setInputValue],
   );
 
-  console.log({
-    integrations: Object.values(optionGroups).length,
-  });
   const [filteredOptionGroups, setFilteredOptionGroups] =
     React.useState(optionGroups);
 
@@ -179,7 +176,6 @@ export function SearchModal({
               optionGroups={filteredOptionGroups}
               defaultChainBrand={defaultNetwork.value.brandName}
               onSelectOption={onSelectOption}
-              className="max-h-[calc(100%-60px)] overflow-y-auto"
             />
           )}
 
