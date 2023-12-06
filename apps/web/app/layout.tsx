@@ -5,7 +5,6 @@ import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
-import { UsersnapScript } from "./usersnap";
 
 // utils
 import localFont from "next/font/local";
@@ -77,7 +76,6 @@ export default async function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
-        <UsersnapScript />
       </head>
       <body
         className={`${inter.variable} ${interDisplay.variable} font-sans text-foreground`}

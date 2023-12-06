@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
 import useSWR from "swr";
-import { ButtonBody } from "../../cta-button/button-body";
+import { ButtonBody } from "./button-body";
 import Link from "next/link";
 
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -60,10 +60,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
       )}
       {mimeType === "application/pdf" && data ? (
         <div className="overflow-auto w-full max-h-screen">
-          <Document
-            file={data.arrayBuffer}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
+          <Document file={data.arrayBuffer} onLoadSuccess={onDocumentLoadSuccess}>
             {Array.from({ length: numPages || 0 }, (_, i) => i + 1).map(
               (page: number) => (
                 <Page key={page} pageNumber={page} />
