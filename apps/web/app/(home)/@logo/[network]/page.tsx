@@ -27,13 +27,15 @@ export default async function NetworkLogo(props: Props) {
         MODULAR CLOUD
       </small>
 
-      <h1
-        className="font-logo text-5xl font-medium md:text-6xl capitalize text-transparent bg-clip-text"
-        style={{
-          backgroundImage: network.config.cssGradient,
-        }}
-      >
-        {network.chainBrand}
+      <h1 className="font-logo text-5xl font-medium md:text-6xl capitalize">
+        <span
+          className="text-transparent bg-clip-text"
+          style={{
+            backgroundImage: network.config.cssGradient,
+          }}
+        >
+          {network.chainBrand}
+        </span>
       </h1>
     </div>
   );
