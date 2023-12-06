@@ -1,4 +1,4 @@
-import { createResolver } from "@modularcloud-resolver/core";
+import { createResolver, NotFound } from "@modularcloud-resolver/core";
 import { z } from "zod";
 import { Value } from "../../../schemas/page";
 import * as Rollapp from "@modularcloud-resolver/rollapp";
@@ -118,6 +118,9 @@ export const IBCResolver = createResolver(
       data.result.ibc.steps[0].data?.error ||
       !data.result.ibc.steps[0].transaction
     ) {
+      if (data.result.ibc.steps[0].data?.error?.code === 404) {
+        NotFound();
+      }
       return {
         type: "error",
         label,

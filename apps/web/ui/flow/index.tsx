@@ -88,10 +88,10 @@ function Node({
       return data;
     },
     {
-      //refreshInterval: THIRTY_SECONDS,
+      refreshInterval: 5000,
       errorRetryCount: 2,
       keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
+      revalidateOnFocus: false,
       fallbackData,
     },
   );
@@ -104,11 +104,10 @@ function Node({
     return null;
   }, [nodeResponse.data]);
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-  const node = nodeResponse.data.result;
-  if (nodeResponse.error || !nodeResponse.data || !nodeResponse.data.result) {
-    //console.log("ERROR:", nodeResponse);
-    return null;
-  }
+  const node =
+    nodeResponse.error || !nodeResponse.data || !nodeResponse.data.result
+      ? fallbackData.result
+      : nodeResponse.data.result;
   let colors =
     "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
   if (isNext) {
