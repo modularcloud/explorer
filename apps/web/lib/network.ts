@@ -100,6 +100,17 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
     }
   }
 
+  allIntegrations = allIntegrations.sort((a, b) => {
+    // prioritize celestia before every other chain
+    if (a.chainBrand === "celestia") return -1;
+    if (a.chainBrand === "celestia") return 1;
+
+    // put non paid chains at the end
+    if (!a.paidVersion) return 1;
+    if (!b.paidVersion) return -1;
+    return 0;
+  });
+
   if (process.env.NODE_ENV === "development") {
     await jsonFetch<{
       data: Array<SingleNetwork> | null;
@@ -156,7 +167,7 @@ export async function getSingleNetwork(slug: string) {
         }>(`http://localhost:3000/api/fs-cache`, {
           method: "POST",
           body: {
-            key: `single-network-slug`,
+            key: `single-network-${integration.slug}`,
             value: integration,
           },
         });
@@ -204,6 +215,5 @@ export async function getAllPaidNetworks() {
   const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
     ? getAllNetworksCached()
     : getAllNetworks());
-  // only the 1st 30
-  return allNetworks.slice(0, 30).filter((network) => network.paidVersion);
+  return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
