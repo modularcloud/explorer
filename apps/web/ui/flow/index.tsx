@@ -123,6 +123,10 @@ function Node({
     colors =
       "border-[#FADBE1] bg-[#FFF0F3] text-[#710E21] hover:bg-[#FFE5EB] hover:scale-105 transition-transform duration-100";
   }
+
+  if (node.id === hash) {
+    node.shortId = "You're here 👇";
+  }
   return (
     <Link
       href={`${node.type === "completed" ? node.link : "#"}`}
