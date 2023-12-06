@@ -18,14 +18,14 @@ export default function HomeLogo() {
         THIS FUTURE IS NOW
       </small>
 
-      <p className="font-logo text-5xl font-medium md:text-6xl capitalize">
+      <h1 className="font-logo text-5xl font-medium md:text-6xl capitalize">
         <span className="bg-gradient-to-r from-[#191930] via-[#525272] to-[#2C2C43] text-transparent bg-clip-text">
           Modular
         </span>
         <span className="from-royal to-cyan-500 bg-gradient-to-r bg-clip-text text-transparent">
           Cloud
         </span>
-      </p>
+      </h1>
     </div>
   );
 }
