@@ -1,12 +1,11 @@
 "use client";
 
-import type { Value } from "@modularcloud/headless";
 import Image from "next/image";
 import { cn } from "../shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import React, { useContext, useMemo } from "react";
+import React from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
 import { useParams } from "next/navigation";
@@ -95,7 +94,7 @@ function Node({
       fallbackData,
     },
   );
-  const time = useMemo(() => {
+  const time = React.useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.timestamp) {
       dayjs.extend(relativeTime);
@@ -170,7 +169,7 @@ function Node({
       </div>
       {node.type === "completed" ? (
         <div className="flex justify-between align-items gap-5 mt-4">
-          <div className="text-xs font-medium leading-4">
+          <div className="text-xs font-medium leading-4 whitespace-nowrap">
             {node.shortId ?? node.id}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
@@ -264,11 +263,12 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
     },
   );
-  const amount = useMemo(() => {
+  const amount = React.useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
       const [value, denom] = node.sidebar.Token.payload.split(" ");
-      return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`;
+      const formattedDenom = denom.slice(1).toUpperCase();
+      return `${Number(value) / 10 ** 18} ${formattedDenom.length > 7 ? formattedDenom.slice(0, 7) + "..." : formattedDenom}`;
     }
     return null;
   }, [nodeResponse.data]);
