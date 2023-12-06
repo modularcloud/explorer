@@ -20,49 +20,54 @@ export async function DymensionWidgetLayout({
   );
 
   return (
-    <ul
-      className={cn(
-        "grid grid-cols-2 gap-4",
-        "md:grid-cols-3 md:gap-6",
-        "tab:grid-cols-4 tab:gap-8",
-        "lg:grid-cols-5",
-      )}
-    >
-      {allNetworks.map((network) => (
-        <li key={network.slug}>
-          <Card
-            className={cn(
-              "h-[11.75rem] relative flex flex-col items-center p-5 gap-1 w-full",
-              "hover:bg-muted-100 transition-colors duration-150",
-              "focus-within:border-primary",
-            )}
-            style={{
-              // @ts-expect-error this is a CSS variable
-              "--color-primary": network.config.primaryColor,
-            }}
-          >
-            <Image
-              src={network.config.logoUrl}
-              height={108}
-              width={108}
-              alt={`${network.chainBrand} ${network.chainName} logo`}
-              className="object-center rounded-full w-24 aspect-square"
-            />
-            <span className="font-medium text-xs capitalize">
-              {network.chainBrand}
-            </span>
-            <span className="text-muted text-xs">{network.chainName}</span>
-            <Link
-              href={`/${network.slug}`}
-              className="after:absolute after:inset-0 focus:outline-none"
+    <>
+      <h2 className="text-center text-muted text-xs my-4">
+        A dymension ecosystem chain
+      </h2>
+      <ul
+        className={cn(
+          "grid grid-cols-2 gap-4",
+          "md:grid-cols-3 md:gap-6",
+          "tab:grid-cols-4 tab:gap-8",
+          "lg:grid-cols-5",
+        )}
+      >
+        {allNetworks.map((network) => (
+          <li key={network.slug}>
+            <Card
+              className={cn(
+                "h-[11.75rem] relative flex flex-col items-center p-5 gap-1 w-full",
+                "hover:bg-muted-100 transition-colors duration-150",
+                "focus-within:border-primary",
+              )}
+              style={{
+                // @ts-expect-error this is a CSS variable
+                "--color-primary": network.config.primaryColor,
+              }}
             >
-              <span className="sr-only">
-                {network.chainBrand} {network.chainName}
+              <Image
+                src={network.config.logoUrl}
+                height={108}
+                width={108}
+                alt={`${network.chainBrand} ${network.chainName} logo`}
+                className="object-center rounded-full w-24 aspect-square"
+              />
+              <span className="font-medium text-xs capitalize">
+                {network.chainBrand}
               </span>
-            </Link>
-          </Card>
-        </li>
-      ))}
-    </ul>
+              <span className="text-muted text-xs">{network.chainName}</span>
+              <Link
+                href={`/${network.slug}`}
+                className="after:absolute after:inset-0 focus:outline-none"
+              >
+                <span className="sr-only">
+                  {network.chainBrand} {network.chainName}
+                </span>
+              </Link>
+            </Card>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
