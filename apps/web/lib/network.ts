@@ -217,3 +217,18 @@ export async function getAllPaidNetworks() {
     : getAllNetworks());
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
+
+export async function getNetworksForPlatform(platform: string) {
+  const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
+    ? getAllNetworksCached()
+    : getAllNetworks());
+
+  return allNetworks.filter((network) => network.config.platform === platform);
+}
+export async function getNetworksForPlatformCached(platform: string) {
+  const getNetworksForPlatformFn = nextCache(getNetworksForPlatform, {
+    tags: CACHE_KEYS.networks.platform(platform),
+  });
+
+  return await getNetworksForPlatformFn(platform);
+}

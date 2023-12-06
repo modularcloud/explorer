@@ -1,7 +1,11 @@
 import * as React from "react";
 
 import { notFound } from "next/navigation";
-import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
+import {
+  getAllPaidNetworks,
+  getNetworksForPlatformCached,
+  getSingleNetworkCached,
+} from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
@@ -31,6 +35,16 @@ export default async function NetworkWidgetPage({ params }: Props) {
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
+
+  if (network.config.platform === "dymension") {
+    const dymensionNetworks = await getNetworksForPlatformCached("dymension");
+    return (
+      <DymensionWidgetLayout
+        networkSlug={network.slug}
+        allDymensionNetworks={dymensionNetworks}
+      />
+    );
+  }
 
   switch (network.config.widgetLayout) {
     // TODO : When EVM is ready, we should follow the same code structure as the other layouts
