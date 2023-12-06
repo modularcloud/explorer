@@ -74,7 +74,7 @@ function Node({
     },
   };
   const nodeResponse = useSWR(
-    ["/api/resolve/transactions", body],
+    ["/api/resolve/ibc", body],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
@@ -244,7 +244,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     },
   };
   const nodeResponse = useSWR(
-    ["/api/resolve/transactions", body],
+    ["/api/resolve/ibc", body],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
