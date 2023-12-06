@@ -16,11 +16,10 @@ import { IntegrationGridView } from "./integration-grid-view";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
-import { filterOptionGroups } from "./filter-option-group";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
-import { useDebouncedCallBack } from "~/lib/hooks/use-debounced-callback";
+import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
@@ -64,14 +63,10 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const [filteredOptionGroups, setFilteredOptionGroups] =
-    React.useState(optionGroups);
-
-  const filterGroups = (filter: string) =>
-    setFilteredOptionGroups(filterOptionGroups(optionGroups, filter));
+  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
 
   const isNetworkQuery =
-    !selectedNetwork && Object.keys(filteredOptionGroups).length > 0;
+    !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
 
   let currentNetwork = selectedNetwork;
   if (!selectedNetwork && !isNetworkQuery) {
@@ -128,10 +123,7 @@ export function SearchModal({
                 }
                 autoComplete="off"
                 value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                  filterGroups(e.target.value);
-                }}
+                onChange={(e) => setInputValue(e.target.value)}
                 helpText="Search blocks, transactions, addresses, or namespaces"
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
@@ -172,7 +164,7 @@ export function SearchModal({
           {!currentNetwork && isNetworkQuery && (
             <IntegrationGridView
               parentDialogRef={dialogRef}
-              optionGroups={filteredOptionGroups}
+              optionGroups={filteredOptionGroup}
               defaultChainBrand={defaultNetwork.value.brandName}
               onSelectOption={onSelectOption}
             />

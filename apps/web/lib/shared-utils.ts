@@ -298,35 +298,3 @@ export async function jsonFetch<T>(
       throw error;
     });
 }
-
-/**
- * This function allows you to delay the call of a function after a certain delay,
- * in order not to block the ui when the user performs an action.
- * Each time this function is called befire the defined delay,
- * it cancels its previous execution
- *
- * @example
- *   // usage
- *   const fn = debounce(() => { console.log(...) })
- *
- *   // Only the second one will be executed
- *   fn()
- *   fn()
- *
- * @param callback
- * @param delay
- */
-export function debounce<T extends Function>(
-  callback: T,
-  delay: number = 500,
-): T {
-  let timer: any;
-  const fn = (...args: unknown[]) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      // @ts-ignore
-      callback.apply(this, args);
-    }, delay);
-  };
-  return fn as unknown as T;
-}
