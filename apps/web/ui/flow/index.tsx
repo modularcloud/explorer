@@ -318,6 +318,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
 }
 
 export function FlowChart() {
+  console.log("HELLO ===================================================")
   const params = useParams();
   const slug = params?.network;
   const txHash = params?.path?.[1];
