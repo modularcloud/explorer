@@ -101,7 +101,7 @@ export const IBCResolver = createResolver(
     ][step];
 
     const response = await fetch(
-      `https://aptaki5hsk.execute-api.us-west-2.amazonaws.com/prod/v1/integration/${integrationId}/ibc-info/tx-hash/${hash}?step=${stepName}`,
+      `${process.env.IBC_API}/integration/${integrationId}/ibc-info/tx-hash/${hash}?step=${stepName}`,
     ).then((res) => res.json());
     const data = Result.parse(response);
     const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];

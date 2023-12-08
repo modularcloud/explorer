@@ -39,7 +39,8 @@
         "CELESTIA_ARABICA_RPC",
         "INTERNAL_INTEGRATION_API_URL",
         "REVALIDATE_TOKEN",
-        "ALT_BASE_URL"
+        "ALT_BASE_URL",
+        "IBC_API"
       ]
     },
     "verify#build": {
