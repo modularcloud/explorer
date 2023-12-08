@@ -25,6 +25,7 @@ const STEPS = [
   "TOOLKIT",
   "LAYER_1",
   "SUMMARY",
+  "SUCCESS",
 ] as const;
 type Step = (typeof STEPS)[number];
 
