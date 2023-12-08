@@ -9,6 +9,7 @@ import React from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
 import { useParams } from "next/navigation";
+import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
 type Node =
   | {
@@ -268,7 +269,11 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
       const [value, denom] = node.sidebar.Token.payload.split(" ");
       const formattedDenom = denom.slice(1).toUpperCase();
-      return `${Number(value) / 10 ** 18} ${formattedDenom.length > 7 ? formattedDenom.slice(0, 7) + "..." : formattedDenom}`;
+      return `${Number(value) / 10 ** 18} ${
+        formattedDenom.length > 7
+          ? formattedDenom.slice(0, 7) + "..."
+          : formattedDenom
+      }`;
     }
     return null;
   }, [nodeResponse.data]);
@@ -318,9 +323,9 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
 }
 
 export function FlowChart() {
-  const params = useParams();
-  const slug = params?.network;
-  const txHash = params?.path?.[1];
+  const params = useParams<{ network: string; path: string[] }>();
+  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
+  const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
