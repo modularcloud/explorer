@@ -10,18 +10,20 @@ export type InputProps = Omit<
   renderLeadingIcon?: (classNames: string) => React.ReactNode;
   renderTrailingIcon?: (classNames: string) => React.ReactNode;
   size?: "small" | "medium" | "large";
+  label: string;
+  hideLabel?: boolean;
 };
 
 export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
   function Input(
     {
       className,
-
       helpText,
       inputClassName,
-
+      label,
       renderLeadingIcon,
       renderTrailingIcon,
+      hideLabel = false,
       required = false,
       autoComplete = "off",
       type = "text",
@@ -37,6 +39,9 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
 
     return (
       <div className={cn(className, "flex w-full flex-col gap-1")}>
+        <label htmlFor={id} className={cn(hideLabel && "sr-only")}>
+          {label}
+        </label>
         <div
           className={cn(
             className,
@@ -60,7 +65,6 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
               }),
             )}
           </div>
-
           <input
             {...otherProps}
             ref={ref}
@@ -78,7 +82,6 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
               },
             )}
           />
-
           {renderTrailingIcon?.(
             cn("text-muted flex-shrink-0", {
               "h-4 w-4": size !== "large",
