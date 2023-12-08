@@ -5,37 +5,61 @@ import * as React from "react";
 import { range } from "~/lib/shared-utils";
 import { Button } from "~/ui/button";
 import { cn } from "~/ui/shadcn/utils";
-import { ArrowRight, Check, Enveloppe, GithubLogo, GlobeWeb } from "~/ui/icons";
+import {
+  ArrowRight,
+  Building,
+  Check,
+  Enveloppe,
+  GithubLogo,
+  GlobeWeb,
+} from "~/ui/icons";
 import { Input } from "~/ui/input";
 import { Card } from "~/ui/card";
 import Image from "next/image";
 
 export type RegisterFormProps = {};
 
+const STEPS = [
+  "DETAILS",
+  "ENVIRONMENT",
+  "TOOLKIT",
+  "LAYER_1",
+  "SUMMARY",
+] as const;
+type Step = (typeof STEPS)[number];
+
 export function RegisterForm({}: RegisterFormProps) {
-  const [currentStep, setCurrentStep] = React.useState(1);
+  const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
 
   let title = "Register your chain";
   let subTitle = "Tell us more about yourself.";
 
-  if (currentStep === 2) {
+  if (currentStep === "ENVIRONMENT") {
     title = "Execution Environment";
     subTitle = "Choose one or more options";
   }
-  if (currentStep === 3) {
+  if (currentStep === "TOOLKIT") {
     title = "Toolkit";
     subTitle = "Choose an option";
   }
-  if (currentStep === 4) {
+  if (currentStep === "LAYER_1") {
     title = "Layer 1";
     subTitle = "Choose one or more options";
   }
+  if (currentStep === "SUMMARY") {
+    title = "Summary";
+    subTitle = "Your chain summary";
+  }
 
+  const currentStepIdx = STEPS.findIndex((step) => step === currentStep);
+  function jumpToStep(index: number) {
+    if (index < STEPS.length && index >= 0) {
+      setCurrentStep(STEPS[index]);
+    }
+  }
   async function formAction(formData: FormData) {
     console.log({ formData });
-    if (currentStep <= 4) {
-      setCurrentStep(currentStep + 1);
-    }
+    jumpToStep(currentStepIdx + 1);
   }
 
   return (
@@ -43,15 +67,15 @@ export function RegisterForm({}: RegisterFormProps) {
       className="flex flex-col justify-between h-full items-center w-full"
       action={formAction}
     >
-      <header className="p-4 border-b bg-white z-10 relative w-full flex flex-col items-center">
+      <header className="p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0">
         <Stepper
-          current={currentStep}
-          noOfSteps={4}
-          onJumpToStep={(step) => setCurrentStep(step)}
+          current={currentStepIdx}
+          noOfSteps={STEPS.length - 1}
+          onJumpToStep={jumpToStep}
         />
       </header>
 
-      <div className="flex-1 flex flex-col gap-8 pt-32 justify-stretch w-full px-10 mx-auto tab:max-w-[30rem]">
+      <div className="flex-1 flex flex-col gap-8 pt-32 py-20 justify-stretch w-full px-10 mx-auto tab:max-w-[30rem]">
         <div className="flex flex-col items-center gap-3">
           <img
             src="/images/mc-logo.svg"
@@ -63,7 +87,7 @@ export function RegisterForm({}: RegisterFormProps) {
         </div>
 
         <div className="flex flex-col gap-4">
-          {currentStep === 1 && (
+          {currentStep === "DETAILS" && (
             <>
               <Input
                 size="small"
@@ -84,7 +108,7 @@ export function RegisterForm({}: RegisterFormProps) {
                 name="projectName"
                 required
                 renderLeadingIcon={(cls) => (
-                  <GlobeWeb className={cls} aria-hidden="true" />
+                  <Building className={cls} aria-hidden="true" />
                 )}
               />
               <Input
@@ -99,7 +123,7 @@ export function RegisterForm({}: RegisterFormProps) {
               />
             </>
           )}
-          {currentStep === 2 && (
+          {currentStep === "ENVIRONMENT" && (
             <>
               <div className="grid grid-cols-2 gap-3">
                 <ImageCheckbox
@@ -135,20 +159,231 @@ export function RegisterForm({}: RegisterFormProps) {
               />
             </>
           )}
+          {currentStep === "TOOLKIT" && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ImageCheckbox
+                  label="Blobstream"
+                  name="toolkit"
+                  value="BLOBSTREAM"
+                  type="radio"
+                  image="/images/celestia-logo.svg"
+                />
+                <ImageCheckbox
+                  label="Rollkit"
+                  name="toolkit"
+                  value="ROLLKIT"
+                  type="radio"
+                  image="/images/Rollkit.svg"
+                />
+                <ImageCheckbox
+                  label="Dymint"
+                  name="toolkit"
+                  value="DYMINT"
+                  type="radio"
+                  image="/images/Dymint.svg"
+                />
+              </div>
+              <p>Other</p>
+              <div className="grid grid-cols-2 gap-3">
+                <ImageCheckbox
+                  label="OP Stack"
+                  name="toolkit"
+                  value="OP_STACK"
+                  type="radio"
+                />
+                <ImageCheckbox
+                  label="Arbitrum Nitro"
+                  name="toolkit"
+                  value="ARBITRUM_NITRO"
+                  type="radio"
+                />
+              </div>
+
+              <Input
+                size="small"
+                label="Not listed here ?"
+                placeholder="Enter the name here..."
+              />
+            </>
+          )}
+          {currentStep === "LAYER_1" && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ImageCheckbox
+                  label="Ethereum"
+                  name="layer_1"
+                  value="ETHEREUM"
+                  image="/images/ethereum.png"
+                />
+                <ImageCheckbox
+                  label="Celestia"
+                  name="layer_1"
+                  value="CELESTIA"
+                  image="/images/celestia-logo.svg"
+                />
+              </div>
+            </>
+          )}
+          {currentStep === "SUMMARY" && (
+            <div className="flex flex-col gap-8">
+              <section className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-medium text-xl leading-6">Details</h2>
+                  <Button
+                    type="button"
+                    variant="bordered"
+                    className="px-2 py-1 text-muted font-normal text-xs"
+                    onClick={() => setCurrentStep("DETAILS")}
+                  >
+                    Edit
+                  </Button>
+                </div>
+                <dl className="flex flex-col gap-4 text-sm">
+                  <div className="flex items-center gap-1.5 text-muted">
+                    <Enveloppe
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                    <div className="flex items-center gap-0.5 flex-wrap">
+                      <dt>Email:</dt>
+                      <dd>
+                        <strong className="font-medium">
+                          hi@modularcloud.com
+                        </strong>
+                      </dd>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-muted">
+                    <Building
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                    <div className="flex items-center gap-0.5 flex-wrap">
+                      <dt>Project Name:</dt>
+                      <dd>
+                        <strong className="font-medium">CelestiaScan</strong>
+                      </dd>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-muted">
+                    <GithubLogo
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                    <div className="flex items-center gap-0.5 flex-wrap">
+                      <dt>GitHub Repo:</dt>
+                      <dd>
+                        <a
+                          href="https://github.com/celestiaorg/celestia-app"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary underline"
+                        >
+                          https://github.com/celestiaorg/celestia-app
+                        </a>
+                      </dd>
+                    </div>
+                  </div>
+                </dl>
+              </section>
+
+              <section className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-medium text-xl leading-6">
+                    Execution Environment
+                  </h2>
+                  <Button
+                    type="button"
+                    variant="bordered"
+                    className="px-2 py-1 text-muted font-normal text-xs"
+                    onClick={() => setCurrentStep("ENVIRONMENT")}
+                  >
+                    Edit
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <ImageCheckbox
+                    label="Ethereum"
+                    image="/images/ethereum.png"
+                    disabled
+                  />
+                  <ImageCheckbox
+                    label="Celestia"
+                    image="/images/celestia-logo.svg"
+                    disabled
+                  />
+                </div>
+              </section>
+
+              <section className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-medium text-xl leading-6">Toolkit</h2>
+                  <Button
+                    type="button"
+                    variant="bordered"
+                    className="px-2 py-1 text-muted font-normal text-xs"
+                    onClick={() => setCurrentStep("TOOLKIT")}
+                  >
+                    Edit
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <ImageCheckbox
+                    label="Ethereum"
+                    image="/images/ethereum.png"
+                    disabled
+                  />
+                  <ImageCheckbox
+                    label="Celestia"
+                    image="/images/celestia-logo.svg"
+                    disabled
+                  />
+                </div>
+              </section>
+
+              <section className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-medium text-xl leading-6">Layer 1</h2>
+                  <Button
+                    type="button"
+                    variant="bordered"
+                    className="px-2 py-1 text-muted font-normal text-xs"
+                    onClick={() => setCurrentStep("LAYER_1")}
+                  >
+                    Edit
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <ImageCheckbox
+                    label="Ethereum"
+                    image="/images/ethereum.png"
+                    disabled
+                  />
+                  <ImageCheckbox
+                    label="Celestia"
+                    image="/images/celestia-logo.svg"
+                    disabled
+                  />
+                </div>
+              </section>
+            </div>
+          )}
         </div>
       </div>
 
-      <footer className="p-4 border-t bg-white z-10 relative w-full">
+      <footer className="p-4 border-t bg-white z-10 w-full sticky bottom-0">
         <div className="flex items-center justify-stretch gap-4 md:justify-between">
           <Button
             type="button"
             variant="bordered"
-            aria-disabled={currentStep === 1}
+            aria-disabled={currentStep === "DETAILS"}
             className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
             onClick={() => {
-              if (currentStep > 1) {
-                setCurrentStep(currentStep - 1);
-              }
+              jumpToStep(currentStepIdx - 1);
             }}
           >
             <ArrowRight
@@ -182,7 +417,7 @@ type StepperProps = {
 function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
   return (
     <ol className="flex gap-3">
-      {range(1, noOfSteps).map((step) => (
+      {range(0, noOfSteps - 1).map((step) => (
         <li className="flex items-center gap-2">
           <Button
             type="button"
@@ -206,9 +441,9 @@ function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
             >
               Step
             </span>
-            <span>{step}</span>
+            <span>{step + 1}</span>
           </Button>
-          {step !== noOfSteps && (
+          {step < noOfSteps - 1 && (
             <ArrowRight className="h-3 w-3 text-muted/40" aria-hidden="true" />
           )}
         </li>
@@ -223,19 +458,21 @@ type ImageCheckboxProps = Omit<
 > & {
   image?: string;
   label: string;
+  type?: "checkbox" | "radio";
 };
 
 function ImageCheckbox({
   image,
   label,
   value,
+  type = "checkbox",
   ...checkboxProps
 }: ImageCheckboxProps) {
   const checkboxId = React.useId();
   return (
     <div>
       <input
-        type="checkbox"
+        type={type}
         id={checkboxId}
         defaultValue={value}
         className="peer sr-only"
@@ -244,7 +481,15 @@ function ImageCheckbox({
       <Card
         as="label"
         htmlFor={checkboxId}
-        className="flex flex-col py-2 text-xs items-center cursor-pointer peer-checked:border-primary peer-checked:border-2"
+        className={cn(
+          "flex flex-col text-xs items-center cursor-pointer",
+          "peer-checked:border-primary peer-checked:border-2",
+          "peer-disabled:cursor-default",
+          {
+            "py-2": !!image,
+            "py-3": !image,
+          },
+        )}
       >
         {image && (
           <div className="h-8 w-8 p-1">
