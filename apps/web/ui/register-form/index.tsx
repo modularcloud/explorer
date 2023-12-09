@@ -5,17 +5,12 @@ import * as React from "react";
 import { range } from "~/lib/shared-utils";
 import { Button } from "~/ui/button";
 import { cn } from "~/ui/shadcn/utils";
-import {
-  ArrowRight,
-  Building,
-  Check,
-  Enveloppe,
-  GithubLogo,
-  GlobeWeb,
-} from "~/ui/icons";
+import { ArrowRight, Building, Check, Enveloppe, GithubLogo } from "~/ui/icons";
 import { Input } from "~/ui/input";
 import { Card } from "~/ui/card";
 import Image from "next/image";
+import { z } from "zod";
+import { useFormState } from "react-dom";
 
 export type RegisterFormProps = {};
 
@@ -29,8 +24,52 @@ const STEPS = [
 ] as const;
 type Step = (typeof STEPS)[number];
 
+const detailStepSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .nonempty({
+      message: "Can't be empty!",
+    })
+    .email({
+      message: "Please enter a correct email",
+    }),
+  projectName: z.string().trim().nonempty({
+    message: "Can't be empty!",
+  }),
+  githubRepo: z
+    .string()
+    .trim()
+    .refine(
+      (val) => {
+        // allow empty
+        if (!val) return true;
+        try {
+          if (!val.startsWith("https://")) val = `https://${val}`;
+
+          const url = new URL(val);
+          return (
+            url.toString().startsWith("https://github.com/") ||
+            url.toString().startsWith("github.com/")
+          );
+        } catch (error) {
+          return false;
+        }
+      },
+      {
+        message:
+          "please enter a correct URL, hint: it should start with https://github.com/",
+      },
+    ),
+});
+
+type FullFormType = z.TypeOf<typeof detailStepSchema>;
+
 export function RegisterForm({}: RegisterFormProps) {
   const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
+  const [valuesInputed, setValuesInputed] = React.useState<
+    Partial<FullFormType>
+  >({});
 
   let title = "Register your chain";
   let subTitle = "Tell us more about yourself.";
@@ -58,15 +97,43 @@ export function RegisterForm({}: RegisterFormProps) {
       setCurrentStep(STEPS[index]);
     }
   }
-  async function formAction(formData: FormData) {
+
+  async function formAction(_: any, formData: FormData) {
     console.log({ formData });
+
+    if (currentStep === "DETAILS") {
+      const result = detailStepSchema.safeParse(Object.fromEntries(formData));
+
+      if (!result.success) {
+        return {
+          type: "error" as const,
+          fieldErrors: result.error.flatten().fieldErrors,
+          formData: {
+            email: formData.get("email")?.toString() ?? null,
+            projectName: formData.get("projectName")?.toString() ?? null,
+            githubRepo: formData.get("githubRepo")?.toString() ?? null,
+          },
+        };
+      }
+
+      setValuesInputed({ ...valuesInputed, ...result.data });
+    }
     jumpToStep(currentStepIdx + 1);
+
+    return {};
   }
+
+  const [state, action] = useFormState(formAction, {});
+
+  const defaultValues =
+    state?.type === "error" ? state.formData : valuesInputed;
+  const errors = state.type === "error" ? state.fieldErrors : null;
 
   return (
     <form
       className="flex flex-col justify-between h-full items-center w-full"
-      action={formAction}
+      action={action}
+      noValidate
     >
       <header className="p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0">
         <Stepper
@@ -97,9 +164,11 @@ export function RegisterForm({}: RegisterFormProps) {
                 placeholder="Ex: contact@celestia.org"
                 name="email"
                 required
+                defaultValue={defaultValues?.email}
                 renderLeadingIcon={(cls) => (
                   <Enveloppe className={cls} aria-hidden="true" />
                 )}
+                error={errors?.email}
               />
               <Input
                 size="small"
@@ -107,20 +176,24 @@ export function RegisterForm({}: RegisterFormProps) {
                 type="text"
                 placeholder="Ex: Celestia"
                 name="projectName"
+                defaultValue={defaultValues?.projectName}
                 required
                 renderLeadingIcon={(cls) => (
                   <Building className={cls} aria-hidden="true" />
                 )}
+                error={errors?.projectName}
               />
               <Input
                 size="small"
                 label="Github Repo (optional)"
                 type="url"
                 name="githubRepo"
+                defaultValue={defaultValues?.githubRepo}
                 placeholder="Ex: https://github.com/celestiaorg/celestia-app"
                 renderLeadingIcon={(cls) => (
                   <GithubLogo className={cls} aria-hidden="true" />
                 )}
+                error={errors?.githubRepo}
               />
             </>
           )}
@@ -419,7 +492,7 @@ function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
   return (
     <ol className="flex gap-3">
       {range(0, noOfSteps - 1).map((step) => (
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2" key={step}>
           <Button
             type="button"
             onClick={() => onJumpToStep(step)}
