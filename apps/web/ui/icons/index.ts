@@ -77,4 +77,5 @@ export { default as SunOn } from "./SunOn";
 export { default as UsdCoin } from "./UsdCoin";
 export { default as UserOff } from "./UserOff";
 export { default as UserOn } from "./UserOn";
+export { default as Warning } from "./Warning";
 export { default as XCircle } from "./XCircle";

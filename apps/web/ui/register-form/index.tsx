@@ -2,15 +2,20 @@
 "use client";
 
 import * as React from "react";
-import { range } from "~/lib/shared-utils";
-import { Button } from "~/ui/button";
-import { cn } from "~/ui/shadcn/utils";
-import { ArrowRight, Building, Check, Enveloppe, GithubLogo } from "~/ui/icons";
-import { Input } from "~/ui/input";
-import { Card } from "~/ui/card";
-import Image from "next/image";
-import { z } from "zod";
 import { useFormState } from "react-dom";
+import { Button } from "~/ui/button";
+import {
+  ArrowRight,
+  Building,
+  Enveloppe,
+  GithubLogo,
+  Warning,
+} from "~/ui/icons";
+import { Input } from "~/ui/input";
+import { preprocess, z } from "zod";
+import { Stepper } from "./stepper";
+import { ImageCheckbox } from "./image-checkbox";
+import { cn } from "../shadcn/utils";
 
 export type RegisterFormProps = {};
 
@@ -18,7 +23,7 @@ const STEPS = [
   "DETAILS",
   "ENVIRONMENT",
   "TOOLKIT",
-  "LAYER_1",
+  "LAYER",
   "SUMMARY",
   "SUCCESS",
 ] as const;
@@ -63,13 +68,50 @@ const detailStepSchema = z.object({
     ),
 });
 
-type FullFormType = z.TypeOf<typeof detailStepSchema>;
+const envStepSchema = z.object({
+  env: z.array(z.string().trim().nonempty()).nonempty({
+    message: "Choose one or more environments",
+  }),
+});
+
+const toolkitStepSchema = z.object({
+  toolkit: z
+    .string({
+      required_error: "Please select one toolkit",
+    })
+    .trim()
+    .nonempty({
+      message: "Please select one toolkit",
+    }),
+});
+
+const layerStepSchema = z.object({
+  layer: preprocess(
+    (arg) => {
+      if (Array.isArray(arg)) {
+        return new Set([...arg]);
+      }
+      return arg;
+    },
+    z.set(z.enum(["ETHEREUM", "CELESTIA"]), {
+      invalid_type_error: "Please choose one or more options",
+      required_error: "Please choose one or more options",
+    }),
+  ),
+});
+
+type DetailStep = z.TypeOf<typeof detailStepSchema>;
+type EnvStep = z.TypeOf<typeof envStepSchema>;
+type ToolkitStep = z.TypeOf<typeof toolkitStepSchema>;
+type LayerStep = z.TypeOf<typeof layerStepSchema>;
+
+type AllValues = DetailStep & EnvStep & ToolkitStep & LayerStep;
 
 export function RegisterForm({}: RegisterFormProps) {
   const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
-  const [valuesInputed, setValuesInputed] = React.useState<
-    Partial<FullFormType>
-  >({});
+  const [valuesInputed, setValuesInputed] = React.useState<Partial<AllValues>>(
+    {},
+  );
 
   let title = "Register your chain";
   let subTitle = "Tell us more about yourself.";
@@ -82,7 +124,7 @@ export function RegisterForm({}: RegisterFormProps) {
     title = "Toolkit";
     subTitle = "Choose an option";
   }
-  if (currentStep === "LAYER_1") {
+  if (currentStep === "LAYER") {
     title = "Layer 1";
     subTitle = "Choose one or more options";
   }
@@ -116,6 +158,49 @@ export function RegisterForm({}: RegisterFormProps) {
         };
       }
 
+      setValuesInputed({ ...valuesInputed, ...result.data });
+    }
+    if (currentStep === "ENVIRONMENT") {
+      const result = envStepSchema.safeParse({
+        env: formData.getAll("env"),
+      });
+      if (!result.success) {
+        return {
+          type: "error" as const,
+          fieldErrors: result.error.flatten().fieldErrors,
+          formData: {
+            env: [...formData.getAll("env")].map(String),
+          } as EnvStep,
+        };
+      }
+      setValuesInputed({ ...valuesInputed, ...result.data });
+    }
+    if (currentStep === "TOOLKIT") {
+      const result = toolkitStepSchema.safeParse(Object.fromEntries(formData));
+      if (!result.success) {
+        return {
+          type: "error" as const,
+          fieldErrors: result.error.flatten().fieldErrors,
+          formData: {
+            toolkit: formData.get("toolkit")?.toString() ?? null,
+          },
+        };
+      }
+      setValuesInputed({ ...valuesInputed, ...result.data });
+    }
+    if (currentStep === "LAYER") {
+      const result = layerStepSchema.safeParse({
+        layer: formData.getAll("layer"),
+      });
+      if (!result.success) {
+        return {
+          type: "error" as const,
+          fieldErrors: result.error.flatten().fieldErrors,
+          formData: {
+            layer: new Set([...formData.getAll("layer")].map(String)),
+          } as LayerStep,
+        };
+      }
       setValuesInputed({ ...valuesInputed, ...result.data });
     }
     jumpToStep(currentStepIdx + 1);
@@ -156,148 +241,16 @@ export function RegisterForm({}: RegisterFormProps) {
 
         <div className="flex flex-col gap-4">
           {currentStep === "DETAILS" && (
-            <>
-              <Input
-                size="small"
-                label="Email"
-                type="email"
-                placeholder="Ex: contact@celestia.org"
-                name="email"
-                required
-                defaultValue={defaultValues?.email}
-                renderLeadingIcon={(cls) => (
-                  <Enveloppe className={cls} aria-hidden="true" />
-                )}
-                error={errors?.email}
-              />
-              <Input
-                size="small"
-                label="Project Name"
-                type="text"
-                placeholder="Ex: Celestia"
-                name="projectName"
-                defaultValue={defaultValues?.projectName}
-                required
-                renderLeadingIcon={(cls) => (
-                  <Building className={cls} aria-hidden="true" />
-                )}
-                error={errors?.projectName}
-              />
-              <Input
-                size="small"
-                label="Github Repo (optional)"
-                type="url"
-                name="githubRepo"
-                defaultValue={defaultValues?.githubRepo}
-                placeholder="Ex: https://github.com/celestiaorg/celestia-app"
-                renderLeadingIcon={(cls) => (
-                  <GithubLogo className={cls} aria-hidden="true" />
-                )}
-                error={errors?.githubRepo}
-              />
-            </>
+            <DetailStepForm defaultValues={defaultValues} errors={errors} />
           )}
           {currentStep === "ENVIRONMENT" && (
-            <>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageCheckbox
-                  label="Ethereum"
-                  name="env"
-                  value="EVM"
-                  image="/images/ethereum.png"
-                />
-                <ImageCheckbox
-                  label="Sealevel"
-                  name="env"
-                  value="SVM"
-                  image="/images/sealevel.png"
-                />
-                <ImageCheckbox
-                  label="Move"
-                  name="env"
-                  value="MOVE"
-                  image="/images/move.svg"
-                />
-                <ImageCheckbox
-                  label="Cosmos SDK"
-                  name="env"
-                  value="COSMOS"
-                  image="/images/cosmos.svg"
-                />
-              </div>
-
-              <Input
-                size="small"
-                label="Not listed here ?"
-                placeholder="Enter the name here..."
-              />
-            </>
+            <EnvStepForm defaultValues={defaultValues} errors={errors} />
           )}
           {currentStep === "TOOLKIT" && (
-            <>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageCheckbox
-                  label="Blobstream"
-                  name="toolkit"
-                  value="BLOBSTREAM"
-                  type="radio"
-                  image="/images/celestia-logo.svg"
-                />
-                <ImageCheckbox
-                  label="Rollkit"
-                  name="toolkit"
-                  value="ROLLKIT"
-                  type="radio"
-                  image="/images/Rollkit.svg"
-                />
-                <ImageCheckbox
-                  label="Dymint"
-                  name="toolkit"
-                  value="DYMINT"
-                  type="radio"
-                  image="/images/Dymint.svg"
-                />
-              </div>
-              <p>Other</p>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageCheckbox
-                  label="OP Stack"
-                  name="toolkit"
-                  value="OP_STACK"
-                  type="radio"
-                />
-                <ImageCheckbox
-                  label="Arbitrum Nitro"
-                  name="toolkit"
-                  value="ARBITRUM_NITRO"
-                  type="radio"
-                />
-              </div>
-
-              <Input
-                size="small"
-                label="Not listed here ?"
-                placeholder="Enter the name here..."
-              />
-            </>
+            <ToolkitStepForm defaultValues={defaultValues} errors={errors} />
           )}
-          {currentStep === "LAYER_1" && (
-            <>
-              <div className="grid grid-cols-2 gap-3">
-                <ImageCheckbox
-                  label="Ethereum"
-                  name="layer_1"
-                  value="ETHEREUM"
-                  image="/images/ethereum.png"
-                />
-                <ImageCheckbox
-                  label="Celestia"
-                  name="layer_1"
-                  value="CELESTIA"
-                  image="/images/celestia-logo.svg"
-                />
-              </div>
-            </>
+          {currentStep === "LAYER" && (
+            <LayerStepForm defaultValues={defaultValues} errors={errors} />
           )}
           {currentStep === "SUMMARY" && (
             <div className="flex flex-col gap-8">
@@ -314,7 +267,7 @@ export function RegisterForm({}: RegisterFormProps) {
                   </Button>
                 </div>
                 <dl className="flex flex-col gap-4 text-sm">
-                  <div className="flex items-center gap-1.5 text-muted">
+                  <div className="flex items-center gap-1.5">
                     <Enveloppe
                       className="h-4 w-4 flex-none"
                       aria-hidden="true"
@@ -323,12 +276,12 @@ export function RegisterForm({}: RegisterFormProps) {
                       <dt>Email:</dt>
                       <dd>
                         <strong className="font-medium">
-                          hi@modularcloud.com
+                          {valuesInputed.email}
                         </strong>
                       </dd>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted">
+                  <div className="flex items-center gap-1.5">
                     <Building
                       className="h-4 w-4 flex-none"
                       aria-hidden="true"
@@ -336,11 +289,13 @@ export function RegisterForm({}: RegisterFormProps) {
                     <div className="flex items-center gap-0.5 flex-wrap">
                       <dt>Project Name:</dt>
                       <dd>
-                        <strong className="font-medium">CelestiaScan</strong>
+                        <strong className="font-medium">
+                          {valuesInputed.projectName}
+                        </strong>
                       </dd>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted">
+                  <div className="flex items-center gap-1.5">
                     <GithubLogo
                       className="h-4 w-4 flex-none"
                       aria-hidden="true"
@@ -348,14 +303,20 @@ export function RegisterForm({}: RegisterFormProps) {
                     <div className="flex items-center gap-0.5 flex-wrap">
                       <dt>GitHub Repo:</dt>
                       <dd>
-                        <a
-                          href="https://github.com/celestiaorg/celestia-app"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-primary underline"
-                        >
-                          https://github.com/celestiaorg/celestia-app
-                        </a>
+                        {valuesInputed.githubRepo ? (
+                          <a
+                            href={valuesInputed.githubRepo}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-primary underline"
+                          >
+                            {valuesInputed.githubRepo}
+                          </a>
+                        ) : (
+                          <small className="text-muted/70 italic">
+                            &lt;empty&gt;
+                          </small>
+                        )}
                       </dd>
                     </div>
                   </div>
@@ -425,7 +386,7 @@ export function RegisterForm({}: RegisterFormProps) {
                     type="button"
                     variant="bordered"
                     className="px-2 py-1 text-muted font-normal text-xs"
-                    onClick={() => setCurrentStep("LAYER_1")}
+                    onClick={() => setCurrentStep("LAYER")}
                   >
                     Edit
                   </Button>
@@ -482,102 +443,277 @@ export function RegisterForm({}: RegisterFormProps) {
   );
 }
 
-type StepperProps = {
-  current: number;
-  noOfSteps: number;
-  onJumpToStep: (step: number) => void;
+type FormDefaultValues = Partial<{
+  [K in keyof AllValues]?: AllValues[K] | null;
+}>;
+type FormStepProps = {
+  defaultValues: FormDefaultValues;
+  errors: Record<string, string[] | undefined> | null;
 };
 
-function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
+function DetailStepForm({ defaultValues, errors }: FormStepProps) {
   return (
-    <ol className="flex gap-3">
-      {range(0, noOfSteps - 1).map((step) => (
-        <li className="flex items-center gap-2" key={step}>
-          <Button
-            type="button"
-            onClick={() => onJumpToStep(step)}
-            className={cn(
-              "px-3 py-1 gap-2 border  border-muted/20 items-center transition duration-150",
-              current === step && "bg-muted-100 border-primary",
-            )}
-          >
-            {step === current && <span className="sr-only">Current : </span>}
-            {step < current && (
-              <>
-                <span className="sr-only">Completed : </span>
-                <Check className="h-4 w-4 text-primary" aria-hidden="true" />
-              </>
-            )}
-            <span
-              className={cn("md:not-sr-only", {
-                "sr-only": step !== current,
-              })}
-            >
-              Step
-            </span>
-            <span>{step + 1}</span>
-          </Button>
-          {step < noOfSteps - 1 && (
-            <ArrowRight className="h-3 w-3 text-muted/40" aria-hidden="true" />
-          )}
-        </li>
-      ))}
-    </ol>
+    <>
+      <Input
+        size="small"
+        label="Email"
+        type="email"
+        placeholder="Ex: contact@celestia.org"
+        name="email"
+        required
+        defaultValue={defaultValues?.email}
+        renderLeadingIcon={(cls) => (
+          <Enveloppe className={cls} aria-hidden="true" />
+        )}
+        error={errors?.email}
+      />
+      <Input
+        size="small"
+        label="Project Name"
+        type="text"
+        placeholder="Ex: Celestia"
+        name="projectName"
+        defaultValue={defaultValues?.projectName}
+        required
+        renderLeadingIcon={(cls) => (
+          <Building className={cls} aria-hidden="true" />
+        )}
+        error={errors?.projectName}
+      />
+      <Input
+        size="small"
+        label="Github Repo (optional)"
+        type="url"
+        name="githubRepo"
+        defaultValue={defaultValues?.githubRepo}
+        placeholder="Ex: https://github.com/celestiaorg/celestia-app"
+        renderLeadingIcon={(cls) => (
+          <GithubLogo className={cls} aria-hidden="true" />
+        )}
+        error={errors?.githubRepo}
+      />
+    </>
   );
 }
 
-type ImageCheckboxProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "size" | "type"
-> & {
-  image?: string;
-  label: string;
-  type?: "checkbox" | "radio";
-};
+const DEFAULT_ENVS = ["EVM", "SVM", "COSMOS", "MOVE"];
 
-function ImageCheckbox({
-  image,
-  label,
-  value,
-  type = "checkbox",
-  ...checkboxProps
-}: ImageCheckboxProps) {
-  const checkboxId = React.useId();
+function EnvStepForm({ defaultValues, errors }: FormStepProps) {
+  const [additionalEnvs, setAdditionalEnvs] = React.useState(
+    defaultValues.env?.filter((env) => !DEFAULT_ENVS.includes(env)) ?? [],
+  );
   return (
-    <div>
-      <input
-        type={type}
-        id={checkboxId}
-        defaultValue={value}
-        className="peer sr-only"
-        {...checkboxProps}
+    <>
+      {errors?.env && (
+        <div
+          className={cn(
+            "flex flex-wrap gap-1 text-sm p-1 text-red-400 text-center items-center justify-center",
+            "bg-red-100 rounded-md border-red-500 border",
+          )}
+        >
+          <Warning className="h-4 w-4 flex-none" aria-hidden="true" />
+          {errors.env.map((err, index) => (
+            <span key={index}>{err}</span>
+          ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <ImageCheckbox
+          label="Ethereum"
+          name="env"
+          value="EVM"
+          defaultChecked={defaultValues.env?.includes("EVM")}
+          image="/images/ethereum.png"
+        />
+        <ImageCheckbox
+          label="Sealevel"
+          name="env"
+          value="SVM"
+          defaultChecked={defaultValues.env?.includes("SVM")}
+          image="/images/sealevel.png"
+        />
+        <ImageCheckbox
+          label="Move"
+          name="env"
+          value="MOVE"
+          defaultChecked={defaultValues.env?.includes("MOVE")}
+          image="/images/move.svg"
+        />
+        <ImageCheckbox
+          label="Cosmos SDK"
+          name="env"
+          value="COSMOS"
+          defaultChecked={defaultValues.env?.includes("COSMOS")}
+          image="/images/cosmos.svg"
+        />
+
+        {additionalEnvs.map((currentEnv) => (
+          <ImageCheckbox
+            key={currentEnv}
+            label={currentEnv}
+            name="env"
+            value={currentEnv}
+            checked
+            onChange={() =>
+              setAdditionalEnvs(
+                additionalEnvs.filter((env) => env !== currentEnv),
+              )
+            }
+          />
+        ))}
+      </div>
+
+      <Input
+        size="small"
+        label="Not listed here ?"
+        placeholder="Enter the name here..."
+        onKeyDown={(e) => {
+          const currentValue = e.currentTarget.value.trim();
+          if (e.key === "Enter" && currentValue) {
+            e.preventDefault();
+            setAdditionalEnvs([...additionalEnvs, currentValue]);
+          }
+        }}
       />
-      <Card
-        as="label"
-        htmlFor={checkboxId}
-        className={cn(
-          "flex flex-col text-xs items-center cursor-pointer",
-          "peer-checked:border-primary peer-checked:border-2",
-          "peer-disabled:cursor-default",
-          {
-            "py-2": !!image,
-            "py-3": !image,
-          },
+    </>
+  );
+}
+
+const DEFAULT_TOOLKITS = [
+  "BLOBSTREAM",
+  "ROLLKIT",
+  "DYMINT",
+  "OP_STACK",
+  "ARBITRUM_NITRO",
+];
+
+function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
+  const [additionalToolkit, setAdditionalToolkit] = React.useState(() => {
+    if (
+      defaultValues.toolkit &&
+      !DEFAULT_TOOLKITS.includes(defaultValues.toolkit)
+    ) {
+      return defaultValues.toolkit;
+    }
+    return null;
+  });
+  return (
+    <>
+      {errors?.toolkit && (
+        <div
+          className={cn(
+            "flex flex-wrap gap-1 text-sm p-1 text-red-400 text-center items-center justify-center",
+            "bg-red-100 rounded-md border-red-500 border",
+          )}
+        >
+          <Warning className="h-4 w-4 flex-none" aria-hidden="true" />
+          {errors.toolkit.map((err, index) => (
+            <span key={index}>{err}</span>
+          ))}
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-3">
+        <ImageCheckbox
+          label="Blobstream"
+          name="toolkit"
+          value="BLOBSTREAM"
+          defaultChecked={defaultValues.toolkit === "BLOBSTREAM"}
+          type="radio"
+          image="/images/celestia-logo.svg"
+        />
+        <ImageCheckbox
+          label="Rollkit"
+          name="toolkit"
+          value="ROLLKIT"
+          defaultChecked={defaultValues.toolkit === "ROLLKIT"}
+          type="radio"
+          image="/images/Rollkit.svg"
+        />
+        <ImageCheckbox
+          label="Dymint"
+          name="toolkit"
+          value="DYMINT"
+          defaultChecked={defaultValues.toolkit === "DYMINT"}
+          type="radio"
+          image="/images/Dymint.svg"
+        />
+      </div>
+      <p>Other</p>
+      <div className="grid grid-cols-2 gap-3">
+        <ImageCheckbox
+          label="OP Stack"
+          name="toolkit"
+          value="OP_STACK"
+          defaultChecked={defaultValues.toolkit === "OP_STACK"}
+          type="radio"
+        />
+        <ImageCheckbox
+          label="Arbitrum Nitro"
+          name="toolkit"
+          value="ARBITRUM_NITRO"
+          defaultChecked={defaultValues.toolkit === "ARBITRUM_NITRO"}
+          type="radio"
+        />
+        {additionalToolkit && (
+          <ImageCheckbox
+            label={additionalToolkit}
+            name="toolkit"
+            type="radio"
+            value={additionalToolkit}
+            defaultChecked
+          />
         )}
-      >
-        {image && (
-          <div className="h-8 w-8 p-1">
-            <Image
-              src={image}
-              alt={label}
-              width={32}
-              height={32}
-              className="object-center object-contain aspect-square"
-            />
-          </div>
-        )}
-        {label}
-      </Card>
-    </div>
+      </div>
+
+      <Input
+        size="small"
+        label="Not listed here ?"
+        placeholder="Enter the name here..."
+        onKeyDown={(e) => {
+          const currentValue = e.currentTarget.value.trim();
+          if (e.key === "Enter" && currentValue) {
+            e.preventDefault();
+            setAdditionalToolkit(currentValue);
+          }
+        }}
+      />
+    </>
+  );
+}
+
+function LayerStepForm({ defaultValues, errors }: FormStepProps) {
+  return (
+    <>
+      {errors?.layer && (
+        <div
+          className={cn(
+            "flex flex-wrap gap-1 text-sm p-1 text-red-400 text-center items-center justify-center",
+            "bg-red-100 rounded-md border-red-500 border",
+          )}
+        >
+          <Warning className="h-4 w-4 flex-none" aria-hidden="true" />
+          {errors.layer.map((err, index) => (
+            <span key={index}>{err}</span>
+          ))}
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-3">
+        <ImageCheckbox
+          label="Ethereum"
+          name="layer"
+          value="ETHEREUM"
+          defaultChecked={defaultValues.layer?.has("ETHEREUM")}
+          image="/images/ethereum.png"
+        />
+        <ImageCheckbox
+          label="Celestia"
+          name="layer"
+          value="CELESTIA"
+          defaultChecked={defaultValues.layer?.has("CELESTIA")}
+          image="/images/celestia-logo.svg"
+        />
+      </div>
+    </>
   );
 }
