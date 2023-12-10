@@ -218,7 +218,6 @@ export function RegisterForm({}: RegisterFormProps) {
     <form
       className="flex flex-col justify-between h-full items-center w-full"
       action={action}
-      noValidate
     >
       <header className="p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0">
         <Stepper
