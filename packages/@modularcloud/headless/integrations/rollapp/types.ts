@@ -4,7 +4,7 @@ type JSONRPCResponse<T> = {
   result: T;
 };
 
-type Transaction = {
+export type Transaction = {
   hash: string;
   height: string;
   index: number;

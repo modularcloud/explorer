@@ -8,6 +8,7 @@ import { z } from "zod";
 import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
 import Long from "long";
+import { Shared } from "proto-utils";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -91,18 +92,94 @@ const RollappTransactionResolver = createResolver(
   [FetchResolver],
 );
 
+export const BalancesResolver = createResolver(
+  {
+    id: "rollapp-balances-0.0.0",
+    cache: false,
+  },
+  async (input: { address: string; endpoint: string }, fetchResolver) => {
+    const data = Shared.QueryAllBalancesRequest.create({
+      address: input.address,
+    });
+    const hex = Buffer.from(
+      Shared.QueryAllBalancesRequest.encode(data).finish(),
+    ).toString("hex");
+    const balanceResponse: ResolutionResponse = await fetchResolver({
+      url: `${input.endpoint}/abci_query?path=/cosmos.bank.v1beta1.Query/AllBalances&data=${hex}&height=0&prove=false`,
+    });
+    if (balanceResponse.type !== "success") {
+      throw new Error("Failed to fetch balance");
+    }
+    return Shared.QueryAllBalancesResponse.decode(
+      Buffer.from(balanceResponse.result.result.response.value, "base64"),
+    );
+  },
+  [FetchResolver],
+);
+
+export const RollAppSentAddressResolver = createResolver(
+  {
+    id: "rollapp-sent-address-0.0.0",
+    cache: false,
+  },
+  async (
+    input: {
+      endpoint: string;
+      address: string;
+      perPage: string;
+      page?: string;
+    },
+    fetchResolver,
+  ) => {
+    const transactions = await fetchResolver({
+      url: `${input.endpoint}/tx_search?query=message.sender='${
+        input.address
+      }'&prove=false&page=${input.page ?? 1}&per_page=${
+        input.perPage
+      }&order_by=asc`,
+    });
+    if (transactions.type !== "success") {
+      throw new Error("Failed to fetch transactions");
+    }
+    return transactions.result;
+  },
+  [FetchResolver],
+);
+
+export const RollAppReceiveAddressResolver = createResolver(
+  {
+    id: "rollapp-receive-address-0.0.0",
+    cache: false,
+  },
+  async (
+    input: {
+      endpoint: string;
+      address: string;
+      perPage: string;
+      page?: string;
+    },
+    fetchResolver,
+  ) => {
+    const transactions = await fetchResolver({
+      url: `${input.endpoint}/tx_search?query=transfer.recipient='${
+        input.address
+      }'&prove=false&page=${input.page ?? 1}&per_page=${
+        input.perPage
+      }&order_by=asc`,
+    });
+    if (transactions.type !== "success") {
+      throw new Error("Failed to fetch transactions");
+    }
+    return transactions.result;
+  },
+  [FetchResolver],
+);
+
 export const resolvers = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
 };
-
-// export const BalanceResolver = createResolver({
-//     id: "celestia-balance-0.0.0",
-//     cache: false
-// }, async (input: { address: string; network: string }, fetchResolver) => {
-
-// }, [FetchResolver]);
 
 // Helpers
 function fixCapsAndSpacing(camel: string): string {

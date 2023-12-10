@@ -7,7 +7,7 @@ type IntegrationResponse = ResolutionResponse | null;
 
 export function createRollappIntegration(context: PageContext) {
   registerResolvers();
-
+  addRoute(["addresses", "[address]"], "rollapp-page-address-0.0.0");
   // addRoute(["addresses", "[address]"], "celestia-address-balances-0.0.0", {
   //   enabled: true,
   //   regex: /^celestia\w{39}$/,
