@@ -87,14 +87,20 @@ export const RollAppAddressPageResolver = createResolver(
           },
         };
     const [balances, sent, received]: [
-      any,
+      { denom: string; amount: string }[],
       Transaction[] | null,
       Transaction[] | null,
     ] = await Promise.all([
       getBalances({
         endpoint: context.rpcEndpoint,
         address,
-      }).then((res) => console.log(res)),
+      }).then((res) => {
+        if (res.type === "success") {
+          return res.result.balances;
+        }
+        console.log("Error getting balances", address, res);
+        return [];
+      }),
       addressPagination.sent
         ? getSent({
             endpoint: context.rpcEndpoint,
@@ -178,7 +184,25 @@ export const RollAppAddressPageResolver = createResolver(
         title: `Address ${address}`,
         description: `Address ${address} on ${context.chainBrand}`,
       },
-      sidebar: getDefaultSidebar("Address", address, "Transactions"),
+      sidebar: {
+        headerKey: "Address",
+        headerValue: address,
+        properties: balances.length
+          ? Object.fromEntries(
+              balances.map((bal) =>
+                bal.denom.charAt(0) === "u"
+                  ? [
+                      bal.denom.slice(1).toUpperCase(),
+                      {
+                        type: "standard",
+                        payload: Number(bal.amount) / 10 ** 6,
+                      },
+                    ]
+                  : [bal.denom, { type: "standard", payload: bal.amount }],
+              ),
+            )
+          : { [context.nativeToken]: { type: "standard", payload: "0" } },
+      },
       tabs: [
         {
           text: "Transactions",
