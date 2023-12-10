@@ -9,7 +9,7 @@ import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 import { SvmMetrics } from "./get-metrics";
 
 import { useSvmWidgetData } from "./use-widget-data";
-import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
+import { useClientOnlyTime } from "~/ui/network-widgets/use-client-only-time";
 
 import type { Page } from "@modularcloud/headless";
 

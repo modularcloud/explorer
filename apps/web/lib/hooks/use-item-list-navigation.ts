@@ -1,5 +1,4 @@
 import * as React from "react";
-import { isElementOverflowing } from "~/lib/shared-utils";
 
 export type OnSelectItemArgs<T> = {
   item: T;
