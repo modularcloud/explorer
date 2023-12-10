@@ -9,6 +9,11 @@ export const CACHE_KEYS = {
     all: () => ["INTEGRATION"],
     summary: () => [...CACHE_KEYS.networks.all(), "INTEGRATION_SUMMARY"],
     single: (slug: string) => [...CACHE_KEYS.networks.all(), slug],
+    platform: (platform: string) => [
+      ...CACHE_KEYS.networks.all(),
+      "platform",
+      platform,
+    ],
   },
   widgets: {
     evmWithPrice: (networkSlug: string) => ["EVM_WITH_PRICE", networkSlug],

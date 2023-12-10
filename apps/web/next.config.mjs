@@ -15,6 +15,7 @@ const config = {
     },
   },
   images: {
+    minimumCacheTTL: 31_536_000, // One year
     remotePatterns: [
       {
         protocol: "https",

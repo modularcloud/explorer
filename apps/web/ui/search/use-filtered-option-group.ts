@@ -6,6 +6,9 @@ export function useFilteredOptionGroup(
   filter: string,
 ) {
   return React.useMemo(() => {
+    if (filter.trim().length === 0) {
+      return optionGroups;
+    }
     // filter chain brands starting with the filter
     let optionGroupsByChainBrand = Object.keys(optionGroups)
       .filter((key) => key.toLowerCase().startsWith(filter.toLowerCase()))
