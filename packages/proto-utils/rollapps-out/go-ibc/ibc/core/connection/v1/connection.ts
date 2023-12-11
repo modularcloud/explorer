@@ -144,7 +144,7 @@ export interface ConnectionPaths {
 }
 
 /**
- * Version defines the versioning scheme used to negotiate the IBC verison in
+ * Version defines the versioning scheme used to negotiate the IBC version in
  * the connection handshake.
  */
 export interface Version {
