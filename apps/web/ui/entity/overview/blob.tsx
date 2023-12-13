@@ -60,7 +60,10 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
       )}
       {mimeType === "application/pdf" && data ? (
         <div className="overflow-auto w-full max-h-screen">
-          <Document file={data.arrayBuffer} onLoadSuccess={onDocumentLoadSuccess}>
+          <Document
+            file={data.arrayBuffer}
+            onLoadSuccess={onDocumentLoadSuccess}
+          >
             {Array.from({ length: numPages || 0 }, (_, i) => i + 1).map(
               (page: number) => (
                 <Page key={page} pageNumber={page} />
