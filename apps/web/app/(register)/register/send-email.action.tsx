@@ -11,7 +11,7 @@ export async function sendEmail(values: AllValues) {
 
     await resend.emails.send({
       from: env.RESEND_EMAIL_SENDER,
-      to: "hello@fredkiss.dev",
+      to: env.RESEND_EMAIL_RECEIVER,
       subject: "Newly registered chain",
       react: (
         <div>
