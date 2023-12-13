@@ -390,6 +390,18 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
         (env) => !DEFAULT_ENVS.find((e) => e.value !== env),
       ) ?? [],
   );
+
+  const inputRef = React.useRef<React.ElementRef<"input">>(null);
+
+  function addAdditionalEnv() {
+    const currentValue = inputRef.current?.value.trim();
+    if (inputRef.current && currentValue) {
+      setAdditionalEnvs([...additionalEnvs, currentValue]);
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  }
+
   return (
     <>
       {errors?.env && (
@@ -418,9 +430,9 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
           />
         ))}
 
-        {additionalEnvs.map((currentEnv) => (
+        {additionalEnvs.map((currentEnv, index) => (
           <ImageCheckbox
-            key={currentEnv}
+            key={index}
             label={currentEnv}
             name="env"
             value={currentEnv}
@@ -434,18 +446,28 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
         ))}
       </div>
 
-      <Input
-        size="small"
-        label="Not listed here ?"
-        placeholder="Enter the name here..."
-        onKeyDown={(e) => {
-          const currentValue = e.currentTarget.value.trim();
-          if (e.key === "Enter" && currentValue) {
-            e.preventDefault();
-            setAdditionalEnvs([...additionalEnvs, currentValue]);
-          }
-        }}
-      />
+      <div className="flex gap-4 items-end">
+        <Input
+          size="small"
+          ref={inputRef}
+          label="Not listed here ?"
+          placeholder="Enter the name here..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addAdditionalEnv();
+            }
+          }}
+        />
+        <Button
+          color="primary"
+          className="min-w-max px-3 py-1"
+          type="button"
+          onClick={addAdditionalEnv}
+        >
+          Add env
+        </Button>
+      </div>
     </>
   );
 }
@@ -462,6 +484,18 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
     }
     return null;
   });
+
+  const inputRef = React.useRef<React.ElementRef<"input">>(null);
+
+  function addToolkit() {
+    const currentValue = inputRef.current?.value.trim();
+    if (inputRef.current && currentValue) {
+      setAdditionalToolkit(currentValue);
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  }
+
   return (
     <>
       {errors?.toolkit && (
@@ -530,18 +564,28 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
         )}
       </div>
 
-      <Input
-        size="small"
-        label="Not listed here ?"
-        placeholder="Enter the name here..."
-        onKeyDown={(e) => {
-          const currentValue = e.currentTarget.value.trim();
-          if (e.key === "Enter" && currentValue) {
-            e.preventDefault();
-            setAdditionalToolkit(currentValue);
-          }
-        }}
-      />
+      <div className="flex gap-4 items-end">
+        <Input
+          size="small"
+          ref={inputRef}
+          label="Not listed here ?"
+          placeholder="Enter the name here..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addToolkit();
+            }
+          }}
+        />
+        <Button
+          color="primary"
+          className="min-w-max px-3 py-1"
+          type="button"
+          onClick={addToolkit}
+        >
+          Add env
+        </Button>
+      </div>
     </>
   );
 }
