@@ -56,9 +56,9 @@ export const BlockResolver = createResolver(
         return rpcResponse;
       }),
       fetch(
-        `${String(
-          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
-        )}/block?slotNumber=${parsedSlot}`,
+        `${String(process.env.SVM_DEVNET_RPC_ALTERNATIVE)}/${
+          endpoint.indexOf("testnet") === -1 ? 4 : 2
+        }/block?slotNumber=${parsedSlot}`,
       ).then(async (response) => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);
