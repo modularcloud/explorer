@@ -1,5 +1,5 @@
 import { createResolver } from "@modularcloud-resolver/core";
-import { resolvers, ParsedMsg } from "@modularcloud-resolver/rollapp";
+import { ParsedMsg, hubResolvers } from "@modularcloud-resolver/rollapp";
 
 type IBCTransferEvent = {
   type: "transfer";
@@ -83,5 +83,5 @@ export const RollAppEvents = createResolver(
       }
     });
   },
-  [resolvers.getLatestHubMessages],
+  [hubResolvers.getLatestHubMessages],
 );

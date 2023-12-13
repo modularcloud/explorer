@@ -79,7 +79,7 @@ export function getMessages(txRaw: string) {
   });
 }
 // TODO add pagination token
-export const LatestHubMessages = createResolver(
+const LatestHubMessages = createResolver(
   {
     id: "latest-hub-messages-0.0.0",
     cache: false,
@@ -142,3 +142,7 @@ export const LatestHubMessages = createResolver(
   },
   [resolvers.getBlock],
 );
+
+export const hubResolvers = {
+    getLatestHubMessages: LatestHubMessages,
+};

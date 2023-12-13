@@ -9,7 +9,6 @@ import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
 import Long from "long";
 import { Shared } from "proto-utils";
-import { LatestHubMessages } from "./hub";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -176,18 +175,10 @@ export const RollAppReceiveAddressResolver = createResolver(
   [FetchResolver],
 );
 
-const LH = () => LatestHubMessages;
-
-export const resolvers: {
-  getBlockByHash: typeof RollappBlockHashResolver;
-  getBlock: typeof RollappBlockHeightResolver;
-  getTx: typeof RollappTransactionResolver;
-  getLatestHubMessages: typeof LatestHubMessages;
-} = {
+export const resolvers = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
-  getLatestHubMessages: LH(),
 };
 
 // Helpers
@@ -264,4 +255,4 @@ export const helpers = {
   getBlobTx,
 };
 
-export type { ParsedMsg } from "./hub";
+export * from "./hub";
