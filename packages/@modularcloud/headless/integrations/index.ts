@@ -68,7 +68,7 @@ export function registerResolvers() {
   registerResolver(RollappMessageResolver);
   registerResolver(IBCResolver);
   registerResolver(RollAppAddressPageResolver);
-  registerResolver(RollAppEvents);
+  // registerResolver(RollAppEvents);
   // TODO REMOVE
   // registerResolver(resolvers.getLatestHubMessages);
   // registerResolver(CelestiaAddressTransactionsResolver);
