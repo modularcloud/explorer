@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "~/ui/shadcn/components/ui/dialog";
 import { Input } from "~/ui/input";
-import { ArrowRight, GlobeCyber, Search } from "~/ui/icons";
+import { ArrowRight, Search } from "~/ui/icons";
 import { LoadingIndicator } from "~/ui/loading-indicator";
 import { IntegrationActionListView } from "./integration-action-list-view";
 import { useSearcheableEntities } from "./use-searcheable-entities";
@@ -16,13 +16,13 @@ import { IntegrationGridView } from "./integration-grid-view";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 
 // utils
-import { useFilteredOptionGroup } from "./use-filtered-option-group";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
+import Image from "next/image";
+import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
-import Image from "next/image";
 interface Props {
   defaultNetwork: {
     value: SearchOption;
@@ -64,6 +64,7 @@ export function SearchModal({
   );
 
   const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+
   const isNetworkQuery =
     !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
 
@@ -168,7 +169,6 @@ export function SearchModal({
               optionGroups={filteredOptionGroup}
               defaultChainBrand={defaultNetwork.value.brandName}
               onSelectOption={onSelectOption}
-              className="max-h-[calc(100%-60px)] overflow-y-auto"
             />
           )}
 

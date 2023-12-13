@@ -6,7 +6,7 @@ import { LatestBlocks } from "~/ui/network-widgets/widgets/latest-blocks";
 import { LatestTransactions } from "~/ui/network-widgets/widgets/latest-transactions";
 import { Placeholder } from "~/ui/network-widgets/widgets/placeholder";
 
-import { useClientOnlyTime } from "~/ui/network-widgets/use-initial-server-time";
+import { useClientOnlyTime } from "~/ui/network-widgets/use-client-only-time";
 import { useCelestiaWidgetData } from "./use-widget-data";
 import { cn } from "~/ui/shadcn/utils";
 

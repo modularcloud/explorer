@@ -2,7 +2,7 @@ import { HomeBg } from "~/ui/home-bg";
 import { HomeBgMobile } from "~/ui/home-bg/mobile";
 
 import { notFound } from "next/navigation";
-import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
+import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
 
 import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
@@ -27,7 +27,7 @@ export default async function NetworkLogo(props: Props) {
         MODULAR CLOUD
       </small>
 
-      <p className="font-logo text-5xl font-medium md:text-6xl capitalize">
+      <h1 className="font-logo text-5xl font-medium md:text-6xl capitalize">
         <span
           className="text-transparent bg-clip-text"
           style={{
@@ -36,12 +36,12 @@ export default async function NetworkLogo(props: Props) {
         >
           {network.chainBrand}
         </span>
-      </p>
+      </h1>
     </div>
   );
 }
 
 export async function generateStaticParams() {
-  const allNetworks = await getAllNetworks();
-  return allNetworks.map((network) => ({ network: network.slug }));
+  const paidNetworks = await getAllPaidNetworks();
+  return paidNetworks.map((network) => ({ network: network.slug }));
 }
