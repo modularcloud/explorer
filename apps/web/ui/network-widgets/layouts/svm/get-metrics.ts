@@ -14,7 +14,8 @@ export type SvmMetrics = z.TypeOf<typeof svmMetricsDataSchema>;
 
 export async function getSvmWidgetMetrics(networkSlug: string) {
   return await fetch(
-    `https://svm.preview-api.modular.cloud/${networkSlug}/metrics`,
+    "https://svm.preview-api.modular.cloud/eclipse-devnet/metrics",
+    //`https://svm.preview-api.modular.cloud/${networkSlug}/metrics`,
     {
       next: {
         revalidate: DEFAULT_WIDGET_REVALIDATE_TIME,
