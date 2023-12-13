@@ -15,7 +15,7 @@ import { Input } from "~/ui/input";
 import { preprocess, z } from "zod";
 import { Stepper } from "./stepper";
 import { ImageCheckbox } from "./image-checkbox";
-import { cn } from "../shadcn/utils";
+import { cn } from "~/ui/shadcn/utils";
 
 export type RegisterFormProps = {};
 
@@ -93,10 +93,12 @@ const layerStepSchema = z.object({
       }
       return arg;
     },
-    z.set(z.enum(["ETHEREUM", "CELESTIA"]), {
-      invalid_type_error: "Please choose one or more options",
-      required_error: "Please choose one or more options",
-    }),
+    z
+      .set(z.enum(["ETHEREUM", "CELESTIA"]), {
+        invalid_type_error: "Please choose one or more options",
+        required_error: "Please choose one or more options",
+      })
+      .nonempty({ message: "Please select at least one option" }),
   ),
 });
 
@@ -107,11 +109,58 @@ type LayerStep = z.TypeOf<typeof layerStepSchema>;
 
 type AllValues = DetailStep & EnvStep & ToolkitStep & LayerStep;
 
+const DEFAULT_ENVS = [
+  { value: "EVM", name: "Ethereum", logo: "/images/ethereum.png" },
+  { value: "SVM", name: "Sealevel", logo: "/images/sealevel.png" },
+  { value: "COSMOS", name: "Cosmos SDK", logo: "/images/cosmos.png" },
+  { value: "MOVE", name: "Move", logo: "/images/move.png" },
+];
+
+const DEFAULT_TOOLKITS = [
+  {
+    value: "BLOBSTREAM",
+    name: "Blobstream",
+    logo: "/images/celestia-logo.svg",
+  },
+  {
+    value: "ROLLKIT",
+    name: "Rollkit",
+    logo: "/images/rollkit.svg",
+  },
+  {
+    value: "DYMINT",
+    name: "Dymint",
+    logo: "/images/dymension-logo.svg",
+  },
+  {
+    value: "ARBITRUM_NITRO",
+    name: "Abitrum Nitro",
+  },
+  {
+    value: "OP_STACK",
+    name: "OP Stack",
+  },
+];
+
+const DEFAULT_LAYERS = [
+  {
+    value: "ETHEREUM",
+    name: "Ethereum",
+    logo: "/images/ethereum.png",
+  },
+  {
+    value: "CELESTIA",
+    name: "Celestia",
+    logo: "/images/celestia-logo.svg",
+  },
+];
+
 export function RegisterForm({}: RegisterFormProps) {
   const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
   const [valuesInputed, setValuesInputed] = React.useState<Partial<AllValues>>(
     {},
   );
+  const [totalFilledSteps, setTotalFilledSteps] = React.useState(0);
 
   let title = "Register your chain";
   let subTitle = "Tell us more about yourself.";
@@ -136,13 +185,34 @@ export function RegisterForm({}: RegisterFormProps) {
   const currentStepIdx = STEPS.findIndex((step) => step === currentStep);
   function jumpToStep(index: number) {
     if (index < STEPS.length && index >= 0) {
-      setCurrentStep(STEPS[index]);
+      let canJumpToStep = false;
+      const step = STEPS[index];
+      switch (step) {
+        case "DETAILS":
+          canJumpToStep = true;
+          break;
+        case "ENVIRONMENT":
+          canJumpToStep = detailStepSchema.safeParse(valuesInputed).success;
+          break;
+        case "TOOLKIT":
+          canJumpToStep = envStepSchema.safeParse(valuesInputed).success;
+          break;
+        case "LAYER":
+          canJumpToStep = toolkitStepSchema.safeParse(valuesInputed).success;
+          break;
+        case "SUMMARY":
+          canJumpToStep = layerStepSchema.safeParse(valuesInputed).success;
+          break;
+        default:
+          break;
+      }
+      if (canJumpToStep) {
+        setCurrentStep(STEPS[index]);
+      }
     }
   }
 
   async function formAction(_: any, formData: FormData) {
-    console.log({ formData });
-
     if (currentStep === "DETAILS") {
       const result = detailStepSchema.safeParse(Object.fromEntries(formData));
 
@@ -159,6 +229,8 @@ export function RegisterForm({}: RegisterFormProps) {
       }
 
       setValuesInputed({ ...valuesInputed, ...result.data });
+      setCurrentStep("ENVIRONMENT");
+      setTotalFilledSteps((total) => (total >= 1 ? total : 1));
     }
     if (currentStep === "ENVIRONMENT") {
       const result = envStepSchema.safeParse({
@@ -174,6 +246,8 @@ export function RegisterForm({}: RegisterFormProps) {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
+      setCurrentStep("TOOLKIT");
+      setTotalFilledSteps((total) => (total >= 2 ? total : 2));
     }
     if (currentStep === "TOOLKIT") {
       const result = toolkitStepSchema.safeParse(Object.fromEntries(formData));
@@ -187,6 +261,8 @@ export function RegisterForm({}: RegisterFormProps) {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
+      setCurrentStep("LAYER");
+      setTotalFilledSteps((total) => (total >= 3 ? total : 3));
     }
     if (currentStep === "LAYER") {
       const result = layerStepSchema.safeParse({
@@ -202,16 +278,20 @@ export function RegisterForm({}: RegisterFormProps) {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
+      setCurrentStep("SUMMARY");
+      setTotalFilledSteps((total) => (total >= 4 ? total : 4));
     }
-    jumpToStep(currentStepIdx + 1);
 
+    // default values
     return {};
   }
 
   const [state, action] = useFormState(formAction, {});
 
-  const defaultValues =
-    state?.type === "error" ? state.formData : valuesInputed;
+  const defaultValues = {
+    ...valuesInputed,
+    ...state.formData,
+  };
   const errors = state.type === "error" ? state.fieldErrors : null;
 
   return (
@@ -221,6 +301,7 @@ export function RegisterForm({}: RegisterFormProps) {
     >
       <header className="p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0">
         <Stepper
+          totalFilledSteps={totalFilledSteps}
           current={currentStepIdx}
           noOfSteps={STEPS.length - 1}
           onJumpToStep={jumpToStep}
@@ -252,159 +333,10 @@ export function RegisterForm({}: RegisterFormProps) {
             <LayerStepForm defaultValues={defaultValues} errors={errors} />
           )}
           {currentStep === "SUMMARY" && (
-            <div className="flex flex-col gap-8">
-              <section className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-medium text-xl leading-6">Details</h2>
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    className="px-2 py-1 text-muted font-normal text-xs"
-                    onClick={() => setCurrentStep("DETAILS")}
-                  >
-                    Edit
-                  </Button>
-                </div>
-                <dl className="flex flex-col gap-4 text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <Enveloppe
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                    <div className="flex items-center gap-0.5 flex-wrap">
-                      <dt>Email:</dt>
-                      <dd>
-                        <strong className="font-medium">
-                          {valuesInputed.email}
-                        </strong>
-                      </dd>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Building
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                    <div className="flex items-center gap-0.5 flex-wrap">
-                      <dt>Project Name:</dt>
-                      <dd>
-                        <strong className="font-medium">
-                          {valuesInputed.projectName}
-                        </strong>
-                      </dd>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <GithubLogo
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                    <div className="flex items-center gap-0.5 flex-wrap">
-                      <dt>GitHub Repo:</dt>
-                      <dd>
-                        {valuesInputed.githubRepo ? (
-                          <a
-                            href={valuesInputed.githubRepo}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-primary underline"
-                          >
-                            {valuesInputed.githubRepo}
-                          </a>
-                        ) : (
-                          <small className="text-muted/70 italic">
-                            &lt;empty&gt;
-                          </small>
-                        )}
-                      </dd>
-                    </div>
-                  </div>
-                </dl>
-              </section>
-
-              <section className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-medium text-xl leading-6">
-                    Execution Environment
-                  </h2>
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    className="px-2 py-1 text-muted font-normal text-xs"
-                    onClick={() => setCurrentStep("ENVIRONMENT")}
-                  >
-                    Edit
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <ImageCheckbox
-                    label="Ethereum"
-                    image="/images/ethereum.png"
-                    disabled
-                  />
-                  <ImageCheckbox
-                    label="Celestia"
-                    image="/images/celestia-logo.svg"
-                    disabled
-                  />
-                </div>
-              </section>
-
-              <section className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-medium text-xl leading-6">Toolkit</h2>
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    className="px-2 py-1 text-muted font-normal text-xs"
-                    onClick={() => setCurrentStep("TOOLKIT")}
-                  >
-                    Edit
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <ImageCheckbox
-                    label="Ethereum"
-                    image="/images/ethereum.png"
-                    disabled
-                  />
-                  <ImageCheckbox
-                    label="Celestia"
-                    image="/images/celestia-logo.svg"
-                    disabled
-                  />
-                </div>
-              </section>
-
-              <section className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-medium text-xl leading-6">Layer 1</h2>
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    className="px-2 py-1 text-muted font-normal text-xs"
-                    onClick={() => setCurrentStep("LAYER")}
-                  >
-                    Edit
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <ImageCheckbox
-                    label="Ethereum"
-                    image="/images/ethereum.png"
-                    disabled
-                  />
-                  <ImageCheckbox
-                    label="Celestia"
-                    image="/images/celestia-logo.svg"
-                    disabled
-                  />
-                </div>
-              </section>
-            </div>
+            <SummaryStep
+              values={valuesInputed as AllValues}
+              onJumpToStep={setCurrentStep}
+            />
           )}
         </div>
       </div>
@@ -495,11 +427,12 @@ function DetailStepForm({ defaultValues, errors }: FormStepProps) {
   );
 }
 
-const DEFAULT_ENVS = ["EVM", "SVM", "COSMOS", "MOVE"];
-
 function EnvStepForm({ defaultValues, errors }: FormStepProps) {
   const [additionalEnvs, setAdditionalEnvs] = React.useState(
-    defaultValues.env?.filter((env) => !DEFAULT_ENVS.includes(env)) ?? [],
+    () =>
+      defaultValues.env?.filter(
+        (env) => !DEFAULT_ENVS.find((e) => e.value !== env),
+      ) ?? [],
   );
   return (
     <>
@@ -579,19 +512,13 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
   );
 }
 
-const DEFAULT_TOOLKITS = [
-  "BLOBSTREAM",
-  "ROLLKIT",
-  "DYMINT",
-  "OP_STACK",
-  "ARBITRUM_NITRO",
-];
-
 function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
   const [additionalToolkit, setAdditionalToolkit] = React.useState(() => {
     if (
       defaultValues.toolkit &&
-      !DEFAULT_TOOLKITS.includes(defaultValues.toolkit)
+      !DEFAULT_TOOLKITS.find(
+        (toolkit) => defaultValues.toolkit === toolkit.value,
+      )
     ) {
       return defaultValues.toolkit;
     }
@@ -635,7 +562,7 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
           value="DYMINT"
           defaultChecked={defaultValues.toolkit === "DYMINT"}
           type="radio"
-          image="/images/Dymint.svg"
+          image="/images/dymension-logo.svg"
         />
       </div>
       <p>Other</p>
@@ -714,5 +641,166 @@ function LayerStepForm({ defaultValues, errors }: FormStepProps) {
         />
       </div>
     </>
+  );
+}
+
+function SummaryStep({
+  values,
+  onJumpToStep,
+}: {
+  values: AllValues;
+  onJumpToStep: (step: Step) => void;
+}) {
+  const toolkitFound = DEFAULT_TOOLKITS.find(
+    (toolkit) => toolkit.value === values.toolkit,
+  );
+  return (
+    <div className="flex flex-col gap-8">
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <h2 className="font-medium text-xl leading-6">Details</h2>
+          <Button
+            type="button"
+            variant="bordered"
+            className="px-2 py-1 text-muted font-normal text-xs"
+            onClick={() => onJumpToStep("DETAILS")}
+          >
+            Edit
+          </Button>
+        </div>
+        <dl className="flex flex-col gap-4 text-sm">
+          <div className="flex items-center gap-1.5">
+            <Enveloppe className="h-4 w-4 flex-none" aria-hidden="true" />
+            <div className="flex items-center gap-0.5 flex-wrap">
+              <dt>Email:</dt>
+              <dd>
+                <strong className="font-medium">{values.email}</strong>
+              </dd>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Building className="h-4 w-4 flex-none" aria-hidden="true" />
+            <div className="flex items-center gap-0.5 flex-wrap">
+              <dt>Project Name:</dt>
+              <dd>
+                <strong className="font-medium">{values.projectName}</strong>
+              </dd>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <GithubLogo className="h-4 w-4 flex-none" aria-hidden="true" />
+            <div className="flex items-center gap-0.5 flex-wrap">
+              <dt>GitHub Repo:</dt>
+              <dd>
+                {values.githubRepo ? (
+                  <a
+                    href={values.githubRepo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary underline"
+                  >
+                    {values.githubRepo}
+                  </a>
+                ) : (
+                  <small className="text-muted/70 italic">&lt;empty&gt;</small>
+                )}
+              </dd>
+            </div>
+          </div>
+        </dl>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <h2 className="font-medium text-xl leading-6">
+            Execution Environment
+          </h2>
+          <Button
+            type="button"
+            variant="bordered"
+            className="px-2 py-1 text-muted font-normal text-xs"
+            onClick={() => onJumpToStep("ENVIRONMENT")}
+          >
+            Edit
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {values.env.map((env) => {
+            const envFound = DEFAULT_ENVS.find(
+              (defEnv) => env === defEnv.value,
+            );
+            return envFound ? (
+              <ImageCheckbox
+                key={env}
+                label={envFound.name}
+                image={envFound.logo}
+                disabled
+              />
+            ) : (
+              <ImageCheckbox key={env} label={env} disabled />
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <h2 className="font-medium text-xl leading-6">Toolkit</h2>
+          <Button
+            type="button"
+            variant="bordered"
+            className="px-2 py-1 text-muted font-normal text-xs"
+            onClick={() => onJumpToStep("TOOLKIT")}
+          >
+            Edit
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {toolkitFound ? (
+            <ImageCheckbox
+              label={toolkitFound.name}
+              image={toolkitFound.logo}
+              disabled
+            />
+          ) : (
+            <ImageCheckbox label={values.toolkit} disabled />
+          )}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <h2 className="font-medium text-xl leading-6">Layer 1</h2>
+          <Button
+            type="button"
+            variant="bordered"
+            className="px-2 py-1 text-muted font-normal text-xs"
+            onClick={() => onJumpToStep("LAYER")}
+          >
+            Edit
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from(values.layer).map((layer) => {
+            const layerFound = DEFAULT_LAYERS.find(
+              (defLayer) => layer === defLayer.value,
+            );
+            return layerFound ? (
+              <ImageCheckbox
+                key={layer}
+                label={layerFound.name}
+                image={layerFound.logo}
+                disabled
+              />
+            ) : (
+              <ImageCheckbox key={layer} label={layer} disabled />
+            );
+          })}
+        </div>
+      </section>
+    </div>
   );
 }

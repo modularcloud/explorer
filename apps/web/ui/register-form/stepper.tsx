@@ -6,10 +6,16 @@ import { cn } from "~/ui/shadcn/utils";
 type StepperProps = {
   current: number;
   noOfSteps: number;
+  totalFilledSteps: number;
   onJumpToStep: (step: number) => void;
 };
 
-export function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
+export function Stepper({
+  current,
+  noOfSteps,
+  totalFilledSteps,
+  onJumpToStep,
+}: StepperProps) {
   return (
     <ol className="flex gap-3">
       {range(0, noOfSteps - 1).map((step) => (
@@ -23,7 +29,7 @@ export function Stepper({ current, noOfSteps, onJumpToStep }: StepperProps) {
             )}
           >
             {step === current && <span className="sr-only">Current : </span>}
-            {step < current && (
+            {step < totalFilledSteps && (
               <>
                 <span className="sr-only">Completed : </span>
                 <Check className="h-4 w-4 text-primary" aria-hidden="true" />
