@@ -86,7 +86,7 @@ const DEFAULT_LAYERS = [
 
 export function RegisterForm() {
   const [isSendingEmail, startTransition] = React.useTransition();
-  const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[5]);
+  const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
   const [valuesInputed, setValuesInputed] = React.useState<Partial<AllValues>>(
     {},
   );
