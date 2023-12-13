@@ -116,15 +116,16 @@ export const LatestHubMessages = createResolver(
           if (
             msg.typeUrl === "/ibc.core.channel.v1.MsgRecvPacket" ||
             msg.typeUrl === "/ibc.applications.transfer.v1.MsgTransfer"
-          )
+          ) {
             if (!cachedTxHash) {
               cachedTxHash = await getTxHashFromBlockTx(tx);
             }
-          messages.push([
-            msg,
-            cachedTxHash,
-            new Date(block.result.result.block.header.time).valueOf(),
-          ]);
+            messages.push([
+              msg,
+              cachedTxHash,
+              new Date(block.result.result.block.header.time).valueOf(),
+            ]);
+          }
           if (messages.length >= limit) {
             break;
           }
