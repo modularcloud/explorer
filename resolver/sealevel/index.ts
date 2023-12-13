@@ -56,8 +56,8 @@ export const BlockResolver = createResolver(
         return rpcResponse;
       }),
       fetch(
-        `${String(process.env.SVM_DEVNET_RPC_ALTERNATIVE)}/${
-          endpoint.indexOf("testnet") === -1 ? 4 : 2
+        `${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/${
+          endpoint.indexOf("testnet") === -1 ? 2 : 4
         }/block?slotNumber=${parsedSlot}`,
       ).then(async (response) => {
         const json = await response.json();
@@ -117,9 +117,9 @@ export const TransactionResolver = createResolver(
         return rpcResponse;
       }),
       fetch(
-        `${String(
-          process.env.SVM_DEVNET_RPC_ALTERNATIVE,
-        )}/tx?signature=${signature}`,
+        `${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/${
+          endpoint.indexOf("testnet") === -1 ? 2 : 4
+        }/tx?signature=${signature}`,
       ).then(async (response) => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);
