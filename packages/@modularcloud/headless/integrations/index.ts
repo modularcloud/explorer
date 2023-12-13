@@ -30,7 +30,7 @@ import { RollappTransactionMessagesResolver } from "./rollapp/routes/transaction
 import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/messages/[index]/page";
 import { IBCResolver } from "./rollapp/misc/ibc";
 import { RollAppAddressPageResolver } from "./rollapp/routes/addresses/[address]/page";
-import { RollAppEvents } from "./rollapp/misc/hub";
+// import { RollAppEvents } from "./rollapp/misc/hub";
 // import { resolvers } from "@modularcloud-resolver/rollapp";
 
 export function registerResolvers() {
