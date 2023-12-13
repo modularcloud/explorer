@@ -22,12 +22,14 @@ export const env = createEnv({
     EVM_CHAIN_DATA_SERVICE: z.string().url(),
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
+    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
     }, z.string().url().optional()),
   },
   client: {
+    NEXT_PUBLIC_SVM_METRICS: z.string().url(),
     // add scheme to VERCEL_URL
     NEXT_PUBLIC_VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
@@ -56,5 +58,7 @@ export const env = createEnv({
     ALT_BASE_URL: process.env.ALT_BASE_URL,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     VERCEL_URL: process.env.VERCEL_URL,
+    NEXT_PUBLIC_SVM_METRICS: process.env.NEXT_PUBLIC_SVM_METRICS,
+    SVM_DEVNET_RPC_ALTERNATIVE: process.env.SVM_DEVNET_RPC_ALTERNATIVE,
   },
 });
