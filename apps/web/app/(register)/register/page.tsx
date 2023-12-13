@@ -31,5 +31,3 @@ export default function RegisterPage() {
     </main>
   );
 }
-
-export const runtime = "edge";
