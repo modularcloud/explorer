@@ -23,6 +23,7 @@ export const env = createEnv({
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
     SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
+    IBC_API: z.string().url(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
@@ -60,5 +61,6 @@ export const env = createEnv({
     VERCEL_URL: process.env.VERCEL_URL,
     NEXT_PUBLIC_SVM_METRICS: process.env.NEXT_PUBLIC_SVM_METRICS,
     SVM_DEVNET_RPC_ALTERNATIVE: process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+    IBC_API: process.env.IBC_API,
   },
 });
