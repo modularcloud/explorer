@@ -13,6 +13,9 @@
     "dev": {
       "cache": false
     },
+    "@modularcloud/headless#build": {
+      "dependsOn": ["^build"]
+    },
     "web#build": {
       "dependsOn": ["^build"],
       "env": [
