@@ -43,7 +43,8 @@
         "RESEND_API_KEY",
         "RESEND_EMAIL_SENDER",
         "RESEND_EMAIL_RECEIVER",
-        "NEXT_PUBLIC_SVM_METRICS"
+        "NEXT_PUBLIC_SVM_METRICS",
+        "SVM_DEVNET_RPC_ALTERNATIVE"
       ]
     },
     "verify#build": {
