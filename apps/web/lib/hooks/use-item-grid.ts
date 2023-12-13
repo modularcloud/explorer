@@ -1,5 +1,12 @@
 import * as React from "react";
-import { chunkArray, isElementOverflowing } from "~/lib/shared-utils";
+import { chunkArray } from "~/lib/shared-utils";
+
+export type OnSelectOptionArgs<T> = {
+  option: T;
+  rowIndex: number;
+  colIndex: number;
+  inputMethod: "keyboard" | "mouse";
+};
 
 type UseItemGridArgs<T> = {
   noOfColumns: number;
@@ -11,7 +18,12 @@ type UseItemGridArgs<T> = {
    * Callback for when the item is clicked, either with the mouse
    * or with Enter key
    */
-  onSelectOption?: (option: T) => void;
+  onClickOption?: (item: T) => void;
+  /**
+   * Callback for when the item is selected, either with the mouse
+   * or with the arrow keys
+   */
+  onSelectOption?: (args: OnSelectOptionArgs<T>) => void;
   /**
    * The list of groups to display into grids, this should be memoized or else
    *  it could cause too many rerenders
@@ -21,6 +33,11 @@ type UseItemGridArgs<T> = {
    * The default key to show first in the list
    */
   defaultOptionGroupKeyToSortFirst?: string;
+  /**
+   * Wether or not it should scroll automatically to the selected item
+   * when a new option is selected
+   */
+  scrollOnSelection?: boolean;
 };
 
 /**
@@ -33,8 +50,10 @@ export function useItemGrid<
   noOfColumns,
   optionGroups,
   defaultOptionGroupKeyToSortFirst,
+  onClickOption,
   onSelectOption,
   scopeRef,
+  scrollOnSelection = true,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(() => {
@@ -147,8 +166,21 @@ export function useItemGrid<
         option: nextGroupOptions[0],
         rowIndex: rowIndex + 1,
       });
+    } else return;
+    const {
+      rowIndex: newRowIndex,
+      colIndex: newColIndex,
+      option: newSelectedOption,
+    } = selectedItemPositionRef.current;
+    if (newSelectedOption !== null) {
+      onSelectOption?.({
+        option: newSelectedOption,
+        colIndex: newColIndex,
+        rowIndex: newRowIndex,
+        inputMethod: "keyboard",
+      });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, onSelectOption]);
 
   const moveSelectionUp = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
@@ -179,8 +211,21 @@ export function useItemGrid<
         option: nextGroupOptions[nextGroupOptions.length - 1], // select last index of the row up
         rowIndex: rowIndex - 1,
       });
+    } else return;
+    const {
+      rowIndex: newRowIndex,
+      colIndex: newColIndex,
+      option: newSelectedOption,
+    } = selectedItemPositionRef.current;
+    if (newSelectedOption !== null) {
+      onSelectOption?.({
+        option: newSelectedOption,
+        colIndex: newColIndex,
+        rowIndex: newRowIndex,
+        inputMethod: "keyboard",
+      });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, onSelectOption]);
 
   /**
    * 1- Navigating left/right has 2 cases :
@@ -224,8 +269,21 @@ export function useItemGrid<
         option: nextOption,
         colIndex: colIndex + 1,
       });
+    } else return;
+    const {
+      rowIndex: newRowIndex,
+      colIndex: newColIndex,
+      option: newSelectedOption,
+    } = selectedItemPositionRef.current;
+    if (newSelectedOption !== null) {
+      onSelectOption?.({
+        option: newSelectedOption,
+        colIndex: newColIndex,
+        rowIndex: newRowIndex,
+        inputMethod: "keyboard",
+      });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, onSelectOption]);
 
   const moveSelectionLeft = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
@@ -252,8 +310,21 @@ export function useItemGrid<
         option: nextOption,
         colIndex: colIndex - 1,
       });
+    } else return;
+    const {
+      rowIndex: newRowIndex,
+      colIndex: newColIndex,
+      option: newSelectedOption,
+    } = selectedItemPositionRef.current;
+    if (newSelectedOption !== null) {
+      onSelectOption?.({
+        option: newSelectedOption,
+        colIndex: newColIndex,
+        rowIndex: newRowIndex,
+        inputMethod: "keyboard",
+      });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, onSelectOption]);
 
   const scrollOptionIntoView = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
@@ -295,7 +366,7 @@ export function useItemGrid<
        */
       const { option: currentOption } = selectedItemPositionRef.current;
       if (event.key === "Enter" && !event.repeat && currentOption) {
-        onSelectOption?.(currentOption);
+        onClickOption?.(currentOption);
         // we don't want this event to be propagated to the whole page
         // so that element that listen globally (for hotkey for ex.) don't react accordingly
         event.stopPropagation();
@@ -307,11 +378,15 @@ export function useItemGrid<
       switch (event.key) {
         case "ArrowUp":
           moveSelectionUp();
-          scrollOptionIntoView();
+          if (scrollOnSelection) {
+            scrollOptionIntoView();
+          }
           break;
         case "ArrowDown":
           moveSelectionDown();
-          scrollOptionIntoView();
+          if (scrollOnSelection) {
+            scrollOptionIntoView();
+          }
           break;
         case "ArrowLeft":
           moveSelectionLeft();
@@ -347,9 +422,10 @@ export function useItemGrid<
     moveSelectionLeft,
     moveSelectionRight,
     scrollOptionIntoView,
-    onSelectOption,
+    onClickOption,
     itemRootId,
     scopeRef,
+    scrollOnSelection,
   ]);
 
   React.useEffect(() => {
@@ -379,6 +455,7 @@ export function useItemGrid<
     [selectedOption, selectedColIndex, selectedRowIndex],
   );
 
+  const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
   const registerOptionProps = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
       const isSelected =
@@ -388,13 +465,27 @@ export function useItemGrid<
 
       return {
         id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
-        onClick: () => onSelectOption?.(option),
-        onMouseMove: () => {
-          const element = document.getElementById(
-            `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
-          );
-          element?.focus();
+        onClick: () => onClickOption?.(option),
+        onMouseMove: (event: React.MouseEvent) => {
+          // This is to fix a bug in SAFARI,
+          // In safari the `MouseMove` Event is triggered even on scroll
+          // So we manually check if the mouse has really moved, and if it is not the case
+          // we just ignore the event
+          const currentMousePosition = { x: event.clientX, y: event.clientY };
+          const lastMousePosition = lastMousePositionRef.current;
+          const hasMoved =
+            currentMousePosition.x !== lastMousePosition.x ||
+            currentMousePosition.y !== lastMousePosition.y;
+
+          if (!hasMoved) return;
+
           selectOption({ option, rowIndex, colIndex });
+          onSelectOption?.({
+            option,
+            colIndex,
+            rowIndex,
+            inputMethod: "mouse",
+          });
         },
         onFocus: () => {
           selectOption({ option, rowIndex, colIndex });
@@ -416,8 +507,9 @@ export function useItemGrid<
       selectedOption,
       selectedColIndex,
       selectedRowIndex,
-      onSelectOption,
+      onClickOption,
       selectOption,
+      onSelectOption,
     ],
   );
 

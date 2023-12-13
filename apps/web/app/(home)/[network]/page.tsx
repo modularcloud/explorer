@@ -1,9 +1,11 @@
 import * as React from "react";
 
-import { EvmWithPriceWidgetLayout } from "~/ui/network-widgets/layouts/evm-with-price";
-
 import { notFound } from "next/navigation";
-import { getAllNetworks, getSingleNetworkCached } from "~/lib/network";
+import {
+  getAllPaidNetworks,
+  getNetworksForPlatformCached,
+  getSingleNetworkCached,
+} from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
@@ -11,6 +13,7 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
+import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -32,6 +35,16 @@ export default async function NetworkWidgetPage({ params }: Props) {
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
+
+  if (network.config.platform === "dymension") {
+    const dymensionNetworks = await getNetworksForPlatformCached("dymension");
+    return (
+      <DymensionWidgetLayout
+        networkSlug={network.slug}
+        allDymensionNetworks={dymensionNetworks}
+      />
+    );
+  }
 
   switch (network.config.widgetLayout) {
     // TODO : When EVM is ready, we should follow the same code structure as the other layouts
@@ -57,6 +70,8 @@ export default async function NetworkWidgetPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  const allNetworks = await getAllNetworks();
-  return allNetworks.map((network) => ({ network: network.slug }));
+  const paidNetworks = await getAllPaidNetworks();
+  return paidNetworks.map((network) => ({ network: network.slug }));
 }
+
+export const revalidate = 10;

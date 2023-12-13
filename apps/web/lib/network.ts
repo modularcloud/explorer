@@ -3,11 +3,15 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
+import { jsonFetch } from "./shared-utils";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
     logoUrl: z.string().url(),
-    rpcUrls: z.record(z.enum(["evm", "cosmos", "svm", "celestia"]), z.string().url()),
+    rpcUrls: z.record(
+      z.enum(["evm", "cosmos", "svm", "celestia"]),
+      z.string().url(),
+    ),
     token: z.object({
       name: z.string().max(128),
       decimals: z.number(),
@@ -40,54 +44,140 @@ export const singleNetworkSchema = z.object({
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
 export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
-  try {
-    let allIntegrations: Array<z.infer<typeof singleNetworkSchema>> = [];
-    let nextToken = "";
+  let allIntegrations: Array<SingleNetwork> = [];
 
-    do {
-      const response = await fetch(
-        `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?nextToken=${nextToken}`,
-      );
-
-      const integrationSummaryAPISchema = z.object({
-        result: z.object({
-          integrations: z.array(singleNetworkSchema),
-          nextToken: z.string(),
-        }),
-      });
-      const {
-        result: { integrations },
-      } = integrationSummaryAPISchema.parse(await response.json());
-
-      allIntegrations = allIntegrations.concat(integrations);
-    } while (nextToken);
-
-    return allIntegrations;
-  } catch (error) {
-    console.error("Error fetching networks : ", error);
-    return [];
+  if (process.env.NODE_ENV === "development") {
+    const value = await jsonFetch<{
+      data: Array<SingleNetwork> | null;
+    }>(`http://localhost:3000/api/fs-cache?key=all-networks`);
+    if (value.data) {
+      allIntegrations = value.data;
+      return allIntegrations;
+    }
   }
+
+  if (allIntegrations.length === 0) {
+    try {
+      let nextToken: string | undefined = "";
+
+      do {
+        const response = await fetch(
+          `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
+        ).then(async (r) => {
+          const text = await r.text();
+          const status = r.status;
+          if (status !== 200) {
+            console.log({
+              res: text,
+              status: r.status,
+              statusText: r.statusText,
+            });
+          }
+          return JSON.parse(text);
+        });
+
+        const integrationSummaryAPISchema = z.object({
+          result: z
+            .object({
+              integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+              nextToken: z.string(),
+            })
+            .nullish(),
+        });
+        const { result } = integrationSummaryAPISchema.parse(response);
+        nextToken = result?.nextToken;
+
+        if (result?.integrations) {
+          // @ts-expect-error
+          allIntegrations = [
+            ...allIntegrations,
+            ...result.integrations
+              .filter(Boolean)
+              .filter(
+                (i) =>
+                  i?.chainBrand === "eclipse" || i?.chainBrand === "celestia",
+              ),
+          ];
+        }
+      } while (nextToken);
+    } catch (error) {
+      console.dir({ "Error fetching networks : ": error }, { depth: null });
+    }
+  }
+
+  allIntegrations = allIntegrations.sort((a, b) => {
+    // prioritize celestia before every other chain
+    if (a.chainBrand === "celestia") return -1;
+    if (a.chainBrand === "celestia") return 1;
+
+    // put non paid chains at the end
+    if (!a.paidVersion) return 1;
+    if (!b.paidVersion) return -1;
+    return 0;
+  });
+
+  if (process.env.NODE_ENV === "development") {
+    await jsonFetch<{
+      data: Array<SingleNetwork> | null;
+    }>(`http://localhost:3000/api/fs-cache`, {
+      method: "POST",
+      body: {
+        key: "all-networks",
+        value: allIntegrations,
+      },
+    });
+  }
+
+  return allIntegrations;
 }
 
-export async function getSingleNetwork(
-  slug: string,
-): Promise<SingleNetwork | null> {
+export async function getSingleNetwork(slug: string) {
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
     }),
   });
 
-  const response = await fetch(
-    `${env.INTERNAL_INTEGRATION_API_URL}/integrations/slug/${encodeURIComponent(
-      slug,
-    )}`,
-  );
-
   try {
-    const {
-      result: { integration },
-    } = describeIntegrationBySlugAPISchema.parse(await response.json());
+    let integration: SingleNetwork | null = null;
+
+    // Get the cached data in the File System Cache in DEV
+    if (process.env.NODE_ENV === "development") {
+      const value = await jsonFetch<{
+        data: SingleNetwork | null;
+      }>(
+        `http://localhost:3000/api/fs-cache?key=single-network-${encodeURIComponent(
+          slug,
+        )}`,
+      );
+      if (value.data) {
+        integration = value.data;
+      }
+    }
+
+    if (!integration) {
+      let { result } = await fetch(
+        `${
+          env.INTERNAL_INTEGRATION_API_URL
+        }/integrations/slug/${encodeURIComponent(slug)}`,
+      )
+        .then((r) => r.json())
+        .then((data) => describeIntegrationBySlugAPISchema.parse(data));
+      integration = result.integration;
+
+      // Cache the data in the File System Cache in DEV
+      if (process.env.NODE_ENV === "development") {
+        await jsonFetch<{
+          data: Array<SingleNetwork> | null;
+        }>(`http://localhost:3000/api/fs-cache`, {
+          method: "POST",
+          body: {
+            key: `single-network-${integration.slug}`,
+            value: integration,
+          },
+        });
+      }
+    }
 
     // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
@@ -110,7 +200,7 @@ export async function getSingleNetwork(
   }
 }
 
-export async function getAllNetworksCached(): Promise<Array<SingleNetwork>> {
+export async function getAllNetworksCached() {
   const getAllIntegrationsFn = nextCache(getAllNetworks, {
     tags: CACHE_KEYS.networks.summary(),
   });
@@ -118,11 +208,32 @@ export async function getAllNetworksCached(): Promise<Array<SingleNetwork>> {
   return await getAllIntegrationsFn();
 }
 
-export async function getSingleNetworkCached(
-  slug: string,
-): Promise<SingleNetwork | null> {
+export async function getSingleNetworkCached(slug: string) {
   const getSingleIntegrationFn = nextCache(getSingleNetwork, {
     tags: CACHE_KEYS.networks.single(slug),
   });
   return await getSingleIntegrationFn(slug);
+}
+
+export async function getAllPaidNetworks() {
+  // `getAllNetworksCached` doesn't work during `next build`, so we manually call `getAllNetworks()`
+  const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
+    ? getAllNetworksCached()
+    : getAllNetworks());
+  return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
+}
+
+export async function getNetworksForPlatform(platform: string) {
+  const allNetworks = await (env.NEXT_PUBLIC_VERCEL_URL
+    ? getAllNetworksCached()
+    : getAllNetworks());
+
+  return allNetworks.filter((network) => network.config.platform === platform);
+}
+export async function getNetworksForPlatformCached(platform: string) {
+  const getNetworksForPlatformFn = nextCache(getNetworksForPlatform, {
+    tags: CACHE_KEYS.networks.platform(platform),
+  });
+
+  return await getNetworksForPlatformFn(platform);
 }
