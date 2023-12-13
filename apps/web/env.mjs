@@ -22,6 +22,9 @@ export const env = createEnv({
     EVM_CHAIN_DATA_SERVICE: z.string().url(),
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
+    RESEND_API_KEY: z.string().nonempty(),
+    RESEND_EMAIL_SENDER: z.string().email(),
+    RESEND_EMAIL_RECEIVER: z.string().email(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
@@ -56,5 +59,8 @@ export const env = createEnv({
     ALT_BASE_URL: process.env.ALT_BASE_URL,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     VERCEL_URL: process.env.VERCEL_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_EMAIL_SENDER: process.env.RESEND_EMAIL_SENDER,
+    RESEND_EMAIL_RECEIVER: process.env.RESEND_EMAIL_RECEIVER,
   },
 });
