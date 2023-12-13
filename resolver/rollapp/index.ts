@@ -9,6 +9,7 @@ import { getMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
 import Long from "long";
 import { Shared } from "proto-utils";
+import { LatestHubMessages } from "./hub";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -129,7 +130,7 @@ export const RollAppSentAddressResolver = createResolver(
       perPage: string;
       page?: string;
     },
-    fetchResolver,
+    fetchResolver: typeof FetchResolver,
   ) => {
     const transactions = await fetchResolver({
       url: `${input.endpoint}/tx_search?query=message.sender='${
@@ -179,6 +180,7 @@ export const resolvers = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
+  getLatestHubMessages: LatestHubMessages,
 };
 
 // Helpers
@@ -254,3 +256,5 @@ export const helpers = {
   convertMessageToKeyValue,
   getBlobTx,
 };
+
+export type { ParsedMsg } from "./hub";
