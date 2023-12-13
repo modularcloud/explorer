@@ -176,7 +176,12 @@ export const RollAppReceiveAddressResolver = createResolver(
   [FetchResolver],
 );
 
-export const resolvers = {
+export const resolvers: {
+  getBlockByHash: typeof RollappBlockHashResolver;
+  getBlock: typeof RollappBlockHeightResolver;
+  getTx: typeof RollappTransactionResolver;
+  getLatestHubMessages: typeof LatestHubMessages;
+} = {
   getBlockByHash: RollappBlockHashResolver,
   getBlock: RollappBlockHeightResolver,
   getTx: RollappTransactionResolver,
