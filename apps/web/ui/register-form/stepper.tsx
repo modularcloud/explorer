@@ -17,7 +17,7 @@ export function Stepper({
   onJumpToStep,
 }: StepperProps) {
   return (
-    <ol className="flex gap-3">
+    <ol className="flex gap-3 flex-wrap w-full justify-center">
       {range(0, noOfSteps - 1).map((step) => (
         <li className="flex items-center gap-2" key={step}>
           <Button

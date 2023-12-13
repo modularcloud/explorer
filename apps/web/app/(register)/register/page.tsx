@@ -21,13 +21,15 @@ export default function RegisterPage() {
     >
       <HomeBg
         aria-hidden="true"
-        className="fixed left-0 top-0 right-0 hidden tab:block z-[-1]"
+        className="fixed left-0 top-5 right-0 hidden tab:block z-[-1]"
       />
       <HomeBgMobile
         aria-hidden="true"
-        className="fixed left-0 top-0 right-0 tab:hidden block z-[-1]"
+        className="fixed left-0 top-5 right-0 tab:hidden block z-[-1]"
       />
       <RegisterForm />
     </main>
   );
 }
+
+export const runtime = "edge";

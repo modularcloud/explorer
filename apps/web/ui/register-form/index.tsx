@@ -12,12 +12,21 @@ import {
   Warning,
 } from "~/ui/icons";
 import { Input } from "~/ui/input";
-import { preprocess, z } from "zod";
 import { Stepper } from "./stepper";
 import { ImageCheckbox } from "./image-checkbox";
 import { cn } from "~/ui/shadcn/utils";
-
-export type RegisterFormProps = {};
+import {
+  detailStepSchema,
+  envStepSchema,
+  toolkitStepSchema,
+  layerStepSchema,
+  type AllValues,
+  type EnvStep,
+  type LayerStep,
+  allValuesSchema,
+} from "~/app/(register)/register/register-schema";
+import { sendEmail } from "~/app/(register)/register/send-email.action";
+import { LoadingIndicator } from "../loading-indicator";
 
 const STEPS = [
   "DETAILS",
@@ -29,91 +38,11 @@ const STEPS = [
 ] as const;
 type Step = (typeof STEPS)[number];
 
-const detailStepSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .nonempty({
-      message: "Can't be empty!",
-    })
-    .email({
-      message: "Please enter a correct email",
-    }),
-  projectName: z.string().trim().nonempty({
-    message: "Can't be empty!",
-  }),
-  githubRepo: z
-    .string()
-    .trim()
-    .refine(
-      (val) => {
-        // allow empty
-        if (!val) return true;
-        try {
-          if (!val.startsWith("https://")) val = `https://${val}`;
-
-          const url = new URL(val);
-          return (
-            url.toString().startsWith("https://github.com/") ||
-            url.toString().startsWith("github.com/")
-          );
-        } catch (error) {
-          return false;
-        }
-      },
-      {
-        message:
-          "please enter a correct URL, hint: it should start with https://github.com/",
-      },
-    ),
-});
-
-const envStepSchema = z.object({
-  env: z.array(z.string().trim().nonempty()).nonempty({
-    message: "Choose one or more environments",
-  }),
-});
-
-const toolkitStepSchema = z.object({
-  toolkit: z
-    .string({
-      required_error: "Please select one toolkit",
-    })
-    .trim()
-    .nonempty({
-      message: "Please select one toolkit",
-    }),
-});
-
-const layerStepSchema = z.object({
-  layer: preprocess(
-    (arg) => {
-      if (Array.isArray(arg)) {
-        return new Set([...arg]);
-      }
-      return arg;
-    },
-    z
-      .set(z.enum(["ETHEREUM", "CELESTIA"]), {
-        invalid_type_error: "Please choose one or more options",
-        required_error: "Please choose one or more options",
-      })
-      .nonempty({ message: "Please select at least one option" }),
-  ),
-});
-
-type DetailStep = z.TypeOf<typeof detailStepSchema>;
-type EnvStep = z.TypeOf<typeof envStepSchema>;
-type ToolkitStep = z.TypeOf<typeof toolkitStepSchema>;
-type LayerStep = z.TypeOf<typeof layerStepSchema>;
-
-type AllValues = DetailStep & EnvStep & ToolkitStep & LayerStep;
-
 const DEFAULT_ENVS = [
-  { value: "EVM", name: "Ethereum", logo: "/images/ethereum.png" },
-  { value: "SVM", name: "Sealevel", logo: "/images/sealevel.png" },
-  { value: "COSMOS", name: "Cosmos SDK", logo: "/images/cosmos.png" },
-  { value: "MOVE", name: "Move", logo: "/images/move.png" },
+  { value: "ETHEREUM", name: "Ethereum", logo: "/images/ethereum.png" },
+  { value: "SEALEVEL", name: "Sealevel", logo: "/images/sealevel.png" },
+  { value: "COSMOS_SDK", name: "Cosmos SDK", logo: "/images/cosmos.svg" },
+  { value: "MOVE", name: "Move", logo: "/images/move.svg" },
 ];
 
 const DEFAULT_TOOLKITS = [
@@ -155,8 +84,9 @@ const DEFAULT_LAYERS = [
   },
 ];
 
-export function RegisterForm({}: RegisterFormProps) {
-  const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[0]);
+export function RegisterForm() {
+  const [isSendingEmail, startTransition] = React.useTransition();
+  const [currentStep, setCurrentStep] = React.useState<Step>(STEPS[5]);
   const [valuesInputed, setValuesInputed] = React.useState<Partial<AllValues>>(
     {},
   );
@@ -281,6 +211,14 @@ export function RegisterForm({}: RegisterFormProps) {
       setCurrentStep("SUMMARY");
       setTotalFilledSteps((total) => (total >= 4 ? total : 4));
     }
+    if (currentStep === "SUMMARY") {
+      startTransition(() =>
+        sendEmail(allValuesSchema.parse(valuesInputed)).then(() => {
+          setCurrentStep("SUCCESS");
+          setTotalFilledSteps(5);
+        }),
+      );
+    }
 
     // default values
     return {};
@@ -299,25 +237,34 @@ export function RegisterForm({}: RegisterFormProps) {
       className="flex flex-col justify-between h-full items-center w-full"
       action={action}
     >
-      <header className="p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0">
+      <header
+        className={cn(
+          "p-4 border-b bg-white z-10  w-full flex flex-col items-center sticky top-0",
+          {
+            "pointer-events-none": currentStep === "SUCCESS",
+          },
+        )}
+      >
         <Stepper
           totalFilledSteps={totalFilledSteps}
           current={currentStepIdx}
-          noOfSteps={STEPS.length - 1}
+          noOfSteps={STEPS.length - 2}
           onJumpToStep={jumpToStep}
         />
       </header>
 
-      <div className="flex-1 flex flex-col gap-8 pt-32 py-20 justify-stretch w-full px-10 mx-auto tab:max-w-[30rem]">
-        <div className="flex flex-col items-center gap-3">
-          <img
-            src="/images/mc-logo.svg"
-            alt="Modular Cloud logo"
-            className="h-6 w-6 mb-3"
-          />
-          <h1 className="font-medium text-2xl">{title}</h1>
-          <p>{subTitle}</p>
-        </div>
+      <div className="flex-1 flex flex-col gap-8 pt-32 py-20 justify-stretch w-full px-10 mx-auto tab:max-w-[30rem] relative">
+        {currentStep !== "SUCCESS" && (
+          <div className="flex flex-col items-center gap-3">
+            <img
+              src="/images/mc-logo.svg"
+              alt="Modular Cloud logo"
+              className="h-6 w-6 mb-3"
+            />
+            <h1 className="font-medium text-2xl">{title}</h1>
+            <p>{subTitle}</p>
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           {currentStep === "DETAILS" && (
@@ -338,38 +285,47 @@ export function RegisterForm({}: RegisterFormProps) {
               onJumpToStep={setCurrentStep}
             />
           )}
+          {currentStep === "SUCCESS" && <SuccessStep />}
         </div>
       </div>
 
-      <footer className="p-4 border-t bg-white z-10 w-full sticky bottom-0">
-        <div className="flex items-center justify-stretch gap-4 md:justify-between">
-          <Button
-            type="button"
-            variant="bordered"
-            aria-disabled={currentStep === "DETAILS"}
-            className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
-            onClick={() => {
-              jumpToStep(currentStepIdx - 1);
-            }}
-          >
-            <ArrowRight
-              className="h-3 w-3 text-muted -scale-x-100"
-              aria-hidden="true"
-            />
-            <span>Previous</span>
-            <span></span>
-          </Button>
+      {currentStep !== "SUCCESS" && (
+        <footer className="p-4 border-t bg-white z-10 w-full sticky bottom-0">
+          <div className="flex items-center justify-stretch gap-4 md:justify-between">
+            <Button
+              type="button"
+              variant="bordered"
+              aria-disabled={currentStep === "DETAILS"}
+              className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
+              onClick={() => {
+                jumpToStep(currentStepIdx - 1);
+              }}
+            >
+              <ArrowRight
+                className="h-3 w-3 text-muted -scale-x-100"
+                aria-hidden="true"
+              />
+              <span>Previous</span>
+              <span></span>
+            </Button>
 
-          <Button
-            type="submit"
-            className="bg-primary px-3 py-1 text-white w-full md:w-auto text-center items-center justify-between md:gap-12 hover:bg-primary/80"
-          >
-            <span></span>
-            <span>Next</span>
-            <ArrowRight className="h-3 w-3 text-white" aria-hidden="true" />
-          </Button>
-        </div>
-      </footer>
+            <Button
+              type="submit"
+              disabled={isSendingEmail}
+              color="primary"
+              className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
+            >
+              <span>
+                {isSendingEmail && (
+                  <LoadingIndicator className="text-white h-4 w-4" />
+                )}
+              </span>
+              <span>Next</span>
+              <ArrowRight className="h-3 w-3 text-white" aria-hidden="true" />
+            </Button>
+          </div>
+        </footer>
+      )}
     </form>
   );
 }
@@ -451,34 +407,16 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <ImageCheckbox
-          label="Ethereum"
-          name="env"
-          value="EVM"
-          defaultChecked={defaultValues.env?.includes("EVM")}
-          image="/images/ethereum.png"
-        />
-        <ImageCheckbox
-          label="Sealevel"
-          name="env"
-          value="SVM"
-          defaultChecked={defaultValues.env?.includes("SVM")}
-          image="/images/sealevel.png"
-        />
-        <ImageCheckbox
-          label="Move"
-          name="env"
-          value="MOVE"
-          defaultChecked={defaultValues.env?.includes("MOVE")}
-          image="/images/move.svg"
-        />
-        <ImageCheckbox
-          label="Cosmos SDK"
-          name="env"
-          value="COSMOS"
-          defaultChecked={defaultValues.env?.includes("COSMOS")}
-          image="/images/cosmos.svg"
-        />
+        {DEFAULT_ENVS.map((env) => (
+          <ImageCheckbox
+            key={env.value}
+            label={env.name}
+            name="env"
+            value={env.value}
+            defaultChecked={defaultValues.env?.includes(env.value)}
+            image={env.logo}
+          />
+        ))}
 
         {additionalEnvs.map((currentEnv) => (
           <ImageCheckbox
@@ -801,6 +739,39 @@ function SummaryStep({
           })}
         </div>
       </section>
+    </div>
+  );
+}
+
+function SuccessStep() {
+  return (
+    <div className="h-full w-full fixed inset-0">
+      <div
+        className={cn(
+          "min-w-max border border-mid-dark-100 bg-muted-100 px-8 py-6 rounded-md absolute",
+          "animate-slide-up-from-bottom top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+        )}
+      >
+        <img
+          src="/images/bg-btn.svg"
+          className="absolute left-0 top-0 right-0"
+          alt=""
+        />
+        <span className="relative z-10">
+          🎈 Thank you for registering your chain
+        </span>
+      </div>
+
+      <img
+        src="/images/confetti_left.svg"
+        alt=""
+        className="absolute -left-4 -bottom-4 animate-slide-up-from-left"
+      />
+      <img
+        src="/images/confetti_right.svg"
+        alt=""
+        className="absolute -right-4 -bottom-4 animate-slide-up-from-right"
+      />
     </div>
   );
 }

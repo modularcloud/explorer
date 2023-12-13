@@ -34,6 +34,7 @@ export function ImageCheckbox({
         htmlFor={checkboxId}
         className={cn(
           "flex flex-col text-xs items-center cursor-pointer",
+
           "peer-checked:border-primary peer-checked:border-2",
           "peer-disabled:cursor-default",
           {
@@ -53,7 +54,9 @@ export function ImageCheckbox({
             />
           </div>
         )}
-        {label}
+        <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+          {label}
+        </p>
       </Card>
     </div>
   );
