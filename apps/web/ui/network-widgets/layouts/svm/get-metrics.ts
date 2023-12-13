@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import { DEFAULT_WIDGET_REVALIDATE_TIME } from "~/lib/constants";
 
 export const svmMetricsDataSchema = z.object({
@@ -13,8 +14,12 @@ export const svmMetricsDataSchema = z.object({
 export type SvmMetrics = z.TypeOf<typeof svmMetricsDataSchema>;
 
 export async function getSvmWidgetMetrics(networkSlug: string) {
+  const idMap: Record<string, number> = {
+    "eclipse-testnet": 4,
+    "eclipse-devnet": 2,
+  };
   return await fetch(
-    `https://svm.preview-api.modular.cloud/${networkSlug}/metrics`,
+    `${env.NEXT_PUBLIC_SVM_METRICS}/${idMap[networkSlug]}/real-time-metrics`,
     {
       next: {
         revalidate: DEFAULT_WIDGET_REVALIDATE_TIME,

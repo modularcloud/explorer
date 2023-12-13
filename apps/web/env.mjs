@@ -31,6 +31,7 @@ export const env = createEnv({
     }, z.string().url().optional()),
   },
   client: {
+    NEXT_PUBLIC_SVM_METRICS: z.string().url(),
     // add scheme to VERCEL_URL
     NEXT_PUBLIC_VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
@@ -62,5 +63,6 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_EMAIL_SENDER: process.env.RESEND_EMAIL_SENDER,
     RESEND_EMAIL_RECEIVER: process.env.RESEND_EMAIL_RECEIVER,
+    NEXT_PUBLIC_SVM_METRICS: process.env.NEXT_PUBLIC_SVM_METRICS,
   },
 });

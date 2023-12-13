@@ -42,7 +42,8 @@
         "ALT_BASE_URL",
         "RESEND_API_KEY",
         "RESEND_EMAIL_SENDER",
-        "RESEND_EMAIL_RECEIVER"
+        "RESEND_EMAIL_RECEIVER",
+        "NEXT_PUBLIC_SVM_METRICS"
       ]
     },
     "verify#build": {
