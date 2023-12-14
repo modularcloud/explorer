@@ -32,6 +32,7 @@ export const CelestiaLatestTransactionsResolver = createResolver(
       if (resolution.type === "success") {
         return resolution.result;
       }
+      console.log("Error resolve tx: ", { resolution });
       throw new Error("Failed to resolve one or more transactions");
     });
     const page: Page = {
