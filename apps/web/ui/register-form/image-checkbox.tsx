@@ -5,23 +5,27 @@ import { cn } from "~/ui/shadcn/utils";
 
 type ImageCheckboxProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "size" | "type"
+  "size" | "type" | "className"
 > & {
   image?: string;
+  className?: string;
   label: string;
   type?: "checkbox" | "radio";
+  direction?: "horizontal" | "vertical";
 };
 
 export function ImageCheckbox({
   image,
   label,
   value,
+  className,
+  direction = "vertical",
   type = "checkbox",
   ...checkboxProps
 }: ImageCheckboxProps) {
   const checkboxId = React.useId();
   return (
-    <div>
+    <div className="w-full h-full flex">
       <input
         type={type}
         id={checkboxId}
@@ -33,14 +37,16 @@ export function ImageCheckbox({
         as="label"
         htmlFor={checkboxId}
         className={cn(
-          "flex flex-col text-xs items-center cursor-pointer",
-
+          "flex items-center cursor-pointer",
           "peer-checked:border-primary peer-checked:border-2",
           "peer-disabled:cursor-default",
           {
             "py-2": !!image,
             "py-3": !image,
+            "flex-col justify-center text-xs": direction === "vertical",
+            "flex-row text-sm gap-2": direction === "horizontal",
           },
+          className,
         )}
       >
         {image && (

@@ -707,7 +707,7 @@ function SummaryStep({
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 place-items-stretch">
           {values.env.map((env) => {
             const envFound = DEFAULT_ENVS.find(
               (defEnv) => env === defEnv.value,
@@ -718,9 +718,15 @@ function SummaryStep({
                 label={envFound.name}
                 image={envFound.logo}
                 disabled
+                direction="horizontal"
               />
             ) : (
-              <ImageCheckbox key={env} label={env} disabled />
+              <ImageCheckbox
+                key={env}
+                label={env}
+                disabled
+                direction="horizontal"
+              />
             );
           })}
         </div>
@@ -739,15 +745,20 @@ function SummaryStep({
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 place-items-stretch">
           {toolkitFound ? (
             <ImageCheckbox
               label={toolkitFound.name}
               image={toolkitFound.logo}
               disabled
+              direction="horizontal"
             />
           ) : (
-            <ImageCheckbox label={values.toolkit} disabled />
+            <ImageCheckbox
+              label={values.toolkit}
+              disabled
+              direction="horizontal"
+            />
           )}
         </div>
       </section>
@@ -765,7 +776,7 @@ function SummaryStep({
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 place-items-stretch">
           {Array.from(values.layer).map((layer) => {
             const layerFound = DEFAULT_LAYERS.find(
               (defLayer) => layer === defLayer.value,
@@ -776,9 +787,15 @@ function SummaryStep({
                 label={layerFound.name}
                 image={layerFound.logo}
                 disabled
+                direction="horizontal"
               />
             ) : (
-              <ImageCheckbox key={layer} label={layer} disabled />
+              <ImageCheckbox
+                key={layer}
+                label={layer}
+                disabled
+                direction="horizontal"
+              />
             );
           })}
         </div>
