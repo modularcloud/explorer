@@ -446,7 +446,7 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
         ))}
       </div>
 
-      <div className="flex gap-4 items-end">
+      <div className="flex flex-col justify-stretch gap-4 items-end lg:justify-normal lg:flex-row">
         <Input
           size="small"
           ref={inputRef}
@@ -461,11 +461,11 @@ function EnvStepForm({ defaultValues, errors }: FormStepProps) {
         />
         <Button
           color="primary"
-          className="min-w-max px-3 py-1"
+          className="min-w-max px-3 py-1 w-full iline-flex justify-center lg:w-auto"
           type="button"
           onClick={addAdditionalEnv}
         >
-          Add env
+          <span>Add environment</span>
         </Button>
       </div>
     </>
@@ -564,7 +564,7 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
         )}
       </div>
 
-      <div className="flex gap-4 items-end">
+      <div className="flex flex-col justify-stretch gap-4 items-end lg:justify-normal lg:flex-row">
         <Input
           size="small"
           ref={inputRef}
@@ -579,11 +579,11 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
         />
         <Button
           color="primary"
-          className="min-w-max px-3 py-1"
+          className="min-w-max px-3 py-1 w-full iline-flex justify-center lg:w-auto"
           type="button"
           onClick={addToolkit}
         >
-          Add env
+          <span>Add toolkit</span>
         </Button>
       </div>
     </>
