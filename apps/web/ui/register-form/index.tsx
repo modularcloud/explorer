@@ -62,8 +62,8 @@ const DEFAULT_TOOLKITS = [
     logo: "/images/dymension-logo.svg",
   },
   {
-    value: "ARBITRUM_NITRO",
-    name: "Abitrum Nitro",
+    value: "ORBIT_STACK",
+    name: "Orbit Stack",
   },
   {
     value: "OP_STACK",
@@ -547,10 +547,10 @@ function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
           type="radio"
         />
         <ImageCheckbox
-          label="Arbitrum Nitro"
+          label="Orbit Stack"
           name="toolkit"
-          value="ARBITRUM_NITRO"
-          defaultChecked={defaultValues.toolkit === "ARBITRUM_NITRO"}
+          value="ORBIT_STACK"
+          defaultChecked={defaultValues.toolkit === "ORBIT_STACK"}
           type="radio"
         />
         {additionalToolkit && (
