@@ -10,7 +10,7 @@ const SvgKeyboardArrowDown = (props: SVGProps<SVGSVGElement>) => (
   >
     <path
       fill="currentColor"
-      d="M4.354 4.313a.5.5 0 0 1-.708 0L.854 1.52a.5.5 0 0 1 .353-.853h5.586a.5.5 0 0 1 .353.853L4.354 4.313"
+      d="M4.354 4.313a.5.5 0 0 1-.708 0L.854 1.52a.5.5 0 0 1 .353-.853h5.586a.5.5 0 0 1 .353.853z"
     />
   </svg>
 );
