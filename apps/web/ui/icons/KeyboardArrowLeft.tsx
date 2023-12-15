@@ -10,7 +10,7 @@ const SvgKeyboardArrowLeft = (props: SVGProps<SVGSVGElement>) => (
   >
     <path
       fill="currentColor"
-      d="M.688 4.354a.5.5 0 0 1 0-.708L3.48.854a.5.5 0 0 1 .854.353v5.586a.5.5 0 0 1-.854.353L.688 4.354Z"
+      d="M.688 4.354a.5.5 0 0 1 0-.708L3.48.854a.5.5 0 0 1 .854.353v5.586a.5.5 0 0 1-.854.353z"
     />
   </svg>
 );

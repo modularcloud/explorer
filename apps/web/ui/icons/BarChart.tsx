@@ -9,11 +9,11 @@ const SvgBarChart = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="currentColor"
+      stroke="#8457FF"
       strokeLinecap="square"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M5 13.777a1 1 0 0 0-1 1V19a1 1 0 0 0 1 1h1.33a1 1 0 0 0 1-1v-4.223a1 1 0 0 0-1-1H5ZM11.33 9.334a1 1 0 0 0-1 1v8.667a1 1 0 0 0 1 1h1.33a1 1 0 0 0 1-1v-8.667a1 1 0 0 0-1-1h-1.33ZM17.67 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1H19a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"
+      d="M5 13.777a1 1 0 0 0-1 1V19a1 1 0 0 0 1 1h1.33a1 1 0 0 0 1-1v-4.223a1 1 0 0 0-1-1zM11.33 9.334a1 1 0 0 0-1 1v8.667a1 1 0 0 0 1 1h1.33a1 1 0 0 0 1-1v-8.667a1 1 0 0 0-1-1zM17.67 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1H19a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"
     />
   </svg>
 );
