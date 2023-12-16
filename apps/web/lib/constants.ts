@@ -12,3 +12,8 @@ export type VMDisplayName =
 
 export const DEFAULT_WIDGET_REVALIDATE_TIME = 1;
 export const DEFAULT_WIDGET_REFETCH_TIME = 5;
+
+export const DYMENSION_ROLLAPP_IBC_RESOLVER_ID = "rollapp-events-0.0.0";
+export const DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT = {
+  endpoint: "https://froopyland.rpc.silknodes.io",
+} as const;
