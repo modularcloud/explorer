@@ -35,7 +35,7 @@ export function DymensionWidgetContent({
   }
 
   return (
-    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+    <div className="max-w-[52.5rem] mx-auto flex flex-col gap-4 w-full">
       <div className="hidden tab:inline-block h-4 mx-auto text-center">
         {lastUpdatedTime && (
           <time
@@ -68,7 +68,7 @@ export function DymensionWidgetContent({
 
 function DymensionWidgetSkeleton(props: { error?: string }) {
   return (
-    <ul className="relative">
+    <ul className="relative max-w-[52.5rem]  mx-auto">
       {props.error && (
         <div className="z-10 absolute inset-0 backdrop-blur-md rounded-lg text-center p-24 border border-red-400">
           <p className="text-red-400 text-lg">
