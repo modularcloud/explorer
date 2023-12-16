@@ -91,12 +91,7 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
           // @ts-expect-error
           allIntegrations = [
             ...allIntegrations,
-            ...result.integrations
-              .filter(Boolean)
-              .filter(
-                (i) =>
-                  i?.chainBrand === "eclipse" || i?.chainBrand === "celestia",
-              ),
+            ...result.integrations.filter(Boolean),
           ];
         }
       } while (nextToken);
@@ -195,6 +190,7 @@ export async function getSingleNetwork(slug: string) {
     }
     if (integration.chainBrand === "dymension") {
       integration.config.widgetLayout = "Dymension";
+      integration.config.primaryColor = "29 13% 45%";
     }
 
     return integration;
