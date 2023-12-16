@@ -4,12 +4,12 @@ const TransactionMetaSchema = z.object({
   computeUnitsConsumed: z.number(),
   err: z.union([z.any(), z.null()]), // Adjust this based on the actual structure of `err`
   fee: z.number(),
-  innerInstructions: z.array(z.any()), // Adjust this based on the actual structure
+  innerInstructions: z.array(z.any()).nullable(), // Adjust this based on the actual structure
   loadedAddresses: z.object({
     readonly: z.array(z.string()),
     writable: z.array(z.string()),
   }),
-  logMessages: z.array(z.string()),
+  logMessages: z.array(z.string()).nullable(),
   postBalances: z.array(z.number()),
   postTokenBalances: z.array(z.any()), // Adjust this based on the actual structure
   preBalances: z.array(z.number()),
