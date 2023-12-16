@@ -42,7 +42,7 @@ export function IBCTransferEventCard({
   networkSlug,
 }: IBCTransferEventCardProps) {
   return (
-    <Card className="p-0 flex flex-col w-full shadow-none">
+    <Card className="p-0 grid w-full shadow-none">
       <div className="p-5 rounded-t-lg flex items-start justify-between">
         <Link
           href={`/${networkSlug}/transactions/${event.hash}`}
@@ -158,7 +158,7 @@ export function IBCTransferEventCard({
 
 export function IBCTransferEventCardSkeleton() {
   return (
-    <Card className="p-0 flex flex-col w-full shadow-none">
+    <Card className="p-0 grid w-full shadow-none">
       <div className="p-5 rounded-t-lg flex items-start justify-between">
         <Skeleton className="rounded-md h-8 w-24" />
         <Skeleton className="rounded-md h-6 w-24" />
