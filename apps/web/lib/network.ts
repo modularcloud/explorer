@@ -91,12 +91,7 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
           // @ts-expect-error
           allIntegrations = [
             ...allIntegrations,
-            ...result.integrations
-              .filter(Boolean)
-              .filter(
-                (i) =>
-                  i?.chainBrand === "eclipse" || i?.chainBrand === "celestia",
-              ),
+            ...result.integrations.filter(Boolean),
           ];
         }
       } while (nextToken);
