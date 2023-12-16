@@ -110,6 +110,14 @@ module.exports = {
         lg: ["1.125rem", "1.75rem"], // 18px, 28px
         xl: ["1.5rem", "2rem"], // 24px, 32px
       },
+      fontSize: {
+        xxs: ["0.65625rem", "0.875rem"], // 10px, 14px
+        xs: ["0.75rem", "1rem"], // 12px, 16px
+        sm: ["0.875rem", "1.25rem"], // 14px, 20px
+        base: ["1rem", "1.5rem"], // 16px, 24px
+        lg: ["1.125rem", "1.75rem"], // 18px, 28px
+        xl: ["1.5rem", "2rem"], // 24px, 32px
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
