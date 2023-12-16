@@ -5,5 +5,10 @@ export type DymensionWidgetLayoutProps = {};
 
 export async function DymensionWidgetLayout({}: DymensionWidgetLayoutProps) {
   const ibcEvents = await getDymensionIBCTransfertEvents();
-  return <DymensionWidgetContent initialEvents={ibcEvents} />;
+  return (
+    <DymensionWidgetContent
+      initialEvents={ibcEvents}
+      initialUpdatedAt={new Date()}
+    />
+  );
 }

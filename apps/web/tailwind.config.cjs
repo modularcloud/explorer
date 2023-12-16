@@ -45,6 +45,12 @@ module.exports = {
       //   sm: "calc(var(--radius) - 4px)",
       // },
       keyframes: {
+        keyframes: {
+          fadeIn: {
+            "0%": { opacity: 0 },
+            "100%": { transform: 1 },
+          },
+        },
         "accordion-down": {
           from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -80,6 +86,7 @@ module.exports = {
         slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideRightAndFade:
           "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "fade-in": "fadeIn 150ms linear",
       },
       fontSize: {
         xxs: ["0.65625rem", "0.875rem"], // 10px, 14px

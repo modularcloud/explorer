@@ -7,13 +7,16 @@ import type { IBCTransferEvent } from "~/lib/headless-utils";
 import { useDymensionWidgetData } from "./use-widget-data";
 import { useParams } from "next/navigation";
 import { range } from "~/lib/shared-utils";
+import { useClientOnlyTime } from "../../use-client-only-time";
 
 export type DymensionWidgetContentProps = {
   initialEvents: IBCTransferEvent[];
+  initialUpdatedAt: Date;
 };
 
 export function DymensionWidgetContent({
   initialEvents,
+  initialUpdatedAt,
 }: DymensionWidgetContentProps) {
   const params = useParams() as { network: string };
   const { error, data } = useDymensionWidgetData({
@@ -21,21 +24,45 @@ export function DymensionWidgetContent({
     initialTransfertEvents: initialEvents,
   });
 
+  const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
+
+  if (error) {
+    return <DymensionWidgetSkeleton error={error.toString()} />;
+  }
+
   if (!data) {
-    return <DymensionWidgetSkeleton error={error?.toString()} />;
+    return <DymensionWidgetSkeleton />;
   }
 
   return (
-    <ul>
-      {initialEvents.map((event, index) => (
-        <li key={event.hash} className="flex flex-col items-center">
-          <IBCTransferEventCard networkSlug={params.network} event={event} />
-          {index < initialEvents.length - 1 && (
-            <div aria-hidden="true" className="w-[1px] bg-mid-dark-100 h-4" />
-          )}
-        </li>
-      ))}
-    </ul>
+    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+      <div className="hidden tab:inline-block h-4 mx-auto text-center">
+        {lastUpdatedTime && (
+          <time
+            className="text-xs text-muted/40 mx-auto font-normal animate-fade-in"
+            dateTime={lastUpdatedTime.toISOString()}
+          >
+            Last Updated:&nbsp;
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "long",
+              timeStyle: "long",
+              hour12: true,
+              timeZone: "America/Los_Angeles",
+            }).format(lastUpdatedTime)}
+          </time>
+        )}
+      </div>
+      <ul>
+        {data.map((event, index) => (
+          <li key={event.hash} className="flex flex-col items-center">
+            <IBCTransferEventCard networkSlug={params.network} event={event} />
+            {index < data.length - 1 && (
+              <div aria-hidden="true" className="w-[1px] bg-mid-dark-100 h-4" />
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
