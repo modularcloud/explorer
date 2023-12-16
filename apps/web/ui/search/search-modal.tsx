@@ -115,6 +115,8 @@ export function SearchModal({
               <Input
                 size="medium"
                 id="query"
+                label="query"
+                hideLabel
                 ref={inputRef}
                 placeholder={
                   selectedNetwork
