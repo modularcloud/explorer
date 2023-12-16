@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import Link from "next/link";
 import { Card } from "~/ui/card";
@@ -11,16 +10,12 @@ import {
 import { ClientTime } from "~/ui/tables/time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
+import type { IBCTransferEvent } from "~/lib/headless-utils";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
+  networkSlug: string;
 };
-
-function shortenAddress(address: string) {
-  const first4Chars = address.slice(0, 4);
-  const last4Chars = address.slice(address.length - 4);
-  return `${first4Chars}...${last4Chars}`;
-}
 
 function formatAmout(amount: string) {
   const [total, unit] = amount.split(" ");
@@ -29,8 +24,8 @@ function formatAmout(amount: string) {
 
   if (isNaN(totalAmount)) {
     return amount;
-    // return totalAmount + " " + unit;
   }
+
   const isMoreThanBillions = totalAmount > 999_999_999_999;
 
   const totalFormatted = new Intl.NumberFormat("en-US", {
@@ -41,12 +36,15 @@ function formatAmout(amount: string) {
   return totalFormatted + " " + unit;
 }
 
-export function IBCTransferEventCard({ event }: IBCTransferEventCardProps) {
+export function IBCTransferEventCard({
+  event,
+  networkSlug,
+}: IBCTransferEventCardProps) {
   return (
     <Card className="p-0 flex flex-col w-full shadow-none">
       <div className="p-5 rounded-t-lg flex items-start justify-between">
         <Link
-          href="#"
+          href={`/${networkSlug}/transactions/${event.hash}`}
           className="inline-flex gap-1 px-2 py-1 bg-teal-50 border border-teal-100/75 rounded-md"
         >
           <CornerUpRight className="h-5 w-5 text-teal-500" aria-hidden="true" />
@@ -79,7 +77,6 @@ export function IBCTransferEventCard({ event }: IBCTransferEventCardProps) {
             <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
               {event.from.address}
             </p>
-            {/* {shortenAddress(event.from.address)} */}
           </Link>
           <span className="text-muted">on</span>
           <Link
@@ -135,7 +132,6 @@ export function IBCTransferEventCard({ event }: IBCTransferEventCardProps) {
             <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
               {event.to.address}
             </p>
-            {/* {shortenAddress(event.to.address)} */}
           </Link>
           <span className="text-muted">on</span>
           <Link
@@ -158,22 +154,3 @@ export function IBCTransferEventCard({ event }: IBCTransferEventCardProps) {
     </Card>
   );
 }
-
-export type IBCTransferEvent = {
-  type: "transfer";
-  hash: string;
-  timestamp: number;
-  amount?: string;
-  from: {
-    address: string;
-    chainName: string;
-    chainSlug: string;
-    chainLogo: string;
-  };
-  to: {
-    address: string;
-    chainName: string;
-    chainSlug: string;
-    chainLogo: string;
-  };
-};

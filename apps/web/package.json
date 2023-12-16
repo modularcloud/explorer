@@ -32,6 +32,7 @@
     "@uploadcare/upload-client": "^6.6.1",
     "@vercel/analytics": "^0.1.11",
     "@vercel/blob": "^0.14.1",
+    "@vercel/postgres": "^0.5.1",
     "bright": "^0.8.3",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",

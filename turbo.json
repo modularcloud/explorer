@@ -42,7 +42,15 @@
         "ALT_BASE_URL",
         "IBC_API",
         "NEXT_PUBLIC_SVM_METRICS",
-        "SVM_DEVNET_RPC_ALTERNATIVE"
+        "SVM_DEVNET_RPC_ALTERNATIVE",
+        "POSTGRES_URL",
+        "POSTGRES_PRISMA_URL",
+        "POSTGRES_URL_NON_POOLING",
+        "POSTGRES_USER",
+        "POSTGRES_HOST",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DATABASE",
+        "CRON_SECRET"
       ]
     },
     "verify#build": {
