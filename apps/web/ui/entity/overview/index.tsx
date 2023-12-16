@@ -27,7 +27,8 @@ export async function Overview({ properties, isIBC }: Props) {
   }, [properties]);
   return (
     <>
-      {isIBC ? <FlowChart /> : null}
+      {/* TODO : remove for now */}
+      {/* {isIBC ? <FlowChart /> : null} */}
       <section className="pb-4 h-full overflow-y-auto">
         <OverviewEntryList entries={entries} />
 

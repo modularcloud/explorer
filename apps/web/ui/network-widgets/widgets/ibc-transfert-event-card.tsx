@@ -11,6 +11,7 @@ import { ClientTime } from "~/ui/tables/time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
 import type { IBCTransferEvent } from "~/lib/headless-utils";
+import { Skeleton } from "~/ui/skeleton";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -149,6 +150,68 @@ export function IBCTransferEventCard({
               {event.to.chainName}
             </p>
           </Link>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function IBCTransferEventCardSkeleton() {
+  return (
+    <Card className="p-0 flex flex-col w-full shadow-none">
+      <div className="p-5 rounded-t-lg flex items-start justify-between">
+        <Skeleton className="rounded-md h-8 w-24" />
+        <Skeleton className="rounded-md h-6 w-24" />
+      </div>
+      <hr className="h-[1px] bg-mid-dark-100" />
+
+      <div
+        className={cn(
+          "p-5 rounded-b-lg grid w-full place-content-center text-sm",
+          "gap-5",
+          "tab:grid-cols-5 tab:gap-2",
+        )}
+      >
+        {/* Sender */}
+        <div className="tab:col-span-2 flex items-center gap-2 min-w-0 w-full max-w-full">
+          <span className="text-muted">From</span>
+          <Skeleton className="rounded-md h-6 flex-1 inline-flex min-w-0" />
+          <span className="text-muted">on</span>
+          <Skeleton className="rounded-md h-6 flex-1 inline-flex min-w-0" />
+        </div>
+
+        {/* Amount */}
+        <div
+          className={cn(
+            "col-span-1 h-full w-full flex items-center justify-center gap-1 py-1",
+            "bg-blue-50 border border-blue-100/75 rounded-md tab:border-transparent tab:bg-transparent",
+          )}
+        >
+          <ChevronDoubleDown
+            className="h-4 w-4 text-blue-600 tab:hidden flex-none"
+            aria-hidden="true"
+          />
+          <ArrowRightGradient
+            className="text-blue-600 h-4 hidden tab:block flex-none"
+            aria-hidden="true"
+          />
+          <Skeleton className="rounded-md w-full h-6" />
+          <ChevronDoubleDown
+            className="h-4 w-4 text-blue-600 tab:hidden flex-none"
+            aria-hidden="true"
+          />
+          <ArrowRightGradient
+            className="text-blue-600 h-4 hidden tab:block flex-none"
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Receiver */}
+        <div className="tab:col-span-2 flex items-center gap-2 min-w-0 w-full max-w-full">
+          <span className="text-muted">To</span>
+          <Skeleton className="rounded-md h-6 flex-1 inline-flex min-w-0" />
+          <span className="text-muted">on</span>
+          <Skeleton className="rounded-md h-6 flex-1 inline-flex min-w-0" />
         </div>
       </div>
     </Card>
