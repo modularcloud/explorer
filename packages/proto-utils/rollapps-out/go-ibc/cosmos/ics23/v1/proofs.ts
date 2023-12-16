@@ -14,6 +14,9 @@ export enum HashOp {
   /** BITCOIN - ripemd160(sha256(x)) */
   BITCOIN = 5,
   SHA512_256 = 6,
+  BLAKE2B_512 = 7,
+  BLAKE2S_256 = 8,
+  BLAKE3 = 9,
   UNRECOGNIZED = -1,
 }
 
@@ -40,6 +43,15 @@ export function hashOpFromJSON(object: any): HashOp {
     case 6:
     case "SHA512_256":
       return HashOp.SHA512_256;
+    case 7:
+    case "BLAKE2B_512":
+      return HashOp.BLAKE2B_512;
+    case 8:
+    case "BLAKE2S_256":
+      return HashOp.BLAKE2S_256;
+    case 9:
+    case "BLAKE3":
+      return HashOp.BLAKE3;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -63,6 +75,12 @@ export function hashOpToJSON(object: HashOp): string {
       return "BITCOIN";
     case HashOp.SHA512_256:
       return "SHA512_256";
+    case HashOp.BLAKE2B_512:
+      return "BLAKE2B_512";
+    case HashOp.BLAKE2S_256:
+      return "BLAKE2S_256";
+    case HashOp.BLAKE3:
+      return "BLAKE3";
     case HashOp.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";

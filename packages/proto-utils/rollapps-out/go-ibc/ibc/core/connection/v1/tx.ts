@@ -46,7 +46,7 @@ export interface MsgConnectionOpenTry {
     | Height
     | undefined;
   /**
-   * proof of the initialization the connection on Chain A: `UNITIALIZED ->
+   * proof of the initialization the connection on Chain A: `UNINITIALIZED ->
    * INIT`
    */
   proofInit: Uint8Array;
@@ -77,7 +77,7 @@ export interface MsgConnectionOpenAck {
     | Height
     | undefined;
   /**
-   * proof of the initialization the connection on Chain B: `UNITIALIZED ->
+   * proof of the initialization the connection on Chain B: `UNINITIALIZED ->
    * TRYOPEN`
    */
   proofTry: Uint8Array;
