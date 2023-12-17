@@ -1,7 +1,7 @@
 import { createResolver, NotFound } from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
-import { getMessages } from "./registry";
+import { getMessages, getMemo } from "./registry";
 import { getBlobTx } from "./parse-tx";
 import Long from "long";
 
@@ -145,8 +145,10 @@ function convertMessageToKeyValue(message: any, prefix?: string) {
   return KV;
 }
 
+
 export const helpers = {
   getMessages,
+  getMemo,
   getMessageDisplayName,
   convertMessageToKeyValue,
   getBlobTx,

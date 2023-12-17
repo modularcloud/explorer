@@ -32,3 +32,11 @@ export function getMessages(txRaw: string) {
     };
   });
 }
+
+export function getMemo(txRaw: string) {
+  const txBuffer = Buffer.from(txRaw, "base64");
+
+  const txBody = Celestia.Tx.decode(txBuffer).body;
+
+  return txBody?.memo;
+}

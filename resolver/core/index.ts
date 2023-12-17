@@ -25,6 +25,8 @@ export function NotFound() {
   throw PendingException;
 }
 
+var cache = (fn: Function, input: any) => Promise<any>;
+
 export type Trace = {
   resolverId: string;
   input: any;
