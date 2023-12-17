@@ -2,6 +2,7 @@ import * as Celestia from "@modularcloud-resolver/celestia";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getTransactionProperties,
+  parseInscription,
   selectRowTransactionProperties,
   selectSidebarTransactionProperties,
 } from "../../../../helpers";
@@ -47,15 +48,6 @@ export const CelestiaBlockTransctionsResolver = createResolver(
 
     if (response.type === "error") throw response.error;
     if (response.type === "pending") throw PendingException;
-
-    const baseUrl =
-      // use the public vercel url if it exists
-      (process.env.NEXT_PUBLIC_VERCEL_URL &&
-        `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`) ||
-      // otherwise use the internal vercel url
-      (process.env.VERCEL_URL && `http://${process.env.VERCEL_URL}`) ||
-      // otherwise use the localhost
-      "http://localhost:3000";
 
     const block: BlockResponse = response.result;
     const transactions = (
@@ -112,15 +104,14 @@ export const CelestiaBlockTransctionsResolver = createResolver(
         ],
         entries: await Promise.all(
           transactions.map(async (resolution) => {
-            const response = await fetch(baseUrl + "/api/node/get-messages", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ str: resolution.result.tx }),
-            });
-            const messages = await response.json();
-            const type = messages[0]?.uniqueIdentifier ?? "Unknown";
+            const messages = Celestia.helpers.getMessages(resolution.result.tx);
+            const memo = Celestia.helpers.getMemo(resolution.result.tx);
+            const inscription = parseInscription(memo);
+            const type = inscription
+              ? "Inscription"
+              : Celestia.helpers.getMessageDisplayName(
+                  messages[messages.length - 1].typeUrl,
+                );
             const link = `/${context.chainBrand}-${context.chainName}/transactions/${resolution.result.hash}`;
             const properties = getTransactionProperties(resolution);
             const { Height, ...row } = selectRowTransactionProperties(

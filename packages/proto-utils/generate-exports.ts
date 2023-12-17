@@ -74,7 +74,13 @@ function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
                   sourceFile.fileName,
                 );
               }
-              if (exportedName.startsWith("Msg")) {
+              if (
+                exportedName.startsWith("Msg") &&
+                !exportedName.endsWith("Response") &&
+                exportedName !== "MsgClientImpl" &&
+                exportedName !== "MsgServiceName" &&
+                exportedName !== "Msg"
+              ) {
                 exportObjects.push({
                   parser: exportedName,
                   type: protobufPackage,

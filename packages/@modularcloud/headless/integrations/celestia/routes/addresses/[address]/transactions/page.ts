@@ -3,6 +3,7 @@ import { createResolver } from "@modularcloud-resolver/core";
 import { getDefaultSidebar } from "../../../../../../helpers";
 import { PaginationContext } from "../../../../../../schemas/context";
 import { Page, PageContext } from "../../../../../../schemas/page";
+import { parseInscription } from "../../../../helpers";
 import { TransactionResponse } from "../../../../types";
 
 export const CelestiaAddressTransactionsResolver = createResolver(
@@ -81,22 +82,14 @@ export const CelestiaAddressTransactionsResolver = createResolver(
         ],
         entries: await Promise.all(
           transactions.map(async (tx) => {
-            let baseUrl = "http://localhost:3000";
-            if (process.env.VERCEL_URL) {
-              baseUrl = `https://${process.env.VERCEL_URL}`;
-            }
-            if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-              baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-            }
-
-            const response = await fetch(baseUrl + "/api/node/get-messages", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ str: tx.result.tx }),
-            });
-            const messages = await response.json();
+            const messages = Celestia.helpers.getMessages(tx.result.tx);
+            const memo = Celestia.helpers.getMemo(tx.result.tx);
+            const inscription = parseInscription(memo);
+            const type = inscription
+              ? "Inscription"
+              : Celestia.helpers.getMessageDisplayName(
+                  messages[messages.length - 1].typeUrl,
+                );
             const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
             return {
               sidebar: {
@@ -117,7 +110,7 @@ export const CelestiaAddressTransactionsResolver = createResolver(
                   },
                   Type: {
                     type: "standard",
-                    payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                    payload: type,
                   },
                   Index: {
                     type: "standard",
@@ -152,7 +145,7 @@ export const CelestiaAddressTransactionsResolver = createResolver(
                 },
                 Type: {
                   type: "standard",
-                  payload: messages[0]?.uniqueIdentifier ?? "Unknown",
+                  payload: type,
                 },
               },
             };
