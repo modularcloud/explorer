@@ -10,6 +10,23 @@ import {
 } from "../../../helpers";
 import { getDefaultSidebar } from "../../../../../helpers";
 
+function parseInscription(memo?: string) {
+  try {
+    if (!memo) return;
+    const bytes = Buffer.from(memo, "base64");
+    const utf8 = bytes.toString("utf8");
+    const bytesInsideUtf8 = Buffer.from(utf8, "base64");
+    const utf8InsideUtf8 = bytesInsideUtf8.toString("utf8");
+    const match = utf8InsideUtf8.match(/^data:,(.+)$/);
+    if (!match) return;
+    const data = match[1];
+    const json = JSON.parse(data);
+    return json;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export const CelestiaTransactionResolver = createResolver(
   {
     id: "celestia-page-transaction-0.0.0",
@@ -53,6 +70,15 @@ export const CelestiaTransactionResolver = createResolver(
       }
     }
 
+    const messages = Celestia.helpers.getMessages(response.result.result.tx);
+    const memo = Celestia.helpers.getMemo(response.result.result.tx);
+    const inscription = parseInscription(memo);
+    const type = inscription
+      ? "Inscription"
+      : Celestia.helpers.getMessageDisplayName(
+          messages[messages.length - 1].typeUrl,
+        );
+
     const page: Page = {
       context,
       metadata: {
@@ -63,8 +89,13 @@ export const CelestiaTransactionResolver = createResolver(
         type: "notebook",
         properties: {
           // Setting the proper order
+          Type: {
+            type: "standard",
+            payload: type,
+          },
           Hash,
           Height,
+          ...(memo && { Memo: { type: "standard", payload: memo } }),
           ...blockProperties,
           ...rest,
         },
