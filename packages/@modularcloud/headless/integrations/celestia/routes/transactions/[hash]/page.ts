@@ -7,25 +7,9 @@ import {
   getBlockProperties,
   getTransactionProperties,
   selectSidebarBlockProperties,
+  parseInscription,
 } from "../../../helpers";
 import { getDefaultSidebar } from "../../../../../helpers";
-
-function parseInscription(memo?: string) {
-  try {
-    if (!memo) return;
-    const bytes = Buffer.from(memo, "base64");
-    const utf8 = bytes.toString("utf8");
-    const bytesInsideUtf8 = Buffer.from(utf8, "base64");
-    const utf8InsideUtf8 = bytesInsideUtf8.toString("utf8");
-    const match = utf8InsideUtf8.match(/^data:,(.+)$/);
-    if (!match) return;
-    const data = match[1];
-    const json = JSON.parse(data);
-    return json;
-  } catch (e) {
-    console.error(e);
-  }
-}
 
 export const CelestiaTransactionResolver = createResolver(
   {
