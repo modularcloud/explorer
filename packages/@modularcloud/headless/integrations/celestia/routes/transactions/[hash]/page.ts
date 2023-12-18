@@ -58,6 +58,14 @@ export const CelestiaTransactionResolver = createResolver(
     const memo = Celestia.helpers.getMemo(response.result.result.tx);
     const ctxd = contextualizeTx(response.result, context.slug);
 
+    const messages = Celestia.helpers.getMessages(response.result.result.tx);
+    const inscription = parseInscription(memo);
+    const type = inscription
+      ? "Inscription"
+      : Celestia.helpers.getMessageDisplayName(
+          messages[messages.length - 1].typeUrl,
+        );
+
     const page: Page = {
       context,
       metadata: {
@@ -72,8 +80,8 @@ export const CelestiaTransactionResolver = createResolver(
           Hash,
           Height,
           ...blockProperties,
-          ...rest,
           ...(memo && { Memo: Standard(memo) }),
+          ...rest,
         },
       },
       sidebar: getDefaultSidebar("Transaction", hash, "Overview"),
