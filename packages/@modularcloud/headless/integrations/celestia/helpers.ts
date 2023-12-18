@@ -31,6 +31,7 @@ export function contextualizeTx(tx: TransactionResponse, slug: string) {
   let type = inscription
     ? "Inscription"
     : helpers.getMessageDisplayName(messages[messages.length - 1].typeUrl);
+  const msg = messages[messages.length - 1];
 
   // Inscription
   if (inscription) {
@@ -46,8 +47,7 @@ export function contextualizeTx(tx: TransactionResponse, slug: string) {
       inscriptionProperties["Tick"] = Values.Standard(inscription.tick);
     }
 
-    const msg = messages[messages.length - 1];
-    if(msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
+    if (msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
       const parsed: ParsedMsg<"/cosmos.bank.v1beta1.MsgSend"> = msg as any;
       inscriptionProperties["Inscriber"] = Values.Link({
         text: parsed.decodedValue.fromAddress,
@@ -58,7 +58,7 @@ export function contextualizeTx(tx: TransactionResponse, slug: string) {
           properties: {
             Balance: Values.Standard("Temporarily Unavailable"),
           },
-        }
+        },
       });
     }
 
@@ -72,6 +72,46 @@ export function contextualizeTx(tx: TransactionResponse, slug: string) {
   }
 
   // Send
+  if (msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
+    const parsed: ParsedMsg<"/cosmos.bank.v1beta1.MsgSend"> = msg as any;
+    return {
+      Type: Values.Standard(type),
+      "From Address": Values.Link({
+        text: parsed.decodedValue.fromAddress,
+        route: [slug, "addresses", parsed.decodedValue.fromAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        },
+      }),
+      "To Address": Values.Link({
+        text: parsed.decodedValue.toAddress,
+        route: [slug, "addresses", parsed.decodedValue.toAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        },
+      }),
+      Amount: Values.Standard(
+        parsed.decodedValue.amount
+          .map(
+            (amount) =>
+              `${
+                amount.denom === "utia"
+                  ? Number(amount.amount) / 10 ** 6
+                  : amount.amount
+              } ${amount.denom === "utia" ? "TIA" : amount.denom}`,
+          )
+          .join(", "),
+      ),
+    };
+  }
 
   // IBC Transfer
 
