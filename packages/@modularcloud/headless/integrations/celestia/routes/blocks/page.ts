@@ -76,82 +76,86 @@ export const CelestiaLatestBlocksResolver = createResolver(
         entries: (latestBlockResponse
           ? [latestBlockResponse, ...blocks]
           : blocks
-        ).map((resolution) => {
-          if (resolution.type !== "success")
-            throw new Error("Failed to resolve one or more blocks");
-          const block: BlockResponse = resolution.result;
-          const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
-          return {
-            sidebar: {
-              headerKey: "Spotlight",
-              headerValue: "Block",
-              properties: {
+        )
+          .map((resolution) => {
+            if (resolution.type !== "success" || !resolution.result?.result) {
+              console.warn("Error resolve block: ", { resolution });
+              return null as any;
+            }
+            const block: BlockResponse = resolution.result;
+            const link = `/${context.chainBrand}-${context.chainName}/blocks/${block.result.block.header.height}`;
+            return {
+              sidebar: {
+                headerKey: "Spotlight",
+                headerValue: "Block",
+                properties: {
+                  Height: {
+                    type: "standard",
+                    payload: block.result.block.header.height,
+                  },
+                  Hash: {
+                    type: "standard",
+                    payload: block.result.block_id.hash,
+                  },
+                  Timestamp: {
+                    type: "standard",
+                    payload: block.result.block.header.time,
+                  },
+                  Proposer: {
+                    type: "standard",
+                    payload: block.result.block.header.proposer_address,
+                  },
+                  Transactions: {
+                    type: "standard",
+                    payload: block.result.block.data.txs.length,
+                  },
+                },
+              },
+              link,
+              key: link,
+              row: {
+                Block: {
+                  type: "longval",
+                  payload: {
+                    maxLength: 30,
+                    stepDown: 5,
+                    value: block.result.block_id.hash,
+                  },
+                },
                 Height: {
                   type: "standard",
                   payload: block.result.block.header.height,
                 },
-                Hash: {
-                  type: "standard",
-                  payload: block.result.block_id.hash,
-                },
-                Timestamp: {
-                  type: "standard",
-                  payload: block.result.block.header.time,
-                },
-                Proposer: {
-                  type: "standard",
-                  payload: block.result.block.header.proposer_address,
-                },
-                Transactions: {
+                Txs: {
                   type: "standard",
                   payload: block.result.block.data.txs.length,
                 },
-              },
-            },
-            link,
-            key: link,
-            row: {
-              Block: {
-                type: "longval",
-                payload: {
-                  maxLength: 30,
-                  stepDown: 5,
-                  value: block.result.block_id.hash,
+                Timestamp: {
+                  type: "standard",
+                  payload: new Date(
+                    block.result.block.header.time,
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    // year: "numeric",
+                    // hour: "2-digit",
+                    // minute: "2-digit",
+                    // second: "2-digit",
+                    // timeZone: "UTC",
+                  }), // + " UTC",
+                },
+                Proposer: {
+                  type: "longval",
+                  payload: {
+                    maxLength: 20,
+                    stepDown: 3,
+                    value: block.result.block.header.proposer_address,
+                  },
                 },
               },
-              Height: {
-                type: "standard",
-                payload: block.result.block.header.height,
-              },
-              Txs: {
-                type: "standard",
-                payload: block.result.block.data.txs.length,
-              },
-              Timestamp: {
-                type: "standard",
-                payload: new Date(
-                  block.result.block.header.time,
-                ).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  // year: "numeric",
-                  // hour: "2-digit",
-                  // minute: "2-digit",
-                  // second: "2-digit",
-                  // timeZone: "UTC",
-                }), // + " UTC",
-              },
-              Proposer: {
-                type: "longval",
-                payload: {
-                  maxLength: 20,
-                  stepDown: 3,
-                  value: block.result.block.header.proposer_address,
-                },
-              },
-            },
-          };
-        }),
+            };
+          })
+          .filter(Boolean),
       },
       sidebar: {
         headerKey: "Network",

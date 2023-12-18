@@ -44,7 +44,8 @@
         "RESEND_EMAIL_SENDER",
         "RESEND_EMAIL_RECEIVER",
         "NEXT_PUBLIC_SVM_METRICS",
-        "SVM_DEVNET_RPC_ALTERNATIVE"
+        "SVM_DEVNET_RPC_ALTERNATIVE",
+        "CELESTIA_MAINNET_BACKUP_NODE"
       ]
     },
     "verify#build": {
