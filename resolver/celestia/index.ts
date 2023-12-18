@@ -153,3 +153,5 @@ export const helpers = {
   convertMessageToKeyValue,
   getBlobTx,
 };
+
+export type { ParsedMsg } from "./registry";

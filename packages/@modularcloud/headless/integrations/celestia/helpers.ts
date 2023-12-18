@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { LinkSchema, Value } from "../../schemas/page";
 import { BlockResponse, TransactionResponse, TxBlob } from "./types";
 import * as Values from "./utils/values";
+import { helpers, ParsedMsg } from "@modularcloud-resolver/celestia";
 
 // no network requests allowed by functions in this file!!
 type fetch = never;
@@ -21,6 +22,62 @@ export function parseInscription(memo?: string) {
   } catch (e) {
     console.error(e);
   }
+}
+
+export function contextualizeTx(tx: TransactionResponse, slug: string) {
+  const messages = helpers.getMessages(tx.result.tx);
+  const memo = helpers.getMemo(tx.result.tx);
+  const inscription = parseInscription(memo);
+  let type = inscription
+    ? "Inscription"
+    : helpers.getMessageDisplayName(messages[messages.length - 1].typeUrl);
+
+  // Inscription
+  if (inscription) {
+    const inscriptionProperties: any = {};
+    if (inscription.op) {
+      inscriptionProperties["Operation"] = Values.Standard(inscription.op);
+    }
+    if (inscription.amt) {
+      inscriptionProperties["Amount"] = Values.Standard(inscription.amt);
+    }
+
+    if (inscription.tick) {
+      inscriptionProperties["Tick"] = Values.Standard(inscription.tick);
+    }
+
+    const msg = messages[messages.length - 1];
+    if(msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
+      const parsed: ParsedMsg<"/cosmos.bank.v1beta1.MsgSend"> = msg as any;
+      inscriptionProperties["Inscriber"] = Values.Link({
+        text: parsed.decodedValue.fromAddress,
+        route: [slug, "addresses", parsed.decodedValue.fromAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        }
+      });
+    }
+
+    if (inscription.p && typeof inscription.p === "string") {
+      type = `${type} (${inscription.p.toUpperCase()})`;
+    }
+    return {
+      Type: Values.Standard(type),
+      ...inscriptionProperties,
+    };
+  }
+
+  // Send
+
+  // IBC Transfer
+
+  // IBC Receive
+
+  // Withdraw
 }
 
 /**
