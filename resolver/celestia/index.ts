@@ -44,7 +44,7 @@ export const BlockHeightResolver = createResolver(
     const response = await fetchResolver({
       url: input.height
         ? `${input.endpoint}/block?height=${input.height}`
-        : `${process.env.CELESTIA_MAINNET_BACKUP_NODE}/block`, // temporarily removed: `${input.endpoint}/block`,
+        : `${input.endpoint}/block`,
     });
     if (response.type === "success") return response.result;
     const backup = await fetchResolver({
