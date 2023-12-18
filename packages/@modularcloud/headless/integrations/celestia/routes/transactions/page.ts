@@ -29,13 +29,15 @@ export const CelestiaLatestTransactionsResolver = createResolver(
         }),
       ),
     );
-    const transactions: TransactionResponse[] = list.map((resolution) => {
-      if (resolution.type === "success") {
-        return resolution.result;
-      }
-      console.log("Error resolve tx: ", { resolution });
-      throw new Error("Failed to resolve one or more transactions");
-    });
+    const transactions: TransactionResponse[] = list
+      .map((resolution) => {
+        if (resolution.type === "success" && resolution.result.result) {
+          return resolution.result;
+        }
+        console.warn("Error resolve tx: ", { resolution });
+        return null;
+      })
+      .filter(Boolean);
     const page: Page = {
       context,
       metadata: {
