@@ -118,6 +118,56 @@ export function contextualizeTx(tx: TransactionResponse, slug: string) {
   // IBC Receive
 
   // Withdraw
+  if (
+    msg.typeUrl === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+  ) {
+    const parsed: ParsedMsg<"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"> =
+      msg as any;
+    const withdraw = tx.result.tx_result.events.find(
+      (event) => event.type === "withdraw_rewards",
+    );
+    if (withdraw && withdraw.attributes) {
+      const amount = (withdraw as any).attributes.find(
+        (attribute: any) => attribute.key === "YW1vdW50",
+      ).value;
+
+      return {
+        Type: Values.Standard(type),
+        "Delegator Address": Values.Link({
+          text: parsed.decodedValue.delegatorAddress,
+          route: [slug, "addresses", parsed.decodedValue.delegatorAddress],
+          sidebar: {
+            headerKey: "Spotlight",
+            headerValue: "Address",
+            properties: {
+              Balance: Values.Standard("Temporarily Unavailable"),
+            },
+          },
+        }),
+        "Validator Address": Values.Link({
+          text: parsed.decodedValue.validatorAddress,
+          route: [slug, "addresses", parsed.decodedValue.validatorAddress],
+          sidebar: {
+            headerKey: "Spotlight",
+            headerValue: "Address",
+            properties: {
+              Balance: Values.Standard("Temporarily Unavailable"),
+            },
+          },
+        }),
+        Amount: Values.Standard(
+          `${
+            Number(
+              Buffer.from(amount, "base64")
+                .toString("utf-8")
+                .replace("utia", ""),
+            ) /
+            10 ** 6
+          } ${"TIA"}`,
+        ),
+      };
+    }
+  }
 }
 
 /**
