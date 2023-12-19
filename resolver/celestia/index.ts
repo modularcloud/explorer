@@ -1,4 +1,8 @@
-import { createResolver, NotFound } from "@modularcloud-resolver/core";
+import {
+  createResolver,
+  NotFound,
+  ResolutionResponse,
+} from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
 import { getMessages, getMemo } from "./registry";
@@ -16,10 +20,16 @@ export const BlockHashResolver = createResolver(
       throw new Error("Invalid hash");
     }
     const hash = match[1];
-    const response = await fetchResolver({
+    const response: ResolutionResponse = await fetchResolver({
       url: `${input.endpoint}/block_by_hash?hash=0x${hash.toUpperCase()}`,
     });
     if (response.type === "success") return response.result;
+    const backup: ResolutionResponse = await fetchResolver({
+      url: `${
+        process.env.CELESTIA_MAINNET_BACKUP_NODE
+      }/block?hash=0x${hash.toUpperCase()}`,
+    });
+    if (backup.type === "success") return backup.result;
     NotFound();
   },
   [FetchResolver],
@@ -37,6 +47,12 @@ export const BlockHeightResolver = createResolver(
         : `${input.endpoint}/block`,
     });
     if (response.type === "success") return response.result;
+    const backup = await fetchResolver({
+      url: input.height
+        ? `${process.env.CELESTIA_MAINNET_BACKUP_NODE}/block?height=${input.height}`
+        : `${process.env.CELESTIA_MAINNET_BACKUP_NODE}/block`,
+    });
+    if (backup.type === "success") return backup.result;
     if (input.height && !input.height.match(/^\d+$/)) {
       throw new Error("Invalid height");
     }
@@ -60,6 +76,12 @@ export const TransactionResolver = createResolver(
       url: `${input.endpoint}/tx?hash=0x${hash.toUpperCase()}&prove=false`,
     });
     if (response.type === "success") return response.result;
+    const backup = await fetchResolver({
+      url: `${
+        process.env.CELESTIA_MAINNET_BACKUP_NODE
+      }/tx?hash=0x${hash.toUpperCase()}&prove=false`,
+    });
+    if (backup.type === "success") return backup.result;
     NotFound();
   },
   [FetchResolver],
@@ -145,7 +167,6 @@ function convertMessageToKeyValue(message: any, prefix?: string) {
   return KV;
 }
 
-
 export const helpers = {
   getMessages,
   getMemo,
@@ -153,3 +174,5 @@ export const helpers = {
   convertMessageToKeyValue,
   getBlobTx,
 };
+
+export type { ParsedMsg } from "./registry";

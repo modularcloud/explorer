@@ -26,6 +26,7 @@ export const env = createEnv({
     RESEND_EMAIL_SENDER: z.string().email(),
     RESEND_EMAIL_RECEIVER: z.string().email(),
     SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
+    CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
@@ -66,5 +67,6 @@ export const env = createEnv({
     RESEND_EMAIL_RECEIVER: process.env.RESEND_EMAIL_RECEIVER,
     NEXT_PUBLIC_SVM_METRICS: process.env.NEXT_PUBLIC_SVM_METRICS,
     SVM_DEVNET_RPC_ALTERNATIVE: process.env.SVM_DEVNET_RPC_ALTERNATIVE,
+    CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
   },
 });

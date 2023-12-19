@@ -1,6 +1,14 @@
 import { Any } from "./google/protobuf/any";
 import { Celestia } from "proto-utils";
+import { MsgType } from "proto-utils/celestia-msgs";
 const parsers = Celestia.Msgs;
+
+export type ParsedMsg<T extends MsgType["typeUrl"]> = {
+  typeUrl: T;
+  decodedValue: ReturnType<
+    Extract<MsgType, { typeUrl: T }>["parser"]["decode"]
+  >;
+};
 
 function decodeAny(anyMessage: Any) {
   const typeUrl = anyMessage.typeUrl;
