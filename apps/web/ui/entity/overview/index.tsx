@@ -2,24 +2,18 @@ import "server-only";
 import * as React from "react";
 
 import { Skeleton } from "~/ui/skeleton";
-import { OverviewEntryList } from "./entry";
+import { OverviewEntryList } from "./entry-list";
 
-import { fetchEntity } from "~/ecs/lib/server";
-import { AttributesArchetype } from "~/ecs/archetypes/attributes";
 import { range } from "~/lib/shared-utils";
 
 import type { Value } from "@modularcloud/headless";
-import type { FetchLoadArgs } from "~/lib/shared-utils";
+
 import { FlowChart } from "~/ui/flow";
 
 type Props = {
   properties: Record<string, Value>;
   isIBC?: boolean;
 };
-
-async function AsyncEntries({ resourcePath }: { resourcePath: FetchLoadArgs }) {
-  return null;
-}
 
 export async function Overview({ properties, isIBC }: Props) {
   const entries = React.useMemo(() => {
@@ -30,10 +24,6 @@ export async function Overview({ properties, isIBC }: Props) {
       {isIBC ? <FlowChart /> : null}
       <section className="pb-4 h-full overflow-y-auto">
         <OverviewEntryList entries={entries} />
-
-        {/* {(asyncAttributes ?? []).map((set) => (
-          <AsyncEntries resourcePath={set.src} />
-        ))} */}
       </section>
     </>
   );

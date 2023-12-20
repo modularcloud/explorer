@@ -5,7 +5,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { ArrowOut } from "~/ui/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ClientTime } from "~/ui/tables/time";
+import { ClientTime } from "~/ui/client-time";
 
 export type BlockRow = {
   number: number;
