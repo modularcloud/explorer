@@ -3,15 +3,6 @@ import "./env.mjs";
 
 /** @type {import('next').NextConfig} */
 const config = {
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/celestia-mainnet",
-        permanent: true,
-      },
-    ];
-  },
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
   experimental: {
