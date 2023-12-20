@@ -5,7 +5,7 @@ import { env } from "~/env.mjs";
 import Web3 from "web3";
 import { z } from "zod";
 import { fetchLoad, getEventSignatureName } from "./shared-utils";
-import { DEFAULT_WIDGET_REVALIDATE_TIME } from "./constants";
+import { DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS } from "./constants";
 import { loadPage } from "./headless-utils";
 
 export const APICORSHeaders = {
@@ -195,7 +195,7 @@ export async function getLatestBlocks(network: string) {
   return await loadPage({
     route: { network: network, path: ["blocks"] },
     context: { limit: 6 },
-    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
+    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS,
   });
 }
 
@@ -203,6 +203,6 @@ export async function getLatestTransactions(network: string) {
   return await loadPage({
     route: { network: network, path: ["transactions"] },
     context: { limit: 5 },
-    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME,
+    revalidateTimeInSeconds: DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS,
   });
 }

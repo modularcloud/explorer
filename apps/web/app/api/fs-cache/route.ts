@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { FileSystemCache } from "~/lib/fs-cache-dev";
+import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
 
 export async function GET(request: NextRequest) {
   const key = request.nextUrl.searchParams.get("key");
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const fsCache = new FileSystemCache();
+  const fsCache = new FileSystemCacheDEV();
   const value = await fsCache.get(key);
   return NextResponse.json({
     data: value,
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const fsCache = new FileSystemCache();
+  const fsCache = new FileSystemCacheDEV();
   await fsCache.set(key, value);
   return NextResponse.json({ data: value });
 }

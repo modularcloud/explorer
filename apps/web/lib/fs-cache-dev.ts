@@ -6,7 +6,7 @@ type CacheId = string | number | (string | number)[];
  * This class is only meant to be on DEV, don't try to use this in production
  * as it might break
  */
-export class FileSystemCache {
+export class FileSystemCacheDEV {
   private cacheDir: string = `.next/cache/fs-cache`;
 
   constructor() {
