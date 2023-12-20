@@ -8,8 +8,8 @@ import {
   getEVMLatestBlocks,
   getEVMLatestTransactions,
   getTransactionVolumeHistory,
-  APICORSHeaders,
-} from "~/lib/server-utils";
+} from "~/lib/old-evm-utils";
+import { APICORSHeaders } from "~/lib/server-utils";
 
 export async function GET(_: Request, ctx: { params: { network: string } }) {
   const network = await getSingleNetworkCached(ctx.params.network);

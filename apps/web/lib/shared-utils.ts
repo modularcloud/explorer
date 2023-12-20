@@ -1,88 +1,4 @@
-import { EntityBaseSchema } from "@modularcloud/ecs";
-import { z } from "zod";
-import _slugify from "slugify";
-import type { SingleNetwork } from "./network";
-import { HeadlessRoute } from "./headless-utils";
-
-export function convertToHttpIfIpfs(url: string) {
-  if (url.startsWith("ipfs://")) {
-    return `${process.env.IPFS_GATEWAY}/${url.replace("ipfs://", "")}`;
-  }
-  return url;
-}
-
-// temporarily necessary because sometimes only the ipfs.io gateway works, probably won't help much
-export function convertToPublicHttpIfIpfs(url: string) {
-  if (url.startsWith("ipfs://")) {
-    return `https://ipfs.io/ipfs/${url.replace("ipfs://", "")}`;
-  }
-  return url;
-}
-
-export function decodeEvmAddressParam(address: string) {
-  if (address.indexOf("000000000000000000000000") !== -1) {
-    return address.replace("000000000000000000000000", "");
-  }
-  return address;
-}
-
-export async function getEventSignatureName(topic: string) {
-  try {
-    const results = await fetch(
-      `https://api.openchain.xyz/signature-database/v1/lookup?event=${topic}&filter=true`,
-    ).then((res) => res.json());
-    return z.string().parse(results?.result?.event?.[topic]?.[0]?.name);
-  } catch {}
-}
-
-// wrap loading in a fetch request until we figure out how to best cache using next app routing
-export type FetchLoadArgs = { network: string; type: string; query: string };
-export async function fetchLoad(props: FetchLoadArgs) {
-  try {
-    let cache: RequestCache = "force-cache";
-
-    if (
-      props.type === "account" ||
-      props.type === "pagination" ||
-      props.type === "address" ||
-      props.type === "balances"
-    ) {
-      cache = "no-store";
-    }
-    // Since this fetch call is not called with `cache: no-store` it will always be cached
-    // However, i suppose blockchain data are immutable ? so this will normally not be a problem
-    const response = await fetch(
-      `${getBaseURL()}/api/app/load/${props.network}/${
-        props.type
-      }/${encodeURIComponent(props.query)}`,
-      {
-        cache,
-      },
-    );
-    if (!response.ok) {
-      const json = await response.json().catch((_) => {});
-
-      if (json === null) {
-        console.log(
-          "Error loading entity : No entity was found for these params :",
-          props,
-        );
-      } else {
-        console.log("Error loading entity", { json });
-      }
-      return null;
-    }
-
-    return EntityBaseSchema.parse(await response.json());
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-}
-
-export function slugify(str: string): string {
-  return _slugify(str, { lower: true, strict: true });
-}
+import type { HeadlessRoute } from "./headless-utils";
 
 export function truncateString(
   address: string,
@@ -108,29 +24,6 @@ export function truncateString(
 export function capitalize(str: string) {
   const firstChar = str.charAt(0);
   return firstChar.toUpperCase() + str.substring(1).toLowerCase();
-}
-
-/**
- * Check if the child element overflows the parent
- * @param parent
- * @param child
- * @returns
- */
-export function isElementOverflowing(parent: HTMLElement, child: HTMLElement) {
-  const parentRect = parent.getBoundingClientRect();
-  const childRect = child.getBoundingClientRect();
-
-  // Check if the child overflows the parent in any direction
-  if (
-    childRect.left < parentRect.left ||
-    childRect.right > parentRect.right ||
-    childRect.top < parentRect.top ||
-    childRect.bottom > parentRect.bottom
-  ) {
-    return true;
-  }
-
-  return false;
 }
 
 /**
@@ -184,7 +77,6 @@ export function truncateHash(hash: string, maxLength: number = 23) {
   return `${start}...${end}`;
 }
 
-// Function to copy the value to the clipboard
 export async function copyValueToClipboard(value: string) {
   try {
     await navigator.clipboard.writeText(value);
@@ -196,7 +88,7 @@ export async function copyValueToClipboard(value: string) {
 }
 
 /**
- * Generate an array of numbers from start to the end
+ * Generate an array of numbers from start to the end included
  *
  * @example
  *      range(1, 5);
@@ -210,7 +102,7 @@ export function range(start: number, end: number): number[] {
 }
 
 /**
- * Wait for the specified amount of time
+ * Wait for the specified amount of time in milliseconds
  *
  * @example
  *  await wait(1000); // will wait for 1 second
