@@ -17,7 +17,7 @@ import {
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { OptionGroups } from "~/lib/shared-utils";
+import type { OptionGroups } from "~/lib/search-options";
 interface Props {
   optionGroups: OptionGroups;
 }

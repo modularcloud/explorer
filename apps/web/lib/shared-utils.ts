@@ -80,19 +80,6 @@ export async function fetchLoad(props: FetchLoadArgs) {
   }
 }
 
-export type SearchOption = {
-  displayName: string;
-  brandName: string;
-  verified?: boolean;
-  brandColor: string;
-  layout?: SingleNetwork["config"]["widgetLayout"];
-  logoURL: string;
-  id: string;
-};
-export type OptionGroups = {
-  [groupDisplayName: string]: SearchOption[];
-};
-
 export function slugify(str: string): string {
   return _slugify(str, { lower: true, strict: true });
 }
