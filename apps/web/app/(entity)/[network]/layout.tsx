@@ -8,7 +8,7 @@ import { getSingleNetworkCached } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { FetchLoadArgs } from "~/lib/shared-utils";
+import { HeadlessRoute } from "~/lib/headless-utils";
 
 export default async function BlockLayout({
   children,
@@ -17,7 +17,7 @@ export default async function BlockLayout({
 }: {
   children: React.ReactNode;
   rightpanel: React.ReactNode;
-  params: Pick<FetchLoadArgs, "network">;
+  params: Pick<HeadlessRoute, "network">;
 }) {
   const network = await getSingleNetworkCached(params.network);
   return (
