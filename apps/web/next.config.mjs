@@ -8,7 +8,7 @@ const config = {
       {
         source: "/",
         destination: "/celestia-mainnet",
-        permanent: true,
+        permanent: false,
       },
     ];
   },
