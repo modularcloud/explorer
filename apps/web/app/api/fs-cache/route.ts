@@ -22,7 +22,11 @@ export async function GET(request: NextRequest) {
   });
 }
 export async function POST(request: NextRequest) {
-  const { key, value } = (await request.json()) as { key: string; value: any };
+  const { key, value, ttl } = (await request.json()) as {
+    key: string;
+    value: any;
+    ttl?: number;
+  };
 
   if (!key) {
     return NextResponse.json(
@@ -36,6 +40,6 @@ export async function POST(request: NextRequest) {
   }
 
   const fsCache = new FileSystemCacheDEV();
-  await fsCache.set(key, value);
+  await fsCache.set(key, value, ttl);
   return NextResponse.json({ data: value });
 }
