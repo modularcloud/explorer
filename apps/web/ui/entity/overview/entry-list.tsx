@@ -9,7 +9,7 @@ import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
-import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
+import { useHotkey } from "~/lib/hooks/use-hotkey";
 import {
   OnSelectItemArgs,
   useItemListNavigation,
@@ -96,7 +96,7 @@ export function OverviewEntryList({ entries }: Props) {
     onSelectItem,
   });
 
-  useHotkeyListener({
+  useHotkey({
     keys: ["c"],
     listener: () => {
       if (!selectedItem) return false;
@@ -139,7 +139,7 @@ export function OverviewEntryList({ entries }: Props) {
     modifier: "META",
   });
 
-  useHotkeyListener({
+  useHotkey({
     keys: ["Enter"],
     listener: () => {
       if (!selectedItem) return false;

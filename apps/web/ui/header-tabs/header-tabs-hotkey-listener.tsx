@@ -3,7 +3,7 @@
 // components
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useHotkeyListener } from "~/lib/hooks/use-hotkey-listener";
+import { useHotkey } from "~/lib/hooks/use-hotkey";
 
 // utils
 import { range } from "~/lib/shared-utils";
@@ -18,7 +18,7 @@ export function HeaderTabsHotkeyListener({ tabList }: Props) {
   const router = useRouter();
   const params = useParams() as HeadlessRoute;
 
-  useHotkeyListener({
+  useHotkey({
     keys: range(1, tabList.length).map(String),
     listener(keyPressed) {
       const selectedTab = tabList[Number(keyPressed) - 1];
