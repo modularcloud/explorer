@@ -3,6 +3,26 @@ export type ResolverConfig = {
   cache: boolean;
 };
 
+let cacheFn: (fn: AnyResolver, input: any) => Promise<any> = async (
+  fn: AnyResolver,
+  input: any,
+) => {
+  console.log(`Cache enabled but not configured for ${fn.__config.id}`);
+  return fn(input);
+};
+
+export function setCacheFn(fn: (fn: AnyResolver, input: any) => Promise<any>) {
+  cacheFn = fn;
+}
+
+export function useNextUnstableCache(unstable_cache: any) {
+  cacheFn = async (fn: AnyResolver, input: any) => {
+    return unstable_cache(fn, input, {
+      revalidate: 1
+    })(input);
+  };
+}
+
 export type Resolution =
   | {
       type: "success";
@@ -24,8 +44,6 @@ export const PendingException = Symbol("PendingException");
 export function NotFound() {
   throw PendingException;
 }
-
-var cache = (fn: Function, input: any) => Promise<any>;
 
 export type Trace = {
   resolverId: string;
@@ -62,7 +80,7 @@ export function createResolver<K, T extends Resolver<any>[]>(
       // inject a side effect for storing traces
       const deps = dependencies.map((dependency) => {
         return async (input: any) => {
-          const result = await dependency(input);
+          const result = await cacheFn(dependency, input);
           traces.push(result.trace);
 
           return result;

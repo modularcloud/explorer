@@ -6,6 +6,7 @@ import {
   SearchBuilders,
   createCelestiaIntegration,
   createRollappIntegration,
+  useNextUnstableCache
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
@@ -13,7 +14,7 @@ import { parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
-
+import { unstable_cache } from "next/cache";
 /**
  * This is reused on the `api/load-page/route.ts` file
  */
@@ -33,6 +34,8 @@ export async function loadIntegration(
   if (!network) {
     notFound();
   }
+
+  useNextUnstableCache(unstable_cache);
 
   let integration: ReturnType<
     | typeof createSVMIntegration
