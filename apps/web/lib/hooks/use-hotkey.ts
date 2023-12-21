@@ -2,7 +2,7 @@ import * as React from "react";
 import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { isMacLike } from "~/lib/shared-utils";
 
-type UseHotkey = {
+type UseHotkeyArgs = {
   keys: string[];
   modifier?: "CTRL" | "META" | "ALT";
   /**
@@ -15,7 +15,7 @@ type UseHotkey = {
 /**
  * Hook for listening to hotkeys
  */
-export function useHotkey({ keys, modifier, listener }: UseHotkey) {
+export function useHotkey({ keys, modifier, listener }: UseHotkeyArgs) {
   const { isSearchModalOpen } = React.use(GlobalHotkeyContext);
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
 
