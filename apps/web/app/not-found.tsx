@@ -2,6 +2,9 @@ import Link from "next/link";
 
 // utils
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+import { ErrorBox } from "~/ui/error/box";
+import { HomeBg } from "~/ui/home-bg";
+import { HomeBgMobile } from "~/ui/home-bg/mobile";
 
 export const metadata = {
   title: "Page Not found - Modular Cloud",
@@ -10,44 +13,25 @@ export const metadata = {
 export default function NotFound() {
   return (
     <main
-      className="flex h-screen w-full flex-col items-center justify-center gap-6 text-center"
+      className="flex h-screen w-full flex-col tab:items-center tab:justify-center gap-6 text-center"
       style={{
         // @ts-expect-error this is a CSS variable
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
     >
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      <div
+        style={{
+          // @ts-expect-error this is a CSS variable
+          "--color-primary": DEFAULT_BRAND_COLOR,
+        }}
       >
-        <path
-          d="M20 33H29C31.2091 33 33 31.2091 33 29V20H7M20 33H11C8.79086 33 7 31.2091 7 29V20M20 33V7H11C8.79086 7 7 8.79086 7 11V20"
-          stroke="#888A90"
-          strokeOpacity="0.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M32.1907 2.74387L23.2578 3.8407L24.8421 16.7438L37.7452 15.1595L36.6484 6.22658C36.3792 4.03391 34.3834 2.47465 32.1907 2.74387Z"
-          fill="#EF4444"
-          fillOpacity="0.2"
-          stroke="#EF4444"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      <div className="flex flex-col gap-2">
-        <h1 className="text-foreground text-xl font-semibold">
-          Page Not Found
-        </h1>
-        <p className="text-night-700">This page does not exist.</p>
-        <Link href="/" className="underline text-primary">
-          Go home
-        </Link>
+        <HomeBg className="absolute left-0 top-0 right-0 hidden tab:block z-[-1]" />
+        <HomeBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[-1]" />
+        <div className="max-tab:w-screen max-tab:h-screen p-4">
+          <div className="p-[3.75rem] bg-muted-100 rounded-lg max-tab:w-full max-tab:h-full">
+            <ErrorBox />
+          </div>
+        </div>
       </div>
     </main>
   );
