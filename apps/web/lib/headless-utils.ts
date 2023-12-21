@@ -6,7 +6,7 @@ import {
   SearchBuilders,
   createCelestiaIntegration,
   createRollappIntegration,
-  useNextUnstableCache
+  useNextUnstableCache as setCache
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
@@ -35,7 +35,7 @@ export async function loadIntegration(
     notFound();
   }
 
-  useNextUnstableCache(unstable_cache);
+  setCache(unstable_cache);
 
   let integration: ReturnType<
     | typeof createSVMIntegration
