@@ -5,7 +5,8 @@
 This is a monorepo built with [Turborepo](https://turbo.build/repo). These are the workspaces inside:
 
 - `apps/web`: the main app built with [Next.js](https://nextjs.org/)
-- `packages/@modularcloud/headless`: ...
+- `packages/@modularcloud/headless`: headless utils used to fetch data from the different chains
+- `packages/tsconfig`: `tsconfig.json`s used throughout the monorepo
 - `packages/eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 
 ### Build
