@@ -14,5 +14,6 @@ pkgs.mkShell {
     nodejs_20
     nodePackages.npm
     protobuf
+    redis
   ];
 }

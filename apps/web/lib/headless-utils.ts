@@ -6,7 +6,7 @@ import {
   SearchBuilders,
   createCelestiaIntegration,
   createRollappIntegration,
-  useNextUnstableCache as setCache
+  useNextUnstableCache as setCache,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
@@ -15,6 +15,7 @@ import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
 import { unstable_cache } from "next/cache";
+import { unstableCacheReplacement } from "./precache";
 /**
  * This is reused on the `api/load-page/route.ts` file
  */
@@ -35,7 +36,7 @@ export async function loadIntegration(
     notFound();
   }
 
-  setCache(unstable_cache);
+  setCache(unstableCacheReplacement);
 
   let integration: ReturnType<
     | typeof createSVMIntegration
@@ -91,7 +92,7 @@ export async function loadIntegration(
         return response;
       }
 
-      const resolveRouteFn = nextCache(
+      const resolveRouteFn = unstableCacheReplacement(
         async function cachedResolveRoute(
           path: string[],
           additionalContext?: PaginationContext | undefined,
