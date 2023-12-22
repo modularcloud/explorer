@@ -48,7 +48,7 @@ export function NotFound() {
 export type Trace = {
   resolverId: string;
   input: any;
-  resolution: Resolution;
+  // resolution: Resolution;
   createdAt: number;
   dependencies: Trace[];
 };
@@ -110,7 +110,7 @@ export function createResolver<K, T extends Resolver<any>[]>(
           trace: {
             resolverId: config.id,
             input,
-            resolution: resolution,
+            // resolution: resolution,
             createdAt: Date.now(),
             dependencies: traces,
           },
