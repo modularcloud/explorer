@@ -12,7 +12,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@modularcloud/ecs": "*",
     "@modularcloud/headless": "*",
     "@monaco-editor/react": "^4.5.1",
     "@nivo/treemap": "^0.83.0",
