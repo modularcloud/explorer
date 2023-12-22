@@ -18,7 +18,7 @@ export function setCacheFn(fn: (fn: AnyResolver, input: any) => Promise<any>) {
 export function useNextUnstableCache(unstable_cache: any) {
   cacheFn = async (fn: AnyResolver, input: any) => {
     return unstable_cache(fn, [fn.__config.id, input], {
-      revalidate: Infinity
+      revalidate: 1
     })(input);
   };
 }
