@@ -1,3 +1,4 @@
+import "server-only";
 import * as React from "react";
 // components
 import Link from "next/link";
