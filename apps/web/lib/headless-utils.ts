@@ -120,7 +120,27 @@ export async function loadIntegration(
         },
       );
 
-      return await resolveRouteFn(path, additionalContext);
+      const time = new Date().getTime();
+      console.time(
+        `[${time} RESOLVE ROUTE] ${CACHE_KEYS.resolvers.route(
+          {
+            network: networkSlug,
+            path,
+          },
+          additionalContext,
+        )}`,
+      );
+      const result = await resolveRouteFn(path, additionalContext);
+      console.timeEnd(
+        `[${time} RESOLVE ROUTE] ${CACHE_KEYS.resolvers.route(
+          {
+            network: networkSlug,
+            path,
+          },
+          additionalContext,
+        )}`,
+      );
+      return result;
     },
   };
 }
