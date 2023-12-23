@@ -5,22 +5,23 @@ import { Table } from "~/ui/entity/table";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound, redirect } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: HeadlessRoute }) {
-  const pathParams = parseHeadlessRouteVercelFix(params);
+// TODO : This is a temporary workaround
+// export async function generateMetadata({ params }: { params: HeadlessRoute }) {
+//   const pathParams = parseHeadlessRouteVercelFix(params);
 
-  if (pathParams.path[0] === "search") {
-    const query = pathParams.path[1];
-    return {
-      title: `Searching for ${query}`,
-    };
-  }
+//   if (pathParams.path[0] === "search") {
+//     const query = pathParams.path[1];
+//     return {
+//       title: `Searching for ${query}`,
+//     };
+//   }
 
-  const { metadata } = await loadPage({ route: params });
-  return {
-    title: metadata.title,
-    description: metadata.description,
-  };
-}
+//   const { metadata } = await loadPage({ route: params });
+//   return {
+//     title: metadata.title,
+//     description: metadata.description,
+//   };
+// }
 
 export default function EntityPage({ params }: { params: HeadlessRoute }) {
   const pathParams = parseHeadlessRouteVercelFix(params);
