@@ -36,8 +36,7 @@ export async function loadIntegration(
     notFound();
   }
 
-  // TODO : reenable
-  // setCache(unstableCacheReplacement);
+  setCache(unstableCacheReplacement);
 
   let integration: ReturnType<
     | typeof createSVMIntegration
