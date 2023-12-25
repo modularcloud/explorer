@@ -56,7 +56,13 @@ export function SVMWidgetLayoutContent({
   const [apiResult, latestBlocks, latestTransactions] = data;
 
   const {
-    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
+    metrics: {
+      CONTRACT,
+      TRANSACTION,
+      UNIQUE_ADDRESS,
+      AVG_TRANSACTION_FEE_LAST_10_BLOCKS,
+      TPS_LAST_10_BLOCKS,
+    },
     slotNumber,
   } = apiResult;
 
@@ -136,9 +142,23 @@ export function SVMWidgetLayoutContent({
           value={TRANSACTION.toLocaleString("en-US")}
         />
 
+        <IconCard
+          label="TPS"
+          className="[grid-area:TP]"
+          icon={BarChart}
+          value={TPS_LAST_10_BLOCKS.toLocaleString("en-US")}
+        />
+
         <Placeholder className="hidden lg:block [grid-area:P1]" />
-        <Placeholder className="hidden lg:block [grid-area:P2]" />
-        <Placeholder className="hidden lg:block [grid-area:P3]" />
+
+        <IconCard
+          label="Average Fee"
+          className="[grid-area:AF]"
+          icon={Document}
+          value={`${AVG_TRANSACTION_FEE_LAST_10_BLOCKS.toLocaleString(
+            "en-US",
+          )} Gwei`}
+        />
 
         <LatestBlocks
           networkSlug={networkSlug}

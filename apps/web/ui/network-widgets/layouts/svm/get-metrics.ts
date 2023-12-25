@@ -7,6 +7,8 @@ export const svmMetricsDataSchema = z.object({
     CONTRACT: z.number(),
     TRANSACTION: z.number(),
     UNIQUE_ADDRESS: z.number(),
+    TPS_LAST_10_BLOCKS: z.number(),
+    AVG_TRANSACTION_FEE_LAST_10_BLOCKS: z.number(),
   }),
   slotNumber: z.string(),
 });
