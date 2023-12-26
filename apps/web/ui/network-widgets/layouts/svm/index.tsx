@@ -44,16 +44,18 @@ export async function SVMWidgetLayout({
             "LB LB"
             "LB LB"
             "CD BK"
+            "TP AF"
           `,
         "--grid-area-tab": `
             "LT LT WA TR"
             "LT LT LB LB"
             "BK CD LB LB"
+            "TP TP AF AF"
           `,
         "--grid-area-lg": `
             "LT LT WA LB LB"
             "LT LT BK LB LB"
-            "CD P1 P2 P3 TR"
+            "CD TP P1 AF TR"
           `,
       }}
     >
