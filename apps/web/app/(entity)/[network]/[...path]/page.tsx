@@ -24,10 +24,14 @@ import { getSingleNetworkCached } from "~/lib/network";
 //   };
 // }
 
-export async function generateMetadata({ params }: { params: HeadlessRoute }) {
-  const pathParams = parseHeadlessRouteVercelFix(params);
-  if (pathParams.path[0] === "search") {
-    const query = pathParams.path[1];
+export async function generateMetadata({
+  params: _params,
+}: {
+  params: HeadlessRoute;
+}) {
+  const params = parseHeadlessRouteVercelFix(_params);
+  if (params.path[0] === "search") {
+    const query = params.path[1];
     return {
       title: `Searching for ${query}`,
     };
@@ -54,7 +58,7 @@ export async function generateMetadata({ params }: { params: HeadlessRoute }) {
       return str;
     }
     if (str.match(/^(?:[0-9]+\.){3}[0-9]+$/)) {
-      return str.substr(0, 12) + "...";
+      return str.substring(0, 12) + "...";
     }
     return str.slice(0, 6) + "..." + str.slice(-6);
   }
