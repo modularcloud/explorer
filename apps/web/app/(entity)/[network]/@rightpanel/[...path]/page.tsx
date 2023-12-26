@@ -3,6 +3,7 @@ import { RightPanel, RightPanelSkeleton } from "~/ui/right-panel";
 import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
 import { notFound } from "next/navigation";
 import * as React from "react";
+import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
 interface Props {
   params: HeadlessRoute;
@@ -16,7 +17,14 @@ export default async function RightPanelPage(props: Props) {
   );
 }
 
-async function RightPanelPageContent({ params }: Props) {
+async function RightPanelPageContent({ params: _params }: Props) {
+  const params = parseHeadlessRouteVercelFix(_params);
+  const entityType = params.path[0];
+
+  if (entityType === "search") {
+    return <RightPanelSkeleton />;
+  }
+
   const network = await getSingleNetworkCached(params.network);
   if (!network) {
     notFound();
