@@ -31,6 +31,8 @@ export async function SVMWidgetLayout({
          * - WA : wallet adresses
          * - TR : total transactions
          * - BK : total blocks
+         * - AF : Average Fee
+         * - TP : TPS
          * - P1, P2, P3 : placeholders (shown only on desktop)
          *
          * We define them as variables here because we use the same layout in the skeleton,
