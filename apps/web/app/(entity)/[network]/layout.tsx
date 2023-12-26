@@ -20,14 +20,15 @@ export default async function BlockLayout({
   params: Pick<HeadlessRoute, "network">;
 }) {
   const network = await getSingleNetworkCached(params.network);
+
   return (
     <RQTableProvider>
       <main
         className="min-h-screen flex flex-col h-full"
         style={{
           // @ts-expect-error this is a CSS variable
-          "--color-primary": network!.config.primaryColor,
-          "--gradient-primary": network!.config.cssGradient,
+          "--color-primary": network?.config.primaryColor,
+          "--gradient-primary": network?.config.cssGradient,
         }}
       >
         <HideBodyOverflow />
