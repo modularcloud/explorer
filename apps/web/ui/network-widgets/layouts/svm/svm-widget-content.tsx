@@ -95,7 +95,7 @@ export function SVMWidgetLayoutContent({
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
           "auto-rows-[160px] auto-cols-[145px]",
-          "w-full gap-4 font-medium",
+          "w-full gap-8 tab:gap-10 font-medium",
           "accent-primary place-items-stretch",
         )}
       >
