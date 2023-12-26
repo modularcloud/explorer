@@ -67,7 +67,7 @@ export function SVMWidgetLayoutContent({
   } = apiResult;
 
   return (
-    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+    <div className="max-w-[1060px] mx-auto grid gap-4 w-full">
       <div className="hidden tab:inline-block h-4 mx-auto text-center">
         {lastUpdatedTime && (
           <time
@@ -94,7 +94,6 @@ export function SVMWidgetLayoutContent({
           "[grid-template-areas:var(--grid-area-mobile)]",
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
-          "auto-rows-[160px] auto-cols-[145px]",
           "w-full gap-8 tab:gap-10 font-medium",
           "accent-primary place-items-stretch",
         )}
