@@ -50,7 +50,7 @@ export function CelestiaWidgetLayoutContent({
   const [apiResult, latestBlocks, latestTransactions] = data;
 
   return (
-    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+    <div className="max-w-[1060px] mx-auto grid gap-4 w-full">
       <div className="hidden tab:inline-block h-4 mx-auto text-center">
         {lastUpdatedTime && (
           <time
@@ -78,7 +78,6 @@ export function CelestiaWidgetLayoutContent({
           "[grid-template-areas:var(--grid-area-mobile)]",
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
-          "auto-rows-[153px] tab:auto-rows-[146.5px] auto-cols-[145px]",
           "w-full gap-8 tab:gap-10 font-medium max-w-full",
           "accent-primary",
         )}
