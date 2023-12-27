@@ -13,20 +13,6 @@ import { getSearchOptionGroups } from "~/lib/search-options";
 // types
 import type { Metadata } from "next";
 
-const inter = localFont({
-  src: [
-    {
-      path: "../fonts/InterVariable/InterVariable.woff2",
-      style: "normal",
-    },
-    {
-      path: "../fonts/InterVariable/InterVariable-Italic.woff2",
-      style: "italic",
-    },
-  ],
-  variable: "--font-inter",
-});
-
 const interDisplay = localFont({
   src: [
     {
@@ -78,7 +64,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${interDisplay.variable} font-sans text-foreground`}
+        className={`${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
         <SkipToMainContent />
