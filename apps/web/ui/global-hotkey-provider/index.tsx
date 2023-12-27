@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { OptionGroups } from "~/lib/shared-utils";
+import type { OptionGroups } from "~/lib/search-options";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
@@ -19,7 +19,6 @@ export const GlobalHotkeyContext = React.createContext<GlobalHotkeyContextType>(
   },
 );
 
-// TODO : refactor to use `useHotkeyListener`
 export function GlobalHotkeyProvider({
   children,
   optionGroups,

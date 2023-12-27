@@ -2,11 +2,9 @@ import fs from "fs/promises";
 import path from "path";
 
 type CacheId = string | number | (string | number)[];
-/**
- * This class is only meant to be on DEV, don't try to use this in production
- * as it might break
- */
-export class FileSystemCache {
+type CacheEntry<T> = { value: T; expiry: number | null };
+
+export class FileSystemCacheDEV {
   private cacheDir: string = `.next/cache/fs-cache`;
 
   constructor() {
@@ -29,18 +27,29 @@ export class FileSystemCache {
     return fullKey;
   }
 
-  async set<T>(key: CacheId, value: T): Promise<void> {
+  async set<T>(key: CacheId, value: T, ttl?: number): Promise<void> {
+    const cacheEntry: CacheEntry<T> = {
+      value,
+      expiry: ttl ? Date.now() + ttl * 1000 : null,
+    };
     const filePath = this.getFilePath(await this.computeCacheKey(key));
-    await fs.writeFile(filePath, JSON.stringify(value), "utf-8");
+    await fs.writeFile(filePath, JSON.stringify(cacheEntry), "utf-8");
   }
 
   async get<T>(key: string): Promise<T | null> {
     const filePath = this.getFilePath(key);
     try {
       const data = await fs.readFile(filePath, "utf-8");
-      return JSON.parse(data) as T;
+      const cacheEntry: CacheEntry<T> = JSON.parse(data);
+
+      if (cacheEntry.expiry && Date.now() > cacheEntry.expiry) {
+        // Data is expired
+        return null;
+      }
+
+      return cacheEntry.value;
     } catch (error) {
-      // If the file doesn't exist, return null
+      // If the file doesn't exist or other errors occur, return null
       return null;
     }
   }

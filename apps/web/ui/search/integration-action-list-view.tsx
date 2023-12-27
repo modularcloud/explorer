@@ -3,7 +3,8 @@ import { cn } from "~/ui/shadcn/utils";
 import { useItemGrid } from "~/lib/hooks/use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
-import { capitalize, type SearchOption } from "~/lib/shared-utils";
+import { capitalize } from "~/lib/shared-utils";
+import type { SearchOption } from "~/lib/search-options";
 
 interface Props {
   query: string;

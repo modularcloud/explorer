@@ -1,6 +1,6 @@
 import * as React from "react";
 // components
-import { HeaderTabs, HeaderTabsSkeleton } from "~/ui/tabs/header-tabs";
+import { HeaderTabs, HeaderTabsSkeleton } from "~/ui/header-tabs";
 
 // utils
 import { cn } from "~/ui/shadcn/utils";

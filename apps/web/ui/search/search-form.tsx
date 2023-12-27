@@ -14,7 +14,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 // types
-import type { OptionGroups } from "~/lib/shared-utils";
+import type { OptionGroups } from "~/lib/search-options";
 
 interface Props {
   optionGroups: OptionGroups;

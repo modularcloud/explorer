@@ -1,5 +1,4 @@
-import { getAllNetworksCached } from "./network";
-import type { OptionGroups, SearchOption } from "./shared-utils";
+import { type SingleNetwork, getAllNetworksCached } from "./network";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
@@ -36,3 +35,16 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
 
   return optionGroups;
 }
+
+export type SearchOption = {
+  displayName: string;
+  brandName: string;
+  verified?: boolean;
+  brandColor: string;
+  layout?: SingleNetwork["config"]["widgetLayout"];
+  logoURL: string;
+  id: string;
+};
+export type OptionGroups = {
+  [groupDisplayName: string]: SearchOption[];
+};

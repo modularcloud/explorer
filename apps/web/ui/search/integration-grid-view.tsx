@@ -4,11 +4,11 @@ import { GlobeCyber } from "~/ui/icons";
 import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
 import { capitalize } from "~/lib/shared-utils";
-import { OnSelectOptionArgs, useItemGrid } from "~/lib/hooks/use-item-grid";
+import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
-import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
 import Image from "next/image";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import type { SearchOption, OptionGroups } from "~/lib/search-options";
 interface Props {
   className?: string;
   optionGroups: OptionGroups;

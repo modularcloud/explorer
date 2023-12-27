@@ -8,7 +8,7 @@ import { getSingleNetworkCached } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { FetchLoadArgs } from "~/lib/shared-utils";
+import { HeadlessRoute } from "~/lib/headless-utils";
 
 export default async function BlockLayout({
   children,
@@ -17,17 +17,18 @@ export default async function BlockLayout({
 }: {
   children: React.ReactNode;
   rightpanel: React.ReactNode;
-  params: Pick<FetchLoadArgs, "network">;
+  params: Pick<HeadlessRoute, "network">;
 }) {
   const network = await getSingleNetworkCached(params.network);
+
   return (
     <RQTableProvider>
       <main
         className="min-h-screen flex flex-col h-full"
         style={{
           // @ts-expect-error this is a CSS variable
-          "--color-primary": network!.config.primaryColor,
-          "--gradient-primary": network!.config.cssGradient,
+          "--color-primary": network?.config.primaryColor,
+          "--gradient-primary": network?.config.cssGradient,
         }}
       >
         <HideBodyOverflow />

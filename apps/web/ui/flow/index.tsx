@@ -84,6 +84,7 @@ function Node({
     },
   );
   console.log(nodeResponse.data);
+
   const time = useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.timestamp) {
@@ -92,20 +93,12 @@ function Node({
     }
     return null;
   }, [nodeResponse.data]);
+
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
   if (!nodeResponse.data) return null;
+
   const node = nodeResponse.data.result;
 
-  let colors =
-    "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
-  if (isNext) {
-    colors =
-      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]";
-  }
-  if (node.type === "completed") {
-    colors =
-      "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]";
-  }
   return (
     <Link
       href={`${node.link}`}
@@ -120,7 +113,14 @@ function Node({
       }}
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
-        colors,
+        {
+          "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6":
+            !isNext && node.type !== "completed",
+          "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]":
+            isNext,
+          "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]":
+            node.type === "completed",
+        },
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
@@ -161,8 +161,11 @@ function Node({
 
 function Address({ address }: { address: string }) {
   const pieces = RegExp(/^([a-zA-Z]+)1([a-z0-9]{38})$/).exec(address);
+
   if (!pieces) return null;
+
   const [, prefix, suffix] = pieces;
+
   return (
     <div className="items-center border border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 flex gap-2 px-2.5 py-0.5 rounded-[32px] border-solid max-md:justify-center">
       <div className="text-xs font-medium leading-4 text-[#666D80]">
@@ -213,6 +216,7 @@ function Transfer() {
       slug: "coinhunterstrrollapp_9084503-1",
     },
   };
+
   const nodeResponse = useSWR(
     ["/api/resolve/transactions", body],
     async () => {
@@ -233,6 +237,7 @@ function Transfer() {
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
     },
   );
+
   const amount = useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.sidebar.Token.payload) {
@@ -241,8 +246,10 @@ function Transfer() {
     }
     return null;
   }, [nodeResponse.data]);
+
   const node = nodeResponse.data?.result;
   if (!node) return null;
+
   return (
     <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
       <Address address={node.sidebar.Sender.payload} />
@@ -330,6 +337,7 @@ export function FlowChart() {
       },
     ],
   } as any;
+
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
