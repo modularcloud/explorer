@@ -124,6 +124,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
           size="small"
           label="Estimated Launch Date (optional)"
           placeholder="Choose a value"
+          name="launchDate"
         >
           <SelectContent>
             <SelectItem value="Q1-2024">1. Quarter 2024</SelectItem>
