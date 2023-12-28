@@ -1,10 +1,10 @@
 "use server";
 
 import { env } from "~/env.mjs";
-import type { AllValues } from "./register-schema";
+import type { RegisterFormValues } from "./register-schema";
 import { Resend } from "resend";
 
-export async function sendEmail(values: AllValues) {
+export async function sendEmail(values: RegisterFormValues) {
   // Don't send emails on DEV to avoid going over the plan
   if (process.env.NODE_ENV !== "development") {
     const resend = new Resend(env.RESEND_API_KEY);

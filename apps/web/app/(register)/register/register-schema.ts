@@ -73,7 +73,7 @@ export const layerStepSchema = z.object({
   ),
 });
 
-export const allValuesSchema = detailStepSchema
+export const registerFormValuesSchema = detailStepSchema
   .merge(envStepSchema)
   .merge(toolkitStepSchema)
   .merge(layerStepSchema);
@@ -83,4 +83,4 @@ export type EnvStep = z.TypeOf<typeof envStepSchema>;
 export type ToolkitStep = z.TypeOf<typeof toolkitStepSchema>;
 export type LayerStep = z.TypeOf<typeof layerStepSchema>;
 
-export type AllValues = z.TypeOf<typeof allValuesSchema>;
+export type RegisterFormValues = z.TypeOf<typeof registerFormValuesSchema>;
