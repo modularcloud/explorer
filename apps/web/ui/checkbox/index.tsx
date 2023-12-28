@@ -32,7 +32,7 @@ export const Checkbox = React.forwardRef<
           "flex gap-2 items-center group",
           "[--display-unchecked:flex] [--display-checked:none]",
           "peer-checked:[--display-unchecked:none] peer-checked:[--display-checked:flex]",
-          "peer-checked:text-black text-muted",
+          "peer-checked:text-foreground text-muted",
         )}
         htmlFor={checkboxId}
       >

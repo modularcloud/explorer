@@ -49,8 +49,7 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
         </label>
         <div
           className={cn(
-            className,
-            "flex w-full items-center gap-2 rounded-md border px-3",
+            "flex w-full items-center gap-2 rounded-lg border px-3",
             "bg-white shadow-sm focus-within:border",
             "transition duration-150",
             {
@@ -63,6 +62,7 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
               "py-3": size === "large",
               "cursor-not-allowed bg-disabled": disabled,
             },
+            className,
           )}
         >
           <div className="inline-grid place-items-center flex-shrink-0">
