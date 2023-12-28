@@ -8,6 +8,7 @@ import { Input } from "~/ui/input";
 import { cn } from "~/ui/shadcn/utils";
 import { ImageCheckbox } from "./image-checkbox";
 import { RegisterFormStep } from ".";
+import { Checkbox } from "~/ui/checkbox";
 
 type FormDefaultValues = Partial<{
   [K in keyof RegisterFormValues]?: RegisterFormValues[K] | null;
@@ -64,6 +65,7 @@ const DEFAULT_LAYERS = [
 ];
 
 export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
+  const [isProjectLive, setIsProjectLive] = React.useState(false);
   return (
     <>
       <Input
@@ -103,6 +105,12 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
           <GithubLogo className={cls} aria-hidden="true" />
         )}
         error={errors?.githubRepo}
+      />
+
+      <Checkbox
+        checked={isProjectLive}
+        label="This project is currently live"
+        onChange={(e) => setIsProjectLive(e.target.checked)}
       />
     </>
   );
