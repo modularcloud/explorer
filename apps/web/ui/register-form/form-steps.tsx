@@ -9,6 +9,12 @@ import { cn } from "~/ui/shadcn/utils";
 import { ImageCheckbox } from "./image-checkbox";
 import { RegisterFormStep } from ".";
 import { Checkbox } from "~/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+} from "~/ui/select";
 
 type FormDefaultValues = Partial<{
   [K in keyof RegisterFormValues]?: RegisterFormValues[K] | null;
@@ -112,6 +118,21 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         label="This project is currently live"
         onChange={(e) => setIsProjectLive(e.target.checked)}
       />
+
+      {isProjectLive && (
+        <Select
+          size="small"
+          label="Estimated Launch Date (optional)"
+          placeholder="Choose a value"
+        >
+          <SelectContent>
+            <SelectItem value="Q1-2024">1. Quarter 2024</SelectItem>
+            <SelectItem value="Q2-2024">2. Quarter 2024</SelectItem>
+            <SelectItem value="Q3-2024">3. Quarter 2024</SelectItem>
+            <SelectItem value="Q4-2024">4. Quarter 2024 or later</SelectItem>
+          </SelectContent>
+        </Select>
+      )}
     </>
   );
 }
