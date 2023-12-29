@@ -13,6 +13,8 @@ export const detailStepSchema = z.object({
   projectName: z.string().trim().nonempty({
     message: "Can't be empty!",
   }),
+  estimatedLaunchDate: z.string().trim().nullish(),
+  isProjectLive: z.coerce.boolean().default(false),
   githubRepo: z
     .string()
     .trim()
