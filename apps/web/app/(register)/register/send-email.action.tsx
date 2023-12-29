@@ -96,7 +96,7 @@ export async function sendEmail(values: RegisterFormValues) {
               {Array.from(values.layer).map((layer, index) => (
                 <>
                   <span>{layer}</span>
-                  {index < values.layer.size - 1 && ", "}
+                  {index < values.layer.length - 1 && ", "}
                 </>
               ))}
             </strong>
