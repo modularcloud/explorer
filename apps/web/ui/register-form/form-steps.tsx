@@ -118,6 +118,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         name="email"
         required
         defaultValue={defaultValues?.email}
+        autoFocus
         renderLeadingIcon={(cls) => (
           <Enveloppe className={cls} aria-hidden="true" />
         )}
@@ -648,7 +649,7 @@ export function SummaryStep({
   );
 }
 
-export function SuccessStep() {
+export function SuccessStep({ onReset }: { onReset: () => void }) {
   return (
     <div className="h-full w-full fixed inset-0">
       <div
@@ -682,6 +683,7 @@ export function SuccessStep() {
           <Button
             type="button"
             color="primary"
+            onClick={onReset}
             className="flex-1 inline-flex justify-center text-xs md:text-base"
           >
             Register another chain

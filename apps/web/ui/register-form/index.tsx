@@ -97,6 +97,11 @@ export function RegisterForm() {
       }
     }
   }
+  function resetForm() {
+    setCurrentStep(STEPS[0]);
+    setValuesInputed({});
+    setTotalFilledSteps(0);
+  }
 
   async function formAction(_: any, formData: FormData) {
     if (currentStep === "DETAILS") {
@@ -241,7 +246,7 @@ export function RegisterForm() {
               onJumpToStep={setCurrentStep}
             />
           )}
-          {currentStep === "SUCCESS" && <SuccessStep />}
+          {currentStep === "SUCCESS" && <SuccessStep onReset={resetForm} />}
         </div>
       </div>
 
