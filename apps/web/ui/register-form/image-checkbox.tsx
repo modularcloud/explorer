@@ -37,8 +37,10 @@ export function ImageCheckbox({
         as="label"
         htmlFor={checkboxId}
         className={cn(
-          "flex items-center cursor-pointer",
-          "peer-checked:border-primary peer-checked:border-2",
+          "flex items-center cursor-pointer ring-primary/20",
+          "transition duration-150",
+          "peer-checked:ring-2 peer-checked:ring-primary",
+          "peer-focus:border-primary peer-focus:ring-2",
           "peer-disabled:cursor-default",
           {
             "py-2": !!image,
