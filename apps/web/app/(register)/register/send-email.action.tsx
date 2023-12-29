@@ -62,6 +62,40 @@ export async function sendEmail(values: RegisterFormValues) {
             )}
           </p>
           <p>
+            The project is live ? :&nbsp;
+            {values.isProjectLive ? (
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                YES
+              </strong>
+            ) : (
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                NO
+              </strong>
+            )}
+          </p>
+
+          {values.estimatedLaunchDate && (
+            <p>
+              Estimated launch date :&nbsp;
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                {values.estimatedLaunchDate}
+              </strong>
+            </p>
+          )}
+
+          <p>
             Execution Environment(s):&nbsp;
             <strong
               style={{
