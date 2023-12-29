@@ -4,7 +4,7 @@
 import * as React from "react";
 import { useFormState } from "react-dom";
 import { Button } from "~/ui/button";
-import { ArrowRight } from "~/ui/icons";
+import { ArrowRight, Stars } from "~/ui/icons";
 import { Stepper } from "./stepper";
 import { cn } from "~/ui/shadcn/utils";
 import {
@@ -276,12 +276,23 @@ export function RegisterForm() {
               className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
             >
               <span>
-                {isSendingEmail && (
+                {isSendingEmail ? (
                   <LoadingIndicator className="text-white h-4 w-4" />
+                ) : (
+                  currentStep === "SUMMARY" && (
+                    <Stars className="h-4 w-4 text-white" aria-hidden="true" />
+                  )
                 )}
               </span>
-              <span>Next</span>
-              <ArrowRight className="h-3 w-3 text-white" aria-hidden="true" />
+              <span>{currentStep === "SUMMARY" ? "Submit" : "Next"}</span>
+              <span>
+                {currentStep !== "SUMMARY" && (
+                  <ArrowRight
+                    className="h-3 w-3 text-white"
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
             </Button>
           </div>
         </footer>

@@ -3,7 +3,7 @@ import * as React from "react";
 import { Building } from "lucide-react";
 import { RegisterFormValues } from "~/app/(register)/register/register-schema";
 import { Button } from "~/ui/button";
-import { Enveloppe, GithubLogo, Plus, Warning } from "~/ui/icons";
+import { CalendarTime, Enveloppe, GithubLogo, Plus, Warning } from "~/ui/icons";
 import { Input } from "~/ui/input";
 import { cn } from "~/ui/shadcn/utils";
 import { ImageCheckbox } from "./image-checkbox";
@@ -480,6 +480,7 @@ export function SummaryStep({
               </dd>
             </div>
           </div>
+
           <div className="flex items-center gap-1.5">
             <Building className="h-4 w-4 flex-none" aria-hidden="true" />
             <div className="flex items-center gap-0.5 flex-wrap">
@@ -489,6 +490,21 @@ export function SummaryStep({
               </dd>
             </div>
           </div>
+
+          {values.estimatedLaunchDate && (
+            <div className="flex items-center gap-1.5">
+              <CalendarTime className="h-4 w-4 flex-none" aria-hidden="true" />
+              <div className="flex items-center gap-0.5 flex-wrap">
+                <dt>Estimated Launch date:</dt>
+                <dd>
+                  <strong className="font-medium">
+                    {values.estimatedLaunchDate}
+                  </strong>
+                </dd>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center gap-1.5">
             <GithubLogo className="h-4 w-4 flex-none" aria-hidden="true" />
             <div className="flex items-center gap-0.5 flex-wrap">
@@ -597,7 +613,7 @@ export function SummaryStep({
         </div>
 
         <div className="grid grid-cols-2 gap-3 place-items-stretch">
-          {Array.from(values.layer).map((layer) => {
+          {values.layer.map((layer) => {
             const layerFound = DEFAULT_LAYERS.find(
               (defLayer) => layer === defLayer.value,
             );
