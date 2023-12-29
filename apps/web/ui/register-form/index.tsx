@@ -27,6 +27,7 @@ import {
   SummaryStep,
   SuccessStep,
 } from "./form-steps";
+import type { EventFor } from "~/lib/types";
 
 const STEPS = [
   "DETAILS",
@@ -103,7 +104,7 @@ export function RegisterForm() {
     setTotalFilledSteps(0);
   }
 
-  async function formAction(_: any, formData: FormData) {
+  function validateForm(formData: FormData, progress: boolean) {
     if (currentStep === "DETAILS") {
       const result = detailStepSchema.safeParse(Object.fromEntries(formData));
 
@@ -120,8 +121,10 @@ export function RegisterForm() {
       }
 
       setValuesInputed({ ...valuesInputed, ...result.data });
-      setCurrentStep("ENVIRONMENT");
-      setTotalFilledSteps((total) => (total >= 1 ? total : 1));
+      if (progress) {
+        setCurrentStep("ENVIRONMENT");
+        setTotalFilledSteps((total) => (total >= 1 ? total : 1));
+      }
     }
     if (currentStep === "ENVIRONMENT") {
       const result = envStepSchema.safeParse({
@@ -137,8 +140,10 @@ export function RegisterForm() {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
-      setCurrentStep("TOOLKIT");
-      setTotalFilledSteps((total) => (total >= 2 ? total : 2));
+      if (progress) {
+        setCurrentStep("TOOLKIT");
+        setTotalFilledSteps((total) => (total >= 2 ? total : 2));
+      }
     }
     if (currentStep === "TOOLKIT") {
       const result = toolkitStepSchema.safeParse(Object.fromEntries(formData));
@@ -152,8 +157,10 @@ export function RegisterForm() {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
-      setCurrentStep("LAYER");
-      setTotalFilledSteps((total) => (total >= 3 ? total : 3));
+      if (progress) {
+        setCurrentStep("LAYER");
+        setTotalFilledSteps((total) => (total >= 3 ? total : 3));
+      }
     }
     if (currentStep === "LAYER") {
       const result = layerStepSchema.safeParse({
@@ -169,29 +176,37 @@ export function RegisterForm() {
         };
       }
       setValuesInputed({ ...valuesInputed, ...result.data });
-      setCurrentStep("SUMMARY");
-      setTotalFilledSteps((total) => (total >= 4 ? total : 4));
+      if (progress) {
+        setCurrentStep("SUMMARY");
+        setTotalFilledSteps((total) => (total >= 4 ? total : 4));
+      }
     }
     if (currentStep === "SUMMARY") {
-      startTransition(() =>
-        sendEmail(registerFormValuesSchema.parse(valuesInputed)).then(() => {
-          setCurrentStep("SUCCESS");
-          setTotalFilledSteps(5);
-        }),
-      );
+      if (progress) {
+        startTransition(() =>
+          sendEmail(registerFormValuesSchema.parse(valuesInputed)).then(() => {
+            setCurrentStep("SUCCESS");
+            setTotalFilledSteps(5);
+          }),
+        );
+      }
     }
-
-    // default values
-    return {};
   }
 
-  const [state, action] = useFormState(formAction, {});
+  async function formAction(_: any, formData: FormData) {
+    const errors = validateForm(formData, true);
+    if (errors !== undefined) return errors;
+    // default values
+    return null;
+  }
+
+  const [state, action] = useFormState(formAction, null);
 
   const defaultValues = {
     ...valuesInputed,
-    ...state.formData,
+    ...state?.formData,
   };
-  const errors = state.type === "error" ? state.fieldErrors : null;
+  const errors = state?.type === "error" ? state.fieldErrors : null;
 
   return (
     <form
@@ -258,7 +273,8 @@ export function RegisterForm() {
                 type="button"
                 variant="bordered"
                 className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
-                onClick={() => {
+                onClick={(event: EventFor<"button", "onClick">) => {
+                  validateForm(new FormData(event.currentTarget.form!), false);
                   jumpToStep(currentStepIdx - 1);
                 }}
               >
