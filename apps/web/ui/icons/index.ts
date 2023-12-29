@@ -50,6 +50,7 @@ export { default as GlobeWeb } from "./GlobeWeb";
 export { default as GreenTick } from "./GreenTick";
 export { default as Grid } from "./Grid";
 export { default as Home } from "./Home";
+export { default as Home2 } from "./Home2";
 export { default as KeyboardArrowDown } from "./KeyboardArrowDown";
 export { default as KeyboardArrowLeft } from "./KeyboardArrowLeft";
 export { default as KeyboardArrowRight } from "./KeyboardArrowRight";

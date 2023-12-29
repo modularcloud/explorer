@@ -3,7 +3,14 @@ import * as React from "react";
 import { Building } from "lucide-react";
 import { RegisterFormValues } from "~/app/(register)/register/register-schema";
 import { Button } from "~/ui/button";
-import { CalendarTime, Enveloppe, GithubLogo, Plus, Warning } from "~/ui/icons";
+import {
+  CalendarTime,
+  Enveloppe,
+  GithubLogo,
+  Home2,
+  Plus,
+  Warning,
+} from "~/ui/icons";
 import { Input } from "~/ui/input";
 import { cn } from "~/ui/shadcn/utils";
 import { ImageCheckbox } from "./image-checkbox";
@@ -393,6 +400,7 @@ export function LayerStepForm({ defaultValues, errors }: FormStepProps) {
       <div className="grid grid-cols-2 gap-3">
         {DEFAULT_LAYERS.map((layer) => (
           <ImageCheckbox
+            key={layer.value}
             label={layer.name}
             name="layer"
             value={layer.value}
@@ -645,18 +653,51 @@ export function SuccessStep() {
     <div className="h-full w-full fixed inset-0">
       <div
         className={cn(
-          "min-w-max border border-mid-dark-100 bg-muted-100 px-8 py-6 rounded-md absolute",
+          "absolute flex flex-col gap-4",
           "animate-slide-up-from-bottom top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
         )}
       >
-        <img
-          src="/images/bg-btn.svg"
-          className="absolute left-0 top-0 right-0"
-          alt=""
-        />
-        <span className="relative z-10">
-          🎈 Thank you for registering your chain
-        </span>
+        <div
+          className={cn(
+            "",
+            "min-w-max border border-mid-dark-100 bg-muted-100 px-8 py-6 rounded-md ",
+          )}
+        >
+          <img
+            src="/images/bg-btn.svg"
+            className="absolute left-0 top-0 right-0"
+            alt=""
+          />
+          <div className="flex items-center gap-2 md:mx-10">
+            <span className="text-2xl">🎈</span>
+            <div className="flex flex-col">
+              <p className="relative z-10 font-medium">
+                Thank you for registering your chain
+              </p>
+              <p className="relative z-10">We will reach out to you soon.</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            color="primary"
+            className="flex-1 inline-flex justify-center text-xs md:text-base"
+          >
+            Register another chain
+          </Button>
+          <Button
+            color="transparent"
+            href="/"
+            variant="bordered"
+            className="flex-1 inline-flex justify-center gap-1 border-mid-dark-100 bg-muted-100 text-muted text-xs md:text-base"
+          >
+            <span>Return home</span>
+            <span>
+              <Home2 className="h-4 w-4" aria-hidden="true" strokeWidth={2} />
+            </span>
+          </Button>
+        </div>
       </div>
 
       <img
