@@ -64,6 +64,7 @@ export { default as MessageOn } from "./MessageOn";
 export { default as MoonFilled } from "./MoonFilled";
 export { default as MoonOff } from "./MoonOff";
 export { default as MoonOn } from "./MoonOn";
+export { default as Plus } from "./Plus";
 export { default as Recycle } from "./Recycle";
 export { default as RedCross } from "./RedCross";
 export { default as RightSidebarOff } from "./RightSidebarOff";

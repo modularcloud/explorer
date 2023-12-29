@@ -159,7 +159,7 @@ export function RegisterForm() {
           type: "error" as const,
           fieldErrors: result.error.flatten().fieldErrors,
           formData: {
-            layer: new Set([...formData.getAll("layer")].map(String)),
+            layer: [...formData.getAll("layer")].map(String),
           } as LayerStep,
         };
       }

@@ -59,20 +59,12 @@ export const toolkitStepSchema = z.object({
 });
 
 export const layerStepSchema = z.object({
-  layer: preprocess(
-    (arg) => {
-      if (Array.isArray(arg)) {
-        return new Set([...arg]);
-      }
-      return arg;
-    },
-    z
-      .set(z.enum(["ETHEREUM", "CELESTIA"]), {
-        invalid_type_error: "Please choose one or more options",
-        required_error: "Please choose one or more options",
-      })
-      .nonempty({ message: "Please select at least one option" }),
-  ),
+  layer: z.array(z.string().trim().nonempty(), {
+    invalid_type_error: "Please choose one or more options",
+    required_error: "Please choose one or more options",
+  }).nonempty({
+    message: "Please choose one or more options",
+  }),
 });
 
 export const registerFormValuesSchema = detailStepSchema

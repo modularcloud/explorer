@@ -3,7 +3,7 @@ import * as React from "react";
 import { Building } from "lucide-react";
 import { RegisterFormValues } from "~/app/(register)/register/register-schema";
 import { Button } from "~/ui/button";
-import { Enveloppe, GithubLogo, Warning } from "~/ui/icons";
+import { Enveloppe, GithubLogo, Plus, Warning } from "~/ui/icons";
 import { Input } from "~/ui/input";
 import { cn } from "~/ui/shadcn/utils";
 import { ImageCheckbox } from "./image-checkbox";
@@ -43,12 +43,29 @@ const DEFAULT_TOOLKITS = [
     logo: "/images/dymension-logo.svg",
   },
   {
-    value: "ORBIT_STACK",
-    name: "Orbit Stack",
+    value: "ZK_STACK",
+    name: "ZK Stack",
+    logo: "/images/zk_stack.svg",
   },
   {
     value: "OP_STACK",
     name: "OP Stack",
+    logo: "/images/op_stack.svg",
+  },
+  {
+    value: "ORBIT_STACK",
+    name: "Orbit Stack",
+    logo: "/images/orbit_stack.svg",
+  },
+  {
+    value: "CDK",
+    name: "CDK",
+    logo: "/images/cdk.svg",
+  },
+  {
+    value: "Sovereign",
+    name: "Sovereign",
+    logo: "/images/sovereign.svg",
   },
 ];
 
@@ -62,6 +79,21 @@ const DEFAULT_LAYERS = [
     value: "CELESTIA",
     name: "Celestia",
     logo: "/images/celestia-logo.svg",
+  },
+  {
+    value: "AVAIL",
+    name: "Avail",
+    logo: "/images/avail.png",
+  },
+  {
+    value: "EIGEN_DA",
+    name: "EigenDA",
+    logo: "/images/eigen_da.png",
+  },
+  {
+    value: "NEAR",
+    name: "Near",
+    logo: "/images/near.svg",
   },
 ];
 
@@ -203,7 +235,7 @@ export function EnvStepForm({ defaultValues, errors }: FormStepProps) {
         ))}
       </div>
 
-      <div className="flex flex-col justify-stretch gap-4 items-end lg:justify-normal lg:flex-row">
+      <div className="flex flex-col gap-4 items-end sm:flex-row">
         <Input
           size="small"
           ref={inputRef}
@@ -217,12 +249,15 @@ export function EnvStepForm({ defaultValues, errors }: FormStepProps) {
           }}
         />
         <Button
-          color="primary"
-          className="min-w-max px-3 py-1 w-full iline-flex justify-center lg:w-auto"
+          color="transparent"
+          variant="bordered"
+          className="min-w-max px-3 py-1 inline-flex justify-between w-full sm:w-auto"
           type="button"
           onClick={addAdditionalEnv}
         >
-          <span>Add environment</span>
+          <span></span>
+          <span>Add</span>
+          <Plus className="h-3.5 w-3.5 text-foreground" aria-hidden="true" />
         </Button>
       </div>
     </>
@@ -269,47 +304,18 @@ export function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
         </div>
       )}
       <div className="grid grid-cols-2 gap-3">
-        <ImageCheckbox
-          label="Blobstream"
-          name="toolkit"
-          value="BLOBSTREAM"
-          defaultChecked={defaultValues.toolkit === "BLOBSTREAM"}
-          type="radio"
-          image="/images/celestia-logo.svg"
-        />
-        <ImageCheckbox
-          label="Rollkit"
-          name="toolkit"
-          value="ROLLKIT"
-          defaultChecked={defaultValues.toolkit === "ROLLKIT"}
-          type="radio"
-          image="/images/Rollkit.svg"
-        />
-        <ImageCheckbox
-          label="Dymint"
-          name="toolkit"
-          value="DYMINT"
-          defaultChecked={defaultValues.toolkit === "DYMINT"}
-          type="radio"
-          image="/images/dymension-logo.svg"
-        />
-      </div>
-      <p>Other</p>
-      <div className="grid grid-cols-2 gap-3">
-        <ImageCheckbox
-          label="OP Stack"
-          name="toolkit"
-          value="OP_STACK"
-          defaultChecked={defaultValues.toolkit === "OP_STACK"}
-          type="radio"
-        />
-        <ImageCheckbox
-          label="Orbit Stack"
-          name="toolkit"
-          value="ORBIT_STACK"
-          defaultChecked={defaultValues.toolkit === "ORBIT_STACK"}
-          type="radio"
-        />
+        {DEFAULT_TOOLKITS.map((toolkit) => (
+          <ImageCheckbox
+            key={toolkit.value}
+            label={toolkit.name}
+            name="toolkit"
+            value={toolkit.value}
+            defaultChecked={defaultValues.toolkit === toolkit.value}
+            type="radio"
+            image={toolkit.logo}
+          />
+        ))}
+
         {additionalToolkit && (
           <ImageCheckbox
             label={additionalToolkit}
@@ -321,7 +327,7 @@ export function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
         )}
       </div>
 
-      <div className="flex flex-col justify-stretch gap-4 items-end lg:justify-normal lg:flex-row">
+      <div className="flex flex-col gap-4 items-end sm:flex-row">
         <Input
           size="small"
           ref={inputRef}
@@ -335,12 +341,15 @@ export function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
           }}
         />
         <Button
-          color="primary"
-          className="min-w-max px-3 py-1 w-full iline-flex justify-center lg:w-auto"
+          color="transparent"
+          variant="bordered"
+          className="min-w-max px-3 py-1 inline-flex justify-between w-full sm:w-auto"
           type="button"
           onClick={addToolkit}
         >
-          <span>Add toolkit</span>
+          <span></span>
+          <span>Add</span>
+          <Plus className="h-3.5 w-3.5 text-foreground" aria-hidden="true" />
         </Button>
       </div>
     </>
@@ -348,6 +357,24 @@ export function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
 }
 
 export function LayerStepForm({ defaultValues, errors }: FormStepProps) {
+  const [additionalLayers, setAdditionalLayers] = React.useState(
+    () =>
+      defaultValues.layer?.filter(
+        (layer) => !DEFAULT_LAYERS.find((l) => l.value !== layer),
+      ) ?? [],
+  );
+
+  const inputRef = React.useRef<React.ElementRef<"input">>(null);
+
+  function addAdditionalLayer() {
+    const currentValue = inputRef.current?.value.trim();
+    if (inputRef.current && currentValue) {
+      setAdditionalLayers([...additionalLayers, currentValue]);
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  }
+
   return (
     <>
       {errors?.layer && (
@@ -364,20 +391,56 @@ export function LayerStepForm({ defaultValues, errors }: FormStepProps) {
         </div>
       )}
       <div className="grid grid-cols-2 gap-3">
-        <ImageCheckbox
-          label="Ethereum"
-          name="layer"
-          value="ETHEREUM"
-          defaultChecked={defaultValues.layer?.has("ETHEREUM")}
-          image="/images/ethereum.png"
+        {DEFAULT_LAYERS.map((layer) => (
+          <ImageCheckbox
+            label={layer.name}
+            name="layer"
+            value={layer.value}
+            defaultChecked={defaultValues.layer?.includes(layer.value)}
+            image={layer.logo}
+          />
+        ))}
+
+        {additionalLayers.map((currentLayer, index) => (
+          <ImageCheckbox
+            key={index}
+            label={currentLayer}
+            name="env"
+            value={currentLayer}
+            checked
+            onChange={() =>
+              setAdditionalLayers(
+                additionalLayers.filter((layer) => layer !== currentLayer),
+              )
+            }
+          />
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-4 items-end sm:flex-row">
+        <Input
+          size="small"
+          ref={inputRef}
+          label="Not listed here ?"
+          placeholder="Enter the name here..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addAdditionalLayer();
+            }
+          }}
         />
-        <ImageCheckbox
-          label="Celestia"
-          name="layer"
-          value="CELESTIA"
-          defaultChecked={defaultValues.layer?.has("CELESTIA")}
-          image="/images/celestia-logo.svg"
-        />
+        <Button
+          color="transparent"
+          variant="bordered"
+          className="min-w-max px-3 py-1 inline-flex justify-between w-full sm:w-auto"
+          type="button"
+          onClick={addAdditionalLayer}
+        >
+          <span></span>
+          <span>Add</span>
+          <Plus className="h-3.5 w-3.5 text-foreground" aria-hidden="true" />
+        </Button>
       </div>
     </>
   );
