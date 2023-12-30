@@ -168,10 +168,10 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
           defaultValue={defaultValues.estimatedLaunchDate ?? undefined}
         >
           <SelectContent>
-            <SelectItem value="QUARTER_1-2024">1. Quarter 2024</SelectItem>
-            <SelectItem value="QUARTER_2-2024">2. Quarter 2024</SelectItem>
-            <SelectItem value="QUARTER_3-2024">3. Quarter 2024</SelectItem>
-            <SelectItem value="QUARTER_4-2024 OR LATER">
+            <SelectItem value="1. Quarter 2024">1. Quarter 2024</SelectItem>
+            <SelectItem value="2. Quarter 2024">2. Quarter 2024</SelectItem>
+            <SelectItem value="3. Quarter 2024">3. Quarter 2024</SelectItem>
+            <SelectItem value="4. Quarter 2024 or later">
               4. Quarter 2024 or later
             </SelectItem>
           </SelectContent>
