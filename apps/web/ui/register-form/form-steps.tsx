@@ -42,7 +42,7 @@ const DEFAULT_TOOLKITS = [
   {
     value: "ROLLKIT",
     name: "Rollkit",
-    logo: "/images/rollkit.svg",
+    logo: "/images/rollkit-logo.svg",
   },
   {
     value: "DYMINT",
