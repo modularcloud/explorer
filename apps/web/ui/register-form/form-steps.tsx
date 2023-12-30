@@ -8,6 +8,7 @@ import {
   Enveloppe,
   GithubLogo,
   Home2,
+  Live,
   Plus,
   Warning,
 } from "~/ui/icons";
@@ -498,6 +499,18 @@ export function SummaryStep({
               <dt>Project Name:</dt>
               <dd>
                 <strong className="font-medium">{values.projectName}</strong>
+              </dd>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Live className="h-4 w-4 flex-none" aria-hidden="true" />
+            <div className="flex items-center gap-0.5 flex-wrap">
+              <dt>The project is live ?</dt>
+              <dd>
+                <strong className="font-medium">
+                  {values.isProjectLive ? "Yes" : "No"}
+                </strong>
               </dd>
             </div>
           </div>
