@@ -104,7 +104,7 @@ export function RegisterForm() {
     setTotalFilledSteps(0);
   }
 
-  function validateForm(formData: FormData, progress: boolean) {
+  function validateFormAndSaveState(formData: FormData, progress: boolean) {
     if (currentStep === "DETAILS") {
       const result = detailStepSchema.safeParse(Object.fromEntries(formData));
 
@@ -194,7 +194,7 @@ export function RegisterForm() {
   }
 
   async function formAction(_: any, formData: FormData) {
-    const errors = validateForm(formData, true);
+    const errors = validateFormAndSaveState(formData, true);
     if (errors !== undefined) return errors;
     // default values
     return null;
@@ -274,7 +274,10 @@ export function RegisterForm() {
                 variant="bordered"
                 className="px-3 py-1 w-full md:w-auto text-center items-center justify-between md:gap-12"
                 onClick={(event: EventFor<"button", "onClick">) => {
-                  validateForm(new FormData(event.currentTarget.form!), false);
+                  validateFormAndSaveState(
+                    new FormData(event.currentTarget.form!),
+                    false,
+                  );
                   jumpToStep(currentStepIdx - 1);
                 }}
               >

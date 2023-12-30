@@ -181,12 +181,12 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
 }
 
 export function EnvStepForm({ defaultValues, errors }: FormStepProps) {
-  const [additionalEnvs, setAdditionalEnvs] = React.useState(
-    () =>
-      defaultValues.env?.filter(
-        (env) => !DEFAULT_ENVS.find((e) => e.value !== env),
-      ) ?? [],
-  );
+  const [additionalEnvs, setAdditionalEnvs] = React.useState(() => {
+    const defaultEnvValues = DEFAULT_ENVS.map((e) => e.value);
+    return (
+      defaultValues.env?.filter((env) => !defaultEnvValues.includes(env)) ?? []
+    );
+  });
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
 
@@ -365,12 +365,14 @@ export function ToolkitStepForm({ defaultValues, errors }: FormStepProps) {
 }
 
 export function LayerStepForm({ defaultValues, errors }: FormStepProps) {
-  const [additionalLayers, setAdditionalLayers] = React.useState(
-    () =>
+  const [additionalLayers, setAdditionalLayers] = React.useState(() => {
+    const defaultLayerValues = DEFAULT_LAYERS.map((e) => e.value);
+    return (
       defaultValues.layer?.filter(
-        (layer) => !DEFAULT_LAYERS.find((l) => l.value !== layer),
-      ) ?? [],
-  );
+        (layer) => !defaultLayerValues.includes(layer),
+      ) ?? []
+    );
+  });
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
 
@@ -414,7 +416,7 @@ export function LayerStepForm({ defaultValues, errors }: FormStepProps) {
           <ImageCheckbox
             key={index}
             label={currentLayer}
-            name="env"
+            name="layer"
             value={currentLayer}
             checked
             onChange={() =>
