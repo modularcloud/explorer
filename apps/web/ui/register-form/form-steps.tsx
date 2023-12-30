@@ -106,7 +106,7 @@ const DEFAULT_LAYERS = [
 
 export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
   const [isProjectLive, setIsProjectLive] = React.useState(
-    Boolean(defaultValues.isProjectLive),
+    Boolean(defaultValues.isProjectLive ?? true),
   );
   return (
     <>
@@ -158,7 +158,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         onChange={(e) => setIsProjectLive(e.target.checked)}
       />
 
-      {isProjectLive && (
+      {!isProjectLive && (
         <Select
           size="small"
           label="Estimated Launch Date (optional)"
