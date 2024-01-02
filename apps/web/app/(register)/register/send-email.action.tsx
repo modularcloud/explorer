@@ -1,10 +1,10 @@
 "use server";
 
 import { env } from "~/env.mjs";
-import type { AllValues } from "./register-schema";
+import type { RegisterFormValues } from "./register-schema";
 import { Resend } from "resend";
 
-export async function sendEmail(values: AllValues) {
+export async function sendEmail(values: RegisterFormValues) {
   // Don't send emails on DEV to avoid going over the plan
   if (process.env.NODE_ENV !== "development") {
     const resend = new Resend(env.RESEND_API_KEY);
@@ -62,6 +62,40 @@ export async function sendEmail(values: AllValues) {
             )}
           </p>
           <p>
+            The project is live ? :&nbsp;
+            {values.isProjectLive ? (
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                YES
+              </strong>
+            ) : (
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                NO
+              </strong>
+            )}
+          </p>
+
+          {values.estimatedLaunchDate && (
+            <p>
+              Estimated launch date :&nbsp;
+              <strong
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                {values.estimatedLaunchDate}
+              </strong>
+            </p>
+          )}
+
+          <p>
             Execution Environment(s):&nbsp;
             <strong
               style={{
@@ -96,7 +130,7 @@ export async function sendEmail(values: AllValues) {
               {Array.from(values.layer).map((layer, index) => (
                 <>
                   <span>{layer}</span>
-                  {index < values.layer.size - 1 && ", "}
+                  {index < values.layer.length - 1 && ", "}
                 </>
               ))}
             </strong>

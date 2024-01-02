@@ -13,6 +13,8 @@ export const detailStepSchema = z.object({
   projectName: z.string().trim().nonempty({
     message: "Can't be empty!",
   }),
+  estimatedLaunchDate: z.string().trim().nullish(),
+  isProjectLive: z.coerce.boolean().default(false),
   githubRepo: z
     .string()
     .trim()
@@ -57,23 +59,15 @@ export const toolkitStepSchema = z.object({
 });
 
 export const layerStepSchema = z.object({
-  layer: preprocess(
-    (arg) => {
-      if (Array.isArray(arg)) {
-        return new Set([...arg]);
-      }
-      return arg;
-    },
-    z
-      .set(z.enum(["ETHEREUM", "CELESTIA"]), {
-        invalid_type_error: "Please choose one or more options",
-        required_error: "Please choose one or more options",
-      })
-      .nonempty({ message: "Please select at least one option" }),
-  ),
+  layer: z.array(z.string().trim().nonempty(), {
+    invalid_type_error: "Please choose one or more options",
+    required_error: "Please choose one or more options",
+  }).nonempty({
+    message: "Please choose one or more options",
+  }),
 });
 
-export const allValuesSchema = detailStepSchema
+export const registerFormValuesSchema = detailStepSchema
   .merge(envStepSchema)
   .merge(toolkitStepSchema)
   .merge(layerStepSchema);
@@ -83,4 +77,4 @@ export type EnvStep = z.TypeOf<typeof envStepSchema>;
 export type ToolkitStep = z.TypeOf<typeof toolkitStepSchema>;
 export type LayerStep = z.TypeOf<typeof layerStepSchema>;
 
-export type AllValues = z.TypeOf<typeof allValuesSchema>;
+export type RegisterFormValues = z.TypeOf<typeof registerFormValuesSchema>;
