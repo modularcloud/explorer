@@ -28,7 +28,7 @@ export default function EntityLayout({ children, params }: Props) {
       )}
       <section
         className={cn(
-          "overflow-x-clip fixed left-0 w-full lg:w-2/3 bottom-0",
+          "overflow-x-clip fixed left-0 bottom-0 lg:max-w-[calc(100%_-_27rem)] w-full",
           // this is default position when there is a 404 error
           "top-[calc(theme('spacing.header')_-_10px)]",
         )}
