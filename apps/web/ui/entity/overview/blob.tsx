@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import * as React from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
@@ -16,15 +16,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
-  const { data, isLoading } = useSWR(url, async (url) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
-    const arrayBuffer = await blob.arrayBuffer();
-    return { text, arrayBuffer };
-  });
-  const [numPages, setNumPages] = useState<number>();
-  const onClick = async () => {
+  const { data, isLoading } = useBlobData(url);
+  const [numPages, setNumPages] = React.useState<number>();
+
+  async function copyBase64Value() {
     if (!data) return;
     const text = Buffer.from(data.text).toString("base64");
     const copied = await copyValueToClipboard(text);
@@ -35,10 +30,8 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
         description: `"${truncateHash(text)}" copied to clipboard`,
       });
     }
-  };
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
+  }
+
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex gap-2">
@@ -46,7 +39,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
           <ButtonBody className="cursor-not-allowed">Loading...</ButtonBody>
         )}
         {data && (
-          <ButtonBody className="cursor-pointer" onClick={onClick}>
+          <ButtonBody className="cursor-pointer" onClick={copyBase64Value}>
             Copy Base64
           </ButtonBody>
         )}
@@ -62,7 +55,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
         <div className="overflow-auto w-full max-h-screen">
           <Document
             file={data.arrayBuffer}
-            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
           >
             {Array.from({ length: numPages || 0 }, (_, i) => i + 1).map(
               (page: number) => (
@@ -74,4 +67,14 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
       ) : null}
     </div>
   );
+}
+
+function useBlobData(url: string) {
+  return useSWR(url, async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
+    const arrayBuffer = await blob.arrayBuffer();
+    return { text, arrayBuffer };
+  });
 }

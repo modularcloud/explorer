@@ -31,6 +31,8 @@ export async function SVMWidgetLayout({
          * - WA : wallet adresses
          * - TR : total transactions
          * - BK : total blocks
+         * - AF : Average Fee
+         * - TP : TPS
          * - P1, P2, P3 : placeholders (shown only on desktop)
          *
          * We define them as variables here because we use the same layout in the skeleton,
@@ -44,16 +46,18 @@ export async function SVMWidgetLayout({
             "LB LB"
             "LB LB"
             "CD BK"
+            "TP AF"
           `,
         "--grid-area-tab": `
             "LT LT WA TR"
             "LT LT LB LB"
             "BK CD LB LB"
+            "TP TP AF AF"
           `,
         "--grid-area-lg": `
             "LT LT WA LB LB"
             "LT LT BK LB LB"
-            "CD P1 P2 P3 TR"
+            "CD TP P1 AF TR"
           `,
       }}
     >

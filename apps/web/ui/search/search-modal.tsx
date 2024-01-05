@@ -22,7 +22,7 @@ import Image from "next/image";
 import { useFilteredOptionGroup } from "./use-filtered-option-group";
 
 // types
-import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
+import type { SearchOption, OptionGroups } from "~/lib/search-options";
 interface Props {
   defaultNetwork: {
     value: SearchOption;
@@ -115,6 +115,8 @@ export function SearchModal({
               <Input
                 size="medium"
                 id="query"
+                label="query"
+                hideLabel
                 ref={inputRef}
                 placeholder={
                   selectedNetwork

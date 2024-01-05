@@ -2,9 +2,173 @@ import { z } from "zod";
 import type { LinkSchema, Value } from "../../schemas/page";
 import { BlockResponse, TransactionResponse, TxBlob } from "./types";
 import * as Values from "./utils/values";
+import { helpers, ParsedMsg } from "@modularcloud-resolver/celestia";
 
 // no network requests allowed by functions in this file!!
 type fetch = never;
+
+export function parseInscription(memo?: string) {
+  try {
+    if (!memo) return;
+    const bytes = Buffer.from(memo, "base64");
+    const utf8 = bytes.toString("utf8");
+    // const bytesInsideUtf8 = Buffer.from(utf8, "base64");
+    // const utf8InsideUtf8 = bytesInsideUtf8.toString("utf8");
+    const match = utf8.match(/^data:,(.+)$/);
+    if (!match) return;
+    const data = match[1];
+    const json = JSON.parse(data);
+    return json;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function contextualizeTx(tx: TransactionResponse, slug: string) {
+  const messages = helpers.getMessages(tx.result.tx);
+  const memo = helpers.getMemo(tx.result.tx);
+  const inscription = parseInscription(memo);
+  let type = inscription
+    ? "Inscription"
+    : helpers.getMessageDisplayName(messages[messages.length - 1].typeUrl);
+  const msg = messages[messages.length - 1];
+
+  // Inscription
+  if (inscription) {
+    const inscriptionProperties: any = {};
+    if (inscription.op) {
+      inscriptionProperties["Operation"] = Values.Standard(inscription.op);
+    }
+    if (inscription.amt) {
+      inscriptionProperties["Amount"] = Values.Standard(inscription.amt);
+    }
+
+    if (inscription.tick) {
+      inscriptionProperties["Tick"] = Values.Standard(inscription.tick);
+    }
+
+    if (msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
+      const parsed: ParsedMsg<"/cosmos.bank.v1beta1.MsgSend"> = msg as any;
+      inscriptionProperties["Inscriber"] = Values.Link({
+        text: parsed.decodedValue.fromAddress,
+        route: [slug, "addresses", parsed.decodedValue.fromAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        },
+      });
+    }
+
+    if (inscription.p && typeof inscription.p === "string") {
+      type = `${type} (${inscription.p.toUpperCase()})`;
+    }
+    return {
+      Type: Values.Standard(type),
+      ...inscriptionProperties,
+    };
+  }
+
+  // Send
+  if (msg.typeUrl === "/cosmos.bank.v1beta1.MsgSend") {
+    const parsed: ParsedMsg<"/cosmos.bank.v1beta1.MsgSend"> = msg as any;
+    return {
+      Type: Values.Standard(type),
+      "From Address": Values.Link({
+        text: parsed.decodedValue.fromAddress,
+        route: [slug, "addresses", parsed.decodedValue.fromAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        },
+      }),
+      "To Address": Values.Link({
+        text: parsed.decodedValue.toAddress,
+        route: [slug, "addresses", parsed.decodedValue.toAddress],
+        sidebar: {
+          headerKey: "Spotlight",
+          headerValue: "Address",
+          properties: {
+            Balance: Values.Standard("Temporarily Unavailable"),
+          },
+        },
+      }),
+      Amount: Values.Standard(
+        parsed.decodedValue.amount
+          .map(
+            (amount) =>
+              `${
+                amount.denom === "utia"
+                  ? Number(amount.amount) / 10 ** 6
+                  : amount.amount
+              } ${amount.denom === "utia" ? "TIA" : amount.denom}`,
+          )
+          .join(", "),
+      ),
+    };
+  }
+
+  // IBC Transfer
+
+  // IBC Receive
+
+  // Withdraw
+  if (
+    msg.typeUrl === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+  ) {
+    const parsed: ParsedMsg<"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"> =
+      msg as any;
+    const withdraw = tx.result.tx_result.events.find(
+      (event) => event.type === "withdraw_rewards",
+    );
+    if (withdraw && withdraw.attributes) {
+      const amount = (withdraw as any).attributes.find(
+        (attribute: any) => attribute.key === "YW1vdW50",
+      ).value;
+
+      return {
+        Type: Values.Standard(type),
+        "Delegator Address": Values.Link({
+          text: parsed.decodedValue.delegatorAddress,
+          route: [slug, "addresses", parsed.decodedValue.delegatorAddress],
+          sidebar: {
+            headerKey: "Spotlight",
+            headerValue: "Address",
+            properties: {
+              Balance: Values.Standard("Temporarily Unavailable"),
+            },
+          },
+        }),
+        "Validator Address": Values.Link({
+          text: parsed.decodedValue.validatorAddress,
+          route: [slug, "addresses", parsed.decodedValue.validatorAddress],
+          sidebar: {
+            headerKey: "Spotlight",
+            headerValue: "Address",
+            properties: {
+              Balance: Values.Standard("Temporarily Unavailable"),
+            },
+          },
+        }),
+        Amount: Values.Standard(
+          `${
+            Number(
+              Buffer.from(amount, "base64")
+                .toString("utf-8")
+                .replace("utia", ""),
+            ) /
+            10 ** 6
+          } ${"TIA"}`,
+        ),
+      };
+    }
+  }
+}
 
 /**
  * TODO: advanced types to infer keys and make a general getProperties function builder

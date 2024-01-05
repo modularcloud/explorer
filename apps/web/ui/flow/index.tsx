@@ -103,6 +103,7 @@ function Node({
     }
     return null;
   }, [nodeResponse.data]);
+
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
   const node =
     nodeResponse.error || !nodeResponse.data || !nodeResponse.data.result
@@ -149,7 +150,14 @@ function Node({
       }}
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
-        colors,
+        {
+          "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6":
+            !isNext && node.type !== "completed",
+          "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]":
+            isNext,
+          "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]":
+            node.type === "completed",
+        },
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
@@ -192,8 +200,11 @@ function Node({
 
 function Address({ address }: { address: string }) {
   const pieces = RegExp(/^([a-zA-Z]+)1([a-z0-9]{38})$/).exec(address);
+
   if (!pieces) return null;
+
   const [, prefix, suffix] = pieces;
+
   return (
     <div className="items-center border border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 flex gap-2 px-2.5 py-0.5 rounded-[32px] border-solid max-md:justify-center">
       <div className="text-xs font-medium leading-4 text-[#666D80]">
@@ -244,6 +255,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
       slug,
     },
   };
+
   const nodeResponse = useSWR(
     ["/api/resolve/ibc", body],
     async () => {
@@ -277,6 +289,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     }
     return null;
   }, [nodeResponse.data]);
+
   const node = nodeResponse.data?.result;
   if (!node || !node.sidebar) return null;
   return (

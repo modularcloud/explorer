@@ -7,8 +7,11 @@ import {
   getBlockProperties,
   getTransactionProperties,
   selectSidebarBlockProperties,
+  parseInscription,
+  contextualizeTx,
 } from "../../../helpers";
 import { getDefaultSidebar } from "../../../../../helpers";
+import { Standard } from "../../../utils/values";
 
 export const CelestiaTransactionResolver = createResolver(
   {
@@ -52,6 +55,16 @@ export const CelestiaTransactionResolver = createResolver(
         );
       }
     }
+    const memo = Celestia.helpers.getMemo(response.result.result.tx);
+    const ctxd = contextualizeTx(response.result, context.slug);
+
+    const messages = Celestia.helpers.getMessages(response.result.result.tx);
+    const inscription = parseInscription(memo);
+    const type = inscription
+      ? "Inscription"
+      : Celestia.helpers.getMessageDisplayName(
+          messages[messages.length - 1].typeUrl,
+        );
 
     const page: Page = {
       context,
@@ -63,9 +76,11 @@ export const CelestiaTransactionResolver = createResolver(
         type: "notebook",
         properties: {
           // Setting the proper order
+          ...ctxd,
           Hash,
           Height,
           ...blockProperties,
+          ...(memo && { Memo: Standard(memo) }),
           ...rest,
         },
       },

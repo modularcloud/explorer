@@ -8,7 +8,7 @@ type IntegrationResponse = ResolutionResponse | null;
 export function createCelestiaIntegration(context: PageContext) {
   registerResolvers();
 
-  addRoute(["addresses", "[address]"], "celestia-address-balances-0.0.0", {
+  addRoute(["addresses", "[address]"], "backup-balances", {
     enabled: true,
     regex: /^celestia\w{39}$/,
     key: "address",

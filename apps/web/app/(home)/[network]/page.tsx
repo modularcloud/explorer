@@ -48,9 +48,6 @@ export default async function NetworkWidgetPage({ params }: Props) {
   }
 
   switch (network.config.widgetLayout) {
-    // TODO : When EVM is ready, we should follow the same code structure as the other layouts
-    // case "EvmWithPrice":
-    //   return <EvmWithPriceWidgetLayout network={searchOption!} />;
     case "SVM":
       return (
         <SVMWidgetLayout

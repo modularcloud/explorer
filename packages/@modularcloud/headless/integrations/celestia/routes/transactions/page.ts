@@ -3,6 +3,7 @@ import { PaginationContext } from "../../../../schemas/context";
 import { Page, PageContext } from "../../../../schemas/page";
 import { TransactionResponse } from "../../types";
 import * as Celestia from "@modularcloud-resolver/celestia";
+import { parseInscription } from "../../helpers";
 
 export const CelestiaLatestTransactionsResolver = createResolver(
   {
@@ -28,13 +29,15 @@ export const CelestiaLatestTransactionsResolver = createResolver(
         }),
       ),
     );
-    const transactions: TransactionResponse[] = list.map((resolution) => {
-      if (resolution.type === "success") {
-        return resolution.result;
-      }
-      console.log("Error resolve tx: ", { resolution });
-      throw new Error("Failed to resolve one or more transactions");
-    });
+    const transactions: TransactionResponse[] = list
+      .map((resolution) => {
+        if (resolution.type === "success" && resolution.result.result) {
+          return resolution.result;
+        }
+        console.warn("Error resolve tx: ", { resolution });
+        return null;
+      })
+      .filter(Boolean);
     const page: Page = {
       context,
       metadata: {
@@ -68,6 +71,13 @@ export const CelestiaLatestTransactionsResolver = createResolver(
         entries: await Promise.all(
           transactions.map(async (tx) => {
             const messages = Celestia.helpers.getMessages(tx.result.tx);
+            const memo = Celestia.helpers.getMemo(tx.result.tx);
+            const inscription = parseInscription(memo);
+            const type = inscription
+              ? "Inscription"
+              : Celestia.helpers.getMessageDisplayName(
+                  messages[messages.length - 1].typeUrl,
+                );
             const link = `/${context.chainBrand}-${context.chainName}/transactions/${tx.result.hash}`;
             return {
               sidebar: {
@@ -88,11 +98,7 @@ export const CelestiaLatestTransactionsResolver = createResolver(
                   },
                   Type: {
                     type: "standard",
-                    payload: messages[0]
-                      ? Celestia.helpers.getMessageDisplayName(
-                          messages[0].typeUrl,
-                        )
-                      : "Unknown",
+                    payload: type,
                   },
                   Index: {
                     type: "standard",
@@ -127,11 +133,7 @@ export const CelestiaLatestTransactionsResolver = createResolver(
                 },
                 Type: {
                   type: "standard",
-                  payload: messages[0]
-                    ? Celestia.helpers.getMessageDisplayName(
-                        messages[0].typeUrl,
-                      )
-                    : "Unknown",
+                  payload: type,
                 },
               },
             };

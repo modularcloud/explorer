@@ -9,24 +9,9 @@ import { SkipToMainContent } from "~/ui/skip-to-main-content";
 // utils
 import localFont from "next/font/local";
 import { getSearchOptionGroups } from "~/lib/search-options";
-import { EXPLORER_CONFIG } from "~/config/explorers";
 
 // types
 import type { Metadata } from "next";
-
-const inter = localFont({
-  src: [
-    {
-      path: "../fonts/InterVariable/InterVariable.woff2",
-      style: "normal",
-    },
-    {
-      path: "../fonts/InterVariable/InterVariable-Italic.woff2",
-      style: "italic",
-    },
-  ],
-  variable: "--font-inter",
-});
 
 const interDisplay = localFont({
   src: [
@@ -57,10 +42,11 @@ const interDisplay = localFont({
 export const metadata: Metadata = {
   title: {
     template: "%s - Modular Cloud",
-    default: EXPLORER_CONFIG.homepageTitle,
+    default: "Explorer by Modular Cloud",
   },
-  description: EXPLORER_CONFIG.homepageDescription,
-  keywords: EXPLORER_CONFIG.homepageKeywords,
+  description: "A block exporer for modular blockchains.",
+  keywords:
+    "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
 };
 
 export default async function RootLayout({
@@ -78,7 +64,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${interDisplay.variable} font-sans text-foreground`}
+        className={`${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
         <SkipToMainContent />

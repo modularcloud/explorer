@@ -1,6 +1,14 @@
 import { Any } from "./google/protobuf/any";
 import { Celestia } from "proto-utils";
+import { MsgType } from "proto-utils/celestia-msgs";
 const parsers = Celestia.Msgs;
+
+export type ParsedMsg<T extends MsgType["typeUrl"]> = {
+  typeUrl: T;
+  decodedValue: ReturnType<
+    Extract<MsgType, { typeUrl: T }>["parser"]["decode"]
+  >;
+};
 
 function decodeAny(anyMessage: Any) {
   const typeUrl = anyMessage.typeUrl;
@@ -31,4 +39,12 @@ export function getMessages(txRaw: string) {
       decodedValue: message,
     };
   });
+}
+
+export function getMemo(txRaw: string) {
+  const txBuffer = Buffer.from(txRaw, "base64");
+
+  const txBody = Celestia.Tx.decode(txBuffer).body;
+
+  return txBody?.memo;
 }
