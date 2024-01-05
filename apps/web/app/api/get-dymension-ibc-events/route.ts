@@ -6,4 +6,4 @@ export async function POST() {
   return NextResponse.json(events);
 }
 
-export const runtime = "edge";
+export const runtime = "nodejs";
