@@ -87,12 +87,6 @@ export const TransactionResolver = createResolver(
   [FetchResolver],
 );
 
-const publicRPCMap = {
-  "3": "http://consensus-full-arabica-9.celestia-arabica.com:26657",
-  "4": "https://rpc-mocha.pops.one",
-  "5": "http://consensus-validator.celestia-arabica-10.com:26657",
-};
-
 // export const BalanceResolver = createResolver({
 //     id: "celestia-balance-0.0.0",
 //     cache: false
