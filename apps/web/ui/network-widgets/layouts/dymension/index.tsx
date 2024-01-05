@@ -1,4 +1,4 @@
-import { getDymensionIBCTransfertEvents } from "~/lib/headless-utils";
+import { getDymensionIBCTransfertEvents } from "~/lib/dymension-utils";
 import { DymensionWidgetContent } from "./dymension-widget-content";
 
 export type DymensionWidgetLayoutProps = {};

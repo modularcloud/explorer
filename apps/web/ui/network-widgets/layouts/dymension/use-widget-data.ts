@@ -1,7 +1,7 @@
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
 import useSWR from "swr";
-import type { IBCTransferEvent } from "~/lib/headless-utils";
+import type { IBCTransferEvent } from "~/lib/dymension-utils";
 
 type UseSvmWidgetDataArgs = {
   networkSlug: string;

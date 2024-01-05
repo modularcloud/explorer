@@ -6,7 +6,7 @@ import {
   DYMENSION_ROLLAPP_IBC_RESOLVER_ID,
   DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT,
 } from "~/lib/constants";
-import { IBCTransferEvent } from "~/lib/headless-utils";
+import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");

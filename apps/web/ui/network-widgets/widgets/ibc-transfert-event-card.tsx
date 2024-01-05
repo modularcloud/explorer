@@ -10,7 +10,7 @@ import {
 import { ClientTime } from "~/ui/client-time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
-import type { IBCTransferEvent } from "~/lib/headless-utils";
+import type { IBCTransferEvent } from "~/lib/dymension-utils";
 import { Skeleton } from "~/ui/skeleton";
 
 export type IBCTransferEventCardProps = {

@@ -3,7 +3,7 @@ import {
   IBCTransferEventCard,
   IBCTransferEventCardSkeleton,
 } from "~/ui/network-widgets/widgets/ibc-transfert-event-card";
-import type { IBCTransferEvent } from "~/lib/headless-utils";
+import type { IBCTransferEvent } from "~/lib/dymension-utils";
 import { useDymensionWidgetData } from "./use-widget-data";
 import { useParams } from "next/navigation";
 import { range } from "~/lib/shared-utils";
