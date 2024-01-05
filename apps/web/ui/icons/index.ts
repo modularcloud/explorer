@@ -21,7 +21,6 @@ export { default as CheckOff } from "./CheckOff";
 export { default as CheckOn } from "./CheckOn";
 export { default as Checkmark } from "./Checkmark";
 export { default as ChevronDoubleDown } from "./ChevronDoubleDown";
-export { default as Checkmark } from "./Checkmark";
 export { default as ChevronDown } from "./ChevronDown";
 export { default as Clock } from "./Clock";
 export { default as CloseOff } from "./CloseOff";

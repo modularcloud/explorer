@@ -22,10 +22,6 @@ export const env = createEnv({
     POSTGRES_PASSWORD: z.string(),
     POSTGRES_DATABASE: z.string(),
     IBC_API: z.string().url(),
-    RESEND_API_KEY: z.string().nonempty(),
-    RESEND_EMAIL_SENDER: z.string().email(),
-    RESEND_EMAIL_RECEIVER: z.string().email(),
-    CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
@@ -62,7 +58,6 @@ export const env = createEnv({
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
     CRON_SECRET: process.env.CRON_SECRET,
-    CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
     CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
   },
 });
