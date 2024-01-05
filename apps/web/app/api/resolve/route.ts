@@ -10,4 +10,4 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(result);
 }
 
-export const runtime = "edge";
+export const runtime = "nodejs";
