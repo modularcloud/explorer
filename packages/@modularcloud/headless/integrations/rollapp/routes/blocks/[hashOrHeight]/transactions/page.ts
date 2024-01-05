@@ -1,4 +1,4 @@
-import { getBlock, getBlockByHash, getTx, helpers } from "@modularcloud-resolver/rollapp";
+import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getTransactionProperties,
@@ -21,9 +21,9 @@ export const RollappBlockTransctionsResolver = createResolver(
       context,
       hashOrHeight,
     }: { context: PageContext & PaginationContext; hashOrHeight: string },
-    _getBlock: typeof getBlock,
-    _getBlockByHash: typeof getBlockByHash,
-    getTransaction: typeof getTx,
+    getBlock: typeof resolvers.getBlock,
+    getBlockByHash: typeof resolvers.getBlockByHash,
+    getTransaction: typeof resolvers.getTx,
   ) => {
     const pageToken = context.after ?? "0";
     const limit = 30;
@@ -39,7 +39,7 @@ export const RollappBlockTransctionsResolver = createResolver(
     if (!type) {
       throw new Error("Invalid hash or height");
     }
-    const fn = type === "hash" ? _getBlockByHash : _getBlock;
+    const fn = type === "hash" ? getBlockByHash : getBlock;
     const response = await fn({
       endpoint: context.rpcEndpoint,
       [type]: hashOrHeight,
@@ -154,5 +154,5 @@ export const RollappBlockTransctionsResolver = createResolver(
     };
     return page;
   },
-  [getBlock, getBlockByHash, getTx],
+  [resolvers.getBlock, resolvers.getBlockByHash, resolvers.getTx],
 );
