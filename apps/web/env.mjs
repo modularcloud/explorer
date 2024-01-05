@@ -10,6 +10,9 @@ export const env = createEnv({
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
     CRON_SECRET: z.string().min(32),
+    RESEND_API_KEY: z.string().nonempty(),
+    RESEND_EMAIL_SENDER: z.string().email(),
+    RESEND_EMAIL_RECEIVER: z.string().email(),
     SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
     POSTGRES_URL: z.string(),
     POSTGRES_PRISMA_URL: z.string(),
@@ -22,6 +25,7 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().nonempty(),
     RESEND_EMAIL_SENDER: z.string().email(),
     RESEND_EMAIL_RECEIVER: z.string().email(),
+    CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
@@ -58,6 +62,7 @@ export const env = createEnv({
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
     CRON_SECRET: process.env.CRON_SECRET,
+    CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
     CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
   },
 });

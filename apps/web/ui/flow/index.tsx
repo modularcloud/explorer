@@ -5,7 +5,7 @@ import { cn } from "../shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
 import { useParams } from "next/navigation";
@@ -95,7 +95,9 @@ function Node({
       fallbackData,
     },
   );
-  const time = React.useMemo(() => {
+  console.log(nodeResponse.data);
+
+  const time = useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.timestamp) {
       dayjs.extend(relativeTime);
@@ -105,28 +107,10 @@ function Node({
   }, [nodeResponse.data]);
 
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-  const node =
-    nodeResponse.error || !nodeResponse.data || !nodeResponse.data.result
-      ? fallbackData.result
-      : nodeResponse.data.result;
-  let colors =
-    "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6";
-  if (isNext) {
-    colors =
-      "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC] hover:scale-105 transition-transform duration-100";
-  }
-  if (node.type === "completed") {
-    colors =
-      "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4] hover:scale-105 transition-transform duration-100";
-  }
-  if (node.type === "error") {
-    colors =
-      "border-[#FADBE1] bg-[#FFF0F3] text-[#710E21] hover:bg-[#FFE5EB] hover:scale-105 transition-transform duration-100";
-  }
+  if (!nodeResponse.data) return null;
 
-  if (node.id === hash) {
-    node.shortId = "You're here 👇";
-  }
+  const node = nodeResponse.data.result;
+
   return (
     <Link
       href={`${node.type === "completed" ? node.link : "#"}`}
@@ -276,6 +260,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
       revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
     },
   );
+
   const amount = React.useMemo(() => {
     const node = nodeResponse.data?.result;
     if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
@@ -290,8 +275,10 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     return null;
   }, [nodeResponse.data]);
 
+
   const node = nodeResponse.data?.result;
   if (!node || !node.sidebar) return null;
+
   return (
     <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
       <Address address={node.sidebar.Sender.payload} />
@@ -340,6 +327,7 @@ export function FlowChart() {
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
+
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
