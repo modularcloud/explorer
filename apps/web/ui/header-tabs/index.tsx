@@ -69,7 +69,7 @@ export async function HeaderTabs({ params }: Props) {
     <nav
       className={cn(
         "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs bg-white",
-        "left-0 top-header w-full lg:w-[65%]",
+        "left-0 top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
         "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",

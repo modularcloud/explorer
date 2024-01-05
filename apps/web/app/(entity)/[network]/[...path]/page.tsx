@@ -29,9 +29,12 @@ export async function generateMetadata({
     (params.path[0] === "transactions" || params.path[0] === "blocks")
   ) {
     return {
-      title: `Latest ${capitalize(params.path[0])} on ${network.chainBrand} ${
-        network.chainName
-      }`,
+      title: `Latest ${capitalize(params.path[0])} on ${capitalize(
+        network.chainBrand,
+      )} ${capitalize(network.chainName)}`,
+      description: `Latest ${capitalize(params.path[0])} on ${capitalize(
+        network.chainBrand,
+      )} ${capitalize(network.chainName)}, brought to you by Modular Cloud.`,
     };
   }
 

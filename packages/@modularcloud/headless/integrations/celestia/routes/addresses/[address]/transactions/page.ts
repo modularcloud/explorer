@@ -24,7 +24,7 @@ export const CelestiaAddressTransactionsResolver = createResolver(
       chain = "6";
     }
     if (context.chainName.indexOf("arabica") !== -1) {
-      chain = "5";
+      chain = "943";
     }
 
     // using modular cloud custom endpoint
