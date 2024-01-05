@@ -1,5 +1,5 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
+import { getBlock, getTx, getTx, helpers } from "@modularcloud-resolver/rollapp";
 import { Page, PageContext, Value } from "../../../../../schemas/page";
 import { TransactionResponse } from "../../../types";
 import {
@@ -16,8 +16,8 @@ export const RollappTransactionResolver = createResolver(
   },
   async (
     { context, hash }: { context: PageContext; hash: string },
-    getTransaction: typeof resolvers.getTx,
-    getBlock: typeof resolvers.getBlock,
+    getTransaction: typeof getTx,
+    _getBlock: typeof getBlock,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -30,7 +30,7 @@ export const RollappTransactionResolver = createResolver(
     /**
      * The block data to contextualize the transaction
      */
-    const blockResponse = await getBlock({
+    const blockResponse = await _getBlock({
       endpoint: context.rpcEndpoint,
       height: (response.result as TransactionResponse)?.result?.height,
     });
@@ -87,5 +87,5 @@ export const RollappTransactionResolver = createResolver(
     };
     return page;
   },
-  [resolvers.getTx, resolvers.getBlock],
+  [getTx, getBlock],
 );
