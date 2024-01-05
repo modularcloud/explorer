@@ -7,7 +7,7 @@ import {
   Clock,
   CornerUpRight,
 } from "~/ui/icons";
-import { ClientTime } from "~/ui/tables/time";
+import { ClientTime } from "~/ui/client-time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
 import type { IBCTransferEvent } from "~/lib/headless-utils";
