@@ -144,5 +144,5 @@ const LatestHubMessages = createResolver(
 );
 
 export const hubResolvers = {
-    getLatestHubMessages: LatestHubMessages,
+  getLatestHubMessages: LatestHubMessages,
 };

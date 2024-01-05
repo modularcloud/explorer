@@ -99,7 +99,7 @@ const RollappTransactionResolver = createResolver(
   [FetchResolver],
 );
 
-export const BalancesResolver = createResolver(
+const BalancesResolver = createResolver(
   {
     id: "rollapp-balances-0.0.0",
     cache: false,
@@ -124,7 +124,7 @@ export const BalancesResolver = createResolver(
   [FetchResolver],
 );
 
-export const RollAppSentAddressResolver = createResolver(
+const RollAppSentAddressResolver = createResolver(
   {
     id: "rollapp-sent-address-0.0.0",
     cache: false,
@@ -249,7 +249,7 @@ function convertMessageToKeyValue(message: any, prefix?: string) {
   return KV;
 }
 
-export const helpers = {
+const helpers = {
   getMessages: registryGetMessages,
   getMessageDisplayName,
   convertMessageToKeyValue,
@@ -257,10 +257,12 @@ export const helpers = {
 };
 
 export {
+  helpers,
+  hubResolvers,
+  BalancesResolver,
   RollappBlockHashResolver as getBlockByHash,
   RollappBlockHeightResolver as getBlock,
   RollappTransactionResolver as getTx,
-  hubResolvers,
   getMessages,
   type ParsedMsg,
   getTxHashFromBlockTx,
