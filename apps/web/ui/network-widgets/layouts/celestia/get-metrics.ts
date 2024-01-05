@@ -18,7 +18,7 @@ export type CelestiaMetrics = z.TypeOf<typeof celestiaMetricsSchema>;
 export async function getCelestiaWidgetMetrics(networkSlug: string) {
   let id = 7;
   if (networkSlug.indexOf("mocha") !== -1) id = 6;
-  else if (networkSlug.indexOf("arabica") !== -1) id = 5;
+  else if (networkSlug.indexOf("arabica") !== -1) id = 943;
 
   return await fetch(
     `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/${id}/metrics`,
