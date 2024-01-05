@@ -22,15 +22,6 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().nonempty(),
     RESEND_EMAIL_SENDER: z.string().email(),
     RESEND_EMAIL_RECEIVER: z.string().email(),
-    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
-    POSTGRES_URL: z.string(),
-    POSTGRES_PRISMA_URL: z.string(),
-    POSTGRES_URL_NON_POOLING: z.string(),
-    POSTGRES_USER: z.string(),
-    POSTGRES_HOST: z.string(),
-    POSTGRES_PASSWORD: z.string(),
-    POSTGRES_DATABASE: z.string(),
-    IBC_API: z.string().url(),
     CELESTIA_MAINNET_BACKUP_NODE: z.string(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
