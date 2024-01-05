@@ -5,10 +5,17 @@ import {
 } from "@modularcloud-resolver/core";
 import { FetchResolver } from "@modularcloud-resolver/fetch";
 import { z } from "zod";
-import { getMessages } from "./registry";
+import { getMessages as registryGetMessages } from "./registry";
 import { getBlobTx } from "./parse-tx";
 import Long from "long";
 import { Shared } from "proto-utils";
+import {
+  ParsedMsg,
+  hubResolvers,
+  getTxHashFromBlockTx,
+  DecodedAny,
+  getMessages,
+} from "./hub";
 
 const RollappBlockHashResolver = createResolver(
   {
@@ -175,12 +182,6 @@ export const RollAppReceiveAddressResolver = createResolver(
   [FetchResolver],
 );
 
-export const resolvers = {
-  getBlockByHash: RollappBlockHashResolver,
-  getBlock: RollappBlockHeightResolver,
-  getTx: RollappTransactionResolver,
-};
-
 // Helpers
 function fixCapsAndSpacing(camel: string): string {
   const letters = camel.split("");
@@ -249,10 +250,19 @@ function convertMessageToKeyValue(message: any, prefix?: string) {
 }
 
 export const helpers = {
-  getMessages,
+  getMessages: registryGetMessages,
   getMessageDisplayName,
   convertMessageToKeyValue,
   getBlobTx,
 };
 
-export * from "./hub";
+export {
+  RollappBlockHashResolver as getBlockByHash,
+  RollappBlockHeightResolver as getBlock,
+  RollappTransactionResolver as getTx,
+  hubResolvers,
+  getMessages,
+  type ParsedMsg,
+  getTxHashFromBlockTx,
+  type DecodedAny,
+};

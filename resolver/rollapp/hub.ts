@@ -4,7 +4,7 @@ import {
 } from "@modularcloud-resolver/core";
 import { DymensionHub } from "proto-utils";
 import { MsgType } from "proto-utils/dymension_hub-msgs";
-import { resolvers } from ".";
+import { getBlock } from "./index";
 
 function getTxStrsFromBlock(block: any, fromTxIndex: number) {
   try {
@@ -140,7 +140,7 @@ const LatestHubMessages = createResolver(
     }
     return messages;
   },
-  [resolvers.getBlock],
+  [getBlock],
 );
 
 export const hubResolvers = {
