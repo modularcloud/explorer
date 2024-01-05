@@ -31,6 +31,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(result);
 }
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 // don't cache anything by default, unless manually done so
 export const fetchCache = "default-no-store";
