@@ -19,7 +19,10 @@ import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
-import { useFilteredOptionGroup } from "./use-filtered-option-group";
+import {
+  useChainsFilteredByEcosystem,
+  useFilteredOptionGroup,
+} from "./use-filtered-option-group";
 
 // types
 import type { SearchOption, OptionGroups } from "~/lib/search-options";
@@ -47,6 +50,7 @@ export function SearchModal({
     searchValue: inputValue,
     setSearchValue: setInputValue,
   } = React.use(GlobalHotkeyContext);
+  const deferredInputValue = React.useDeferredValue(inputValue);
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
@@ -63,7 +67,10 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  const filteredOptionGroup = useFilteredOptionGroup(
+    optionGroups,
+    deferredInputValue,
+  );
 
   const isNetworkQuery =
     !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
@@ -80,6 +87,24 @@ export function SearchModal({
   });
 
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
+  // TODO : This is temporary because in the future we want to support other ecosystems as well, not only dymension
+  //        we need to change the way we filter chains passed for the ecosystem
+  const ecosystemChains = useChainsFilteredByEcosystem(
+    optionGroups,
+    "dymension",
+  );
+
+  // Memoized callbacks for `IntegrationActionListView` since it is Memoized
+  const onListItemActionNavigate = React.useCallback(() => {
+    setSelectedNetwork(null);
+    setInputValue("");
+    setIsDialogOpen(false);
+  }, [setIsDialogOpen, setInputValue]);
+
+  const onListItemActionChangeChainClicked = React.useCallback(() => {
+    setSelectedNetwork(null);
+    setInputValue("");
+  }, [setInputValue]);
 
   return (
     <Dialog
@@ -178,15 +203,14 @@ export function SearchModal({
               parentDialogRef={dialogRef}
               searcheableTypes={searcheableTypes ?? []}
               selectedNetwork={currentNetwork}
-              onChangeChainClicked={() => {
-                setSelectedNetwork(null);
-                setInputValue("");
-              }}
-              onNavigate={() => {
-                setSelectedNetwork(null);
-                setInputValue("");
-                setIsDialogOpen(false);
-              }}
+              onChangeChainClicked={onListItemActionChangeChainClicked}
+              onNavigate={onListItemActionNavigate}
+              ecosystemNetworks={
+                // TODO : This is temporary because in the future we want to support other ecosystems as well
+                //        we need to change the way we filter chains passed for the ecosystem
+                // only for dymension chains for now
+                currentNetwork.platform === "dymension" ? ecosystemChains : null
+              }
             />
           )}
         </div>

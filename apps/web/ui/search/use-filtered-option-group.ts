@@ -35,3 +35,22 @@ export function useFilteredOptionGroup(
     return { ...optionGroupsByChainBrand, ...optionGroupsByChainName };
   }, [filter, optionGroups]);
 }
+
+export function useChainsFilteredByEcosystem(
+  optionGroups: OptionGroups,
+  ecosystem: string,
+) {
+  return React.useMemo(() => {
+    let optionGroupsByChainName = Object.entries(optionGroups)
+      .filter(([, items]) => {
+        return items.every((item) => item.platform === ecosystem);
+      })
+      .reduce((obj, [key, items]) => {
+        obj[key] = items;
+        return obj;
+      }, {} as OptionGroups);
+
+    const objectIsEmpty = Object.entries(optionGroupsByChainName).length === 0;
+    return objectIsEmpty ? null : optionGroupsByChainName;
+  }, [optionGroups, ecosystem]);
+}

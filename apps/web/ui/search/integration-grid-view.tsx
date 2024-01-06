@@ -17,7 +17,7 @@ interface Props {
   parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
 
-export function IntegrationGridView({
+export const IntegrationGridView = React.memo(function IntegrationGridView({
   onSelectOption: onClickOption,
   optionGroups,
   className,
@@ -197,4 +197,4 @@ export function IntegrationGridView({
       </div>
     </div>
   );
-}
+});
