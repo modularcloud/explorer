@@ -13,6 +13,7 @@
     },
     "devDependencies": {
         "@types/jest": "^29.5.3",
+        "esbuild": "^0.19.11",
         "eslint": "^7.32.0",
         "eslint-config-custom": "*",
         "jest": "^29.6.2",

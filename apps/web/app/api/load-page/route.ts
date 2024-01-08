@@ -11,6 +11,7 @@ const loadPageSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  console.log("load-page");
   const body = await req.json();
 
   const validationResult = loadPageSchema.safeParse(body);

@@ -1,6 +1,6 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../../schemas/page";
-import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
+import { getTx, helpers } from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../../types";
 import { getDefaultNestedSidebar } from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
@@ -20,7 +20,7 @@ export const RollappMessageResolver = createResolver(
       hash,
       index,
     }: { context: PageContext; hash: string; index: string },
-    getTransaction: typeof resolvers.getTx,
+    getTransaction: typeof getTx,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -86,5 +86,5 @@ export const RollappMessageResolver = createResolver(
     };
     return page;
   },
-  [resolvers.getTx],
+  [getTx],
 );
