@@ -34,7 +34,7 @@ export default async function NetworkLogo(props: Props) {
             backgroundImage: network.config.cssGradient,
           }}
         >
-          {network.chainBrand}
+          {network.brand}
         </span>
       </h1>
     </div>

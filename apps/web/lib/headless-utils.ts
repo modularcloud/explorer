@@ -41,7 +41,7 @@ export async function loadIntegration(
   >;
   if (network.config.rpcUrls["svm"]) {
     integration = createSVMIntegration({
-      chainBrand: network.chainBrand,
+      chainBrand: network.brand,
       chainName: network.chainName,
       chainLogo: network.config.logoUrl,
       rpcEndpoint: network.config.rpcUrls["svm"],
@@ -50,7 +50,7 @@ export async function loadIntegration(
     });
   } else if (network.config.rpcUrls["cosmos"]) {
     integration = createRollappIntegration({
-      chainBrand: network.chainBrand,
+      chainBrand: network.brand,
       chainName: network.chainName,
       chainLogo: network.config.logoUrl,
       rpcEndpoint: network.config.rpcUrls["cosmos"] as string,
@@ -59,7 +59,7 @@ export async function loadIntegration(
     });
   } else if (network.config.rpcUrls["celestia"]) {
     integration = createCelestiaIntegration({
-      chainBrand: network.chainBrand,
+      chainBrand: network.brand,
       chainName: network.chainName,
       chainLogo: network.config.logoUrl,
       rpcEndpoint: network.config.rpcUrls["celestia"] as string,

@@ -10,7 +10,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
   const integrations = await getAllNetworksCached();
 
   const optionGroups = integrations.reduce((acc, currentNetwork) => {
-    const brand = currentNetwork.chainBrand;
+    const brand = currentNetwork.brand;
 
     const newOption = {
       brandColor: currentNetwork.config.primaryColor,
@@ -18,7 +18,7 @@ export async function getSearchOptionGroups(): Promise<OptionGroups> {
       verified: currentNetwork.paidVersion,
       displayName: currentNetwork.chainName,
       id: currentNetwork.slug,
-      brandName: currentNetwork.chainBrand,
+      brandName: currentNetwork.brand,
       logoURL: currentNetwork.config.logoUrl,
       platform: currentNetwork.config.platform,
     } satisfies SearchOption;
