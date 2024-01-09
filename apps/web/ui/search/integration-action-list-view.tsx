@@ -4,14 +4,14 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize } from "~/lib/shared-utils";
-import type { OptionGroups, SearchOption } from "~/lib/search-options";
+import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 
 interface Props {
   query: string;
-  selectedNetwork: SearchOption;
-  ecosystemNetworks: OptionGroups | null;
+  selectedNetwork: NetworkChain;
+  ecosystemNetworks: GroupedNetworkChains | null;
   className?: string;
   onNavigate: () => void;
   onChangeChainClicked: () => void;
@@ -24,6 +24,7 @@ type ListItemType = {
   icon: React.ComponentType<{ className?: string }>;
   label: React.ReactNode;
   onSelect: () => void;
+  groupName: string;
 };
 
 export const IntegrationActionListView = React.memo(
@@ -64,15 +65,14 @@ export const IntegrationActionListView = React.memo(
     }, [router, searcheableTypes, selectedNetwork.id]);
 
     const items = React.useMemo(() => {
-      let items: {
-        [key: string]: Array<ListItemType>;
-      } = {};
+      let items: Array<(ListItemType | NetworkChain)[]> = [];
 
       if (query.length > 0) {
-        items = {
-          Types: [
+        items = [
+          [
             {
               id: "search",
+              groupName: "Types",
               icon: () => null,
               label: (
                 <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
@@ -86,84 +86,91 @@ export const IntegrationActionListView = React.memo(
                 );
               },
             },
+            ...searcheableTypes.map(([type, query]) => {
+              const typeName = type.endsWith("s")
+                ? type.substring(0, type.length - 1)
+                : type;
+              return {
+                id: type,
+                icon: () => null,
+                groupName: "Types",
+                label: (
+                  <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+                    Go to&nbsp;
+                    <strong className="font-medium text-foreground">
+                      {capitalize(typeName)}
+                    </strong>
+                    &nbsp;
+                    <span className="break-all">{query}</span>
+                  </p>
+                ),
+                onSelect: () => {
+                  onNavigate();
+                  router.push(
+                    `/${selectedNetwork.id}/${type}/${encodeURIComponent(
+                      query,
+                    )}`,
+                  );
+                },
+              };
+            }),
           ],
-        };
-
-        for (const [type, query] of searcheableTypes) {
-          const typeName = type.endsWith("s")
-            ? type.substring(0, type.length - 1)
-            : type;
-          items["Types"].push({
-            id: type,
-            icon: () => null,
-            label: (
-              <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-                Go to&nbsp;
-                <strong className="font-medium text-foreground">
-                  {capitalize(typeName)}
-                </strong>
-                &nbsp;
-                <span className="break-all">{query}</span>
-              </p>
-            ),
-            onSelect: () => {
-              onNavigate();
-              router.push(
-                `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
-              );
-            },
-          });
-        }
+        ];
       }
 
-      items = {
-        ...items,
-        Pages: [
-          {
-            id: "chain-homepage",
-            icon: ({ className }) => (
-              <Home className={cn("h-4 w-4", className)} />
-            ),
-            label: "Go to chain homepage",
-            onSelect: () => {
-              onNavigate();
-              router.push(`/${selectedNetwork.id}`);
-            },
+      items.push([
+        {
+          id: "chain-homepage",
+          groupName: "Pages",
+          icon: ({ className }) => (
+            <Home className={cn("h-4 w-4", className)} />
+          ),
+          label: "Go to chain homepage",
+          onSelect: () => {
+            onNavigate();
+            router.push(`/${selectedNetwork.id}`);
           },
-          {
-            id: "latest-blocks",
-            icon: ({ className }) => (
-              <MenuHorizontal className={cn("h-4 w-4", className)} />
-            ),
-            label: "Go to latest blocks",
-            onSelect: () => {
-              onNavigate();
-              router.push(`/${selectedNetwork.id}/blocks`);
-            },
+        },
+        {
+          id: "latest-blocks",
+          groupName: "Pages",
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
+          label: "Go to latest blocks",
+          onSelect: () => {
+            onNavigate();
+            router.push(`/${selectedNetwork.id}/blocks`);
           },
-          {
-            id: "latest-transactions",
-            icon: ({ className }) => (
-              <MenuHorizontal className={cn("h-4 w-4", className)} />
-            ),
-            label: "Go to latest transactions",
-            onSelect: () => {
-              onNavigate();
-              router.push(`/${selectedNetwork.id}/transactions`);
-            },
+        },
+        {
+          id: "latest-transactions",
+          groupName: "Pages",
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
+          label: "Go to latest transactions",
+          onSelect: () => {
+            onNavigate();
+            router.push(`/${selectedNetwork.id}/transactions`);
           },
-        ],
-        Actions: [
-          {
-            id: "change-chain",
-            icon: () => null,
-            label: "Search a different chain",
-            onSelect: onChangeChainClicked,
-          },
-        ],
-      };
+        },
+      ]);
+      items.push([
+        {
+          id: "change-chain",
+          groupName: "Actions",
+          icon: () => null,
+          label: "Search a different chain",
+          onSelect: onChangeChainClicked,
+        },
+      ]);
 
-      return { ...items, ...ecosystemNetworks };
+      if (ecosystemNetworks) {
+        items = items.concat(ecosystemNetworks);
+      }
+
+      return items;
     }, [
       onNavigate,
       onChangeChainClicked,
@@ -174,31 +181,39 @@ export const IntegrationActionListView = React.memo(
       ecosystemNetworks,
     ]);
 
-    const onSelectOption = React.useCallback(
-      (option: ListItemType | SearchOption) => {
+    const {
+      registerOptionProps,
+      groupedByLines: groupedItems,
+      getOptionId,
+    } = useItemGrid({
+      noOfColumns: 1,
+      optionGroups: items,
+      onClickOption: (option) => {
         if ("onSelect" in option) {
           option.onSelect();
         }
       },
-      [],
-    );
-
-    const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid({
-      noOfColumns: 1,
-      optionGroups: items,
-      onClickOption: onSelectOption,
       scopeRef: parentDialogRef,
     });
 
     const virtualizerParentRef = React.useRef<React.ElementRef<"div">>(null);
 
-    const ROW_SIZE = 192; // size of one row, measured visually by inspecting the DOM in the browsers' devtools
     const virtualizer = useVirtualizer({
       count: groupedItems.slice(2).length,
       getScrollElement: () => virtualizerParentRef.current,
-      estimateSize: () => ROW_SIZE,
+      estimateSize: (index) => {
+        if (!ecosystemNetworks) return 0;
+        const ecosystemBrandNameSize = 32;
+        const networkChainRowSize = 36;
+        const itemPadding = 16;
+        const row = ecosystemNetworks[index];
+        return (
+          ecosystemBrandNameSize +
+          networkChainRowSize * row.length +
+          itemPadding
+        );
+      },
       overscan: 3,
-      // paddingEnd: PADDING_END,
       scrollPaddingEnd: 0, // always let one item visible in the viewport
       scrollPaddingStart: 0, // always show one item when scrolling on top
     });
@@ -208,11 +223,15 @@ export const IntegrationActionListView = React.memo(
         role="listbox"
         className={cn(
           "h-full flex-1 flex flex-col items-start w-full text-muted",
+          "max-h-[calc(100%-60px)] overflow-y-auto",
           className,
         )}
       >
         {groupedItems.slice(0, 2).map((group, rowIndex) => {
-          const [groupName, items] = group[0];
+          const items = group[0];
+          const firstItem = group[0][0];
+          const groupName = (firstItem as ListItemType).groupName;
+
           return (
             <div
               role="group"
@@ -223,26 +242,25 @@ export const IntegrationActionListView = React.memo(
                 {groupName}
               </div>
               {items.map((item) => {
-                if ("brandName" in item) {
-                  return (
-                    <div
-                      key={item.id}
-                      {...registerOptionProps(rowIndex, 0, item)}
-                      className={cn(
-                        "py-2 pl-4 rounded-md cursor-pointer text-start",
-                        "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
-                        "focus-visible:outline-none",
-                        "flex items-center gap-4",
-                      )}
-                    >
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="h-3 w-3 flex-none"
-                      />
-                      <span className="w-[97%]">{item.displayName}</span>
-                    </div>
-                  );
-                }
+                item = item as ListItemType;
+                return (
+                  <div
+                    key={item.id}
+                    {...registerOptionProps(rowIndex, 0, item)}
+                    className={cn(
+                      "py-2 pl-4 rounded-md cursor-pointer text-start",
+                      "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
+                      "focus-visible:outline-none",
+                      "flex items-center gap-4 scroll-mt-10",
+                    )}
+                  >
+                    <ArrowRight
+                      aria-hidden="true"
+                      className="h-3 w-3 flex-none"
+                    />
+                    <span className="w-[97%]">{item.label}</span>
+                  </div>
+                );
               })}
             </div>
           );
@@ -251,10 +269,13 @@ export const IntegrationActionListView = React.memo(
         {ecosystemNetworks !== null && (
           <div
             role="none"
-            className="flex flex-col items-stretch w-full self-stretch overflow-auto flex-1"
+            className="flex flex-col items-stretch w-full self-stretch flex-1"
             ref={virtualizerParentRef}
           >
-            <div aria-hidden="true" className="text-sm py-2">
+            <div
+              aria-hidden="true"
+              className="text-sm py-2 sticky top-0 bg-white z-20"
+            >
               Ecosystem
             </div>
             <div
@@ -277,11 +298,13 @@ export const IntegrationActionListView = React.memo(
                       }}
                     >
                       {rowGroups.map((column, colIndex) => {
-                        const [groupName, items] = column;
+                        const items = column;
+                        const firstItem = column[0];
+                        const groupName = (firstItem as NetworkChain).brandName;
                         return (
                           <div className="flex flex-col" key={groupName}>
                             <div
-                              className="flex items-center gap-2 px-3 py-1.5"
+                              className="flex items-center gap-2 px-3 py-1.5 text-foreground"
                               aria-hidden="true"
                               role="presentation"
                               id={`row-${rowIndex}-col-${colIndex}-header`}
@@ -295,7 +318,7 @@ export const IntegrationActionListView = React.memo(
                                 {groupName} logo
                               </span>
                               <Image
-                                src={(items[0] as SearchOption).logoURL}
+                                src={(items[0] as NetworkChain).logoURL}
                                 height="16"
                                 width="16"
                                 alt={``}
@@ -303,33 +326,43 @@ export const IntegrationActionListView = React.memo(
                                 className="border-none"
                               />
                             </div>
+
                             {items.map((item) => {
-                              if ("icon" in item) {
-                                return (
-                                  <div
-                                    key={item.id}
-                                    {...registerOptionProps(rowIndex, 0, item)}
-                                    className={cn(
-                                      "py-2 pl-4 rounded-md cursor-pointer text-start",
-                                      "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
-                                      "focus-visible:outline-none",
-                                      "flex items-center gap-4",
-                                    )}
-                                  >
-                                    <ArrowRight
-                                      aria-hidden="true"
-                                      className="h-3 w-3 flex-none"
-                                    />
-                                    <span className="w-[97%]">
-                                      {item.label}
-                                    </span>
-                                  </div>
-                                );
-                              }
+                              item = item as NetworkChain;
+                              const optionId = getOptionId(
+                                rowIndex,
+                                colIndex,
+                                item,
+                              );
+                              return (
+                                <div
+                                  key={optionId}
+                                  {...registerOptionProps(
+                                    rowIndex + 2,
+                                    0,
+                                    item,
+                                  )}
+                                  className={cn(
+                                    "py-2 px-3 rounded-md cursor-pointer text-start",
+                                    "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
+                                    "focus-visible:outline-none",
+                                    "flex items-center gap-4 scroll-mt-20",
+                                  )}
+                                >
+                                  <span className="w-[97%]">
+                                    {item.displayName}
+                                  </span>
+                                </div>
+                              );
                             })}
                           </div>
                         );
                       })}
+
+                      {(rowIndex < ecosystemNetworks.length - 1 ||
+                        (ecosystemNetworks.length === 1 && rowIndex === 0)) && (
+                        <hr className="absolute bottom-0 left-0 right-0" />
+                      )}
                     </div>
                   </React.Fragment>
                 );

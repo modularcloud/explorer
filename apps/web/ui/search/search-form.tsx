@@ -14,10 +14,10 @@ import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 // types
-import type { OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 
 interface Props {
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
 }
 
 export function SearchForm({ optionGroups }: Props) {
@@ -26,7 +26,7 @@ export function SearchForm({ optionGroups }: Props) {
   const [isPending, startTransition] = React.useTransition();
 
   const network = React.useMemo(() => {
-    const values = Object.values(optionGroups).flat();
+    const values = optionGroups.flat();
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 

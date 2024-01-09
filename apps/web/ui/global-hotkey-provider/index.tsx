@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
@@ -24,7 +24,7 @@ export function GlobalHotkeyProvider({
   optionGroups,
 }: {
   children: React.ReactNode;
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
 }) {
   const [isSearchModalOpen, setSearchModalOpen] = React.useState(false);
 
@@ -34,7 +34,7 @@ export function GlobalHotkeyProvider({
   const sequenceKeyPressedRef = React.useRef(false);
 
   const network = React.useMemo(() => {
-    const values = Object.values(optionGroups).flat();
+    const values = optionGroups.flat();
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 

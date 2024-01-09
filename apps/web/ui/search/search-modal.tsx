@@ -21,19 +21,19 @@ import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
 import {
   useChainsFilteredByEcosystem,
-  useFilteredOptionGroup,
+  useFilteredAndSortedNetworkChains,
 } from "./use-filtered-option-group";
 
 // types
-import type { SearchOption, OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
 interface Props {
   defaultNetwork: {
-    value: SearchOption;
+    value: NetworkChain;
     selected?: boolean;
   };
   children?: React.ReactNode;
   brandColor: string;
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
   position?: "top" | "middle";
 }
 
@@ -54,12 +54,12 @@ export function SearchModal({
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
-    React.useState<SearchOption | null>(
+    React.useState<NetworkChain | null>(
       defaultNetwork.selected ? defaultNetwork.value : null,
     );
 
   const onSelectOption = React.useCallback(
-    (option: SearchOption) => {
+    (option: NetworkChain) => {
       setSelectedNetwork(option);
       inputRef.current?.focus();
       setInputValue("");
@@ -67,9 +67,10 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredOptionGroup(
+  const filteredOptionGroup = useFilteredAndSortedNetworkChains(
     optionGroups,
     deferredInputValue,
+    defaultNetwork.value,
   );
 
   const isNetworkQuery =

@@ -1,6 +1,6 @@
 import { Footer } from "~/ui/footer";
 import { SearchForm } from "~/ui/search/search-form";
-import { getSearchOptionGroups } from "~/lib/search-options";
+import { getGroupedNetworkChains } from "~/lib/search-options";
 
 export default async function HomeLayout({
   children,
@@ -9,7 +9,7 @@ export default async function HomeLayout({
   logo: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const searchOptionGroups = await getSearchOptionGroups();
+  const searchOptionGroups = await getGroupedNetworkChains();
 
   return (
     <main

@@ -1,56 +1,45 @@
 import * as React from "react";
-import type { OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
 
-export function useFilteredOptionGroup(
-  optionGroups: OptionGroups,
+export function useFilteredAndSortedNetworkChains(
+  networkGrouped: GroupedNetworkChains,
   filter: string,
+  networkToPrioritize: NetworkChain,
 ) {
   return React.useMemo(() => {
-    if (filter.trim().length === 0) {
-      return optionGroups;
+    const filteredChains: GroupedNetworkChains = [];
+
+    for (const networks of networkGrouped) {
+      const filtered =
+        // this is a little perf optimization, because we are sure that the filter will match all networks
+        filter.trim().length === 0
+          ? networks
+          : networks.filter(
+              (chain) =>
+                chain.displayName.toLowerCase().startsWith(filter) ||
+                chain.brandName.toLowerCase().startsWith(filter),
+            );
+
+      if (filtered.length > 0) {
+        if (filtered[0].accountId === networkToPrioritize.accountId) {
+          filteredChains.unshift(filtered);
+        } else {
+          filteredChains.push(filtered);
+        }
+      }
     }
-    // filter chain brands starting with the filter
-    let optionGroupsByChainBrand = Object.keys(optionGroups)
-      .filter((key) => key.toLowerCase().startsWith(filter.toLowerCase()))
-      .reduce((obj, key) => {
-        obj[key] = optionGroups[key];
-        return obj;
-      }, {} as OptionGroups);
 
-    // filter chains starting with the filter
-    let optionGroupsByChainName = Object.entries(optionGroups)
-      .filter(([, items]) => {
-        return items.some((item) =>
-          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
-        );
-      })
-      .reduce((obj, [key, items]) => {
-        // remove chains that don't start with the filter
-        obj[key] = items.filter((item) =>
-          item.displayName.toLowerCase().startsWith(filter.toLowerCase()),
-        );
-        return obj;
-      }, {} as OptionGroups);
-
-    return { ...optionGroupsByChainBrand, ...optionGroupsByChainName };
-  }, [filter, optionGroups]);
+    return filteredChains;
+  }, [networkGrouped, filter, networkToPrioritize]);
 }
 
 export function useChainsFilteredByEcosystem(
-  optionGroups: OptionGroups,
+  optionGroups: GroupedNetworkChains,
   ecosystem: string,
 ) {
   return React.useMemo(() => {
-    let optionGroupsByChainName = Object.entries(optionGroups)
-      .filter(([, items]) => {
-        return items.every((item) => item.platform === ecosystem);
-      })
-      .reduce((obj, [key, items]) => {
-        obj[key] = items;
-        return obj;
-      }, {} as OptionGroups);
-
-    const objectIsEmpty = Object.entries(optionGroupsByChainName).length === 0;
-    return objectIsEmpty ? null : optionGroupsByChainName;
+    return optionGroups.filter((group) =>
+      group.every((chain) => chain.platform === ecosystem),
+    );
   }, [optionGroups, ecosystem]);
 }

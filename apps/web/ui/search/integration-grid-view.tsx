@@ -8,11 +8,11 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import Image from "next/image";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import type { SearchOption, OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
 interface Props {
   className?: string;
-  optionGroups: OptionGroups;
-  onSelectOption?: (chain: SearchOption) => void;
+  optionGroups: GroupedNetworkChains;
+  onSelectOption?: (chain: NetworkChain) => void;
   defaultChainBrand?: string;
   parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
@@ -91,7 +91,8 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
                 }}
               >
                 {rowGroups.map((column, colIndex) => {
-                  const [groupName, options] = column;
+                  const options = column;
+                  const groupName = options[0].brandName;
                   return (
                     <div
                       key={`col-${colIndex}`}
