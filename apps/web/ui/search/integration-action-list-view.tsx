@@ -211,8 +211,7 @@ export const IntegrationActionListView = React.memo(
             // In case of network chain
             virtualizer.scrollToIndex(rowIndex - actionItems.length);
             virtualizerParentRef.current?.scrollIntoView({
-              block: "nearest",
-              behavior: "smooth",
+              block: "start",
             });
           } else {
             // In case of other items
@@ -258,8 +257,7 @@ export const IntegrationActionListView = React.memo(
         (ecosystemNetworks?.length ?? 0) > 0
       ) {
         virtualizerParentRef.current?.scrollIntoView({
-          block: "nearest",
-          behavior: "smooth",
+          block: "start",
         });
       }
     }, [query, searcheableTypes, ecosystemNetworks]);
