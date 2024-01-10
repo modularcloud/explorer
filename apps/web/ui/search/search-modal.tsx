@@ -107,6 +107,11 @@ export function SearchModal({
     setInputValue("");
   }, [setInputValue]);
 
+  const onListItemActionSelectEcosystemChain = React.useCallback(
+    onSelectOption,
+    [onSelectOption],
+  );
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -200,12 +205,13 @@ export function SearchModal({
 
           {currentNetwork && !isNetworkQuery && (
             <IntegrationActionListView
-              query={inputValue}
+              query={deferredInputValue}
               parentDialogRef={dialogRef}
               searcheableTypes={searcheableTypes ?? []}
               selectedNetwork={currentNetwork}
               onChangeChainClicked={onListItemActionChangeChainClicked}
               onNavigate={onListItemActionNavigate}
+              onSelectEcosystemChain={onListItemActionSelectEcosystemChain}
               ecosystemNetworks={
                 // TODO : This is temporary because in the future we want to support other ecosystems as well
                 //        we need to change the way we filter chains passed for the ecosystem

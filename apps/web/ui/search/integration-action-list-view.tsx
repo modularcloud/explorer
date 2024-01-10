@@ -5,7 +5,7 @@ import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize } from "~/lib/shared-utils";
 import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
-import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   className?: string;
   onNavigate: () => void;
   onChangeChainClicked: () => void;
+  onSelectEcosystemChain?: (chain: NetworkChain) => void;
   searcheableTypes: [string, string][];
   parentDialogRef: React.RefObject<React.ElementRef<"div">>;
 }
@@ -43,6 +44,7 @@ export const IntegrationActionListView = React.memo(
     searcheableTypes,
     parentDialogRef,
     ecosystemNetworks,
+    onSelectEcosystemChain,
   }: Props) {
     const router = useRouter();
 
@@ -197,7 +199,10 @@ export const IntegrationActionListView = React.memo(
       onClickOption: (option) => {
         if ("onSelect" in option) {
           option.onSelect();
+          return;
         }
+
+        onSelectEcosystemChain?.(option);
       },
       scopeRef: parentDialogRef,
     });
@@ -363,9 +368,7 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
         aria-hidden="true"
         role="presentation"
       >
-        <span>
-          {capitalize(groupName)} - {rowIndex}
-        </span>
+        <span>{capitalize(groupName)}</span>
         <span className="sr-only" aria-hidden="true" id={`${groupName}-logo`}>
           {groupName} logo
         </span>
