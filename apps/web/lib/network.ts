@@ -139,7 +139,7 @@ export async function getSingleNetwork(slug: string) {
       integration.config.primaryColor = "256 100% 67%";
       integration.config.cssGradient = `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`;
     }
-    if (integration.chainBrand === "dymension") {
+    if (integration.brand === "dymension") {
       integration.config.widgetLayout = "Dymension";
       integration.config.primaryColor = "29 13% 45%";
     }

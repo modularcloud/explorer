@@ -49,11 +49,11 @@ export async function DymensionRollappsWidgetLayout({
                 src={network.config.logoUrl}
                 height={108}
                 width={108}
-                alt={`${network.chainBrand} ${network.chainName} logo`}
+                alt={`${network.brand} ${network.chainName} logo`}
                 className="object-center rounded-full w-24 aspect-square"
               />
               <span className="font-medium text-xs capitalize">
-                {network.chainBrand}
+                {network.brand}
               </span>
               <span className="text-muted text-xs">{network.chainName}</span>
               <Link
@@ -61,7 +61,7 @@ export async function DymensionRollappsWidgetLayout({
                 className="after:absolute after:inset-0 focus:outline-none"
               >
                 <span className="sr-only">
-                  {network.chainBrand} {network.chainName}
+                  {network.brand} {network.chainName}
                 </span>
               </Link>
             </Card>
