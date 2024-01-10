@@ -207,9 +207,19 @@ export const IntegrationActionListView = React.memo(
       scopeRef: parentDialogRef,
     });
 
+    // We delay the initilization of the virtualizer so that it render as late as possible
+    // If we don't do this, when the user will click a chain from the grid view
+    // they will observe a little delay, the culprit is the virtualizer which is very perf hungry (idk why though)
+    const [virtualizerCount, setVirtualizerCount] = React.useState(0);
+    React.useEffect(() => {
+      React.startTransition(() =>
+        setVirtualizerCount(groupedItems.length - actionItems.length),
+      );
+    }, [groupedItems, actionItems]);
+
     const virtualizerParentRef = React.useRef<React.ElementRef<"div">>(null);
     const virtualizer = useVirtualizer({
-      count: groupedItems.length - actionItems.length,
+      count: virtualizerCount,
       getScrollElement: () => virtualizerParentRef.current,
       estimateSize: (index) => {
         if (!ecosystemNetworks) return 0;
@@ -217,6 +227,9 @@ export const IntegrationActionListView = React.memo(
         const networkChainRowSize = 36;
         const itemPadding = 16;
         const row = ecosystemNetworks[index];
+
+        if (!row) return 0;
+
         return (
           ecosystemBrandNameSize +
           networkChainRowSize * row.length +
@@ -227,6 +240,19 @@ export const IntegrationActionListView = React.memo(
       scrollPaddingEnd: 0,
       scrollPaddingStart: 0,
     });
+
+    React.useEffect(() => {
+      if (
+        query.length > 0 &&
+        searcheableTypes.length === 0 &&
+        (ecosystemNetworks?.length ?? 0) > 0
+      ) {
+        virtualizerParentRef.current?.scrollIntoView({
+          block: "nearest",
+          behavior: "smooth",
+        });
+      }
+    }, [query, searcheableTypes, ecosystemNetworks]);
 
     const registerItemProps = React.useCallback(
       (rowIndex: number, option: NetworkChain | ListItemType) =>
@@ -282,7 +308,7 @@ export const IntegrationActionListView = React.memo(
           );
         })}
 
-        {ecosystemNetworks !== null && (
+        {ecosystemNetworks !== null && ecosystemNetworks.length > 0 && (
           <div
             role="none"
             className="flex flex-col items-stretch w-full self-stretch flex-1"
@@ -302,6 +328,7 @@ export const IntegrationActionListView = React.memo(
                 const rowIndex = virtualRow.index;
                 const rowGroups = groupedItems[rowIndex + actionItems.length]; // we space it by 2 because the first groups are `Pages` & `Actions`
 
+                console.log({ rowIndex });
                 return (
                   <React.Fragment key={virtualRow.key}>
                     <div
@@ -313,15 +340,16 @@ export const IntegrationActionListView = React.memo(
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
                     >
-                      {rowGroups.map((chains) => (
-                        <EcosystemNetworkChains
-                          networks={chains}
-                          key={(chains[0] as NetworkChain).accountId}
-                          rowIndex={rowIndex}
-                          rowOffSet={actionItems.length}
-                          registerItemProps={registerItemProps}
-                        />
-                      ))}
+                      {rowGroups &&
+                        rowGroups.map((chains) => (
+                          <EcosystemNetworkChains
+                            networks={chains}
+                            key={(chains[0] as NetworkChain).accountId}
+                            rowIndex={rowIndex}
+                            rowOffSet={actionItems.length}
+                            registerItemProps={registerItemProps}
+                          />
+                        ))}
 
                       {(rowIndex < ecosystemNetworks.length - 1 ||
                         (ecosystemNetworks.length === 1 && rowIndex === 0)) && (

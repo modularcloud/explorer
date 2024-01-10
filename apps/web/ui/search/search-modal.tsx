@@ -93,6 +93,7 @@ export function SearchModal({
   const ecosystemChains = useChainsFilteredByEcosystem(
     optionGroups,
     "dymension",
+    deferredInputValue,
   );
 
   // Memoized callbacks for `IntegrationActionListView` since it is Memoized

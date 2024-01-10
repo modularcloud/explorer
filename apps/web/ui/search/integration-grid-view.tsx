@@ -31,7 +31,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
 
   const noOfColumns = isOneColumn ? 1 : isTwoColumns ? 2 : 3;
 
-  const { groupedByLines, getOptionId, registerOptionProps } = useItemGrid({
+  const { groupedByLines, registerOptionProps } = useItemGrid({
     noOfColumns,
     optionGroups,
     scopeRef: parentDialogRef,
@@ -53,9 +53,8 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_SIZE,
     overscan: 3,
-    // paddingEnd: PADDING_END,
-    scrollPaddingEnd: 0, // always let one item visible in the viewport
-    scrollPaddingStart: 0, // always show one item when scrolling on top
+    scrollPaddingEnd: 0,
+    scrollPaddingStart: 0,
   });
 
   const registerItemProps = React.useCallback(registerOptionProps, [
