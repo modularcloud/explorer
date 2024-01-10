@@ -4,7 +4,7 @@ import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
 export function useFilteredAndSortedNetworkChains(
   networkGrouped: GroupedNetworkChains,
   filter: string,
-  networkToPrioritize: NetworkChain,
+  networkToPrioritize?: NetworkChain,
 ) {
   return React.useMemo(() => {
     const filteredChains: GroupedNetworkChains = [];
@@ -21,7 +21,7 @@ export function useFilteredAndSortedNetworkChains(
             );
 
       if (filtered.length > 0) {
-        if (filtered[0].accountId === networkToPrioritize.accountId) {
+        if (filtered[0].accountId === networkToPrioritize?.accountId) {
           filteredChains.unshift(filtered);
         } else {
           filteredChains.push(filtered);
@@ -36,10 +36,13 @@ export function useFilteredAndSortedNetworkChains(
 export function useChainsFilteredByEcosystem(
   optionGroups: GroupedNetworkChains,
   ecosystem: string,
+  filter: string,
 ) {
-  return React.useMemo(() => {
+  const chains = React.useMemo(() => {
     return optionGroups.filter((group) =>
       group.every((chain) => chain.platform === ecosystem),
     );
   }, [optionGroups, ecosystem]);
+
+  return useFilteredAndSortedNetworkChains(chains, filter);
 }
