@@ -83,6 +83,13 @@ export function useItemGrid<
     option: selectedOption,
   });
 
+  const getOptionId = React.useCallback(
+    (rowIndex: number, colIndex: number, option: T) => {
+      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
+    },
+    [itemRootId],
+  );
+
   const selectOption = React.useCallback(
     ({
       rowIndex,
@@ -94,14 +101,14 @@ export function useItemGrid<
       colIndex?: number;
     }) => {
       // we default to the ref values as they have the previous values in store
-      const newRowIndex =
-        rowIndex !== undefined
-          ? rowIndex
-          : selectedItemPositionRef.current.rowIndex;
-      const newColIndex =
-        colIndex !== undefined
-          ? colIndex
-          : selectedItemPositionRef.current.colIndex;
+      const {
+        option: previousSelectedOption,
+        rowIndex: oldRowIndex,
+        colIndex: oldColIndex,
+      } = selectedItemPositionRef.current;
+
+      const newRowIndex = rowIndex !== undefined ? rowIndex : oldRowIndex;
+      const newColIndex = colIndex !== undefined ? colIndex : oldColIndex;
 
       setSelectedRowIndex(newRowIndex);
       setSelectedColIndex(newColIndex);
@@ -113,8 +120,29 @@ export function useItemGrid<
         rowIndex: newRowIndex,
         colIndex: newColIndex,
       };
+
+      // update element html attributes
+      let currentlySelectedElement: HTMLElement | null = null;
+      let previouslySelectedElement: HTMLElement | null = null;
+
+      if (option !== null) {
+        currentlySelectedElement = document.getElementById(
+          getOptionId(newRowIndex, newColIndex, option),
+        );
+      }
+      if (previousSelectedOption !== null) {
+        previouslySelectedElement = document.getElementById(
+          getOptionId(oldRowIndex, oldColIndex, previousSelectedOption),
+        );
+      }
+
+      previouslySelectedElement?.setAttribute("aria-selected", "false");
+      previouslySelectedElement?.setAttribute("tabindex", "-1");
+
+      currentlySelectedElement?.setAttribute("aria-selected", "true");
+      currentlySelectedElement?.setAttribute("tabindex", "0");
     },
-    [],
+    [getOptionId],
   );
 
   /**
@@ -326,21 +354,14 @@ export function useItemGrid<
     if (option) {
       // scroll option into view
       const element = document.getElementById(
-        `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+        getOptionId(rowIndex, colIndex, option),
       ) as HTMLDivElement | null;
 
       element?.scrollIntoView({
         block: "nearest",
       });
     }
-  }, [itemRootId]);
-
-  const getOptionId = React.useCallback(
-    (rowIndex: number, colIndex: number, option: T) => {
-      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
-    },
-    [itemRootId],
-  );
+  }, [getOptionId]);
 
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
@@ -452,13 +473,8 @@ export function useItemGrid<
   const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
   const registerOptionProps = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
-      const isSelected =
-        selectedOption?.id === option.id &&
-        selectedColIndex === colIndex &&
-        selectedRowIndex == rowIndex;
-
       return {
-        id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
+        id: getOptionId(rowIndex, colIndex, option),
         onClick: () => onClickOption.current?.(option),
         onMouseMove: (event: React.MouseEvent) => {
           // This is to fix a bug in SAFARI,
@@ -473,13 +489,20 @@ export function useItemGrid<
 
           if (!hasMoved) return;
 
-          selectOption({ option, rowIndex, colIndex });
-          onSelectOption.current?.({
-            option,
-            colIndex,
-            rowIndex,
-            inputMethod: "mouse",
-          });
+          const { option: selectedOption } = selectedItemPositionRef.current;
+
+          const currentItemId = option.id;
+          const selectedItemId = selectedOption?.id;
+
+          if (currentItemId !== selectedItemId) {
+            selectOption({ option, rowIndex, colIndex });
+            onSelectOption.current?.({
+              option,
+              colIndex,
+              rowIndex,
+              inputMethod: "mouse",
+            });
+          }
         },
         onFocus: () => {
           selectOption({ option, rowIndex, colIndex });
@@ -492,17 +515,9 @@ export function useItemGrid<
           });
         },
         role: "option",
-        "aria-selected": isSelected,
-        tabIndex: isSelected ? -1 : 0,
       };
     },
-    [
-      itemRootId,
-      selectedOption,
-      selectedColIndex,
-      selectedRowIndex,
-      selectOption,
-    ],
+    [getOptionId, selectOption],
   );
 
   return {

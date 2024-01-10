@@ -5,7 +5,7 @@ import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize } from "~/lib/shared-utils";
 import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { Virtualizer, useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 
 interface Props {
@@ -26,6 +26,12 @@ type ListItemType = {
   onSelect: () => void;
   groupName: string;
 };
+
+type OptionProps = ReturnType<
+  ReturnType<
+    typeof useItemGrid<NetworkChain | ListItemType>
+  >["registerOptionProps"]
+>;
 
 export const IntegrationActionListView = React.memo(
   function IntegrationActionListView({
@@ -64,8 +70,8 @@ export const IntegrationActionListView = React.memo(
       }
     }, [router, searcheableTypes, selectedNetwork.id]);
 
-    const items = React.useMemo(() => {
-      let items: Array<(ListItemType | NetworkChain)[]> = [];
+    const actionItems = React.useMemo(() => {
+      let items: Array<ListItemType[]> = [];
 
       if (query.length > 0) {
         items = [
@@ -166,10 +172,6 @@ export const IntegrationActionListView = React.memo(
         },
       ]);
 
-      if (ecosystemNetworks) {
-        items = items.concat(ecosystemNetworks);
-      }
-
       return items;
     }, [
       onNavigate,
@@ -178,16 +180,20 @@ export const IntegrationActionListView = React.memo(
       selectedNetwork,
       query,
       searcheableTypes,
-      ecosystemNetworks,
     ]);
 
-    const {
-      registerOptionProps,
-      groupedByLines: groupedItems,
-      getOptionId,
-    } = useItemGrid({
+    const gridItems = React.useMemo(() => {
+      const newItems: Array<ListItemType[] | NetworkChain[]> = actionItems;
+      return ecosystemNetworks !== null
+        ? newItems.concat(ecosystemNetworks)
+        : actionItems;
+    }, [actionItems, ecosystemNetworks]);
+
+    const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid<
+      ListItemType | NetworkChain
+    >({
       noOfColumns: 1,
-      optionGroups: items,
+      optionGroups: gridItems,
       onClickOption: (option) => {
         if ("onSelect" in option) {
           option.onSelect();
@@ -197,9 +203,8 @@ export const IntegrationActionListView = React.memo(
     });
 
     const virtualizerParentRef = React.useRef<React.ElementRef<"div">>(null);
-
     const virtualizer = useVirtualizer({
-      count: groupedItems.slice(2).length,
+      count: groupedItems.length - actionItems.length,
       getScrollElement: () => virtualizerParentRef.current,
       estimateSize: (index) => {
         if (!ecosystemNetworks) return 0;
@@ -214,9 +219,15 @@ export const IntegrationActionListView = React.memo(
         );
       },
       overscan: 3,
-      scrollPaddingEnd: 0, // always let one item visible in the viewport
-      scrollPaddingStart: 0, // always show one item when scrolling on top
+      scrollPaddingEnd: 0,
+      scrollPaddingStart: 0,
     });
+
+    const registerItemProps = React.useCallback(
+      (rowIndex: number, option: NetworkChain | ListItemType) =>
+        registerOptionProps(rowIndex, 0, option),
+      [registerOptionProps],
+    );
 
     return (
       <div
@@ -227,7 +238,7 @@ export const IntegrationActionListView = React.memo(
           className,
         )}
       >
-        {groupedItems.slice(0, 2).map((group, rowIndex) => {
+        {groupedItems.slice(0, actionItems.length).map((group, rowIndex) => {
           const items = group[0];
           const firstItem = group[0][0];
           const groupName = (firstItem as ListItemType).groupName;
@@ -246,7 +257,7 @@ export const IntegrationActionListView = React.memo(
                 return (
                   <div
                     key={item.id}
-                    {...registerOptionProps(rowIndex, 0, item)}
+                    {...registerItemProps(rowIndex, item)}
                     className={cn(
                       "py-2 pl-4 rounded-md cursor-pointer text-start",
                       "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
@@ -284,7 +295,7 @@ export const IntegrationActionListView = React.memo(
             >
               {virtualizer.getVirtualItems().map((virtualRow) => {
                 const rowIndex = virtualRow.index;
-                const rowGroups = groupedItems[rowIndex + 2]; // we space it by 2 because the first groups are `Pages` & `Actions`
+                const rowGroups = groupedItems[rowIndex + actionItems.length]; // we space it by 2 because the first groups are `Pages` & `Actions`
 
                 return (
                   <React.Fragment key={virtualRow.key}>
@@ -297,67 +308,15 @@ export const IntegrationActionListView = React.memo(
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
                     >
-                      {rowGroups.map((column, colIndex) => {
-                        const items = column;
-                        const firstItem = column[0];
-                        const groupName = (firstItem as NetworkChain).brandName;
-                        return (
-                          <div className="flex flex-col" key={groupName}>
-                            <div
-                              className="flex items-center gap-2 px-3 py-1.5 text-foreground"
-                              aria-hidden="true"
-                              role="presentation"
-                              id={`row-${rowIndex}-col-${colIndex}-header`}
-                            >
-                              <span>{capitalize(groupName)}</span>
-                              <span
-                                className="sr-only"
-                                aria-hidden="true"
-                                id={`${groupName}-logo`}
-                              >
-                                {groupName} logo
-                              </span>
-                              <Image
-                                src={(items[0] as NetworkChain).logoURL}
-                                height="16"
-                                width="16"
-                                alt={``}
-                                aria-describedby={`${groupName}-logo`}
-                                className="border-none"
-                              />
-                            </div>
-
-                            {items.map((item) => {
-                              item = item as NetworkChain;
-                              const optionId = getOptionId(
-                                rowIndex,
-                                colIndex,
-                                item,
-                              );
-                              return (
-                                <div
-                                  key={optionId}
-                                  {...registerOptionProps(
-                                    rowIndex + 2,
-                                    0,
-                                    item,
-                                  )}
-                                  className={cn(
-                                    "py-2 px-3 rounded-md cursor-pointer text-start",
-                                    "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
-                                    "focus-visible:outline-none",
-                                    "flex items-center gap-4 scroll-mt-20",
-                                  )}
-                                >
-                                  <span className="w-[97%]">
-                                    {item.displayName}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
+                      {rowGroups.map((chains) => (
+                        <EcosystemNetworkChains
+                          networks={chains}
+                          key={(chains[0] as NetworkChain).accountId}
+                          rowIndex={rowIndex}
+                          rowOffSet={actionItems.length}
+                          registerItemProps={registerItemProps}
+                        />
+                      ))}
 
                       {(rowIndex < ecosystemNetworks.length - 1 ||
                         (ecosystemNetworks.length === 1 && rowIndex === 0)) && (
@@ -374,3 +333,69 @@ export const IntegrationActionListView = React.memo(
     );
   },
 );
+
+type EcosystemNetworkChainsProps = {
+  networks: (ListItemType | NetworkChain)[];
+  registerItemProps: (
+    rowIndex: number,
+    option: NetworkChain | ListItemType,
+  ) => OptionProps;
+  rowIndex: number;
+  rowOffSet: number;
+};
+
+const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
+  networks,
+  registerItemProps,
+  rowIndex,
+  rowOffSet: offSet,
+}: EcosystemNetworkChainsProps) {
+  const items = networks;
+  const firstItem = networks[0];
+
+  if (!("brandName" in firstItem)) return null;
+
+  const groupName = firstItem.brandName;
+  return (
+    <div className="flex flex-col" key={groupName}>
+      <div
+        className="flex items-center gap-2 px-3 py-1.5 text-foreground"
+        aria-hidden="true"
+        role="presentation"
+      >
+        <span>
+          {capitalize(groupName)} - {rowIndex}
+        </span>
+        <span className="sr-only" aria-hidden="true" id={`${groupName}-logo`}>
+          {groupName} logo
+        </span>
+        <Image
+          src={(items[0] as NetworkChain).logoURL}
+          height="16"
+          width="16"
+          alt={``}
+          aria-describedby={`${groupName}-logo`}
+          className="border-none"
+        />
+      </div>
+
+      {items.map((item) => {
+        item = item as NetworkChain;
+        return (
+          <div
+            key={item.id}
+            {...registerItemProps(rowIndex + offSet, item)}
+            className={cn(
+              "py-2 px-3 rounded-md cursor-pointer text-start",
+              "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
+              "focus-visible:outline-none",
+              "flex items-center gap-4 scroll-mt-20",
+            )}
+          >
+            <span className="w-[97%]">{item.displayName}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
