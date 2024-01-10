@@ -6,6 +6,7 @@ export type OnSelectOptionArgs<T> = {
   rowIndex: number;
   colIndex: number;
   inputMethod: "keyboard" | "mouse";
+  htmlElementId: string;
 };
 
 type UseItemGridArgs<T> = {
@@ -200,9 +201,10 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, getOptionId]);
 
   const moveSelectionUp = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
@@ -245,9 +247,10 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption]);
+  }, [groupedByLines, selectOption, getOptionId]);
 
   /**
    * 1- Navigating left/right has 2 cases :
@@ -303,9 +306,10 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
 
   const moveSelectionLeft = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
@@ -344,18 +348,18 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
 
   const scrollOptionIntoView = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
 
     if (option) {
-      // scroll option into view
       const element = document.getElementById(
         getOptionId(rowIndex, colIndex, option),
-      ) as HTMLDivElement | null;
+      ) as HTMLElement | null;
 
       element?.scrollIntoView({
         block: "nearest",
@@ -501,6 +505,7 @@ export function useItemGrid<
               colIndex,
               rowIndex,
               inputMethod: "mouse",
+              htmlElementId: getOptionId(rowIndex, colIndex, option),
             });
           }
         },

@@ -204,22 +204,32 @@ export const IntegrationActionListView = React.memo(
 
         onSelectEcosystemChain?.(option);
       },
+      scrollOnSelection: false,
+      onSelectOption: ({ rowIndex, inputMethod, option, htmlElementId }) => {
+        if (inputMethod === "keyboard") {
+          if ("brandName" in option) {
+            // In case of network chain
+            virtualizer.scrollToIndex(rowIndex - actionItems.length);
+            virtualizerParentRef.current?.scrollIntoView({
+              block: "nearest",
+              behavior: "smooth",
+            });
+          } else {
+            // In case of other items
+            const element = document.getElementById(htmlElementId);
+            element?.scrollIntoView({
+              block: "nearest",
+            });
+          }
+        }
+      },
       scopeRef: parentDialogRef,
     });
 
-    // We delay the initilization of the virtualizer so that it render as late as possible
-    // If we don't do this, when the user will click a chain from the grid view
-    // they will observe a little delay, the culprit is the virtualizer which is very perf hungry (idk why though)
-    const [virtualizerCount, setVirtualizerCount] = React.useState(0);
-    React.useEffect(() => {
-      React.startTransition(() =>
-        setVirtualizerCount(groupedItems.length - actionItems.length),
-      );
-    }, [groupedItems, actionItems]);
-
     const virtualizerParentRef = React.useRef<React.ElementRef<"div">>(null);
+    const DEFAULT_ECOSYSTEM_ROW_SIZE = 84;
     const virtualizer = useVirtualizer({
-      count: virtualizerCount,
+      count: groupedItems.length - actionItems.length,
       getScrollElement: () => virtualizerParentRef.current,
       estimateSize: (index) => {
         if (!ecosystemNetworks) return 0;
@@ -237,7 +247,7 @@ export const IntegrationActionListView = React.memo(
         );
       },
       overscan: 3,
-      scrollPaddingEnd: 0,
+      scrollPaddingEnd: DEFAULT_ECOSYSTEM_ROW_SIZE,
       scrollPaddingStart: 0,
     });
 
@@ -265,7 +275,7 @@ export const IntegrationActionListView = React.memo(
         role="listbox"
         className={cn(
           "h-full flex-1 flex flex-col items-start w-full text-muted",
-          "max-h-[calc(100%-60px)] overflow-y-auto",
+          "max-h-[calc(100%-60px)] overflow-y-auto hide-scrollbars",
           className,
         )}
       >
@@ -311,7 +321,7 @@ export const IntegrationActionListView = React.memo(
         {ecosystemNetworks !== null && ecosystemNetworks.length > 0 && (
           <div
             role="none"
-            className="flex flex-col items-stretch w-full self-stretch flex-1"
+            className="w-full flex-none min-h-full max-h-full h-full overflow-y-auto"
             ref={virtualizerParentRef}
           >
             <div
@@ -328,7 +338,6 @@ export const IntegrationActionListView = React.memo(
                 const rowIndex = virtualRow.index;
                 const rowGroups = groupedItems[rowIndex + actionItems.length]; // we space it by 2 because the first groups are `Pages` & `Actions`
 
-                console.log({ rowIndex });
                 return (
                   <React.Fragment key={virtualRow.key}>
                     <div
@@ -340,16 +349,15 @@ export const IntegrationActionListView = React.memo(
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
                     >
-                      {rowGroups &&
-                        rowGroups.map((chains) => (
-                          <EcosystemNetworkChains
-                            networks={chains}
-                            key={(chains[0] as NetworkChain).accountId}
-                            rowIndex={rowIndex}
-                            rowOffSet={actionItems.length}
-                            registerItemProps={registerItemProps}
-                          />
-                        ))}
+                      {rowGroups.map((chains) => (
+                        <EcosystemNetworkChains
+                          networks={chains}
+                          key={(chains[0] as NetworkChain).accountId}
+                          rowIndex={rowIndex}
+                          rowOffSet={actionItems.length}
+                          registerItemProps={registerItemProps}
+                        />
+                      ))}
 
                       {(rowIndex < ecosystemNetworks.length - 1 ||
                         (ecosystemNetworks.length === 1 && rowIndex === 0)) && (

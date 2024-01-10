@@ -1,5 +1,4 @@
 import * as React from "react";
-import { GlobeCyber } from "~/ui/icons";
 
 import { cn } from "~/ui/shadcn/utils";
 import { useMediaQuery } from "~/lib/hooks/use-media-query";
