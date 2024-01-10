@@ -9,7 +9,7 @@ const SvgBarChart = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="currentColor"
+      stroke="#8457FF"
       strokeLinecap="square"
       strokeLinejoin="round"
       strokeWidth={2}

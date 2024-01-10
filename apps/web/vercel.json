@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/save-dymension-ibc-events",
+      "schedule": "* * * * *"
+    }
+  ]
+}

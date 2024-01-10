@@ -9,7 +9,7 @@ const SvgFolder = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="currentColor"
+      stroke="#8457FF"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}

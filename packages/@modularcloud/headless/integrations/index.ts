@@ -30,6 +30,9 @@ import { RollappBlockTransctionsResolver } from "./rollapp/routes/blocks/[hashOr
 import { RollappTransactionMessagesResolver } from "./rollapp/routes/transactions/[hash]/messages/page";
 import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/messages/[index]/page";
 import { IBCResolver } from "./rollapp/misc/ibc";
+import { RollAppAddressPageResolver } from "./rollapp/routes/addresses/[address]/page";
+import { RollAppEvents } from "./rollapp/misc/hub";
+// import { resolvers } from "@modularcloud-resolver/rollapp";
 
 export function registerResolvers() {
   registerResolver(addressOverviewResolver);
@@ -65,6 +68,10 @@ export function registerResolvers() {
   registerResolver(RollappTransactionMessagesResolver);
   registerResolver(RollappMessageResolver);
   registerResolver(IBCResolver);
+  registerResolver(RollAppAddressPageResolver);
+  registerResolver(RollAppEvents);
+  // TODO REMOVE
+  // registerResolver(resolvers.getLatestHubMessages);
   // registerResolver(CelestiaAddressTransactionsResolver);
   // registerResolver(CelestiaLatestTransactionsResolver);
   // registerResolver(CelestiaAddressBalancesResolver);

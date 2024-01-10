@@ -1,14 +1,15 @@
 "use client";
 
-import type { Value } from "@modularcloud/headless";
 import Image from "next/image";
 import { cn } from "../shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "../right-panel/spotlight-store";
+import { useParams } from "next/navigation";
+import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
 type Node =
   | {
@@ -19,6 +20,12 @@ type Node =
       timestamp: string | number;
       link: string;
       //sidebar: Record<string, Value>;
+      image: string;
+    }
+  | {
+      type: "error";
+      label: string;
+      message: string;
       image: string;
     }
   | {
@@ -42,22 +49,33 @@ type Props = {
 function Node({
   isNext,
   step,
+  hash,
+  slug,
 }: {
-  node: Node;
   isNext?: boolean;
   step: number;
+  hash: string;
+  slug: string;
 }) {
+  const [isHovered, setIsHovered] = React.useState(false);
   const body = {
     resolverId: "rollapp-ibc-0.0.0",
     input: {
-      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      hash,
       step,
-      slug: "coinhunterstrrollapp_9084503-1",
+      slug,
     },
   };
   const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+  const fallbackData = {
+    result: {
+      type: "pending",
+      label,
+      waitingFor: label === "Received" ? "receipt" : undefined,
+    },
+  };
   const nodeResponse = useSWR(
-    ["/api/resolve/transactions", body],
+    ["/api/resolve/ibc", body],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
@@ -70,17 +88,11 @@ function Node({
       return data;
     },
     {
-      //refreshInterval: THIRTY_SECONDS,
+      refreshInterval: 5000,
       errorRetryCount: 2,
       keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-      fallbackData: {
-        result: {
-          type: "pending",
-          label,
-          waitingFor: label === "Received" ? "receipt" : undefined,
-        },
-      },
+      revalidateOnFocus: false,
+      fallbackData,
     },
   );
   console.log(nodeResponse.data);
@@ -101,8 +113,14 @@ function Node({
 
   return (
     <Link
-      href={`${node.link}`}
+      href={`${node.type === "completed" ? node.link : "#"}`}
+      onClick={(e) => {
+        if (node.type === "error") {
+          nodeResponse.mutate(fallbackData);
+        }
+      }}
       onMouseEnter={() => {
+        setIsHovered(true);
         if (node.sidebar) {
           setSpotlight?.({
             headerKey: "Spotlight",
@@ -110,6 +128,9 @@ function Node({
             properties: node.sidebar,
           });
         }
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
       }}
       className={cn(
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
@@ -124,17 +145,15 @@ function Node({
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
-        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-5 h-5">
+        <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
           {node.image ? (
-            <div className="rounded-full overflow-hidden">
-              <Image
-                src={node.image}
-                width={20}
-                height={20}
-                alt={`${node.label} chain logo`}
-                // className="aspect-square object-contain object-center w-5 overflow-hidden"
-              />
-            </div>
+            <Image
+              src={node.image}
+              width={20}
+              height={20}
+              alt={`${node.label} chain logo`}
+              className="rounded-full"
+            />
           ) : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
@@ -143,7 +162,7 @@ function Node({
       </div>
       {node.type === "completed" ? (
         <div className="flex justify-between align-items gap-5 mt-4">
-          <div className="text-xs font-medium leading-4">
+          <div className="text-xs font-medium leading-4 whitespace-nowrap">
             {node.shortId ?? node.id}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
@@ -152,7 +171,11 @@ function Node({
         </div>
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
-          {`Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
+          {node.type === "error"
+            ? isHovered
+              ? "Try Again"
+              : node.message
+            : `Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
         </div>
       )}
     </Link>
@@ -207,18 +230,18 @@ function Address({ address }: { address: string }) {
   );
 }
 
-function Transfer() {
+function Transfer({ hash, slug }: { hash: string; slug: string }) {
   const body = {
     resolverId: "rollapp-ibc-0.0.0",
     input: {
-      hash: "0D75ED0D780CCF66D20A3B2A5DED59190103832B03382A40DF67F5EF694541F0",
+      hash,
       step: 0,
-      slug: "coinhunterstrrollapp_9084503-1",
+      slug,
     },
   };
 
   const nodeResponse = useSWR(
-    ["/api/resolve/transactions", body],
+    ["/api/resolve/ibc", body],
     async () => {
       const response = await fetch("/api/resolve", {
         method: "POST",
@@ -238,17 +261,23 @@ function Transfer() {
     },
   );
 
-  const amount = useMemo(() => {
+  const amount = React.useMemo(() => {
     const node = nodeResponse.data?.result;
-    if (node && node.sidebar.Token.payload) {
+    if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
       const [value, denom] = node.sidebar.Token.payload.split(" ");
-      return `${Number(value) / 10 ** 18} ${denom.slice(1).toUpperCase()}`;
+      const formattedDenom = denom.slice(1).toUpperCase();
+      return `${Number(value) / 10 ** 18} ${
+        formattedDenom.length > 7
+          ? formattedDenom.slice(0, 7) + "..."
+          : formattedDenom
+      }`;
     }
     return null;
   }, [nodeResponse.data]);
 
+
   const node = nodeResponse.data?.result;
-  if (!node) return null;
+  if (!node || !node.sidebar) return null;
 
   return (
     <div className="items-stretch self-stretch flex gap-1 max-md:justify-center">
@@ -294,65 +323,22 @@ function Transfer() {
 }
 
 export function FlowChart() {
-  const props: Props = {
-    title: "IBC Transfer",
-    transfer: {
-      from: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      to: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-      amount: "14",
-      denom: "ATOM",
-    },
-    nodes: [
-      {
-        type: "completed",
-        id: "1",
-        shortId: "1",
-        label: "Transfer",
-        timestamp: "7 Min Ago",
-        link: "https://google.com",
-        //sidebar: {},
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Received",
-        waitingFor: "receipt",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/27f754ac-8120-4aaa-952b-56daf8bb7a9a?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-      {
-        type: "pending",
-        label: "Acknowledgement",
-        waitingFor: "acknowledgement",
-        image:
-          "https://cdn.builder.io/api/v1/image/assets/TEMP/7aa5a24f-c7a1-479b-bbc3-ebc91e890a3b?apiKey=4eb9542baac94fe8b4d3b82e21ed7c3a&",
-      },
-    ],
-  } as any;
+  const params = useParams<{ network: string; path: string[] }>();
+  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
+  const txHash = path[1];
+  if (!slug || typeof slug !== "string" || !txHash) return null;
 
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
       <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
-        <div className="text-xs font-medium leading-4">{props.title}</div>
-        <Transfer />
+        <div className="text-xs font-medium leading-4">IBC Transfer</div>
+        <Transfer hash={txHash} slug={slug} />
       </div>
-      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-        {props.nodes.map((node, index, nodes) => (
-          <Node
-            key={index}
-            node={node}
-            // isNext={node.type === "pending" && nodes[index - 1].type === "completed"}
-            step={index}
-          />
-        ))}
+      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
+        <Node step={0} hash={txHash} slug={slug} />
+        <Node step={1} hash={txHash} slug={slug} />
+        <Node step={2} hash={txHash} slug={slug} />
+        <Node step={3} hash={txHash} slug={slug} />
       </div>
     </div>
   );

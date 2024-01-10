@@ -1,11 +1,10 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgClock = (props: SVGProps<SVGSVGElement>) => (
+const SvgCornerUpRight = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
     fill="none"
+    viewBox="0 0 20 20"
     {...props}
   >
     <path
@@ -13,8 +12,8 @@ const SvgClock = (props: SVGProps<SVGSVGElement>) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
-      d="M8 5.166V8l1.834 1.833M14.167 8A6.167 6.167 0 1 1 1.834 8a6.167 6.167 0 0 1 12.333 0"
+      d="M3.125 16.042V9.167c0-.92.746-1.667 1.667-1.667H16.25m-2.5 3.334 3.039-3.039a.417.417 0 0 0 0-.59L13.75 4.168"
     />
   </svg>
 );
-export default SvgClock;
+export default SvgCornerUpRight;

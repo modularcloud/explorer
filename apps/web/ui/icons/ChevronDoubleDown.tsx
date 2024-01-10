@@ -1,11 +1,10 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgClock = (props: SVGProps<SVGSVGElement>) => (
+const SvgChevronDoubleDown = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={16}
-    height={16}
     fill="none"
+    viewBox="0 0 16 16"
     {...props}
   >
     <path
@@ -13,8 +12,8 @@ const SvgClock = (props: SVGProps<SVGSVGElement>) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
-      d="M8 5.166V8l1.834 1.833M14.167 8A6.167 6.167 0 1 1 1.834 8a6.167 6.167 0 0 1 12.333 0"
+      d="m5.334 9 2.313 2.314a.5.5 0 0 0 .707 0L10.667 9M5.334 4.334l2.313 2.313a.5.5 0 0 0 .707 0l2.313-2.313"
     />
   </svg>
 );
-export default SvgClock;
+export default SvgChevronDoubleDown;

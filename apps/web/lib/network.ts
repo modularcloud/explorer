@@ -18,7 +18,7 @@ export const singleNetworkSchema = z.object({
     platform: z.string().max(64).optional(),
     // TODO : These are defaulted for now, but it should be returned by the API
     widgetLayout: z
-      .enum(["EvmWithPrice", "EvmWithoutPrice", "SVM", "Celestia"])
+      .enum(["EvmWithPrice", "EvmWithoutPrice", "SVM", "Celestia", "Dymension"])
       .optional()
       .catch(undefined),
     // This is in HSL format, and is used like this : hsl("224 94% 51%")
@@ -138,6 +138,10 @@ export async function getSingleNetwork(slug: string) {
       integration.config.widgetLayout = "Celestia";
       integration.config.primaryColor = "256 100% 67%";
       integration.config.cssGradient = `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`;
+    }
+    if (integration.chainBrand === "dymension") {
+      integration.config.widgetLayout = "Dymension";
+      integration.config.primaryColor = "29 13% 45%";
     }
 
     return integration;
