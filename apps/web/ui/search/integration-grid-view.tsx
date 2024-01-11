@@ -11,6 +11,8 @@ import type {
   GroupedNetworkChains,
   NetworkChain,
 } from "~/lib/grouped-network-chains";
+import { FancyCheck } from "~/ui/icons";
+import { Tooltip } from "~/ui/tooltip";
 interface Props {
   className?: string;
   optionGroups: GroupedNetworkChains;
@@ -149,6 +151,9 @@ const BrandChains = React.memo(function BrandChains({
 }: BrandChainsProps) {
   const options = chains;
   const groupName = options[0].brandName;
+  const DYMENSION_LOGO_URL =
+    "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";
+  const isInDymensionEcosystem = options[0].platform === "dymension";
   return (
     <div
       role="gridcell"
@@ -183,6 +188,24 @@ const BrandChains = React.memo(function BrandChains({
             aria-describedby={`${groupName}-logo`}
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
+          {isInDymensionEcosystem && (
+            <Tooltip label="Dymension">
+              <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
+                <Image
+                  src={DYMENSION_LOGO_URL}
+                  height="18"
+                  width="18"
+                  alt={``}
+                  aria-describedby={`${groupName}-logo`}
+                  className="border-none rounded-full object-center w-[1.125rem] h-[1.125rem] aspect-square"
+                />
+                <FancyCheck
+                  className="text-gray-400 w-6 h-6 flex-none"
+                  aria-hidden="true"
+                />
+              </div>
+            </Tooltip>
+          )}
         </div>
 
         {options.map((option) => {
