@@ -34,6 +34,13 @@ export function SearchForm({ optionGroups }: Props) {
     ? network.brandColor!
     : DEFAULT_BRAND_COLOR;
 
+  const defaultSearchModalNetwork = React.useMemo(
+    () => ({
+      value: network,
+    }),
+    [network],
+  );
+
   return (
     <div
       style={{
@@ -47,9 +54,7 @@ export function SearchForm({ optionGroups }: Props) {
       )}
     >
       <SearchModal
-        defaultNetwork={{
-          value: network,
-        }}
+        defaultNetwork={defaultSearchModalNetwork}
         brandColor={primaryColor}
         optionGroups={optionGroups}
       >

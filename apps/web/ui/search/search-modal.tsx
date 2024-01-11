@@ -22,7 +22,7 @@ import Image from "next/image";
 import {
   useChainsFilteredByEcosystem,
   useFilteredAndSortedNetworkChains,
-} from "./use-filtered-option-group";
+} from "./use-filtered-network-chains";
 
 // types
 import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
@@ -208,7 +208,7 @@ export function SearchModal({
             <IntegrationActionListView
               query={deferredInputValue}
               parentDialogRef={dialogRef}
-              searcheableTypes={searcheableTypes ?? []}
+              searcheableTypes={searcheableTypes}
               selectedNetwork={currentNetwork}
               onChangeChainClicked={onListItemActionChangeChainClicked}
               onNavigate={onListItemActionNavigate}

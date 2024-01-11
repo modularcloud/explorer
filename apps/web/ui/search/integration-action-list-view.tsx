@@ -236,16 +236,13 @@ export const IntegrationActionListView = React.memo(
         const networkChainRowSize = 36;
         const itemPadding = 16;
         const row = ecosystemNetworks[index];
-
-        if (!row) return 0;
-
         return (
           ecosystemBrandNameSize +
           networkChainRowSize * row.length +
           itemPadding
         );
       },
-      overscan: 5,
+      overscan: 3,
       scrollPaddingEnd: DEFAULT_ECOSYSTEM_ROW_SIZE,
       scrollPaddingStart: 0,
     });

@@ -33,6 +33,7 @@ export function useSearcheableEntities({
       revalidateOnFocus: false,
       keepPreviousData: true,
       revalidateIfStale: false,
+      fallbackData: [],
     },
   );
 }

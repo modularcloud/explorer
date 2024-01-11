@@ -64,12 +64,13 @@ export function useItemGrid<
   const onSelectOption = React.useRef(onSelectionOptionArg);
   const onClickOption = React.useRef(onClickOptionArg);
 
-  // BEWARE : BIG HACK !!!
-  // This is so that we can pass `onSelectOption` & `onClickOption` as closures
-  // without causing unnecessary rerenders
-  // with this, we don't need to memoize these callbacks
-  onSelectOption.current = onSelectionOptionArg;
-  onClickOption.current = onClickOptionArg;
+  React.useLayoutEffect(() => {
+    // This is so that we can pass `onSelectOption` & `onClickOption` as closures
+    // without causing unnecessary rerenders
+    // with this, we don't need to memoize these callbacks
+    onSelectOption.current = onSelectionOptionArg;
+    onClickOption.current = onClickOptionArg;
+  });
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
   const [selectedColIndex, setSelectedColIndex] = React.useState(0);
