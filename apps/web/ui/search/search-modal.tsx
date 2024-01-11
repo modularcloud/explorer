@@ -220,7 +220,10 @@ export function SearchModal({
                 // TODO : This is temporary because in the future we want to support other ecosystems as well
                 //        we need to change the way we filter chains passed for the ecosystem
                 // only for dymension chains for now
-                currentNetwork.platform === "dymension" ? ecosystemChains : null
+                currentNetwork.platform === "dymension" ||
+                currentNetwork.id === "dymension-froopyland"
+                  ? ecosystemChains
+                  : null
               }
             />
           )}
