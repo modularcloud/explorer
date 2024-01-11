@@ -30,10 +30,10 @@ export async function generateMetadata({
   ) {
     return {
       title: `Latest ${capitalize(params.path[0])} on ${capitalize(
-        network.chainBrand,
+        network.brand,
       )} ${capitalize(network.chainName)}`,
       description: `Latest ${capitalize(params.path[0])} on ${capitalize(
-        network.chainBrand,
+        network.brand,
       )} ${capitalize(network.chainName)}, brought to you by Modular Cloud.`,
     };
   }
@@ -81,10 +81,10 @@ export async function generateMetadata({
 
   return {
     title: `${titleParts.join(" - ")} - ${capitalize(
-      network.chainBrand,
+      network.brand,
     )} ${capitalize(network.chainName)}`,
     description: `${descriptionParts.join(" in ")} on ${capitalize(
-      network.chainBrand,
+      network.brand,
     )} ${capitalize(network.chainName)}, brought to you by Modular Cloud.`,
   };
 }

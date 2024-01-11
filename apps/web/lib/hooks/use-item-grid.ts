@@ -6,6 +6,7 @@ export type OnSelectOptionArgs<T> = {
   rowIndex: number;
   colIndex: number;
   inputMethod: "keyboard" | "mouse";
+  htmlElementId: string;
 };
 
 type UseItemGridArgs<T> = {
@@ -28,7 +29,7 @@ type UseItemGridArgs<T> = {
    * The list of groups to display into grids, this should be memoized or else
    *  it could cause too many rerenders
    */
-  optionGroups: { [groupDisplayName: string]: T[] };
+  optionGroups: Array<T[]>;
   /**
    * The default key to show first in the list
    */
@@ -45,36 +46,32 @@ type UseItemGridArgs<T> = {
  * @returns
  */
 export function useItemGrid<
-  T extends { id: string } | { readonly id: string },
+  T extends { id: string; scrollOnSelection?: boolean },
 >({
   noOfColumns,
   optionGroups,
-  defaultOptionGroupKeyToSortFirst,
-  onClickOption,
-  onSelectOption,
+  onClickOption: onClickOptionArg,
+  onSelectOption: onSelectionOptionArg,
   scopeRef,
   scrollOnSelection = true,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
-  const groupedByLines = React.useMemo(() => {
-    let groups = Object.entries(optionGroups);
-    if (
-      defaultOptionGroupKeyToSortFirst &&
-      optionGroups[defaultOptionGroupKeyToSortFirst]
-    ) {
-      groups = groups.sort((a, b) => {
-        if (a[0] === defaultOptionGroupKeyToSortFirst) {
-          return -1;
-        }
-        if (b[0] === defaultOptionGroupKeyToSortFirst) {
-          return 1;
-        }
-        return 0;
-      });
-    }
+  const groupedByLines = React.useMemo(
+    () => chunkArray(optionGroups, noOfColumns),
+    [noOfColumns, optionGroups],
+  );
 
-    return chunkArray(groups, noOfColumns);
-  }, [noOfColumns, optionGroups, defaultOptionGroupKeyToSortFirst]);
+  const onSelectOption = React.useRef(onSelectionOptionArg);
+  const onClickOption = React.useRef(onClickOptionArg);
+
+  React.useLayoutEffect(() => {
+    // BEWARE : BIG HACK !!!
+    // This is so that we can pass `onSelectOption` & `onClickOption` as closures
+    // without causing unnecessary useEffect reruns
+    // with this, we don't need to memoize these callbacks
+    onSelectOption.current = onSelectionOptionArg;
+    onClickOption.current = onClickOptionArg;
+  });
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
   const [selectedColIndex, setSelectedColIndex] = React.useState(0);
@@ -89,6 +86,13 @@ export function useItemGrid<
     option: selectedOption,
   });
 
+  const getOptionId = React.useCallback(
+    (rowIndex: number, colIndex: number, option: T) => {
+      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
+    },
+    [itemRootId],
+  );
+
   const selectOption = React.useCallback(
     ({
       rowIndex,
@@ -100,14 +104,14 @@ export function useItemGrid<
       colIndex?: number;
     }) => {
       // we default to the ref values as they have the previous values in store
-      const newRowIndex =
-        rowIndex !== undefined
-          ? rowIndex
-          : selectedItemPositionRef.current.rowIndex;
-      const newColIndex =
-        colIndex !== undefined
-          ? colIndex
-          : selectedItemPositionRef.current.colIndex;
+      const {
+        option: previousSelectedOption,
+        rowIndex: oldRowIndex,
+        colIndex: oldColIndex,
+      } = selectedItemPositionRef.current;
+
+      const newRowIndex = rowIndex !== undefined ? rowIndex : oldRowIndex;
+      const newColIndex = colIndex !== undefined ? colIndex : oldColIndex;
 
       setSelectedRowIndex(newRowIndex);
       setSelectedColIndex(newColIndex);
@@ -119,8 +123,29 @@ export function useItemGrid<
         rowIndex: newRowIndex,
         colIndex: newColIndex,
       };
+
+      // update element html attributes
+      let currentlySelectedElement: HTMLElement | null = null;
+      let previouslySelectedElement: HTMLElement | null = null;
+
+      if (option !== null) {
+        currentlySelectedElement = document.getElementById(
+          getOptionId(newRowIndex, newColIndex, option),
+        );
+      }
+      if (previousSelectedOption !== null) {
+        previouslySelectedElement = document.getElementById(
+          getOptionId(oldRowIndex, oldColIndex, previousSelectedOption),
+        );
+      }
+
+      previouslySelectedElement?.setAttribute("aria-selected", "false");
+      previouslySelectedElement?.setAttribute("tabindex", "-1");
+
+      currentlySelectedElement?.setAttribute("aria-selected", "true");
+      currentlySelectedElement?.setAttribute("tabindex", "0");
     },
-    [],
+    [getOptionId],
   );
 
   /**
@@ -138,32 +163,32 @@ export function useItemGrid<
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
     if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+    const currentCell = groupedByLines[rowIndex][colIndex];
 
-    let selectedOptionIndex = currentGroupOptions.findIndex(
+    let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
     );
 
     if (selectedOptionIndex === -1) {
       // we select the first element of the group if there is none selected
       selectOption({
-        option: currentGroupOptions[0],
+        option: currentCell[0],
         rowIndex: 0,
         colIndex: 0,
       });
     } else if (
       selectedOptionIndex >= 0 &&
-      selectedOptionIndex < currentGroupOptions.length - 1
+      selectedOptionIndex < currentCell.length - 1
     ) {
       // navigation between the same group
       selectOption({
-        option: currentGroupOptions[selectedOptionIndex + 1],
+        option: currentCell[selectedOptionIndex + 1],
       });
     } else if (rowIndex < groupedByLines.length - 1) {
       // navigation between rows
-      const [_, nextGroupOptions] = groupedByLines[rowIndex + 1][colIndex];
+      const nextCell = groupedByLines[rowIndex + 1][colIndex];
       selectOption({
-        option: nextGroupOptions[0],
+        option: nextCell[0],
         rowIndex: rowIndex + 1,
       });
     } else return;
@@ -173,22 +198,23 @@ export function useItemGrid<
       option: newSelectedOption,
     } = selectedItemPositionRef.current;
     if (newSelectedOption !== null) {
-      onSelectOption?.({
+      onSelectOption.current?.({
         option: newSelectedOption,
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, getOptionId]);
 
   const moveSelectionUp = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
     if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+    const currentCell = groupedByLines[rowIndex][colIndex];
 
-    let selectedOptionIndex = currentGroupOptions.findIndex(
+    let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
     );
 
@@ -197,18 +223,18 @@ export function useItemGrid<
 
     if (
       selectedOptionIndex > 0 &&
-      selectedOptionIndex <= currentGroupOptions.length - 1
+      selectedOptionIndex <= currentCell.length - 1
     ) {
       // navigation between the same group
       selectOption({
-        option: currentGroupOptions[selectedOptionIndex - 1],
+        option: currentCell[selectedOptionIndex - 1],
       });
     } else if (rowIndex > 0) {
       // navigation between rows
-      const [_, nextGroupOptions] = groupedByLines[rowIndex - 1][colIndex];
+      const nextCell = groupedByLines[rowIndex - 1][colIndex];
 
       selectOption({
-        option: nextGroupOptions[nextGroupOptions.length - 1], // select last index of the row up
+        option: nextCell[nextCell.length - 1], // select last index of the row up
         rowIndex: rowIndex - 1,
       });
     } else return;
@@ -218,14 +244,15 @@ export function useItemGrid<
       option: newSelectedOption,
     } = selectedItemPositionRef.current;
     if (newSelectedOption !== null) {
-      onSelectOption?.({
+      onSelectOption.current?.({
         option: newSelectedOption,
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, getOptionId]);
 
   /**
    * 1- Navigating left/right has 2 cases :
@@ -240,16 +267,16 @@ export function useItemGrid<
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
     if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+    const currentCell = groupedByLines[rowIndex][colIndex];
 
-    let selectedOptionIndex = currentGroupOptions.findIndex(
+    let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
     );
 
     if (selectedOptionIndex === -1) {
       // we select the first element of the group if there is none selected
       selectOption({
-        option: currentGroupOptions[0],
+        option: currentCell[0],
         rowIndex: 0,
         colIndex: 0,
       });
@@ -258,11 +285,11 @@ export function useItemGrid<
       colIndex < groupedByLines[rowIndex].length - 1
     ) {
       // navigation between the same group
-      const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex + 1];
+      const nextCell = groupedByLines[rowIndex][colIndex + 1];
 
-      let nextOption = nextGroupOptions[selectedOptionIndex];
+      let nextOption = nextCell[selectedOptionIndex];
       if (!nextOption) {
-        nextOption = nextGroupOptions[0];
+        nextOption = nextCell[0];
       }
 
       selectOption({
@@ -276,22 +303,23 @@ export function useItemGrid<
       option: newSelectedOption,
     } = selectedItemPositionRef.current;
     if (newSelectedOption !== null) {
-      onSelectOption?.({
+      onSelectOption.current?.({
         option: newSelectedOption,
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
 
   const moveSelectionLeft = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
     if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const [_, currentGroupOptions] = groupedByLines[rowIndex][colIndex];
+    const currentCell = groupedByLines[rowIndex][colIndex];
 
-    let selectedOptionIndex = currentGroupOptions.findIndex(
+    let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
     );
 
@@ -299,11 +327,11 @@ export function useItemGrid<
 
     if (colIndex > 0 && colIndex <= groupedByLines[rowIndex].length - 1) {
       // navigation between the same group
-      const [_, nextGroupOptions] = groupedByLines[rowIndex][colIndex - 1];
+      const nextCell = groupedByLines[rowIndex][colIndex - 1];
 
-      let nextOption = nextGroupOptions[selectedOptionIndex];
+      let nextOption = nextCell[selectedOptionIndex];
       if (!nextOption) {
-        nextOption = nextGroupOptions[0];
+        nextOption = nextCell[0];
       }
 
       selectOption({
@@ -317,36 +345,29 @@ export function useItemGrid<
       option: newSelectedOption,
     } = selectedItemPositionRef.current;
     if (newSelectedOption !== null) {
-      onSelectOption?.({
+      onSelectOption.current?.({
         option: newSelectedOption,
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
+        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
       });
     }
-  }, [groupedByLines, selectOption, onSelectOption]);
+  }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
 
   const scrollOptionIntoView = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
 
     if (option) {
-      // scroll option into view
       const element = document.getElementById(
-        `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
-      ) as HTMLDivElement | null;
+        getOptionId(rowIndex, colIndex, option),
+      ) as HTMLElement | null;
 
       element?.scrollIntoView({
         block: "nearest",
       });
     }
-  }, [itemRootId]);
-
-  const getOptionId = React.useCallback(
-    (rowIndex: number, colIndex: number, option: T) => {
-      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
-    },
-    [itemRootId],
-  );
+  }, [getOptionId]);
 
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
@@ -366,7 +387,7 @@ export function useItemGrid<
        */
       const { option: currentOption } = selectedItemPositionRef.current;
       if (event.key === "Enter" && !event.repeat && currentOption) {
-        onClickOption?.(currentOption);
+        onClickOption.current?.(currentOption);
         // we don't want this event to be propagated to the whole page
         // so that element that listen globally (for hotkey for ex.) don't react accordingly
         event.stopPropagation();
@@ -436,7 +457,7 @@ export function useItemGrid<
      *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
      *      to fix it, we just reset the selected column to 0
      */
-    const defaultSelectedItem = groupedByLines[0]?.[0]?.[1]?.[0];
+    const defaultSelectedItem = groupedByLines[0]?.[0]?.[0];
     selectOption({
       option: defaultSelectedItem ?? null,
       rowIndex: 0,
@@ -458,14 +479,9 @@ export function useItemGrid<
   const lastMousePositionRef = React.useRef({ x: 0, y: 0 });
   const registerOptionProps = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
-      const isSelected =
-        selectedOption?.id === option.id &&
-        selectedColIndex === colIndex &&
-        selectedRowIndex == rowIndex;
-
       return {
-        id: `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`,
-        onClick: () => onClickOption?.(option),
+        id: getOptionId(rowIndex, colIndex, option),
+        onClick: () => onClickOption.current?.(option),
         onMouseMove: (event: React.MouseEvent) => {
           // This is to fix a bug in SAFARI,
           // In safari the `MouseMove` Event is triggered even on scroll
@@ -479,13 +495,21 @@ export function useItemGrid<
 
           if (!hasMoved) return;
 
-          selectOption({ option, rowIndex, colIndex });
-          onSelectOption?.({
-            option,
-            colIndex,
-            rowIndex,
-            inputMethod: "mouse",
-          });
+          const { option: selectedOption } = selectedItemPositionRef.current;
+
+          const currentItemId = option.id;
+          const selectedItemId = selectedOption?.id;
+
+          if (currentItemId !== selectedItemId) {
+            selectOption({ option, rowIndex, colIndex });
+            onSelectOption.current?.({
+              option,
+              colIndex,
+              rowIndex,
+              inputMethod: "mouse",
+              htmlElementId: getOptionId(rowIndex, colIndex, option),
+            });
+          }
         },
         onFocus: () => {
           selectOption({ option, rowIndex, colIndex });
@@ -498,19 +522,9 @@ export function useItemGrid<
           });
         },
         role: "option",
-        "aria-selected": isSelected,
-        tabIndex: isSelected ? -1 : 0,
       };
     },
-    [
-      itemRootId,
-      selectedOption,
-      selectedColIndex,
-      selectedRowIndex,
-      onClickOption,
-      selectOption,
-      onSelectOption,
-    ],
+    [getOptionId, selectOption],
   );
 
   return {

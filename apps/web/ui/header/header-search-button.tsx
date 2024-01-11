@@ -17,9 +17,9 @@ import {
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 interface Props {
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
 }
 
 export function HeaderSearchButton({ optionGroups }: Props) {

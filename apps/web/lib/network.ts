@@ -34,7 +34,8 @@ export const singleNetworkSchema = z.object({
   paidVersion: z.boolean(),
   slug: z.string(),
   chainName: z.string(),
-  chainBrand: z.string(),
+  brand: z.string(),
+  accountId: z.string(),
   internalId: z.string(),
   integrationId: z.string().uuid(),
   createdTime: preprocess((arg) => new Date(arg as any), z.date()),
@@ -91,8 +92,8 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
 
   allIntegrations = allIntegrations.sort((a, b) => {
     // prioritize celestia before every other chain
-    if (a.chainBrand === "celestia") return -1;
-    if (a.chainBrand === "celestia") return 1;
+    if (a.brand === "celestia") return -1;
+    if (a.brand === "celestia") return 1;
 
     // put non paid chains at the end
     if (!a.paidVersion) return 1;
@@ -133,12 +134,12 @@ export async function getSingleNetwork(slug: string) {
       integration.config.primaryColor = "236 15% 18%";
       integration.config.cssGradient = `linear-gradient(97deg, #000 -5.89%, #1E1E1E 83.12%, #000 103.23%)`;
     }
-    if (integration.chainBrand === "celestia") {
+    if (integration.brand === "celestia") {
       integration.config.widgetLayout = "Celestia";
       integration.config.primaryColor = "256 100% 67%";
       integration.config.cssGradient = `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`;
     }
-    if (integration.chainBrand === "dymension") {
+    if (integration.brand === "dymension") {
       integration.config.widgetLayout = "Dymension";
       integration.config.primaryColor = "29 13% 45%";
     }

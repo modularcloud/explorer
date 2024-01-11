@@ -102,12 +102,12 @@ export function RightPanel({ data, network }: Props) {
           src={network.config.logoUrl}
           width={24}
           height={24}
-          alt={`Logo ${network.chainBrand}`}
+          alt={`Logo ${network.brand}`}
           className="object-center object-contain flex-shrink-0"
         />
 
         <h2 className="text-lg font-medium">
-          {capitalize(network.chainBrand)} {capitalize(network.chainName)}
+          {capitalize(network.brand)} {capitalize(network.chainName)}
         </h2>
 
         {network.paidVersion && (

@@ -87,7 +87,6 @@ export function Table({ initialData, route }: Props) {
         "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
       initialData: {
-        // TODO : remove and replace later with a fallback
         pages: [initialData],
         pageParams: [undefined],
       },

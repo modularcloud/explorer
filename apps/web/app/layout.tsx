@@ -8,7 +8,7 @@ import { SkipToMainContent } from "~/ui/skip-to-main-content";
 
 // utils
 import localFont from "next/font/local";
-import { getSearchOptionGroups } from "~/lib/search-options";
+import { getGroupedNetworkChains } from "~/lib/search-options";
 
 // types
 import type { Metadata } from "next";
@@ -54,7 +54,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const searchOptionGroups = await getSearchOptionGroups();
+  const searchOptionGroups = await getGroupedNetworkChains();
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <head>

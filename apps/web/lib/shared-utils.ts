@@ -177,3 +177,20 @@ export async function jsonFetch<T>(
       throw error;
     });
 }
+
+export function arrayGroupByTo2DArray<T extends Record<string, any>>(
+  array: T[],
+  key: keyof T,
+) {
+  const map = new Map<string, T[]>();
+
+  for (const item of array) {
+    const keyValue = item[key];
+    if (!map.has(keyValue)) {
+      map.set(keyValue, []);
+    }
+    map.get(keyValue)!.push(item);
+  }
+
+  return Array.from(map.values());
+}
