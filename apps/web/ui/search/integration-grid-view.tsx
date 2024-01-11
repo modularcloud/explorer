@@ -178,7 +178,7 @@ const BrandChains = React.memo(function BrandChains({
             width="16"
             alt={``}
             aria-describedby={`${groupName}-logo`}
-            className="border-none"
+            className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
         </div>
 
