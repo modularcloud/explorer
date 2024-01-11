@@ -18,7 +18,10 @@ export async function getGroupedNetworkChains() {
     id: currentNetwork.slug,
     brandName: currentNetwork.brand,
     logoURL: currentNetwork.config.logoUrl,
-    platform: currentNetwork.config.platform,
+    platform:
+      currentNetwork.slug === "dymension-froopyland"
+        ? "dymension"
+        : currentNetwork.config.platform,
     accountId: currentNetwork.accountId,
   }));
 

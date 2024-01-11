@@ -7,7 +7,7 @@ import { Grid, List } from "~/ui/icons";
 import { HeaderSearchButton } from "./header-search-button";
 
 // utils
-import { getGroupedNetworkChains } from "~/lib/search-options";
+import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 import { cn } from "~/ui/shadcn/utils";
 
 // types

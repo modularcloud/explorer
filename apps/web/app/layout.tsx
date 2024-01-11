@@ -8,7 +8,7 @@ import { SkipToMainContent } from "~/ui/skip-to-main-content";
 
 // utils
 import localFont from "next/font/local";
-import { getGroupedNetworkChains } from "~/lib/search-options";
+import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 // types
 import type { Metadata } from "next";
