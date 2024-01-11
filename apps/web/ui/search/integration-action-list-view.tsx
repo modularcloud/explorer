@@ -245,7 +245,7 @@ export const IntegrationActionListView = React.memo(
           itemPadding
         );
       },
-      overscan: 3,
+      overscan: 5,
       scrollPaddingEnd: DEFAULT_ECOSYSTEM_ROW_SIZE,
       scrollPaddingStart: 0,
     });
