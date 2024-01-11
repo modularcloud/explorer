@@ -17,7 +17,7 @@ import {
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 interface Props {
   optionGroups: GroupedNetworkChains;
 }

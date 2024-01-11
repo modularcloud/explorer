@@ -14,7 +14,7 @@ import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 // types
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 
 interface Props {
   optionGroups: GroupedNetworkChains;

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;

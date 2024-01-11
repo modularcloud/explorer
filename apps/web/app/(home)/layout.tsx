@@ -1,6 +1,6 @@
 import { Footer } from "~/ui/footer";
 import { SearchForm } from "~/ui/search/search-form";
-import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
+import { getGroupedNetworkChains } from "~/lib/search-options";
 
 export default async function HomeLayout({
   children,
