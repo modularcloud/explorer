@@ -71,7 +71,10 @@ export function SearchForm({ optionGroups }: Props) {
             {network.verified && (
               <Tooltip label="This chain is verified">
                 <span>
-                  <FancyCheck className="text-primary" aria-hidden="true" />
+                  <FancyCheck
+                    className="text-primary h-6 w-6 flex-none"
+                    aria-hidden="true"
+                  />
                 </span>
               </Tooltip>
             )}
