@@ -56,39 +56,46 @@ type BlobPDFViewerProps = {
 function BlobPDFViewer({ url }: BlobPDFViewerProps) {
   const id = React.useId();
 
-  React.useEffect(() => {
-    function showPreview() {
-      if ("AdobeDC" in window) {
-        let adobeDCView = new (window.AdobeDC as any).View({
-          clientId: env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
-          divId: id,
-        });
+  const showPreview = React.useCallback(() => {
+    // @ts-expect-error AdobeDC is injected by the adobe embed script
+    if (window.AdobeDC !== undefined) {
+      // @ts-expect-error
+      let adobeDCView = new (window.AdobeDC as any).View({
+        clientId: env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
+        divId: id,
+      });
 
-        const urlParts = url.split("/");
-        adobeDCView.previewFile(
-          {
-            content: {
-              location: {
-                url,
-              },
+      const urlParts = url.split("/");
+      adobeDCView.previewFile(
+        {
+          content: {
+            location: {
+              url,
             },
-            metaData: { fileName: urlParts[urlParts.length - 1] },
           },
-          { embedMode: "SIZED_CONTAINER" },
-        );
-      }
+          metaData: { fileName: urlParts[urlParts.length - 1] },
+        },
+        { embedMode: "SIZED_CONTAINER" },
+      );
     }
+  }, [url, id]);
 
-    showPreview();
-
+  React.useEffect(() => {
     document.addEventListener("adobe_dc_view_sdk.ready", showPreview);
-    return document.removeEventListener("adobe_dc_view_sdk.ready", showPreview);
-  }, [id, url]);
+  }, [showPreview]);
 
   return (
     <>
-      <Script src="https://acrobatservices.adobe.com/view-sdk/viewer.js" />
-      <div className="overflow-auto w-full max-h-screen" id={id}></div>
+      <Script
+        src="https://acrobatservices.adobe.com/view-sdk/viewer.js"
+        onReady={showPreview}
+      />
+      <div
+        className="w-full h-[350px] mb-20 bg-mid-dark-100 flex items-center justify-center"
+        id={id}
+      >
+        loading pdf...
+      </div>
     </>
   );
 }
