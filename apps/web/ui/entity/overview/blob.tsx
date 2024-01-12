@@ -1,23 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import * as React from "react";
-import { Document, Page, pdfjs } from "react-pdf";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+import Script from "next/script";
 import { ButtonBody } from "./button-body";
 import Link from "next/link";
 
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url,
-).toString();
+import { env } from "~/env.mjs";
 
 export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
   const { data, isLoading } = useBlobData(url);
-  const [numPages, setNumPages] = React.useState<number>();
 
   async function copyBase64Value() {
     if (!data) return;
@@ -51,26 +44,57 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
       {mimeType.startsWith("video/") && (
         <video controls src={url} className="w-full" />
       )}
-      {mimeType === "application/pdf" && data ? (
-        <div className="overflow-auto w-full max-h-screen">
-          <Document
-            file={data.arrayBuffer}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          >
-            {Array.from({ length: numPages || 0 }, (_, i) => i + 1).map(
-              (page: number) => (
-                <Page key={page} pageNumber={page} />
-              ),
-            )}
-          </Document>
-        </div>
-      ) : null}
+      {mimeType === "application/pdf" && data && <BlobPDFViewer url={url} />}
     </div>
   );
 }
 
+type BlobPDFViewerProps = {
+  url: string;
+};
+
+function BlobPDFViewer({ url }: BlobPDFViewerProps) {
+  const id = React.useId();
+
+  React.useEffect(() => {
+    function showPreview() {
+      if ("AdobeDC" in window) {
+        let adobeDCView = new (window.AdobeDC as any).View({
+          clientId: env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
+          divId: id,
+        });
+
+        const urlParts = url.split("/");
+        adobeDCView.previewFile(
+          {
+            content: {
+              location: {
+                url,
+              },
+            },
+            metaData: { fileName: urlParts[urlParts.length - 1] },
+          },
+          { embedMode: "SIZED_CONTAINER" },
+        );
+      }
+    }
+
+    showPreview();
+
+    document.addEventListener("adobe_dc_view_sdk.ready", showPreview);
+    return document.removeEventListener("adobe_dc_view_sdk.ready", showPreview);
+  }, [id, url]);
+
+  return (
+    <>
+      <Script src="https://acrobatservices.adobe.com/view-sdk/viewer.js" />
+      <div className="overflow-auto w-full max-h-screen" id={id}></div>
+    </>
+  );
+}
+
 function useBlobData(url: string) {
-  return useSWR(url, async (url) => {
+  return useSWRImmutable(url, async (url) => {
     const response = await fetch(url);
     const blob = await response.blob();
     const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
