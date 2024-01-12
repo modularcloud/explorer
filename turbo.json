@@ -47,7 +47,9 @@
         "RESEND_EMAIL_RECEIVER",
         "NEXT_PUBLIC_SVM_METRICS",
         "SVM_DEVNET_RPC_ALTERNATIVE",
-        "CELESTIA_MAINNET_BACKUP_NODE"
+        "CELESTIA_MAINNET_BACKUP_NODE",
+        "NEXT_PUBLIC_ADOBE_EMBED_API_KEY",
+        "BLOB_READ_WRITE_TOKEN"
       ]
     },
     "verify#build": {
