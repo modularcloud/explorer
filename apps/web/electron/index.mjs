@@ -8,11 +8,9 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
-    titleBarStyle: "hidden",
+    // titleBarStyle: "hidden",
     titleBarOverlay: {
-      color: "#2f3241",
-      symbolColor: "#74b1be",
-      height: 60,
+      height: 35,
     },
     vibrancy: "hud",
   });

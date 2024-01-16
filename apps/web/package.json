@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.local .next/standalone/apps/web/.env.local",
     "ts-check": "tsc --noEmit",
     "electron": "electron ./electron/index.mjs",
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"

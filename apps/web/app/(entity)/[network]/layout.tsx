@@ -40,7 +40,7 @@ export default async function BlockLayout({
             id="main-content"
             tabIndex={0}
             className={cn(
-              "mt-[65px] bg-muted-100 min-h-screen",
+              "mt-[65px] bg-muted-100/80 min-h-screen",
               // style children but not the header nav
               "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white col-span-6",
             )}
@@ -55,7 +55,7 @@ export default async function BlockLayout({
               className={cn(
                 // the height of the sidebar is the total height of the screen - the height of the <Header /> component
                 "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
-                "bg-muted-100 hidden lg:block",
+                "bg-transparent hidden lg:block",
                 "fixed top-[63px] bottom-0 right-0",
                 "overflow-hidden",
               )}
