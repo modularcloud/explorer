@@ -14,6 +14,7 @@ const createWindow = () => {
       symbolColor: "#74b1be",
       height: 60,
     },
+    vibrancy: "hud",
   });
 
   mainWindow.loadURL(`http://localhost:3000`);
