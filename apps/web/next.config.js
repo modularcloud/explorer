@@ -1,9 +1,10 @@
 // @ts-check
-import "./env.mjs";
+// import "./env.mjs";
+require("./env.js");
 
 /** @type {import('next').NextConfig} */
 const config = {
-  output: 'standalone',
+  output: "standalone",
   async redirects() {
     return [
       {
@@ -51,4 +52,5 @@ const config = {
   },
 };
 
-export default config;
+// export default config;
+module.exports = config;

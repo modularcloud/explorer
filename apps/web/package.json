@@ -1,18 +1,46 @@
 {
   "name": "web",
   "version": "0.0.0",
+  "author": {
+    "name": "Liam Cardenas",
+    "email": "lzrs@modular.cloud"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.local .next/standalone/apps/web/.env.local",
+    "postinstall": "electron-builder install-app-deps",
+    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.local .next/standalone/apps/web/.env.local && rsync -a .next/standalone/ electron/standalone",
+    "build:electron": "rm -rf dist/ &&  electron-builder build  --macos",
+    "rebuild": "electron-rebuild",
     "ts-check": "tsc --noEmit",
-    "electron": "electron ./electron/index.mjs",
+    "electron": "electron ./electron/index.js",
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
   },
-  "type": "module",
+  "description": "A block exporer for modular blockchains.",
+  "build": {
+    "appId": "cloud.modular.explorer",
+    "productName": "Modular Cloud explorer",
+    "mac": {
+      "icon": "./public/mc-logo.svg"
+    },
+    "electronVersion": "28.1.3",
+    "files": [
+      "node_modules",
+      "package.json",
+      "electron",
+      "electron/standalone/**/*",
+      "public"
+    ],
+    "directories": {
+      "output": "dist",
+      "app": ".",
+      "buildResources": "electron/assets"
+    }
+  },
+  "main": "electron/index.js",
   "dependencies": {
     "@modularcloud/headless": "*",
     "@monaco-editor/react": "^4.5.1",
@@ -39,7 +67,6 @@
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "decimal.js": "^10.4.3",
-    "electron": "^28.1.3",
     "lucide-react": "^0.259.0",
     "next": "^14.0.4",
     "react": "^18.2.0",
@@ -58,11 +85,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
+    "@electron/rebuild": "^3.5.0",
     "@svgr/cli": "^8.1.0",
     "@types/node": "^17.0.12",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.13",
+    "electron": "^28.1.3",
+    "electron-builder": "^24.9.1",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
     "postcss": "^8.4.21",

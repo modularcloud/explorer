@@ -7,7 +7,7 @@ import Script from "next/script";
 import { ButtonBody } from "./button-body";
 import Link from "next/link";
 
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
   const { data, isLoading } = useBlobData(url);

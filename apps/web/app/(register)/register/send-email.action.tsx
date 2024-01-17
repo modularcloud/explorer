@@ -1,6 +1,6 @@
 "use server";
 
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import type { RegisterFormValues } from "./register-schema";
 import { Resend } from "resend";
 

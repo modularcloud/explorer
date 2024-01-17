@@ -1,7 +1,7 @@
 import "server-only";
 import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { CACHE_KEYS } from "./cache-keys";
 
 export const singleNetworkSchema = z.object({

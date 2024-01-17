@@ -1,8 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 // @ts-check
-import { app, BrowserWindow } from "electron";
-
-import "../.next/standalone/apps/web/server.js";
+const { app, BrowserWindow } = require("electron");
+require("./standalone/apps/web/server.js");
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -30,5 +29,6 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  // if (process.platform !== "darwin")
+  app.quit();
 });

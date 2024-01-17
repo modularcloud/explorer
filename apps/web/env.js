@@ -1,8 +1,10 @@
 // @ts-check
-import { createEnv } from "@t3-oss/env-nextjs";
-import { preprocess, z } from "zod";
+// import { createEnv } from "@t3-oss/env-nextjs";
+// import { preprocess, z } from "zod";
+const { preprocess, z } = require("zod");
+const { createEnv } = require("@t3-oss/env-nextjs");
 
-export const env = createEnv({
+const env = createEnv({
   server: {
     NAMESPACE_ENDPOINT: z.string().url().optional(),
     BLOB_READ_WRITE_TOKEN: z.string(),
@@ -61,7 +63,12 @@ export const env = createEnv({
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
     CRON_SECRET: process.env.CRON_SECRET,
     CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
-    NEXT_PUBLIC_ADOBE_EMBED_API_KEY: process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
+    NEXT_PUBLIC_ADOBE_EMBED_API_KEY:
+      process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
   },
 });
+
+module.exports = {
+  env,
+};
