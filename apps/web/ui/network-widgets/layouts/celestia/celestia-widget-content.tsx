@@ -39,12 +39,8 @@ export function CelestiaWidgetLayoutContent({
 
   const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
-  if (error) {
-    return <CelestiaWidgetSkeleton error={error} />;
-  }
-
   if (!data) {
-    return <CelestiaWidgetSkeleton />;
+    return <CelestiaWidgetSkeleton error={error} />;
   }
 
   const [apiResult, latestBlocks, latestTransactions] = data;

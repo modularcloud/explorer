@@ -26,12 +26,8 @@ export function DymensionWidgetContent({
 
   const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
-  if (error) {
-    return <DymensionWidgetSkeleton error={error.toString()} />;
-  }
-
   if (!data) {
-    return <DymensionWidgetSkeleton />;
+    return <DymensionWidgetSkeleton error={error.toString()} />;
   }
 
   return (
