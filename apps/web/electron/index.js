@@ -7,7 +7,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
-    // titleBarStyle: "hidden",
+    titleBarStyle: "hidden",
     titleBarOverlay: {
       height: 35,
     },

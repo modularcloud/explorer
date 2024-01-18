@@ -67,6 +67,8 @@ export default async function RootLayout({
         className={`${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
+        {/* Draggable area on desktop */}
+        <div className="bg-transparent h-[35px] [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
         <SkipToMainContent />
         <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
           {children}
