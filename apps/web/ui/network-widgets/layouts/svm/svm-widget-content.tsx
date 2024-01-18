@@ -39,18 +39,18 @@ export function SVMWidgetLayoutContent({
 
   const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
-  if (error) {
+  if (!data) {
     return (
       <SVMWidgetSkeleton
-        error={{
-          message: error.toString(),
-        }}
+        error={
+          error
+            ? {
+                message: error.toString(),
+              }
+            : undefined
+        }
       />
     );
-  }
-
-  if (!data) {
-    return <SVMWidgetSkeleton />;
   }
 
   const [apiResult, latestBlocks, latestTransactions] = data;
