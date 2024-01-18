@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "electron-builder install-app-deps",
-    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.local .next/standalone/apps/web/.env.local && rsync -a .next/standalone/ electron/standalone",
+    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.local .next/standalone/apps/web/.env.local && rsync -a .next/standalone/ electron/standalone && sed -i .bak 's/process.chdir(__dirname)//g' electron/standalone/apps/web/server.js",
     "build:electron": "rm -rf dist/ &&  electron-builder build  --macos",
     "rebuild": "electron-rebuild",
     "ts-check": "tsc --noEmit",
