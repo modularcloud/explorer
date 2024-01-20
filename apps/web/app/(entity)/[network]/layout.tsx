@@ -57,7 +57,7 @@ export default async function BlockLayout({
                 "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
                 "bg-muted-100 hidden lg:block",
                 "fixed top-[63px] bottom-0 right-0",
-                "overflow-hidden",
+                "overflow-hidden z-40",
               )}
             >
               {rightpanel}

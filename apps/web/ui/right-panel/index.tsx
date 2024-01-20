@@ -4,14 +4,7 @@ import * as React from "react";
 // components
 import Image from "next/image";
 import { Tooltip } from "~/ui/tooltip";
-import {
-  Electricity,
-  FancyCheck,
-  KeyboardArrowDown,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  KeyboardArrowUp,
-} from "~/ui/icons";
+import { FancyCheck } from "~/ui/icons";
 import { ShortcutKey } from "~/ui/shortcut-key";
 import { AssociatedComponentList } from "./associated";
 import { SpotlightComponentList } from "./spotlight";
@@ -20,8 +13,6 @@ import { Skeleton } from "~/ui/skeleton";
 // utils
 import { capitalize, range } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
-import { isMacLike } from "~/lib/shared-utils";
-import { headers } from "next/headers";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
@@ -82,6 +73,7 @@ export function RightPanel({ data, network }: Props) {
   const { properties, headerKey, headerValue } = data;
 
   const allAttributes = Object.entries(properties);
+
   return (
     <div
       className="w-full grid h-full max-h-full auto-rows-min"
@@ -103,7 +95,7 @@ export function RightPanel({ data, network }: Props) {
           width={24}
           height={24}
           alt={`Logo ${network.brand}`}
-          className="object-center object-contain flex-shrink-0"
+          className="object-center object-contain flex-shrink-0 rounded-full"
         />
 
         <h2 className="text-lg font-medium">
@@ -113,7 +105,10 @@ export function RightPanel({ data, network }: Props) {
         {network.paidVersion && (
           <Tooltip label="This chain is verified">
             <span tabIndex={0} className="rounded-md">
-              <FancyCheck className="text-primary" aria-hidden="true" />
+              <FancyCheck
+                className="text-primary h-6 w-6 flex-none"
+                aria-hidden="true"
+              />
             </span>
           </Tooltip>
         )}

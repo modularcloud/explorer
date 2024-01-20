@@ -80,7 +80,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
               width={16}
               height={16}
               alt={`Logo ${network.brandName}`}
-              className="object-center object-contain flex-shrink-0"
+              className="object-center object-contain flex-shrink-0 rounded-full"
             />
 
             <span className="whitespace-nowrap text-ellipsis overflow-x-hidden flex-shrink">
