@@ -86,7 +86,7 @@ export function RightPanel({ data, network }: Props) {
     >
       <section
         id="header"
-        className="border-b px-6 py-5 gap-4 flex items-center w-full flex-shrink"
+        className="border-b px-6 py-5 gap-2 flex items-center w-full flex-shrink h-header-tabs"
       >
         {/* <Image src={data.logo} alt="Logo" /> */}
         <Image
@@ -123,94 +123,6 @@ export function RightPanel({ data, network }: Props) {
           defaultAttributes={allAttributes}
         />
         <SpotlightComponentList />
-
-        {/* <dl className="w-full">
-          <div className="gap-4 w-full">
-            <h3 className="text-foreground font-medium flex items-center gap-4 col-span-2 text-lg py-3.5">
-              <Electricity aria-hidden="true" className="flex-shrink-0" />
-              Quick Actions
-            </h3>
-
-            <HotkeyEntry
-              label="Focus"
-              keys={[
-                {
-                  cmd: (
-                    <KeyboardArrowLeft className="my-1" aria-hidden="true" />
-                  ),
-                  label: "Arrow left",
-                },
-
-                {
-                  cmd: (
-                    <KeyboardArrowUp className="my-1.5" aria-hidden="true" />
-                  ),
-                  label: "Arrow up",
-                },
-                {
-                  cmd: (
-                    <KeyboardArrowDown className="my-1.5" aria-hidden="true" />
-                  ),
-                  label: "Arrow down",
-                },
-                {
-                  cmd: (
-                    <KeyboardArrowRight className="my-1" aria-hidden="true" />
-                  ),
-                  label: "Arrow right",
-                },
-              ]}
-              isFirst
-            />
-            <HotkeyEntry
-              label="Open"
-              keys={[
-                {
-                  cmd: "Enter",
-                },
-              ]}
-            />
-            <HotkeyEntry
-              label="Copy"
-              keys={[
-                isMacLike(headers().get("user-agent"))
-                  ? {
-                      cmd: "⌘",
-                      label: "Command",
-                    }
-                  : {
-                      cmd: "Ctrl",
-                      label: "Control",
-                    },
-                {
-                  cmd: "C",
-                },
-              ]}
-            />
-            <HotkeyEntry
-              label="Switch Tabs"
-              keys={[
-                {
-                  cmd: "Ctrl",
-                  label: "Control",
-                },
-                {
-                  cmd: "1-9",
-                  label: "One to nine",
-                },
-              ]}
-            />
-            <HotkeyEntry
-              label="Search"
-              keys={[
-                {
-                  cmd: "/",
-                },
-              ]}
-              isLast
-            />
-          </div>
-        </dl> */}
       </section>
     </div>
   );

@@ -47,7 +47,11 @@ export async function HeaderTabs({ params }: Props) {
   // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
     // TODO: We should have a map of icons for each type of tab
-    let Icon = tab.text === "Transactions" ? ArrowLeftRight : ArrowRight;
+    let Icon =
+      tab.text.toLowerCase() === "transactions" ||
+      tab.text.toLowerCase() === "latest transactions"
+        ? ArrowLeftRight
+        : ArrowRight;
     if (tab.text === "Overview") Icon = Stars;
 
     return {
@@ -68,26 +72,24 @@ export async function HeaderTabs({ params }: Props) {
   return (
     <nav
       className={cn(
-        "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs bg-white",
+        "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs bg-white border-b",
         "left-0 top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
         "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "px-4 flex items-center",
       )}
     >
       <HeaderTabsRightGradient />
       <HeaderTabsHotkeyListener
         tabList={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
       />
-      <ol className="flex min-w-max items-stretch w-full h-full">
+      <ol className="flex min-w-max items-center w-full bg-muted-100 rounded-lg p-0.5 gap-1.5 border">
         {tabs.map((tab, index) => {
           return (
             <li
               key={tab.text}
-              className={cn(
-                "h-full",
-                tab.text === null && "flex-grow flex-shrink",
-              )}
+              className={cn(tab.text === null && "flex-grow flex-shrink")}
             >
               {tab.text === null ? (
                 <NavLink
@@ -112,17 +114,15 @@ export async function HeaderTabs({ params }: Props) {
                 >
                   <span
                     className={cn(
-                      "inline-flex items-center justify-center gap-2 p-0.5 m-1",
-                      "ring-primary rounded-lg",
-                      "group-focus:ring-2",
+                      "inline-flex items-center justify-center gap-2 py-0.5 px-3 m-1 w-full",
                     )}
                   >
                     {tab.Icon && (
-                      <tab.Icon aria-hidden="true" className="h-3 w-3" />
+                      <tab.Icon aria-hidden="true" className={cn("h-3 w-3")} />
                     )}
-                    {tab.text}
+                    <span>{tab.text}</span>
 
-                    {tab.totalCount !== null && (
+                    {tab.totalCount !== null ? (
                       <CounterBadge
                         count={tab.totalCount}
                         className={cn(
@@ -132,6 +132,8 @@ export async function HeaderTabs({ params }: Props) {
                           "group-[:not([aria-current=page])]:border-muted/20",
                         )}
                       />
+                    ) : (
+                      <span />
                     )}
                   </span>
                 </NavLink>
@@ -153,9 +155,10 @@ export function HeaderTabsSkeleton() {
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
         "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "px-4 flex items-center",
       )}
     >
-      <ol className="flex min-w-max items-stretch w-full h-full">
+      <ol className="flex min-w-max items-center w-full bg-muted-100 rounded-lg p-0.5 gap-1.5 border overflow-x-auto">
         {range(0, 2).map((_, index) => {
           return (
             <li key={index} className="h-full">

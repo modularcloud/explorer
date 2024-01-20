@@ -21,8 +21,8 @@ export async function Header({ networkSlug }: Props) {
   return (
     <header
       className={cn(
-        "bg-muted-100 flex justify-between items-center px-6 py-3 gap-4 h-header",
-        "fixed left-0 right-0 top-0 z-10",
+        "bg-muted-100 flex justify-between items-center px-6 py-3 gap-4 h-header border-b",
+        "fixed left-0 right-0 top-0 z-[60]",
       )}
     >
       <Link
@@ -50,13 +50,13 @@ export async function Header({ networkSlug }: Props) {
 
       {/* Bigger screens */}
       <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0">
-        <Button isSquared>
+        {/* <Button isSquared>
           <Grid className="text-muted" />
         </Button>
         <div className="h-8 w-[1px] bg-muted/20" aria-hidden="true" />
         <Button isSquared>
           <List className="text-muted" />
-        </Button>
+        </Button> */}
       </div>
     </header>
   );

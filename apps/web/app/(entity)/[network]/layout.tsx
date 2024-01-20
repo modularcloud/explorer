@@ -42,7 +42,7 @@ export default async function BlockLayout({
             className={cn(
               "mt-[65px] bg-muted-100 min-h-screen",
               // style children but not the header nav
-              "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white col-span-6",
+              "[&>*:not(nav)]:bg-white col-span-6",
             )}
           >
             {children}

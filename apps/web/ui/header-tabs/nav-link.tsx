@@ -3,6 +3,7 @@ import * as React from "react";
 
 // components
 import Link from "next/link";
+import { Tooltip } from "~/ui/tooltip";
 
 // utils
 import { useParams } from "next/navigation";
@@ -43,32 +44,43 @@ export function NavLink({
   const isSelected = currentIndex === activeTabIndex;
 
   return (
-    <Link
-      href={href}
-      tabIndex={isDummy ? -1 : 0}
-      aria-hidden={isDummy}
-      className={cn(
-        "flex text-center flex-col group h-full items-center group outline-none text-sm",
-        {
-          "text-foreground bg-white": isSelected,
-          "text-muted  bg-muted-100": !isSelected,
-          "pointer-events-none": isDummy,
-          "rounded-bl-lg": currentIndex === activeTabIndex + 1,
-          "rounded-br-lg": currentIndex === activeTabIndex - 1,
-          "w-48": !isDummy,
-          "flex-grow flex-shrink": isDummy,
-        },
-      )}
-      aria-current={isSelected ? "page" : undefined}
+    <Tooltip
+      className="p-1 pl-2"
+      label={
+        <div className="flex items-center justify-center gap-1 text-xs">
+          <span>Switch Tab</span>
+          <kbd className="border bg-muted-100 rounded-sm p-1">
+            Ctrl+{currentIndex + 1}
+          </kbd>
+        </div>
+      }
+      side="bottom"
+      hideArrow
     >
-      <span
-        className="w-full inline-block h-[1px]"
-        style={{
-          backgroundImage: isSelected ? "var(--gradient-primary)" : "",
-        }}
-      />
-      {children}
-    </Link>
+      <Link
+        href={href}
+        tabIndex={isDummy ? -1 : 0}
+        aria-hidden={isDummy}
+        className={cn(
+          "flex text-center flex-col group items-center group outline-none text-sm",
+          "ring-primary rounded-md",
+          "focus:ring-2",
+          {
+            "text-foreground bg-white border [&_svg]:text-primary shadow-sm":
+              isSelected,
+            "text-muted  bg-muted-100": !isSelected,
+            "pointer-events-none": isDummy,
+            "rounded-bl-lg": currentIndex === activeTabIndex + 1,
+            "rounded-br-lg": currentIndex === activeTabIndex - 1,
+            "w-48": !isDummy,
+            "flex-grow flex-shrink": isDummy,
+          },
+        )}
+        aria-current={isSelected ? "page" : undefined}
+      >
+        {children}
+      </Link>
+    </Tooltip>
   );
 }
 
