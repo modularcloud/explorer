@@ -1,50 +1,42 @@
+import "server-only";
 import { type SingleNetwork, getAllNetworksCached } from "./network";
+import { arrayGroupByTo2DArray } from "./shared-utils";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
  * which is just a list of chains grouped by name.
- * @returns `{ [brand]: [ {chain1}, {chain2}, {chain3} ] }`
+ * @returns `[ [ {chain1, brand1}, {chain2, brand1}, {chain3, brand1} ], [ {chain4, brand2}, {chain5, brand2} ] ]`
  */
-export async function getSearchOptionGroups(): Promise<OptionGroups> {
+export async function getGroupedNetworkChains() {
   const integrations = await getAllNetworksCached();
 
-  const optionGroups = integrations.reduce((acc, currentValue) => {
-    const brand = currentValue.chainBrand;
+  const options: NetworkChain[] = integrations.map((currentNetwork) => ({
+    brandColor: currentNetwork.config.primaryColor,
+    layout: currentNetwork.config.widgetLayout,
+    verified: currentNetwork.paidVersion,
+    displayName: currentNetwork.chainName,
+    id: currentNetwork.slug,
+    brandName: currentNetwork.brand,
+    logoURL: currentNetwork.config.logoUrl,
+    platform: currentNetwork.config.platform,
+    accountId: currentNetwork.accountId,
+  }));
 
-    const newOption = {
-      brandColor: currentValue.config.primaryColor,
-      layout: currentValue.config.widgetLayout,
-      verified: currentValue.paidVersion,
-      displayName: currentValue.chainName,
-      id: currentValue.slug,
-      brandName: currentValue.chainBrand,
-      logoURL: currentValue.config.logoUrl,
-    } satisfies SearchOption;
-    if (acc[brand]) {
-      if (currentValue.chainName === "mainnet") {
-        acc[brand].unshift(newOption);
-      } else {
-        acc[brand].push(newOption);
-      }
-    } else {
-      acc[brand] = [newOption];
-    }
-
-    return acc;
-  }, {} as OptionGroups);
-
-  return optionGroups;
+  return arrayGroupByTo2DArray(options, "accountId");
 }
 
-export type SearchOption = {
+export type GroupedNetworkChains = Awaited<
+  ReturnType<typeof getGroupedNetworkChains>
+>;
+
+export type NetworkChain = {
   displayName: string;
   brandName: string;
+  accountId: string;
   verified?: boolean;
   brandColor: string;
+  platform?: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
   logoURL: string;
   id: string;
-};
-export type OptionGroups = {
-  [groupDisplayName: string]: SearchOption[];
 };

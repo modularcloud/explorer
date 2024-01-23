@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 export function ClientTime({ time, className }: Props) {
-  const [text, setText] = React.useState("");
+  const [text, setText] = React.useState<string | null>(null);
   React.useEffect(() => {
     dayjs.extend(relativeTime);
     let currentRelativeTime = dayjs(time).fromNow();
@@ -32,7 +32,14 @@ export function ClientTime({ time, className }: Props) {
     <time
       suppressHydrationWarning
       dateTime={new Date(time).toISOString()}
-      className={cn(className)}
+      className={cn(
+        "transition-opacity duration-150",
+        {
+          "opacity-0": text === null,
+          "opacity-100": text !== null,
+        },
+        className,
+      )}
     >
       {text}
     </time>

@@ -119,7 +119,9 @@ export const TransactionResolver = createResolver(
       fetch(
         `${process.env.SVM_DEVNET_RPC_ALTERNATIVE}/${
           endpoint.indexOf("testnet") === -1 ? 2 : 4
-        }/tx?signature=${signature}`,
+        }/tx?signature=${signature}${
+          encoding === "jsonParsed" ? "&encoding=jsonParsed" : ""
+        }}`,
       ).then(async (response) => {
         const json = await response.json();
         if (json.error) throw new Error(json.error);

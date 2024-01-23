@@ -7,7 +7,7 @@ import { Grid, List } from "~/ui/icons";
 import { HeaderSearchButton } from "./header-search-button";
 
 // utils
-import { getSearchOptionGroups } from "~/lib/search-options";
+import { getGroupedNetworkChains } from "~/lib/search-options";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export async function Header({ networkSlug }: Props) {
-  const optionGroups = await getSearchOptionGroups();
+  const optionGroups = await getGroupedNetworkChains();
 
   return (
     <header

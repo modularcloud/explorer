@@ -14,10 +14,10 @@ import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
 
 // types
-import type { OptionGroups } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/search-options";
 
 interface Props {
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
 }
 
 export function SearchForm({ optionGroups }: Props) {
@@ -26,13 +26,20 @@ export function SearchForm({ optionGroups }: Props) {
   const [isPending, startTransition] = React.useTransition();
 
   const network = React.useMemo(() => {
-    const values = Object.values(optionGroups).flat();
+    const values = optionGroups.flat();
     return values.find((network) => network.id === params.network) ?? values[0];
   }, [optionGroups, params.network]);
 
   const primaryColor = !!params.network
     ? network.brandColor!
     : DEFAULT_BRAND_COLOR;
+
+  const defaultSearchModalNetwork = React.useMemo(
+    () => ({
+      value: network,
+    }),
+    [network],
+  );
 
   return (
     <div
@@ -47,9 +54,7 @@ export function SearchForm({ optionGroups }: Props) {
       )}
     >
       <SearchModal
-        defaultNetwork={{
-          value: network,
-        }}
+        defaultNetwork={defaultSearchModalNetwork}
         brandColor={primaryColor}
         optionGroups={optionGroups}
       >
@@ -66,7 +71,10 @@ export function SearchForm({ optionGroups }: Props) {
             {network.verified && (
               <Tooltip label="This chain is verified">
                 <span>
-                  <FancyCheck className="text-primary" aria-hidden="true" />
+                  <FancyCheck
+                    className="text-primary h-6 w-6 flex-none"
+                    aria-hidden="true"
+                  />
                 </span>
               </Tooltip>
             )}

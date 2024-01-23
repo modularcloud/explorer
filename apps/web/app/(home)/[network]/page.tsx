@@ -13,6 +13,7 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
+import { DymensionRollappsWidgetLayout } from "~/ui/network-widgets/layouts/dymension/dymension-rollapps-widget-layout";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 
 interface Props {
@@ -24,8 +25,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   if (!network) notFound();
 
   return {
-    title: `${capitalize(network.chainBrand)}`,
-    description: `A block explorer for the ${network.chainBrand} ecosystem.`,
+    title: `${capitalize(network.brand)}`,
+    description: `A block explorer for the ${network.brand} ecosystem.`,
   };
 }
 
@@ -39,7 +40,7 @@ export default async function NetworkWidgetPage({ params }: Props) {
   if (network.config.platform === "dymension") {
     const dymensionNetworks = await getNetworksForPlatformCached("dymension");
     return (
-      <DymensionWidgetLayout
+      <DymensionRollappsWidgetLayout
         networkSlug={network.slug}
         allDymensionNetworks={dymensionNetworks}
       />
@@ -61,6 +62,8 @@ export default async function NetworkWidgetPage({ params }: Props) {
           networkBrandColor={network.config.primaryColor}
         />
       );
+    case "Dymension":
+      return <DymensionWidgetLayout />;
     default:
       return null;
   }

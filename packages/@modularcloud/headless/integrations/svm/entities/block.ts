@@ -81,7 +81,7 @@ export function createEntity(
           (total, reward) => total + reward.lamports,
           0,
         ) / Math.pow(10, 9)
-      } ${context.nativeToken}`,
+      } ${context.nativeToken.toUpperCase()}`,
     },
     "Transaction Count": {
       type: "standard",

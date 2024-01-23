@@ -1,4 +1,4 @@
-import { resolvers } from "@modularcloud-resolver/rollapp";
+import { getBlock } from "@modularcloud-resolver/rollapp";
 import { createResolver } from "@modularcloud-resolver/core";
 import { PaginationContext } from "../../../../schemas/context";
 import { Page, PageContext } from "../../../../schemas/page";
@@ -176,5 +176,5 @@ export const RollappLatestBlocksResolver = createResolver(
     };
     return page;
   },
-  [resolvers.getBlock],
+  [getBlock],
 );

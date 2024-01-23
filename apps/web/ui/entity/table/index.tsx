@@ -87,7 +87,6 @@ export function Table({ initialData, route }: Props) {
         "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
       refetchOnWindowFocus: false,
       initialData: {
-        // TODO : remove and replace later with a fallback
         pages: [initialData],
         pageParams: [undefined],
       },
@@ -265,7 +264,8 @@ export function Table({ initialData, route }: Props) {
                       "px-2 font-semibold",
                     )}
                   >
-                    {firstVisibleColumnName}
+                    {/* Stupid hack */}
+                    {firstVisibleColumnName === "From" ? "Transfers (From / To / Amount)" : firstVisibleColumnName}
                   </th>
                   <th
                     className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"

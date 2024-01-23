@@ -208,7 +208,8 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       tabIndex={0}
       className={cn(
         "group/copyable border-mid-dark-100 bg-white",
-        "grid grid-cols-5 items-baseline gap-4 py-2.5 px-6",
+        "grid items-baseline gap-2 py-2.5 px-6",
+        "md:grid-cols-5 md:gap-4",
         "transition-none duration-0",
         "aria-[selected=true]:text-foreground",
         "aria-[selected=true]:border-l-primary",
@@ -220,10 +221,10 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       )}
       {...optionProps}
     >
-      <dt className="col-span-2 font-medium">{entry.id}</dt>
+      <dt className="md:col-span-2 font-medium">{entry.id}</dt>
 
       {type === "standard" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           {notCopyable ? (
             <span>{payload.toString()}</span>
           ) : (
@@ -237,7 +238,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
         </dd>
       )}
       {type === "longval" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           {notCopyable ? (
             <span>{payload.value.toString()}</span>
           ) : (
@@ -252,13 +253,13 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       )}
 
       {type === "status" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           <Status status={payload} />
         </dd>
       )}
 
       {type === "list" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           <ol className="flex flex-col items-start gap-1 w-full">
             {payload.map((value) => (
               <li key={value} className="w-full">
@@ -272,7 +273,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       )}
 
       {type === "timestamp" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           <CopyableValue value={formatDateTime(entry.value.payload.value)}>
             <DateTime value={payload.value!} />
           </CopyableValue>
@@ -280,7 +281,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
       )}
 
       {type === "link" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           <CopyableValue value={payload.text}>
             <Link className="underline" href={`/${payload.route.join("/")}`}>
               {payload.text}
@@ -289,7 +290,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
         </dd>
       )}
       {type === "blob" && (
-        <dd className="col-span-3">
+        <dd className="md:col-span-3 min-w-0">
           <Blob url={payload.url} mimeType={payload.mimeType} />
         </dd>
       )}

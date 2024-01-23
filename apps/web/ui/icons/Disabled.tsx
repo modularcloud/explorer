@@ -9,7 +9,7 @@ const SvgDisabled = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="currentColor"
+      stroke="#8457FF"
       strokeLinecap="round"
       strokeWidth={2}
       d="M18.364 5.636A9 9 0 1 0 5.636 18.364M18.364 5.636A9 9 0 1 1 5.636 18.364M18.364 5.636 5.636 18.364"

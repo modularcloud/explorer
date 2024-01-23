@@ -10,9 +10,18 @@ interface Props {
   label: string;
   delayInMS?: number;
   side?: TooltipPosition;
+  className?: string;
+  arrowClassName?: string;
 }
 
-export function Tooltip({ children, label, side, delayInMS = 500 }: Props) {
+export function Tooltip({
+  children,
+  label,
+  side,
+  delayInMS = 500,
+  className,
+  arrowClassName,
+}: Props) {
   return (
     <RadixTooltip.Provider delayDuration={delayInMS}>
       <RadixTooltip.Root>
@@ -25,11 +34,14 @@ export function Tooltip({ children, label, side, delayInMS = 500 }: Props) {
               "data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade",
               "text-foreground select-none rounded-md bg-white px-3 py-2 leading-none shadow-md text-sm",
               "border border-mid-dark-100 z-[100]",
+              className,
             )}
             sideOffset={5}
           >
             {label}
-            <RadixTooltip.Arrow className="fill-white z-10" />
+            <RadixTooltip.Arrow
+              className={cn("fill-white z-10", arrowClassName)}
+            />
           </RadixTooltip.Content>
         </RadixTooltip.Portal>
       </RadixTooltip.Root>
