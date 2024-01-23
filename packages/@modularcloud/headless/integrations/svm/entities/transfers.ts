@@ -106,7 +106,7 @@ export function Row(
       },
     },
     link: `/${context.slug}/transactions/${tx.transaction.signatures[0]}`,
-    key: `/${context.slug}/transactions/${tx.transaction.signatures[0]}`,
+    key: `/${context.slug}/transactions/${tx.transaction.signatures[0]}/instructions/${instructionIndex}`,
     sidebar: {
       headerKey: "Transaction",
       headerValue: tx.transaction.signatures[0],
