@@ -84,7 +84,7 @@ export function createEntity(
       payload:
         parsedTransaction.meta.fee / Math.pow(10, 9) +
         " " +
-        context.nativeToken,
+        context.nativeToken.toUpperCase(),
     },
     ...(balance
       ? {
@@ -104,7 +104,7 @@ export function createEntity(
                 properties: {
                   Balance: {
                     type: "standard",
-                    payload: `${balance} ${context.nativeToken}`,
+                    payload: `${balance} ${context.nativeToken.toUpperCase()}`,
                   },
                 },
               },

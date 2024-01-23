@@ -34,7 +34,6 @@ export function Row(
   }
 
   const sidebar = Sidebar(context, transaction);
-  console.log(sidebar);
 
   // Native transfer
   if ("lamports" in instruction.parsed.info) {
@@ -58,7 +57,7 @@ export function Row(
         },
         Amount: {
           type: "standard",
-          payload: `${amount} ${context.nativeToken}`,
+          payload: `${amount} ${context.nativeToken.toUpperCase()}`,
         },
       },
       link: `/${context.slug}/transactions/${tx.transaction.signatures[0]}`,

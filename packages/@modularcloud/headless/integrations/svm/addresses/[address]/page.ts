@@ -37,7 +37,7 @@ export const addressOverviewResolver = createResolver(
         properties: {
           Balance: {
             type: "standard",
-            payload: `${balance} ${context.nativeToken}`,
+            payload: `${balance} ${context.nativeToken.toUpperCase()}`,
           },
         },
       },
