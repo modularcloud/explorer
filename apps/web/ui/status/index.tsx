@@ -11,7 +11,7 @@ export function Status({ status }: Props) {
       {status ? (
         <>
           <CheckCircle
-            className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-0.5"
+            className="h-5 w-5 flex-shrink-0 text-teal-500 relative top-1"
             aria-hidden="true"
           />
           <span className="text-teal-900">Success</span>
@@ -19,7 +19,7 @@ export function Status({ status }: Props) {
       ) : (
         <>
           <XCircle
-            className="h-5 w-5 flex-shrink-0 text-red-500 relative top-0.5"
+            className="h-5 w-5 flex-shrink-0 text-red-500 relative top-1"
             aria-hidden="true"
           />
           <span className="text-red-900">Failed</span>

@@ -17,16 +17,9 @@ interface Props {
   currentIndex: number;
   children?: React.ReactNode;
   tabs: string[];
-  isDummy?: boolean;
 }
 
-export function NavLink({
-  href,
-  currentIndex,
-  tabs,
-  children,
-  isDummy = false,
-}: Props) {
+export function NavLink({ href, currentIndex, tabs, children }: Props) {
   const params: HeadlessRoute = useParams();
 
   const pathParams = parseHeadlessRouteVercelFix(params);
@@ -59,21 +52,19 @@ export function NavLink({
     >
       <Link
         href={href}
-        tabIndex={isDummy ? -1 : 0}
-        aria-hidden={isDummy}
         className={cn(
           "flex text-center flex-col group items-center group outline-none text-sm",
-          "ring-primary rounded-md",
-          "focus:ring-2",
+          "ring-primary/40 rounded-md",
+          "focus:ring-2 focus:border focus:border-primary",
+          "transition duration-150",
+          "min-w-[12rem] max-w-[12rem]",
+          "flex-none",
           {
-            "text-foreground bg-white border [&_svg]:text-primary shadow-sm":
+            "text-foreground bg-white border hover:bg-muted/10 [&_svg]:text-primary shadow-sm":
               isSelected,
-            "text-muted  bg-muted-100": !isSelected,
-            "pointer-events-none": isDummy,
+            "text-muted  bg-muted-100 hover:bg-muted/10": !isSelected,
             "rounded-bl-lg": currentIndex === activeTabIndex + 1,
             "rounded-br-lg": currentIndex === activeTabIndex - 1,
-            "w-48": !isDummy,
-            "flex-grow flex-shrink": isDummy,
           },
         )}
         aria-current={isSelected ? "page" : undefined}
