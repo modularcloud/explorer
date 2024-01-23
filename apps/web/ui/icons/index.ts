@@ -44,6 +44,7 @@ export { default as Enveloppe } from "./Enveloppe";
 export { default as EyeOff } from "./EyeOff";
 export { default as EyeOn } from "./EyeOn";
 export { default as FancyCheck } from "./FancyCheck";
+export { default as Filters } from "./Filters";
 export { default as Folder } from "./Folder";
 export { default as Gas } from "./Gas";
 export { default as GithubLogo } from "./GithubLogo";
