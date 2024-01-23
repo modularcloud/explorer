@@ -37,7 +37,7 @@ export const addressOverviewResolver = createResolver(
         properties: {
           Balance: {
             type: "standard",
-            payload: `${balance} ${context.nativeToken}`,
+            payload: `${balance} ${context.nativeToken.toUpperCase()}`,
           },
         },
       },
@@ -59,6 +59,14 @@ export const addressOverviewResolver = createResolver(
         {
           text: "Transactions",
           route: ["addresses", address, "transactions"],
+        },
+        {
+          text: "ETH Transfers",
+          route: ["addresses", address, "eth-transfers"],
+        },
+        {
+          text: "SPL Transfers",
+          route: ["addresses", address, "spl-transfers"],
         },
       ],
     };

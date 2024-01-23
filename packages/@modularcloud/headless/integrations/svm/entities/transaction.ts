@@ -84,7 +84,7 @@ export function createEntity(
       payload:
         parsedTransaction.meta.fee / Math.pow(10, 9) +
         " " +
-        context.nativeToken,
+        context.nativeToken.toUpperCase(),
     },
     ...(balance
       ? {
@@ -104,7 +104,7 @@ export function createEntity(
                 properties: {
                   Balance: {
                     type: "standard",
-                    payload: `${balance} ${context.nativeToken}`,
+                    payload: `${balance} ${context.nativeToken.toUpperCase()}`,
                   },
                 },
               },
@@ -114,7 +114,12 @@ export function createEntity(
       : {
           Signer: {
             type: "standard",
-            payload: parsedTransaction.transaction.message.accountKeys[0],
+            payload:
+              typeof parsedTransaction.transaction.message.accountKeys[0] ===
+                "object" &&
+              "pubkey" in parsedTransaction.transaction.message.accountKeys[0]
+                ? parsedTransaction.transaction.message.accountKeys[0].pubkey
+                : parsedTransaction.transaction.message.accountKeys[0],
           },
         }),
     "Recent Block Hash": {
@@ -128,11 +133,15 @@ export function createEntity(
     Type: {
       type: "standard",
       payload:
-        typeMap[
-          parsedTransaction.transaction.message.accountKeys[
-            parsedTransaction.transaction.message.instructions[0].programIdIndex
-          ]
-        ] ?? "Unknown",
+        "programIdIndex" in
+        parsedTransaction.transaction.message.instructions[0]
+          ? typeMap[
+              parsedTransaction.transaction.message.accountKeys[
+                parsedTransaction.transaction.message.instructions[0]
+                  .programIdIndex
+              ]
+            ] ?? "Unknown"
+          : parsedTransaction.transaction.message.instructions[0].program,
     },
   };
   return properties;

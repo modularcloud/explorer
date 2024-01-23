@@ -49,18 +49,30 @@ export async function generateMetadata({
   }
 
   const pluralToSingular: Record<string, string> = {
-    addressess: "address",
+    addresses: "address",
   };
 
-  function formatTypeName(str: string) {
-    let mappedSingular = pluralToSingular[str.toLowerCase()];
-    if (mappedSingular) {
-      return capitalize(mappedSingular);
-    }
-    if (str.endsWith("s")) {
-      return capitalize(str.slice(0, -1));
-    }
-    return capitalize(str);
+  const formatMap: Record<string, string> = {
+    eth: "ETH",
+    spl: "SPL",
+  };
+
+  function formatTypeName(str: string, singular?: boolean) {
+    const parts = str.split("-");
+    return parts
+      .map((part, index) => {
+        if (singular && index === parts.length - 1) {
+          let mappedSingular = pluralToSingular[part.toLowerCase()];
+          if (mappedSingular) {
+            return capitalize(mappedSingular);
+          }
+          if (part.endsWith("s")) {
+            return capitalize(str.slice(0, -1));
+          }
+        }
+        return formatMap[part.toLowerCase()] || capitalize(part);
+      })
+      .join(" ");
   }
 
   let titleParts = [];
@@ -70,13 +82,13 @@ export async function generateMetadata({
     const id = params.path[i + 1];
 
     if (!id) {
-      titleParts.unshift(capitalize(type));
-      descriptionParts.unshift(capitalize(type));
+      titleParts.unshift(formatTypeName(type));
+      descriptionParts.unshift(formatTypeName(type));
       break;
     }
 
-    titleParts.unshift(`${formatTypeName(type)} ${shortenId(id)}`);
-    descriptionParts.unshift(`${formatTypeName(type)} ${id}`);
+    titleParts.unshift(`${formatTypeName(type, true)} ${shortenId(id)}`);
+    descriptionParts.unshift(`${formatTypeName(type, true)} ${id}`);
   }
 
   return {

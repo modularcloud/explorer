@@ -148,19 +148,21 @@ export const SidebarSchema = SidebarHeaderSchema.merge(
 );
 export type Sidebar = z.infer<typeof SidebarSchema>;
 
+export const EntrySchema = z.object({
+  row: z.record(ValueSchema),
+  sidebar: SidebarSchema,
+  key: z.string(),
+  link: z.string().optional(),
+});
+export type Entry = z.infer<typeof EntrySchema>;
+
 const CollectionSchema = z.object({
   type: z.literal("collection"),
   refreshIntervalMS: z.number().optional(),
   nextToken: z.string().optional(),
   tableColumns: ColumnSchema.array(),
-  entries: z
-    .object({
-      row: z.record(ValueSchema),
-      sidebar: SidebarSchema,
-      key: z.string(),
-      link: z.string().optional(),
-    })
-    .array(),
+  displayEnabled: z.boolean().optional(),
+  entries: EntrySchema.array(),
 });
 export type Collection = z.infer<typeof CollectionSchema>;
 
