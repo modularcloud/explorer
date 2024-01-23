@@ -47,12 +47,14 @@ export function Row(
           type: "longval",
           payload: {
             value: from,
+            maxLength: 30,
           },
         },
         To: {
           type: "longval",
           payload: {
             value: to,
+            maxLength: 30,
           },
         },
         Amount: {
@@ -81,12 +83,14 @@ export function Row(
         type: "longval",
         payload: {
           value: from,
+          maxLength: 20,
         },
       },
       To: {
         type: "longval",
         payload: {
           value: to,
+          maxLength: 20,
         },
       },
       Amount: {
@@ -97,6 +101,7 @@ export function Row(
         type: "longval",
         payload: {
           value: instruction.parsed.info.mint,
+          maxLength: 20,
         },
       },
     },
