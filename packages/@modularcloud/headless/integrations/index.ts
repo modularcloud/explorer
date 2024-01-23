@@ -33,6 +33,7 @@ import { IBCResolver } from "./rollapp/misc/ibc";
 import { RollAppAddressPageResolver } from "./rollapp/routes/addresses/[address]/page";
 import { RollAppEvents } from "./rollapp/misc/hub";
 import { addressNativeTransferResolver } from "./svm/addresses/[address]/eth-transfers/page";
+import { addressSPLTransferResolver } from "./svm/addresses/[address]/spl-transfers/page";
 // import { resolvers } from "@modularcloud-resolver/rollapp";
 
 export function registerResolvers() {
@@ -48,6 +49,7 @@ export function registerResolvers() {
   registerResolver(SVM.latestBlocksResolver);
   registerResolver(SVM.latestTransactionsResolver);
   registerResolver(addressNativeTransferResolver);
+  registerResolver(addressSPLTransferResolver);
 
   registerResolver(CelestiaTransactionResolver);
   registerResolver(CelestiaBlockResolver);
