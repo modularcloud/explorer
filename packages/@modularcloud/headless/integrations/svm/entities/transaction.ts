@@ -115,6 +115,8 @@ export function createEntity(
           Signer: {
             type: "standard",
             payload:
+              typeof parsedTransaction.transaction.message.accountKeys[0] ===
+                "object" &&
               "pubkey" in parsedTransaction.transaction.message.accountKeys[0]
                 ? parsedTransaction.transaction.message.accountKeys[0].pubkey
                 : parsedTransaction.transaction.message.accountKeys[0],
