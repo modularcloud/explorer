@@ -74,35 +74,3 @@ export function NavLink({ href, currentIndex, tabs, children }: Props) {
     </Tooltip>
   );
 }
-
-interface NavLinkSkeletonProps {
-  children?: React.ReactNode;
-  isLast?: boolean;
-  isAfterOverview?: boolean;
-}
-
-export function NavLinkSkeleton({
-  children,
-  isAfterOverview = false,
-  isLast = false,
-}: NavLinkSkeletonProps) {
-  return (
-    <div
-      className={cn(
-        "flex text-center flex-col group h-full items-center group outline-none",
-        "text-muted bg-muted-100",
-        // compensate the 1px space caused by the selection gradient
-        "pt-[1px]",
-        {
-          // TODO: I don't know fully what this logic is for, so we should figure out if this change is ok before merging
-          // "rounded-bl-lg": !params.section && isAfterOverview,
-          "rounded-bl-lg": isAfterOverview,
-          "w-52": !isLast,
-          "flex-grow flex-shrink": isLast,
-        },
-      )}
-    >
-      {children}
-    </div>
-  );
-}

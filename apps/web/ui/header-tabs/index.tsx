@@ -2,7 +2,7 @@ import * as React from "react";
 // components
 import { Skeleton } from "~/ui/skeleton";
 import { CounterBadge } from "~/ui/counter-badge";
-import { NavLink, NavLinkSkeleton } from "./nav-link";
+import { NavLink } from "./nav-link";
 import { HeaderTabsHotkeyListener } from "./header-tabs-hotkey-listener";
 import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 
@@ -140,32 +140,28 @@ export function HeaderTabsSkeleton() {
   return (
     <nav
       className={cn(
-        "fixed z-30 overflow-x-auto overflow-y-clip h-header-tabs hide-scrollbars bg-white",
-        "left-0 !top-header w-full lg:w-2/3",
+        "fixed z-30 h-header-tabs overflow-y-clip hide-scrollbars bg-white",
+        "left-0 !top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
         "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
-        "px-4 flex items-center",
+        "px-4 flex items-center justify-between gap-4",
       )}
     >
-      <ol className="flex min-w-max items-center w-full bg-muted-100 rounded-lg p-0.5 gap-1.5 border overflow-x-auto">
-        {range(0, 2).map((_, index) => {
+      <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg px-2 py-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">
+        {range(0, 3).map((_, index) => {
           return (
-            <li key={index} className="h-full">
-              <NavLinkSkeleton isAfterOverview={index === 0}>
-                <div className="inline-flex items-center justify-center gap-2 p-1 m-1">
-                  <Skeleton className="h-6 w-4" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              </NavLinkSkeleton>
+            <li key={index} className="h-full flex-grow flex-shrink min-w-0">
+              <div className="inline-flex items-center justify-center gap-2 p-1 m-1 w-full">
+                <Skeleton className="h-[1.125rem] w-4" />
+                <Skeleton className="h-[1.125rem] w-24" />
+              </div>
             </li>
           );
         })}
-
-        <li className="h-full flex-grow flex-shrink">
-          <NavLinkSkeleton isLast />
-        </li>
       </ol>
+
+      <Skeleton className="h-10 w-24 flex-none" />
     </nav>
   );
 }
