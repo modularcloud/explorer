@@ -32,6 +32,7 @@ import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/mes
 import { IBCResolver } from "./rollapp/misc/ibc";
 import { RollAppAddressPageResolver } from "./rollapp/routes/addresses/[address]/page";
 import { RollAppEvents } from "./rollapp/misc/hub";
+import { addressNativeTransferResolver } from "./svm/addresses/[address]/eth-transfers/page";
 // import { resolvers } from "@modularcloud-resolver/rollapp";
 
 export function registerResolvers() {
@@ -46,6 +47,7 @@ export function registerResolvers() {
   registerResolver(latestBlocksPageResolver);
   registerResolver(SVM.latestBlocksResolver);
   registerResolver(SVM.latestTransactionsResolver);
+  registerResolver(addressNativeTransferResolver);
 
   registerResolver(CelestiaTransactionResolver);
   registerResolver(CelestiaBlockResolver);
