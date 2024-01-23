@@ -60,6 +60,14 @@ export const addressOverviewResolver = createResolver(
           text: "Transactions",
           route: ["addresses", address, "transactions"],
         },
+        {
+          text: "ETH Transfers",
+          route: ["addresses", address, "eth-transfers"],
+        },
+        {
+          text: "SPL Transfers",
+          route: ["addresses", address, "spl-transfers"],
+        },
       ],
     };
     return PageResponse;

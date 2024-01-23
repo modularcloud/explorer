@@ -79,6 +79,10 @@ export const addressNativeTransferResolver = createResolver(
           text: "ETH Transfers",
           route: ["addresses", address, "eth-transfers"],
         },
+        {
+          text: "SPL Transfers",
+          route: ["addresses", address, "spl-transfers"],
+        },
       ],
     };
     return PageResponse;
