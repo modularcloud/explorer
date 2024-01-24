@@ -19,6 +19,12 @@ type HeaderTabsFilterButtonProps = {
   primaryColor: string;
 };
 
+function formatSearchParams(sp: URLSearchParams, key: string, value: string) {
+  const newSp = new URLSearchParams(sp);
+  newSp.set(key, value);
+  return newSp.toString();
+}
+
 export function HeaderTabsFilterButton({
   primaryColor,
 }: HeaderTabsFilterButtonProps) {
@@ -28,6 +34,10 @@ export function HeaderTabsFilterButton({
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
     undefined,
   );
+
+  function updateDateRange(newDateRange: DateRange | undefined) {
+    if (!newDateRange) setDateRange(newDateRange);
+  }
 
   return (
     <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -111,7 +121,11 @@ export function HeaderTabsFilterButton({
           <ul className="w-full flex flex-col gap-0 items-stretch">
             <li className="w-full">
               <Link
-                href={`${pathname}?orderBy=desc`}
+                href={`${pathname}?${formatSearchParams(
+                  sp,
+                  "orderBy",
+                  "desc",
+                )}`}
                 className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex"
               >
                 Latest
@@ -119,7 +133,7 @@ export function HeaderTabsFilterButton({
             </li>
             <li className="w-full">
               <Link
-                href={`${pathname}?orderBy=asc`}
+                href={`${pathname}?${formatSearchParams(sp, "orderBy", "asc")}`}
                 className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex"
               >
                 Oldest

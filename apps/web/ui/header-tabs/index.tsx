@@ -47,10 +47,7 @@ export async function HeaderTabs({ params }: Props) {
     notFound();
   }
 
-  const {
-    tabs: resolvedTabs,
-    body: { type },
-  } = page;
+  const { tabs: resolvedTabs } = page;
 
   // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
@@ -136,7 +133,7 @@ export async function HeaderTabs({ params }: Props) {
         })}
       </ol>
 
-      {type !== "notebook" && (
+      {page.body.type !== "notebook" && page.body.displayEnabled && (
         <HeaderTabsFilterButton primaryColor={network.config.primaryColor} />
       )}
     </nav>
@@ -155,10 +152,13 @@ export function HeaderTabsSkeleton() {
         "px-4 flex items-center justify-between gap-4",
       )}
     >
-      <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg px-2 py-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">
+      <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg p-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">
         {range(0, 2).map((_, index) => {
           return (
-            <li key={index} className="h-full flex-grow flex-shrink min-w-0">
+            <li
+              key={index}
+              className="h-full flex-grow flex-shrink min-w-[12rem] max-w-[12rem]"
+            >
               <div className="inline-flex items-center justify-center gap-2 p-1 m-1 w-full">
                 <Skeleton className="h-[1.125rem] w-4" />
                 <Skeleton className="h-[1.125rem] w-24" />
