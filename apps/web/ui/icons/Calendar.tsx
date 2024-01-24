@@ -8,7 +8,7 @@ const SvgCalendar = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#36394A"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

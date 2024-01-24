@@ -149,7 +149,7 @@ export function HeaderTabsSkeleton() {
       )}
     >
       <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg px-2 py-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">
-        {range(0, 3).map((_, index) => {
+        {range(0, 2).map((_, index) => {
           return (
             <li key={index} className="h-full flex-grow flex-shrink min-w-0">
               <div className="inline-flex items-center justify-center gap-2 p-1 m-1 w-full">
