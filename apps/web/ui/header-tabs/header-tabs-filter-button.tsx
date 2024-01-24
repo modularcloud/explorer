@@ -15,7 +15,13 @@ import { Calendar } from "~/ui/shadcn/components/ui/calendar";
 import { cn } from "~/ui/shadcn/utils";
 import { format } from "date-fns";
 
-export function HeaderTabsButton() {
+type HeaderTabsFilterButtonProps = {
+  primaryColor: string;
+};
+
+export function HeaderTabsFilterButton({
+  primaryColor,
+}: HeaderTabsFilterButtonProps) {
   const pathname = usePathname();
   const sp = useSearchParams();
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
@@ -46,7 +52,11 @@ export function HeaderTabsButton() {
       <PopoverContent
         side="bottom"
         align="end"
-        className="bg-white w-[12.5rem] flex flex-col gap-1 p-1 rounded-xl"
+        style={{
+          // @ts-expect-error
+          "--color-primary": primaryColor,
+        }}
+        className="bg-white w-56 flex flex-col gap-1 p-1 rounded-xl"
       >
         <div className="border rounded-lg shadow-sm p-1.5 flex flex-col gap-1.5">
           <p className="text-muted text-sm font-medium">Range</p>
@@ -55,9 +65,10 @@ export function HeaderTabsButton() {
               <Button
                 variant="bordered"
                 className={cn(
-                  "py-2 pl-3.5 pr-2 shadow-sm inline-flex gap-1 items-center justify-between",
+                  "py-1 pl-3.5 pr-2 shadow-sm inline-flex gap-1 items-center justify-between",
                   "text-sm w-full rounded-md",
-                  "text-muted text-xs",
+                  "text-sm",
+                  dateRange ? "text-foreground" : "text-muted",
                 )}
               >
                 {dateRange?.from ? (
@@ -78,7 +89,11 @@ export function HeaderTabsButton() {
             <PopoverContent
               side="bottom"
               align="end"
-              className="bg-white p-0 rounded-md"
+              className="bg-white p-0 rounded-md w-min"
+              style={{
+                // @ts-expect-error
+                "--color-primary": primaryColor,
+              }}
             >
               <Calendar
                 mode="range"

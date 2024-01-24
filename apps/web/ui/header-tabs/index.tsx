@@ -13,7 +13,8 @@ import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
 import { notFound } from "next/navigation";
 
 import type { Page } from "@modularcloud/headless";
-import { HeaderTabsButton } from "./header-tabs-filter-button";
+import { HeaderTabsFilterButton } from "./header-tabs-filter-button";
+import { SingleNetwork, getSingleNetworkCached } from "~/lib/network";
 interface Props {
   params: HeadlessRoute;
 }
@@ -30,15 +31,19 @@ type Tab = {
 
 export async function HeaderTabs({ params }: Props) {
   let page: Page | null = null;
+  let network: SingleNetwork | null = null;
   try {
-    page = await loadPage({
-      route: params,
-    });
+    [page, network] = await Promise.all([
+      loadPage({
+        route: params,
+      }),
+      getSingleNetworkCached(params.network),
+    ]);
   } catch (error) {
     // pass
   }
 
-  if (!page) {
+  if (!page || !network) {
     notFound();
   }
 
@@ -131,7 +136,9 @@ export async function HeaderTabs({ params }: Props) {
         })}
       </ol>
 
-      {type !== "notebook" && <HeaderTabsButton />}
+      {type !== "notebook" && (
+        <HeaderTabsFilterButton primaryColor={network.config.primaryColor} />
+      )}
     </nav>
   );
 }
