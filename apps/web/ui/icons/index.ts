@@ -9,6 +9,7 @@ export { default as BarChart } from "./BarChart";
 export { default as BellOff } from "./BellOff";
 export { default as BellOn } from "./BellOn";
 export { default as Building } from "./Building";
+export { default as Calendar } from "./Calendar";
 export { default as CalendarTime } from "./CalendarTime";
 export { default as CardOff } from "./CardOff";
 export { default as CardOn } from "./CardOn";
