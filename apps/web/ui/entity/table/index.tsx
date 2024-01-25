@@ -71,34 +71,40 @@ export function Table({ initialData, route }: Props) {
     Object.fromEntries(searchParams),
   );
 
-  const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
-    useInfiniteQuery<Page>({
-      queryKey: ["table", route, displayFilters],
-      queryFn: async ({ pageParam, signal }) => {
-        const queryArgs: LoadPageArgs = {
-          route,
-          context: { after: pageParam as string, ...displayFilters },
-        };
-        const response = await fetch("/api/load-page", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(queryArgs),
-          signal,
-        });
-        const data = await response.json();
-        return data;
-      },
-      getNextPageParam: (lastGroup) =>
-        "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
-      refetchOnWindowFocus: false,
-      initialData: {
-        pages: [initialData],
-        pageParams: [undefined],
-      },
-      initialPageParam: undefined,
-    });
+  const {
+    data,
+    fetchNextPage,
+    isFetching,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<Page>({
+    queryKey: ["table", route, displayFilters],
+    queryFn: async ({ pageParam, signal }) => {
+      const queryArgs: LoadPageArgs = {
+        route,
+        context: { after: pageParam as string, ...displayFilters },
+      };
+      const response = await fetch("/api/load-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(queryArgs),
+        signal,
+      });
+      const data = await response.json();
+      return data;
+    },
+    getNextPageParam: (lastGroup) =>
+      "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
+    refetchOnWindowFocus: false,
+    initialData: {
+      pages: [initialData],
+      pageParams: [undefined],
+    },
+    initialPageParam: undefined,
+  });
 
   const flatData = React.useMemo(
     () =>
@@ -205,7 +211,8 @@ export function Table({ initialData, route }: Props) {
     [registerItemProps],
   );
 
-  if (isLoading) {
+  // TODO
+  if (isLoading || (!isFetchingNextPage && isFetching)) {
     return <>Loading...</>;
   }
 

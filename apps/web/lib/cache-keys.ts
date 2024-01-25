@@ -28,7 +28,7 @@ export const CACHE_KEYS = {
       route.network,
       ...route.path,
       "AFTER",
-      context?.after ?? "",
+      context?.after?.slice(0, 25) ?? "",
       "LIMIT",
       context?.limit?.toString() ?? "-1",
       "ORDER_BY",
