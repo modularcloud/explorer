@@ -4,7 +4,10 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize } from "~/lib/shared-utils";
-import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
+import type {
+  GroupedNetworkChains,
+  NetworkChain,
+} from "~/lib/grouped-network-chains";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 

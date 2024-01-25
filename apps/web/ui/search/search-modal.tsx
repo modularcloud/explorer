@@ -25,7 +25,10 @@ import {
 } from "./use-filtered-network-chains";
 
 // types
-import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
+import type {
+  GroupedNetworkChains,
+  NetworkChain,
+} from "~/lib/grouped-network-chains";
 interface Props {
   defaultNetwork: {
     value: NetworkChain;
