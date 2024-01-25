@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
@@ -20,7 +19,10 @@ import {
 import { Calendar } from "~/ui/shadcn/components/ui/calendar";
 import { cn } from "~/ui/shadcn/utils";
 import { format } from "date-fns";
-import { z } from "zod";
+import {
+  displayFiltersSchema,
+  type DisplayFilters,
+} from "~/lib/display-filters";
 
 type HeaderTabsFilterButtonProps = {
   primaryColor: string;
@@ -29,24 +31,16 @@ type HeaderTabsFilterButtonProps = {
 function formatSearchParams(
   sp: URLSearchParams,
   key: string,
-  value: string | number | null,
+  value: string | number | null | undefined,
 ) {
   const newSp = new URLSearchParams(sp);
-  if (value === null) {
+  if (!value) {
     newSp.delete(key);
   } else {
     newSp.set(key, value.toString());
   }
   return newSp;
 }
-
-const filtersSchema = z.object({
-  startTime: z.coerce.number().nullish().catch(null).default(null),
-  endTime: z.coerce.number().nullish().catch(null).default(null),
-  orderBy: z.enum(["asc", "desc"]).catch("desc").default("desc"),
-});
-
-type Filters = z.TypeOf<typeof filtersSchema>;
 
 export function HeaderTabsFilterButton({
   primaryColor,
@@ -55,7 +49,7 @@ export function HeaderTabsFilterButton({
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const searchParams = useSearchParams();
 
-  const { startTime, endTime, orderBy } = filtersSchema.parse(
+  const { startTime, endTime, orderBy } = displayFiltersSchema.parse(
     Object.fromEntries(searchParams),
   );
 
@@ -64,7 +58,7 @@ export function HeaderTabsFilterButton({
     to: endTime && endTime > 0 ? new Date(endTime) : undefined,
   });
 
-  function updateFilters(filters: Partial<Filters>) {
+  function updateFilters(filters: Partial<DisplayFilters>) {
     let newSearchParams = new URLSearchParams(searchParams);
     for (const [key, value] of Object.entries(filters)) {
       newSearchParams = formatSearchParams(newSearchParams, key, value);
@@ -145,8 +139,8 @@ export function HeaderTabsFilterButton({
                 selected={dateRange}
                 onSelect={(newDateRange) => {
                   updateFilters({
-                    startTime: newDateRange?.from?.getTime() ?? null,
-                    endTime: newDateRange?.to?.getTime() ?? null,
+                    startTime: newDateRange?.from?.getTime() ?? undefined,
+                    endTime: newDateRange?.to?.getTime() ?? undefined,
                   });
                   setDateRange(newDateRange);
                 }}

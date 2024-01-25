@@ -31,6 +31,12 @@ export const CACHE_KEYS = {
       context?.after ?? "",
       "LIMIT",
       context?.limit?.toString() ?? "-1",
+      "ORDER_BY",
+      context?.orderBy?.toString() ?? "",
+      "START_TIME",
+      context?.startTime?.toString() ?? "",
+      "END_TIME",
+      context?.endTime?.toString() ?? "",
     ],
   },
 } as const;

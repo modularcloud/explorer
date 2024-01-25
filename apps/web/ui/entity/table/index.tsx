@@ -4,16 +4,17 @@ import { TableCell } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { Page, Collection, Column } from "@modularcloud/headless";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { HeadlessRoute } from "~/lib/headless-utils";
+import type { HeadlessRoute, LoadPageArgs } from "~/lib/headless-utils";
 import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
 import { NotFound } from "~/ui/not-found";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
+import { displayFiltersSchema } from "~/lib/display-filters";
 
 interface Props {
   initialData: Page;
@@ -64,20 +65,26 @@ export function Table({ initialData, route }: Props) {
   const { tableColumns: columns } = initialData.body;
 
   const parentRef = React.useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+
+  const displayFilters = displayFiltersSchema.parse(
+    Object.fromEntries(searchParams),
+  );
 
   const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
     useInfiniteQuery<Page>({
-      queryKey: ["table", route],
+      queryKey: ["table", route, displayFilters],
       queryFn: async ({ pageParam, signal }) => {
+        const queryArgs: LoadPageArgs = {
+          route,
+          context: { after: pageParam as string, ...displayFilters },
+        };
         const response = await fetch("/api/load-page", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            route,
-            context: { after: pageParam },
-          }),
+          body: JSON.stringify(queryArgs),
           signal,
         });
         const data = await response.json();
@@ -265,7 +272,9 @@ export function Table({ initialData, route }: Props) {
                     )}
                   >
                     {/* Stupid hack */}
-                    {firstVisibleColumnName === "From" ? "Transfers (From / To / Amount)" : firstVisibleColumnName}
+                    {firstVisibleColumnName === "From"
+                      ? "Transfers (From / To / Amount)"
+                      : firstVisibleColumnName}
                   </th>
                   <th
                     className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
