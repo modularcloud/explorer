@@ -5,7 +5,13 @@ import * as React from "react";
 import type { DateRange } from "react-day-picker";
 
 import { Button } from "~/ui/button";
-import { Calendar as CalendarIcon, ChevronDown, Filters } from "~/ui/icons";
+import {
+  Calendar as CalendarIcon,
+  Check,
+  Checkmark,
+  ChevronDown,
+  Filters,
+} from "~/ui/icons";
 import {
   Popover,
   PopoverContent,
@@ -14,29 +20,57 @@ import {
 import { Calendar } from "~/ui/shadcn/components/ui/calendar";
 import { cn } from "~/ui/shadcn/utils";
 import { format } from "date-fns";
+import { z } from "zod";
 
 type HeaderTabsFilterButtonProps = {
   primaryColor: string;
 };
 
-function formatSearchParams(sp: URLSearchParams, key: string, value: string) {
+function formatSearchParams(
+  sp: URLSearchParams,
+  key: string,
+  value: string | number | null,
+) {
   const newSp = new URLSearchParams(sp);
-  newSp.set(key, value);
-  return newSp.toString();
+  if (value === null) {
+    newSp.delete(key);
+  } else {
+    newSp.set(key, value.toString());
+  }
+  return newSp;
 }
+
+const filtersSchema = z.object({
+  startTime: z.coerce.number().nullish().catch(null).default(null),
+  endTime: z.coerce.number().nullish().catch(null).default(null),
+  orderBy: z.enum(["asc", "desc"]).catch("desc").default("desc"),
+});
+
+type Filters = z.TypeOf<typeof filtersSchema>;
 
 export function HeaderTabsFilterButton({
   primaryColor,
 }: HeaderTabsFilterButtonProps) {
   const pathname = usePathname();
-  const sp = useSearchParams();
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    undefined,
+  const searchParams = useSearchParams();
+
+  const { startTime, endTime, orderBy } = filtersSchema.parse(
+    Object.fromEntries(searchParams),
   );
 
-  function updateDateRange(newDateRange: DateRange | undefined) {
-    if (!newDateRange) setDateRange(newDateRange);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
+    from: startTime && startTime > 0 ? new Date(startTime) : undefined,
+    to: endTime && endTime > 0 ? new Date(endTime) : undefined,
+  });
+
+  function updateFilters(filters: Partial<Filters>) {
+    let newSearchParams = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(filters)) {
+      newSearchParams = formatSearchParams(newSearchParams, key, value);
+    }
+
+    window.history.pushState(null, "", `?${newSearchParams.toString()}`);
   }
 
   return (
@@ -109,7 +143,13 @@ export function HeaderTabsFilterButton({
                 mode="range"
                 defaultMonth={dateRange?.from}
                 selected={dateRange}
-                onSelect={setDateRange}
+                onSelect={(newDateRange) => {
+                  updateFilters({
+                    startTime: newDateRange?.from?.getTime() ?? null,
+                    endTime: newDateRange?.to?.getTime() ?? null,
+                  });
+                  setDateRange(newDateRange);
+                }}
                 numberOfMonths={1}
                 className="bg-white"
               />
@@ -120,24 +160,42 @@ export function HeaderTabsFilterButton({
           <p className="px-2 py-1.5 text-muted text-sm font-medium">Sort</p>
           <ul className="w-full flex flex-col gap-0 items-stretch">
             <li className="w-full">
-              <Link
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  updateFilters({ orderBy: "desc" });
+                }}
                 href={`${pathname}?${formatSearchParams(
-                  sp,
+                  searchParams,
                   "orderBy",
                   "desc",
                 )}`}
-                className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex"
+                className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex justify-between items-center"
               >
-                Latest
-              </Link>
+                <span>Latest</span>
+                {orderBy === "desc" && (
+                  <Checkmark className="text-primary h-4 w-4" />
+                )}
+              </a>
             </li>
             <li className="w-full">
-              <Link
-                href={`${pathname}?${formatSearchParams(sp, "orderBy", "asc")}`}
-                className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex"
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  updateFilters({ orderBy: "asc" });
+                }}
+                href={`${pathname}?${formatSearchParams(
+                  searchParams,
+                  "orderBy",
+                  "asc",
+                )}`}
+                className="border-t text-sm font-medium hover:bg-muted-100 w-full px-2 py-1.5 inline-flex justify-between items-center"
               >
-                Oldest
-              </Link>
+                <span>Oldest</span>
+                {orderBy === "asc" && (
+                  <Checkmark className="text-primary h-4 w-4" />
+                )}
+              </a>
             </li>
           </ul>
         </div>

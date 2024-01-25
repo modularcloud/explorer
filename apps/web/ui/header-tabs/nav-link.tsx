@@ -35,6 +35,13 @@ export function NavLink({ href, currentIndex, tabs, children }: Props) {
   }
 
   const isSelected = currentIndex === activeTabIndex;
+  const linkRef = React.useRef<React.ElementRef<typeof Link>>(null);
+
+  React.useEffect(() => {
+    linkRef.current?.scrollIntoView({
+      inline: "start",
+    });
+  }, [isSelected]);
 
   return (
     <Tooltip
@@ -52,6 +59,7 @@ export function NavLink({ href, currentIndex, tabs, children }: Props) {
     >
       <Link
         href={href}
+        ref={linkRef}
         className={cn(
           "flex text-center flex-col group items-center group outline-none text-sm",
           "ring-primary/40 rounded-md",
