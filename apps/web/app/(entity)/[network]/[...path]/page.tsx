@@ -148,6 +148,7 @@ async function AyncPageContent({
 
     return <Table initialData={page} route={params} />;
   } catch (error) {
+    console.error(error);
     notFound();
   }
 }
