@@ -15,6 +15,8 @@ import {
 import { NotFound } from "~/ui/not-found";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { displayFiltersSchema } from "~/lib/display-filters";
+import { range } from "~/lib/shared-utils";
+import { Skeleton } from "~/ui/skeleton";
 
 interface Props {
   initialData: Page;
@@ -117,30 +119,6 @@ export function Table({ initialData, route }: Props) {
     [data],
   );
 
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        //once the user has scrolled within 300px of the bottom of the table, fetch more data if there is any
-        if (
-          scrollHeight - scrollTop - clientHeight < 300 &&
-          !isFetching &&
-          hasNextPage
-        ) {
-          fetchNextPage();
-        }
-      }
-    },
-    [fetchNextPage, isFetching, hasNextPage],
-  );
-
-  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-
-  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(parentRef.current);
-  }, [fetchMoreOnBottomReached]);
-
   // const PADDING_END = 160;
   // const ITEM_SIZE = 65;
   // Removed for now as it causes white blank issues.
@@ -158,6 +136,7 @@ export function Table({ initialData, route }: Props) {
   const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
 
   const router = useRouter();
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
   const onSelectItem = React.useCallback(
     ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
@@ -211,19 +190,39 @@ export function Table({ initialData, route }: Props) {
     [registerItemProps],
   );
 
-  // TODO
+  const loadMoreFallbackRef = React.useRef<React.ElementRef<"section">>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isFetching && hasNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        rootMargin: "0px",
+        threshold: 0.1,
+      },
+    );
+
+    const loadMoreFallback = loadMoreFallbackRef.current;
+    if (loadMoreFallback) {
+      observer.observe(loadMoreFallback);
+      return () => {
+        observer.unobserve(loadMoreFallback);
+      };
+    }
+  }, [fetchNextPage, isFetching, hasNextPage]);
+
   if (isLoading || (!isFetchingNextPage && isFetching)) {
-    return <>Loading...</>;
+    return <TableSkeleton />;
   }
 
   return (
     <div>
       {containsData ? (
-        <div
-          ref={parentRef}
-          onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-          className="overflow-y-auto h-screen"
-        >
+        <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
@@ -306,6 +305,13 @@ export function Table({ initialData, route }: Props) {
               </tbody>
             </table>
           </div>
+          {hasNextPage && (
+            <TableSkeleton
+              sectionRef={loadMoreFallbackRef}
+              noOfItems={3}
+              className="border-none"
+            />
+          )}
         </div>
       ) : (
         <NotFound
@@ -414,3 +420,46 @@ const TableRow = React.memo(function TableRow({
     </tr>
   );
 });
+
+type TableSkeletonProps = {
+  noOfItems?: number;
+  className?: string;
+  sectionRef?: React.Ref<React.ElementRef<"section">>;
+};
+
+function TableSkeleton({
+  noOfItems = 12,
+  sectionRef,
+  className,
+}: TableSkeletonProps) {
+  return (
+    <section className="pb-[6.5rem]" ref={sectionRef}>
+      <dl
+        className={cn(
+          "border-t border-mid-dark-100 w-full flex flex-col",
+          className,
+        )}
+      >
+        {/* Rest of the components */}
+        {range(1, noOfItems).map((index) => (
+          <div
+            key={index}
+            className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6"
+          >
+            <dd className="col-span-3">
+              <Skeleton className="h-[1.37rem] inline-flex w-full" />
+            </dd>
+
+            <div className="col-span-2 font-medium flex justify-end">
+              <Skeleton className="h-[1.37rem] inline-flex w-40" />
+            </div>
+
+            <div className="col-span-2 font-medium flex justify-end">
+              <Skeleton className="h-[1.37rem] inline-flex w-40" />
+            </div>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
