@@ -37,12 +37,6 @@ export function NavLink({ href, currentIndex, tabs, children }: Props) {
   const isSelected = currentIndex === activeTabIndex;
   const linkRef = React.useRef<React.ElementRef<typeof Link>>(null);
 
-  React.useEffect(() => {
-    linkRef.current?.scrollIntoView({
-      inline: "start",
-    });
-  }, [isSelected]);
-
   return (
     <Tooltip
       className="p-1 pl-2"
