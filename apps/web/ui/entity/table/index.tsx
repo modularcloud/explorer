@@ -317,13 +317,13 @@ export function Table({ initialData, route }: Props) {
             </div>
           )}
 
-          {/* {hasNextPage && (
+          {hasNextPage && (
             <TableSkeleton
               sectionRef={loadMoreFallbackRef}
               noOfItems={3}
               className="border-none"
             />
-          )} */}
+          )}
         </div>
       ) : (
         <NotFound
