@@ -17,6 +17,7 @@ import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { displayFiltersSchema } from "~/lib/display-filters";
 import { range } from "~/lib/shared-utils";
 import { Skeleton } from "~/ui/skeleton";
+import { LoadingIndicator } from "~/ui/loading-indicator";
 
 interface Props {
   initialData: Page;
@@ -224,14 +225,7 @@ export function Table({ initialData, route }: Props) {
   return (
     <div>
       {containsData ? (
-        <div
-          ref={parentRef}
-          className={cn(
-            "overflow-y-auto h-screen",
-            isRefetchingEverything &&
-              "opacity-40 overflow-y-hidden pointer-events-none",
-          )}
-        >
+        <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
@@ -314,13 +308,21 @@ export function Table({ initialData, route }: Props) {
               </tbody>
             </table>
           </div>
-          {hasNextPage && (isFetchingNextPage || !isRefetchingEverything) && (
+
+          {isRefetchingEverything && (
+            <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
+              <LoadingIndicator className="text-white h-4 w-4" />
+              <span>Loading new data...</span>
+            </div>
+          )}
+
+          {/* {hasNextPage && (
             <TableSkeleton
               sectionRef={loadMoreFallbackRef}
               noOfItems={3}
               className="border-none"
             />
-          )}
+          )} */}
         </div>
       ) : (
         <NotFound
