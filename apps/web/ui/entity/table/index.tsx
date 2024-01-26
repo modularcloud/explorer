@@ -310,13 +310,6 @@ export function Table({ initialData, route }: Props) {
             </table>
           </div>
 
-          {isRefetchingEverything && (
-            <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
-              <LoadingIndicator className="text-white h-4 w-4" />
-              <span>Loading new data...</span>
-            </div>
-          )}
-
           {hasNextPage && (
             <TableSkeleton
               sectionRef={loadMoreFallbackRef}
@@ -330,6 +323,13 @@ export function Table({ initialData, route }: Props) {
           heading="Nothing to see here!"
           description="This table is empty"
         />
+      )}
+
+      {isRefetchingEverything && (
+        <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
+          <LoadingIndicator className="text-white h-4 w-4" />
+          <span>Loading new data...</span>
+        </div>
       )}
     </div>
   );
