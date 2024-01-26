@@ -14,7 +14,6 @@ import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
 
-
 /**
  * This is reused on the `api/load-page/route.ts` file
  */
@@ -77,6 +76,14 @@ export async function loadIntegration(
       additionalContext?: PaginationContext | undefined,
       includeTrace: boolean = false,
     ) => {
+      // Divide start & end time by 1000 because JS dates on the front are in milliseconds
+      if (additionalContext?.startTime) {
+        additionalContext.startTime = additionalContext.startTime / 1000;
+      }
+      if (additionalContext?.endTime) {
+        additionalContext.endTime = additionalContext.endTime / 1000;
+      }
+
       if (revalidateTimeInSeconds === 0) {
         const response = await integration.resolveRoute(
           path,
