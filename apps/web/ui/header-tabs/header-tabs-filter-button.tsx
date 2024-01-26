@@ -138,9 +138,13 @@ export function HeaderTabsFilterButton({
                 defaultMonth={dateRange?.from}
                 selected={dateRange}
                 onSelect={(newDateRange) => {
+                  // set end time to 23:59:59 to include items in a day
+                  const dateTo = newDateRange?.to;
+                  dateTo?.setHours(23, 59, 59);
+
                   updateFilters({
                     startTime: newDateRange?.from?.getTime() ?? undefined,
-                    endTime: newDateRange?.to?.getTime() ?? undefined,
+                    endTime: dateTo?.getTime() ?? undefined,
                   });
                   setDateRange(newDateRange);
                 }}
