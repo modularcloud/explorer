@@ -215,14 +215,23 @@ export function Table({ initialData, route }: Props) {
     }
   }, [fetchNextPage, isFetching, hasNextPage]);
 
-  if (isLoading || (!isFetchingNextPage && isFetching)) {
+  if (isLoading) {
     return <TableSkeleton />;
   }
+
+  const isRefetchingEverything = !isFetchingNextPage && isFetching;
 
   return (
     <div>
       {containsData ? (
-        <div ref={parentRef} className="overflow-y-auto h-screen">
+        <div
+          ref={parentRef}
+          className={cn(
+            "overflow-y-auto h-screen",
+            isRefetchingEverything &&
+              "opacity-40 overflow-y-hidden pointer-events-none",
+          )}
+        >
           <div
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
@@ -305,7 +314,7 @@ export function Table({ initialData, route }: Props) {
               </tbody>
             </table>
           </div>
-          {hasNextPage && (
+          {hasNextPage && (isFetchingNextPage || !isRefetchingEverything) && (
             <TableSkeleton
               sectionRef={loadMoreFallbackRef}
               noOfItems={3}
