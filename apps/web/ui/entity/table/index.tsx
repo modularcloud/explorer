@@ -6,7 +6,7 @@ import { cn } from "~/ui/shadcn/utils";
 import type { Page, Collection, Column } from "@modularcloud/headless";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import type { HeadlessRoute, LoadPageArgs } from "~/lib/headless-utils";
 import {
   OnSelectItemArgs,
@@ -107,6 +107,7 @@ export function Table({ initialData, route }: Props) {
       pageParams: [undefined],
     },
     initialPageParam: undefined,
+    placeholderData: keepPreviousData,
   });
 
   const flatData = React.useMemo(
