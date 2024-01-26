@@ -57,14 +57,16 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
 };
 
 export function Table({ initialData, route }: Props) {
+  if (initialData.body.type !== "collection") {
+    throw new Error("Table component can only be used with a collection");
+  }
+
   let containsData = false;
   // @ts-ignore: Property 'entries' does not exist on type
   if (initialData && initialData.body?.entries?.length > 0) {
     containsData = true;
   }
-  if (initialData.body.type !== "collection") {
-    throw new Error("Table component can only be used with a collection");
-  }
+
   const { tableColumns: columns } = initialData.body;
 
   const parentRef = React.useRef<HTMLDivElement>(null);
@@ -75,10 +77,12 @@ export function Table({ initialData, route }: Props) {
   );
 
   const {
-    data,
+    data = {
+      pages: [initialData],
+      pageParams: [undefined],
+    },
     fetchNextPage,
     isFetching,
-    isLoading,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Page>({
@@ -102,10 +106,6 @@ export function Table({ initialData, route }: Props) {
     getNextPageParam: (lastGroup) =>
       "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
     refetchOnWindowFocus: false,
-    initialData: {
-      pages: [initialData],
-      pageParams: [undefined],
-    },
     initialPageParam: undefined,
     placeholderData: keepPreviousData,
   });
@@ -135,7 +135,7 @@ export function Table({ initialData, route }: Props) {
   //   scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
   // });
 
-  const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
+  const getItemId = React.useCallback((entry: TableEntry) => entry?.key, []);
 
   const router = useRouter();
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
@@ -217,7 +217,7 @@ export function Table({ initialData, route }: Props) {
     }
   }, [fetchNextPage, isFetching, hasNextPage]);
 
-  if (isLoading) {
+  if (!data) {
     return <TableSkeleton />;
   }
 
@@ -225,7 +225,7 @@ export function Table({ initialData, route }: Props) {
 
   return (
     <div>
-      {containsData ? (
+      {containsData && flatData.length > 0 ? (
         <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
