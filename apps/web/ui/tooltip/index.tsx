@@ -7,11 +7,12 @@ export type TooltipPosition = RadixTooltip.TooltipContentProps["side"];
 
 interface Props {
   children: React.ReactNode;
-  label: string;
+  label: React.ReactNode;
   delayInMS?: number;
   side?: TooltipPosition;
   className?: string;
   arrowClassName?: string;
+  hideArrow?: boolean;
 }
 
 export function Tooltip({
@@ -21,6 +22,7 @@ export function Tooltip({
   delayInMS = 500,
   className,
   arrowClassName,
+  hideArrow,
 }: Props) {
   return (
     <RadixTooltip.Provider delayDuration={delayInMS}>
@@ -39,9 +41,11 @@ export function Tooltip({
             sideOffset={5}
           >
             {label}
-            <RadixTooltip.Arrow
-              className={cn("fill-white z-10", arrowClassName)}
-            />
+            {!hideArrow && (
+              <RadixTooltip.Arrow
+                className={cn("fill-white z-10", arrowClassName)}
+              />
+            )}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>
       </RadixTooltip.Root>

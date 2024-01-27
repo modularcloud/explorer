@@ -4,16 +4,20 @@ import { TableCell } from "./table-cell";
 import { cn } from "~/ui/shadcn/utils";
 
 import type { Page, Collection, Column } from "@modularcloud/headless";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import type { HeadlessRoute } from "~/lib/headless-utils";
+import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
+import type { HeadlessRoute, LoadPageArgs } from "~/lib/headless-utils";
 import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
 import { NotFound } from "~/ui/not-found";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
+import { displayFiltersSchema } from "~/lib/display-filters";
+import { range } from "~/lib/shared-utils";
+import { Skeleton } from "~/ui/skeleton";
+import { LoadingIndicator } from "~/ui/loading-indicator";
 
 interface Props {
   initialData: Page;
@@ -53,45 +57,58 @@ const generateClassname = (breakpoint: Column["breakpoint"]) => {
 };
 
 export function Table({ initialData, route }: Props) {
+  if (initialData.body.type !== "collection") {
+    throw new Error("Table component can only be used with a collection");
+  }
+
   let containsData = false;
   // @ts-ignore: Property 'entries' does not exist on type
   if (initialData && initialData.body?.entries?.length > 0) {
     containsData = true;
   }
-  if (initialData.body.type !== "collection") {
-    throw new Error("Table component can only be used with a collection");
-  }
+
   const { tableColumns: columns } = initialData.body;
 
   const parentRef = React.useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
-  const { data, fetchNextPage, isFetching, isLoading, hasNextPage } =
-    useInfiniteQuery<Page>({
-      queryKey: ["table", route],
-      queryFn: async ({ pageParam, signal }) => {
-        const response = await fetch("/api/load-page", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            route,
-            context: { after: pageParam },
-          }),
-          signal,
-        });
-        const data = await response.json();
-        return data;
-      },
-      getNextPageParam: (lastGroup) =>
-        "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
-      refetchOnWindowFocus: false,
-      initialData: {
-        pages: [initialData],
-        pageParams: [undefined],
-      },
-      initialPageParam: undefined,
-    });
+  const displayFilters = displayFiltersSchema.parse(
+    Object.fromEntries(searchParams),
+  );
+
+  const {
+    data = {
+      pages: [initialData],
+      pageParams: [undefined],
+    },
+    fetchNextPage,
+    isFetching,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<Page>({
+    queryKey: ["table", route, displayFilters],
+    queryFn: async ({ pageParam, signal }) => {
+      const queryArgs: LoadPageArgs = {
+        route,
+        context: { after: pageParam as string, ...displayFilters },
+      };
+      const response = await fetch("/api/load-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(queryArgs),
+        signal,
+      });
+      const data = await response.json();
+      return data;
+    },
+    getNextPageParam: (lastGroup) =>
+      "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
+    refetchOnWindowFocus: false,
+    initialPageParam: undefined,
+    placeholderData: keepPreviousData,
+  });
 
   const flatData = React.useMemo(
     () =>
@@ -103,30 +120,6 @@ export function Table({ initialData, route }: Props) {
       }) ?? [],
     [data],
   );
-
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        //once the user has scrolled within 300px of the bottom of the table, fetch more data if there is any
-        if (
-          scrollHeight - scrollTop - clientHeight < 300 &&
-          !isFetching &&
-          hasNextPage
-        ) {
-          fetchNextPage();
-        }
-      }
-    },
-    [fetchNextPage, isFetching, hasNextPage],
-  );
-
-  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-
-  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(parentRef.current);
-  }, [fetchMoreOnBottomReached]);
 
   // const PADDING_END = 160;
   // const ITEM_SIZE = 65;
@@ -142,9 +135,10 @@ export function Table({ initialData, route }: Props) {
   //   scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
   // });
 
-  const getItemId = React.useCallback((entry: TableEntry) => entry.key, []);
+  const getItemId = React.useCallback((entry: TableEntry) => entry?.key, []);
 
   const router = useRouter();
+  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
   const onSelectItem = React.useCallback(
     ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
@@ -198,18 +192,41 @@ export function Table({ initialData, route }: Props) {
     [registerItemProps],
   );
 
-  if (isLoading) {
-    return <>Loading...</>;
+  const loadMoreFallbackRef = React.useRef<React.ElementRef<"section">>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !isFetching && hasNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        rootMargin: "0px",
+        threshold: 0.1,
+      },
+    );
+
+    const loadMoreFallback = loadMoreFallbackRef.current;
+    if (loadMoreFallback) {
+      observer.observe(loadMoreFallback);
+      return () => {
+        observer.unobserve(loadMoreFallback);
+      };
+    }
+  }, [fetchNextPage, isFetching, hasNextPage]);
+
+  if (!data) {
+    return <TableSkeleton />;
   }
+
+  const isRefetchingEverything = !isFetchingNextPage && isFetching;
 
   return (
     <div>
-      {containsData ? (
-        <div
-          ref={parentRef}
-          onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-          className="overflow-y-auto h-screen"
-        >
+      {containsData && flatData.length > 0 ? (
+        <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
@@ -265,7 +282,9 @@ export function Table({ initialData, route }: Props) {
                     )}
                   >
                     {/* Stupid hack */}
-                    {firstVisibleColumnName === "From" ? "Transfers (From / To / Amount)" : firstVisibleColumnName}
+                    {firstVisibleColumnName === "From"
+                      ? "Transfers (From / To / Amount)"
+                      : firstVisibleColumnName}
                   </th>
                   <th
                     className="px-1 sm:px-3 shadow-[0rem_0.03125rem_0rem_#ECEFF3]"
@@ -290,12 +309,27 @@ export function Table({ initialData, route }: Props) {
               </tbody>
             </table>
           </div>
+
+          {hasNextPage && (
+            <TableSkeleton
+              sectionRef={loadMoreFallbackRef}
+              noOfItems={3}
+              className="border-none"
+            />
+          )}
         </div>
       ) : (
         <NotFound
           heading="Nothing to see here!"
           description="This table is empty"
         />
+      )}
+
+      {isRefetchingEverything && (
+        <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
+          <LoadingIndicator className="text-white h-4 w-4" />
+          <span>Loading new data...</span>
+        </div>
       )}
     </div>
   );
@@ -398,3 +432,46 @@ const TableRow = React.memo(function TableRow({
     </tr>
   );
 });
+
+type TableSkeletonProps = {
+  noOfItems?: number;
+  className?: string;
+  sectionRef?: React.Ref<React.ElementRef<"section">>;
+};
+
+function TableSkeleton({
+  noOfItems = 12,
+  sectionRef,
+  className,
+}: TableSkeletonProps) {
+  return (
+    <section className="pb-[6.5rem]" ref={sectionRef}>
+      <dl
+        className={cn(
+          "border-t border-mid-dark-100 w-full flex flex-col",
+          className,
+        )}
+      >
+        {/* Rest of the components */}
+        {range(1, noOfItems).map((index) => (
+          <div
+            key={index}
+            className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6"
+          >
+            <dd className="col-span-3">
+              <Skeleton className="h-[1.37rem] inline-flex w-full" />
+            </dd>
+
+            <div className="col-span-2 font-medium flex justify-end">
+              <Skeleton className="h-[1.37rem] inline-flex w-40" />
+            </div>
+
+            <div className="col-span-2 font-medium flex justify-end">
+              <Skeleton className="h-[1.37rem] inline-flex w-40" />
+            </div>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}

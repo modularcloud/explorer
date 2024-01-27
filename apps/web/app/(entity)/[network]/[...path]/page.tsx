@@ -5,6 +5,7 @@ import { Table } from "~/ui/entity/table";
 import { capitalize, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound, redirect } from "next/navigation";
 import { getSingleNetworkCached } from "~/lib/network";
+import { displayFiltersSchema } from "~/lib/display-filters";
 
 export async function generateMetadata({
   params: _params,
@@ -101,17 +102,29 @@ export async function generateMetadata({
   };
 }
 
-export default function EntityPage({ params }: { params: HeadlessRoute }) {
+export default function EntityPage({
+  params,
+  searchParams,
+}: {
+  params: HeadlessRoute;
+  searchParams?: Record<string, any>;
+}) {
   const pathParams = parseHeadlessRouteVercelFix(params);
 
   return (
     <React.Suspense fallback={<OverviewSkeleton />}>
-      <AyncPageContent params={pathParams} />
+      <AyncPageContent params={pathParams} searchParams={searchParams} />
     </React.Suspense>
   );
 }
 
-async function AyncPageContent({ params }: { params: HeadlessRoute }) {
+async function AyncPageContent({
+  params,
+  searchParams,
+}: {
+  params: HeadlessRoute;
+  searchParams?: Record<string, any>;
+}) {
   const entityType = params.path[0];
 
   if (entityType === "search") {
@@ -126,7 +139,8 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
   }
 
   try {
-    const page = await loadPage({ route: params });
+    const displayFilters = displayFiltersSchema.parse(searchParams);
+    const page = await loadPage({ route: params, context: displayFilters });
 
     if (page.body.type === "notebook") {
       return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
@@ -134,6 +148,7 @@ async function AyncPageContent({ params }: { params: HeadlessRoute }) {
 
     return <Table initialData={page} route={params} />;
   } catch (error) {
+    console.error(error);
     notFound();
   }
 }

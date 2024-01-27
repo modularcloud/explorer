@@ -1,17 +1,19 @@
+import { displayFiltersSchema } from "~/lib/display-filters";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { HeadlessRouteSchema, loadPage } from "~/lib/headless-utils";
 
 const loadPageSchema = z.object({
   route: HeadlessRouteSchema,
-  context: z.object({
-    after: z.string().optional(),
-    limit: z.number().optional(),
-  }),
+  context: z
+    .object({
+      after: z.string().optional(),
+      limit: z.number().optional(),
+    })
+    .merge(displayFiltersSchema),
 });
 
 export async function POST(req: NextRequest) {
-  console.log("load-page");
   const body = await req.json();
 
   const validationResult = loadPageSchema.safeParse(body);

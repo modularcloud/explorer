@@ -17,7 +17,7 @@ import {
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { GroupedNetworkChains } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
 interface Props {
   optionGroups: GroupedNetworkChains;
 }
@@ -80,7 +80,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
               width={16}
               height={16}
               alt={`Logo ${network.brandName}`}
-              className="object-center object-contain flex-shrink-0"
+              className="object-center object-contain flex-shrink-0 rounded-full"
             />
 
             <span className="whitespace-nowrap text-ellipsis overflow-x-hidden flex-shrink">

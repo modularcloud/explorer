@@ -7,7 +7,10 @@ import { useItemGrid } from "~/lib/hooks/use-item-grid";
 
 import Image from "next/image";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
+import type {
+  GroupedNetworkChains,
+  NetworkChain,
+} from "~/lib/grouped-network-chains";
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 interface Props {
