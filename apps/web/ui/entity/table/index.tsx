@@ -353,17 +353,17 @@ const TableRow = React.memo(function TableRow({
   const router = useRouter();
   const optionProps = registerOptionProps?.(entry, currentIndex) ?? {};
 
-  React.useEffect(() => {
-    if (entry.link) {
-      router.prefetch(entry.link);
-    }
-  }, [entry, router]);
   return (
     <tr
       onClick={(e) => {
         if (entry.link) {
           e.stopPropagation();
           router.push(entry.link);
+        }
+      }}
+      onMouseEnter={() => {
+        if (entry.link) {
+          router.prefetch(entry.link);
         }
       }}
       className={cn(
