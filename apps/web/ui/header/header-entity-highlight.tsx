@@ -40,7 +40,7 @@ export function HeaderEntityHighlight({
   }
 
   return (
-    <div className="flex tab:hidden w-full max-w-full h-header-tabs items-center text-sm px-6">
+    <div className="flex tab:hidden w-full max-w-full h-12 border-b items-center text-sm px-6">
       {/* Network logo, name & chainName */}
       <div className="inline-flex gap-2 items-center flex-none">
         <Image

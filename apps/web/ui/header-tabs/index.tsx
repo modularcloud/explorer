@@ -74,7 +74,7 @@ export async function HeaderTabs({ params }: Props) {
         "left-0 top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
-        "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "[&_+_*]:top-[calc(theme('spacing.header')+3rem)]  tab:[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
         "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
@@ -148,8 +148,8 @@ export function HeaderTabsSkeleton() {
         "left-0 !top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
-        "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
-        "px-4 flex items-center justify-between gap-4",
+        "[&_+_*]:top-[calc(theme('spacing.header')+3rem)] tab:[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
       <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg p-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">
