@@ -75,7 +75,7 @@ export async function HeaderTabs({ params }: Props) {
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
         "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
-        "px-4 flex items-center justify-between gap-4",
+        "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
       <HeaderTabsHotkeyListener
