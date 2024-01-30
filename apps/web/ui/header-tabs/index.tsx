@@ -159,7 +159,6 @@ export async function HeaderTabsMobile({ params }: Props) {
 
   const { tabs: resolvedTabs } = page;
 
-  // TODO: we should use this schema directly without modification
   const tabs: Map<string, React.ReactNode> = new Map();
 
   for (const tab of resolvedTabs) {
@@ -191,8 +190,9 @@ export async function HeaderTabsMobile({ params }: Props) {
       <span className="text-xs text-muted flex-none">Go to</span>
       <HeaderTabsMobileDropdown tabs={tabs} />
 
-      {/* TODO */}
-      {page.body.type !== "notebook" && page.body.displayEnabled && <></>}
+      {page.body.type !== "notebook" && page.body.displayEnabled && (
+        <HeaderTabsFilterButton primaryColor={network.config.primaryColor} />
+      )}
     </nav>
   );
 }

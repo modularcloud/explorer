@@ -6,7 +6,6 @@ import type { DateRange } from "react-day-picker";
 import { Button } from "~/ui/button";
 import {
   Calendar as CalendarIcon,
-  Check,
   Checkmark,
   ChevronDown,
   Filters,
@@ -71,17 +70,19 @@ export function HeaderTabsFilterButton({
     <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="bordered"
+          variant="borderless"
           className={cn(
-            "py-2 pl-3.5 pr-2 shadow-sm inline-flex gap-1 items-center text-sm",
-            isPopoverOpen ? "text-foreground" : "text-muted",
+            "p-2 tab:pl-3.5 tab:shadow-sm inline-flex gap-1 items-center text-sm justify-center tab:justify-between",
+            "border-0 focus:ring-0 tab:focus:ring-2 tab:border tab:border-mid-dark-100",
+            isPopoverOpen ? "text-muted tab:text-foreground" : "text-muted",
           )}
         >
           <Filters className="h-4 w-4" />
-          <span className="md:not-sr-only sr-only">Display</span>
+          <span className="sr-only tab:not-sr-only">Display</span>
+
           <ChevronDown
             className={cn(
-              "h-6 w-6 transition duration-150",
+              "h-6 w-6 transition duration-150 hidden tab:block",
               isPopoverOpen && "rotate-180",
             )}
           />
