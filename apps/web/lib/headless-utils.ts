@@ -105,6 +105,11 @@ export async function loadIntegration(
             path,
             additionalContext,
           );
+
+          if (response === null || response.type !== "success") {
+            throw new Error("Not found");
+          }
+
           if (!includeTrace && response !== null) {
             const { trace, ...rest } = response;
             return rest;
@@ -152,27 +157,31 @@ export async function loadPage({
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  const resolution = await integration.resolveRoute(fixedPath, context);
+  try {
+    const resolution = await integration.resolveRoute(fixedPath, context);
 
-  if (!resolution) {
+    if (!resolution) {
+      notFound();
+    }
+
+    if (resolution.type === "pending") {
+      /**
+       * Pending responses are for items that cannot be found, but may exist in the future.
+       * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+       * Therefore, in the short-term we will treat this as any other page that is not found.
+       * However, we will have a special treatment for this in the future.
+       */
+      notFound();
+    }
+
+    if (resolution.type === "error") {
+      throw new Error(resolution.error);
+    }
+
+    return resolution.result as Page;
+  } catch (error) {
     notFound();
   }
-
-  if (resolution.type === "pending") {
-    /**
-     * Pending responses are for items that cannot be found, but may exist in the future.
-     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
-     * Therefore, in the short-term we will treat this as any other page that is not found.
-     * However, we will have a special treatment for this in the future.
-     */
-    notFound();
-  }
-
-  if (resolution.type === "error") {
-    throw new Error(resolution.error);
-  }
-
-  return resolution.result as Page;
 }
 
 export async function search(networkSlug: string, query: string) {
