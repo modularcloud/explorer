@@ -231,7 +231,7 @@ export function Table({ initialData, route }: Props) {
           //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
             <table
-              className="w-full max-w-full border-separate bg-muted-100"
+              className="w-full max-w-full border-separate bg-muted-100 pb-48 tab:pb-0"
               style={{ borderSpacing: "0 1px" }}
             >
               <thead className="sticky top-0 bg-white z-10 text-sm">
