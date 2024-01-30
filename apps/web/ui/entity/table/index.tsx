@@ -228,10 +228,11 @@ export function Table({ initialData, route }: Props) {
       {containsData && flatData.length > 0 ? (
         <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
-          //  style={{ height: `${virtualizer.getTotalSize()}px` }}
+            className="[&_+_*]:mb-20 [&_+_*]:tab:mb-0 group"
+            //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
             <table
-              className="w-full max-w-full border-separate bg-muted-100 pb-48 tab:pb-0"
+              className="w-full max-w-full border-separate bg-muted-100 group-[&:only-child]:mb-48 group-[&:only-child]:tab:mb-0"
               style={{ borderSpacing: "0 1px" }}
             >
               <thead className="sticky top-0 bg-white z-10 text-sm">
@@ -456,7 +457,10 @@ function TableSkeleton({
         {range(1, noOfItems).map((index) => (
           <div
             key={index}
-            className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6"
+            className={cn(
+              index < noOfItems && "border-b",
+              "border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6",
+            )}
           >
             <dd className="col-span-3">
               <Skeleton className="h-[1.37rem] inline-flex w-full" />
