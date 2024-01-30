@@ -71,7 +71,7 @@ export default async function RootLayout({
         <SkipToMainContent />
         <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
           {children}
-          {/* {process.env.NODE_ENV !== "production" && <TailwindIndicator />} */}
+          {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
           <Toaster />
           <Analytics />
           <SpeedInsights />
