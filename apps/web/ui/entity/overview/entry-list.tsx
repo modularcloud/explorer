@@ -162,7 +162,7 @@ export function OverviewEntryList({ entries }: Props) {
   return (
     <dl
       ref={listRef}
-      className="border-t border-mid-dark-100 w-full flex flex-col h-full mb-20 bg-muted-100"
+      className="border-t border-mid-dark-100 w-full flex flex-col h-full mb-20"
     >
       {items.map((item, index) => (
         <OverviewEntry

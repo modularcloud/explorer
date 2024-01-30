@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import type { Page } from "@modularcloud/headless";
 import { HeaderTabsFilterButton } from "./header-tabs-filter-button";
 import { SingleNetwork, getSingleNetworkCached } from "~/lib/network";
+import { HeaderTabsMobileDropdown } from "./header-tabs-mobile-dropdown";
 interface Props {
   params: HeadlessRoute;
 }
@@ -25,7 +26,7 @@ type Tab = {
     "aria-hidden"?: boolean | "true" | "false";
   }> | null;
   text: string;
-  route: string[] | null;
+  route: string[];
   totalCount: number | null;
 };
 
@@ -74,8 +75,8 @@ export async function HeaderTabs({ params }: Props) {
         "left-0 top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
-        "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
-        "px-4 flex items-center justify-between gap-4",
+        "[&_+_*]:top-[calc(theme('spacing.header')+3rem)]  tab:[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
       <HeaderTabsHotkeyListener
@@ -98,9 +99,7 @@ export async function HeaderTabs({ params }: Props) {
             >
               <NavLink
                 tabs={tabs.map((tab) => tab.route?.join("/")!).filter(Boolean)}
-                href={
-                  tab.route ? `/${params.network}/${tab.route.join("/")}` : "#"
-                }
+                href={`/${params.network}/${tab.route.join("/")}`}
                 currentIndex={index}
               >
                 <span
@@ -140,6 +139,64 @@ export async function HeaderTabs({ params }: Props) {
   );
 }
 
+export async function HeaderTabsMobile({ params }: Props) {
+  let page: Page | null = null;
+  let network: SingleNetwork | null = null;
+  try {
+    [page, network] = await Promise.all([
+      loadPage({
+        route: params,
+      }),
+      getSingleNetworkCached(params.network),
+    ]);
+  } catch (error) {
+    // pass
+  }
+
+  if (!page || !network) {
+    notFound();
+  }
+
+  const { tabs: resolvedTabs } = page;
+
+  const tabs: Map<string, React.ReactNode> = new Map();
+
+  for (const tab of resolvedTabs) {
+    let Icon =
+      tab.text.toLowerCase() === "transactions" ||
+      tab.text.toLowerCase() === "latest transactions"
+        ? ArrowLeftRight
+        : ArrowRight;
+    if (tab.text === "Overview") Icon = Stars;
+    tabs.set(
+      `/${params.network}/${tab.route.join("/")}`,
+      <div className="flex items-center gap-2 text-sm">
+        <Icon aria-hidden="true" className={cn("h-3 w-3 flex-none")} />
+        <span>{tab.text}</span>
+      </div>,
+    );
+  }
+  return (
+    <nav
+      className={cn(
+        "fixed z-30 bg-white border rounded-md shadow-md",
+        "left-5 right-5 bottom-5 !top-[auto]",
+        "px-3 py-1.5 flex tab:hidden items-center justify-between gap-2",
+        // this is to style the main section when the content is visible (no 404)
+        // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
+        "[&_+_*]:top-[calc(theme('spacing.header')+3rem)]  tab:[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+      )}
+    >
+      <span className="text-xs text-muted flex-none">Go to</span>
+      <HeaderTabsMobileDropdown tabs={tabs} />
+
+      {page.body.type !== "notebook" && page.body.displayEnabled && (
+        <HeaderTabsFilterButton primaryColor={network.config.primaryColor} />
+      )}
+    </nav>
+  );
+}
+
 export function HeaderTabsSkeleton() {
   return (
     <nav
@@ -148,8 +205,8 @@ export function HeaderTabsSkeleton() {
         "left-0 !top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs />
-        "[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
-        "px-4 flex items-center justify-between gap-4",
+        "[&_+_*]:top-[calc(theme('spacing.header')+3rem)] tab:[&_+_*]:top-[calc(theme('spacing.header')+theme('spacing.header-tabs'))]",
+        "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
       <ol className="min-w-0 flex-shrink inline-flex items-center bg-muted-100 rounded-lg p-0.5 gap-1.5 border overflow-x-auto hide-scrollbars">

@@ -228,10 +228,11 @@ export function Table({ initialData, route }: Props) {
       {containsData && flatData.length > 0 ? (
         <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
-          //  style={{ height: `${virtualizer.getTotalSize()}px` }}
+            className="[&_+_*]:mb-20 [&_+_*]:tab:mb-0 group"
+            //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
             <table
-              className="w-full max-w-full border-separate bg-muted-100"
+              className="w-full max-w-full border-separate bg-muted-100 group-[&:only-child]:mb-48 group-[&:only-child]:tab:mb-0"
               style={{ borderSpacing: "0 1px" }}
             >
               <thead className="sticky top-0 bg-white z-10 text-sm">
@@ -326,7 +327,7 @@ export function Table({ initialData, route }: Props) {
       )}
 
       {isRefetchingEverything && (
-        <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
+        <div className="fixed z-[100] bottom-20 left-5 tab:bottom-8 tab:left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
           <LoadingIndicator className="text-white h-4 w-4" />
           <span>Loading new data...</span>
         </div>
@@ -456,7 +457,10 @@ function TableSkeleton({
         {range(1, noOfItems).map((index) => (
           <div
             key={index}
-            className="border-b border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6"
+            className={cn(
+              index < noOfItems && "border-b",
+              "border-mid-dark-100 py-[1.38rem] grid grid-cols-7 items-baseline gap-4 px-6",
+            )}
           >
             <dd className="col-span-3">
               <Skeleton className="h-[1.37rem] inline-flex w-full" />

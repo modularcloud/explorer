@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import * as RadixSelect from "@radix-ui/react-select";
 import { ArrowDown, Checkmark } from "~/ui/icons";
