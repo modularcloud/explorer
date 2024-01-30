@@ -326,7 +326,7 @@ export function Table({ initialData, route }: Props) {
       )}
 
       {isRefetchingEverything && (
-        <div className="fixed z-[100] bottom-8 left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
+        <div className="fixed z-[100] bottom-20 left-5 tab:bottom-8 tab:left-8 bg-primary/80 rounded-md p-2 text-white flex items-center gap-2 text-sm">
           <LoadingIndicator className="text-white h-4 w-4" />
           <span>Loading new data...</span>
         </div>

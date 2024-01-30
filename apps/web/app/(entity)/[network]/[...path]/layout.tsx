@@ -1,6 +1,10 @@
 import * as React from "react";
 // components
-import { HeaderTabs, HeaderTabsSkeleton } from "~/ui/header-tabs";
+import {
+  HeaderTabs,
+  HeaderTabsSkeleton,
+  HeaderTabsMobile,
+} from "~/ui/header-tabs";
 
 // utils
 import { cn } from "~/ui/shadcn/utils";
@@ -8,6 +12,7 @@ import { cn } from "~/ui/shadcn/utils";
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
+
 interface Props {
   children: React.ReactNode;
   params: HeadlessRoute;
@@ -24,6 +29,7 @@ export default function EntityLayout({ children, params }: Props) {
       ) : (
         <React.Suspense fallback={<HeaderTabsSkeleton />}>
           <HeaderTabs params={params} />
+          <HeaderTabsMobile params={params} />
         </React.Suspense>
       )}
       <section
