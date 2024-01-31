@@ -189,7 +189,7 @@ const BrandChains = React.memo(function BrandChains({
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
           {isInDymensionEcosystem && (
-            <Tooltip label="Dymension">
+            <Tooltip label="Froopyland">
               <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
                 <Image
                   src={DYMENSION_LOGO_URL}
