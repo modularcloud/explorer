@@ -1,11 +1,7 @@
 import * as React from "react";
 
 import { notFound } from "next/navigation";
-import {
-  getAllPaidNetworks,
-  getNetworksForPlatformCached,
-  getSingleNetworkCached,
-} from "~/lib/network";
+import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
@@ -13,7 +9,6 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
-import { DymensionRollappsWidgetLayout } from "~/ui/network-widgets/layouts/dymension/dymension-rollapps-widget-layout";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 
 interface Props {
@@ -36,16 +31,6 @@ export default async function NetworkWidgetPage({ params }: Props) {
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
-
-  if (network.config.platform === "dymension") {
-    const dymensionNetworks = await getNetworksForPlatformCached("dymension");
-    return (
-      <DymensionRollappsWidgetLayout
-        networkSlug={network.slug}
-        allDymensionNetworks={dymensionNetworks}
-      />
-    );
-  }
 
   switch (network.config.widgetLayout) {
     case "SVM":
