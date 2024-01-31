@@ -82,10 +82,7 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
           allIntegrations = [
             ...allIntegrations,
             ...result.integrations.filter(Boolean),
-          ].filter(
-            (i) =>
-              i?.slug.startsWith("celestia-") || i?.slug.startsWith("eclipse"),
-          );
+          ];
         }
       } while (nextToken);
     } catch (error) {
