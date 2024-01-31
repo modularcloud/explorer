@@ -228,11 +228,11 @@ export function Table({ initialData, route }: Props) {
       {containsData && flatData.length > 0 ? (
         <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
-            className="[&_+_*]:mb-20 [&_+_*]:tab:mb-0 group"
+            className="[&_+_*]:mb-20"
             //  style={{ height: `${virtualizer.getTotalSize()}px` }}
           >
             <table
-              className="w-full max-w-full border-separate bg-muted-100 group-[&:only-child]:mb-48 group-[&:only-child]:tab:mb-0"
+              className="w-full max-w-full border-separate bg-muted-100"
               style={{ borderSpacing: "0 1px" }}
             >
               <thead className="sticky top-0 bg-white z-10 text-sm">
@@ -311,12 +311,18 @@ export function Table({ initialData, route }: Props) {
             </table>
           </div>
 
-          {hasNextPage && (
+          {hasNextPage ? (
             <TableSkeleton
               sectionRef={loadMoreFallbackRef}
               noOfItems={3}
               className="border-none"
             />
+          ) : (
+            <div className="py-5 w-full px-8 flex justify-center items-baseline gap-4 pb-[6.5rem]">
+              <hr className="h-2 w-full max-w-[10rem] flex-1" />
+              <span className="text-sm text-muted">End of the table</span>
+              <hr className="h-2 w-full max-w-[10rem] flex-1" />
+            </div>
           )}
         </div>
       ) : (
