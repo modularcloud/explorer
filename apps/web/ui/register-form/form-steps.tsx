@@ -45,36 +45,36 @@ const DEFAULT_TOOLKITS = [
     name: "Rollkit",
     logo: "/images/rollkit-logo.svg",
   },
-  {
-    value: "DYMINT",
-    name: "Dymint",
-    logo: "/images/dymension-logo.svg",
-  },
-  {
-    value: "ZK_STACK",
-    name: "ZK Stack",
-    logo: "/images/zk_stack.svg",
-  },
-  {
-    value: "OP_STACK",
-    name: "OP Stack",
-    logo: "/images/op_stack.svg",
-  },
-  {
-    value: "ORBIT_STACK",
-    name: "Orbit Stack",
-    logo: "/images/orbit_stack.svg",
-  },
-  {
-    value: "CDK",
-    name: "CDK",
-    logo: "/images/cdk.svg",
-  },
-  {
-    value: "Sovereign",
-    name: "Sovereign",
-    logo: "/images/sovereign.svg",
-  },
+  // {
+  //   value: "DYMINT",
+  //   name: "Dymint",
+  //   logo: "/images/dymension-logo.svg",
+  // },
+  // {
+  //   value: "ZK_STACK",
+  //   name: "ZK Stack",
+  //   logo: "/images/zk_stack.svg",
+  // },
+  // {
+  //   value: "OP_STACK",
+  //   name: "OP Stack",
+  //   logo: "/images/op_stack.svg",
+  // },
+  // {
+  //   value: "ORBIT_STACK",
+  //   name: "Orbit Stack",
+  //   logo: "/images/orbit_stack.svg",
+  // },
+  // {
+  //   value: "CDK",
+  //   name: "CDK",
+  //   logo: "/images/cdk.svg",
+  // },
+  // {
+  //   value: "Sovereign",
+  //   name: "Sovereign",
+  //   logo: "/images/sovereign.svg",
+  // },
 ];
 
 const DEFAULT_LAYERS = [
@@ -88,21 +88,21 @@ const DEFAULT_LAYERS = [
     name: "Celestia",
     logo: "/images/celestia-logo.svg",
   },
-  {
-    value: "AVAIL",
-    name: "Avail",
-    logo: "/images/avail.png",
-  },
-  {
-    value: "EIGEN_DA",
-    name: "EigenDA",
-    logo: "/images/eigen_da.png",
-  },
-  {
-    value: "NEAR",
-    name: "Near",
-    logo: "/images/near.svg",
-  },
+  // {
+  //   value: "AVAIL",
+  //   name: "Avail",
+  //   logo: "/images/avail.png",
+  // },
+  // {
+  //   value: "EIGEN_DA",
+  //   name: "EigenDA",
+  //   logo: "/images/eigen_da.png",
+  // },
+  // {
+  //   value: "NEAR",
+  //   name: "Near",
+  //   logo: "/images/near.svg",
+  // },
 ];
 
 export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
@@ -115,7 +115,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         size="small"
         label="Email"
         type="email"
-        placeholder="Ex: contact@celestia.org"
+        placeholder="Ex: contact@modular.cloud"
         name="email"
         required
         defaultValue={defaultValues?.email}
@@ -129,7 +129,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         size="small"
         label="Project Name"
         type="text"
-        placeholder="Ex: Celestia"
+        placeholder="Ex: Modular Cloud"
         name="projectName"
         defaultValue={defaultValues?.projectName}
         required
@@ -144,7 +144,7 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
         type="url"
         name="githubRepo"
         defaultValue={defaultValues?.githubRepo}
-        placeholder="Ex: https://github.com/celestiaorg/celestia-app"
+        placeholder="Ex: https://github.com/modularcloud/explorer"
         renderLeadingIcon={(cls) => (
           <GithubLogo className={cls} aria-hidden="true" />
         )}
@@ -168,12 +168,10 @@ export function DetailStepForm({ defaultValues, errors }: FormStepProps) {
           defaultValue={defaultValues.estimatedLaunchDate ?? undefined}
         >
           <SelectContent>
-            <SelectItem value="1. Quarter 2024">1. Quarter 2024</SelectItem>
-            <SelectItem value="2. Quarter 2024">2. Quarter 2024</SelectItem>
-            <SelectItem value="3. Quarter 2024">3. Quarter 2024</SelectItem>
-            <SelectItem value="4. Quarter 2024 or later">
-              4. Quarter 2024 or later
-            </SelectItem>
+            <SelectItem value="Q1 2024">Q1 2024</SelectItem>
+            <SelectItem value="Q2 2024">Q2 2024</SelectItem>
+            <SelectItem value="Q3 2024">Q3 2024</SelectItem>
+            <SelectItem value="Q4 2024 or later">Q4 2024 or later</SelectItem>
           </SelectContent>
         </Select>
       )}
