@@ -21,8 +21,27 @@ export function HeaderTabsMobileDropdown({ tabs }: Props) {
   const params: HeadlessRoute = useParams();
   const pathParams = parseHeadlessRouteVercelFix(params);
   const currentPathname = `/${params.network}/${pathParams.path.join("/")}`;
+  let currentTabParentPath = currentPathname;
 
-  const currentTab = tabs.get(currentPathname);
+  let currentTab = tabs.get(currentPathname);
+
+  if (!currentTab) {
+    // In some cases the current tab can be a nested one (ex: `/messages/0` ) and it won't appear
+    // in the list of tabs passed in props, in this case we get resort to its parent
+    const allParentTabPathsOfCurrentOne = Array.from(tabs.keys()).filter(
+      (path) => currentPathname.startsWith(path),
+    );
+    // we search the longest parent path so that if we have
+    // `/messages/0` and `/messages/0/1`, we get `/messages/0/1` as the correct parent path
+    currentTabParentPath = allParentTabPathsOfCurrentOne[0];
+    for (const tab of allParentTabPathsOfCurrentOne) {
+      if (tab.length > currentTabParentPath.length) {
+        currentTabParentPath = tab;
+      }
+    }
+
+    currentTab = tabs.get(currentTabParentPath);
+  }
 
   const router = useRouter();
 
@@ -36,7 +55,7 @@ export function HeaderTabsMobileDropdown({ tabs }: Props) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="tab:hidden">
         <DropdownMenuRadioGroup
-          value={currentPathname}
+          value={currentTabParentPath}
           onValueChange={(path) => {
             router.push(path);
           }}
