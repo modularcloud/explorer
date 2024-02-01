@@ -63,7 +63,7 @@ export const RollAppEvents = createResolver(
           timestamp,
           amount: msg.decodedValue.token
             ? msg.decodedValue.token.denom === "udym"
-              ? `${Number(msg.decodedValue.token.amount) / 10 ** 6} DYM`
+              ? `${Number(msg.decodedValue.token.amount) / 10 ** 18} DYM`
               : `${msg.decodedValue.token.amount} ${msg.decodedValue.token.denom}`
             : undefined,
           from: {
