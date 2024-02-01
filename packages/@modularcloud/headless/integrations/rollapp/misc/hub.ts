@@ -32,7 +32,7 @@ export const RollAppEvents = createResolver(
         limit: 5,
       }),
       fetch(
-        `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&maxResults=1000`,
+        `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&maxResults=5000`,
       ).then((res) => res.json()),
     ]);
     if (messages.type !== "success") {
