@@ -73,8 +73,8 @@ export function useItemGrid<
     onClickOption.current = onClickOptionArg;
   });
 
-  const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
-  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState(-1);
+  const [selectedColIndex, setSelectedColIndex] = React.useState(-1);
 
   const [selectedOption, setSelectedOption] = React.useState<T | null>(null);
 
@@ -159,9 +159,11 @@ export function useItemGrid<
    */
   const moveSelectionDown = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
-    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const currentCell = groupedByLines[rowIndex][colIndex];
+    const currentCell =
+      groupedByLines[rowIndex]?.[colIndex] ?? groupedByLines[0]?.[0];
+
+    if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
@@ -263,9 +265,10 @@ export function useItemGrid<
    */
   const moveSelectionRight = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
-    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+    const currentCell =
+      groupedByLines[rowIndex]?.[colIndex] ?? groupedByLines[0]?.[0];
 
-    const currentCell = groupedByLines[rowIndex][colIndex];
+    if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
@@ -455,11 +458,10 @@ export function useItemGrid<
      *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
      *      to fix it, we just reset the selected column to 0
      */
-    const defaultSelectedItem = groupedByLines[0]?.[0]?.[0];
     selectOption({
-      option: defaultSelectedItem ?? null,
-      rowIndex: 0,
-      colIndex: 0,
+      option: null,
+      rowIndex: -1,
+      colIndex: -1,
     });
   }, [selectOption, groupedByLines]);
 
