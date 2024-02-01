@@ -162,25 +162,12 @@ export function Table({ initialData, route }: Props) {
     [router],
   );
 
-  const { registerItemProps, selectItem } = useItemListNavigation({
+  const { registerItemProps, resetSelection } = useItemListNavigation({
     getItemId,
     onSelectItem,
     items: flatData,
     onClickItem,
   });
-
-  const hasAlreadyFocusedFirstItem = React.useRef(false);
-  /**
-   * We force the selection on the first item when they become available
-   * the ref is here because we don't want this to rerun whenever we fetch more data,
-   * but only when the first batch of data is available
-   */
-  React.useEffect(() => {
-    if (flatData.length > 0 && !hasAlreadyFocusedFirstItem.current) {
-      selectItem({ index: 0, item: flatData[0] });
-      hasAlreadyFocusedFirstItem.current = true;
-    }
-  }, [flatData, selectItem]);
 
   const firstVisibleColumnName = columns.filter(
     (col) => !col.hideColumnLabel,
@@ -217,11 +204,23 @@ export function Table({ initialData, route }: Props) {
     }
   }, [fetchNextPage, isFetching, hasNextPage]);
 
+  const isRefetchingEverything = !isFetchingNextPage && isFetching;
+
+  const isFirstRender = React.useRef(true);
+  // we want to reset the selection after the data has been refetched
+  React.useEffect(() => {
+    if (!isRefetchingEverything) {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+      } else {
+        resetSelection();
+      }
+    }
+  }, [isRefetchingEverything, resetSelection]);
+
   if (!data) {
     return <TableSkeleton />;
   }
-
-  const isRefetchingEverything = !isFetchingNextPage && isFetching;
 
   return (
     <div>
@@ -299,7 +298,7 @@ export function Table({ initialData, route }: Props) {
                 {flatData.map((entry, index) => {
                   return (
                     <TableRow
-                      key={index}
+                      key={entry.key}
                       columns={columns}
                       entry={entry}
                       currentIndex={index}
