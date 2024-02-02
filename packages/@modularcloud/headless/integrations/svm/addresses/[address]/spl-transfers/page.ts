@@ -22,7 +22,15 @@ export const addressSPLTransferResolver = createResolver(
     getTransaction: typeof Sealevel.TransactionResolver,
   ) => {
     const transfers = await fetch(
-      `https://svm.preview-api.modular.cloud/${context.slug}/account/${address}/spl-token-transfers`,
+      `https://svm.preview-api.modular.cloud/${
+        context.slug
+      }/account/${address}/spl-token-transfers?maxResults=${
+        context.limit || 30
+      }${context.after ? `&nextToken=${context.after}` : ""}${
+        context.orderBy ? `&orderBy=${context.orderBy}` : ""
+      }${context.startTime ? `&startTime=${context.startTime}` : ""}${
+        context.endTime ? `&endTime=${context.endTime}` : ""
+      }`,
     );
     const signatures = await transfers.json();
 
@@ -60,6 +68,7 @@ export const addressSPLTransferResolver = createResolver(
       },
       body: {
         type: "collection",
+        displayEnabled: true,
         refreshIntervalMS: 10000,
         nextToken: signatures.result.nextToken || null,
         tableColumns: Column(true),

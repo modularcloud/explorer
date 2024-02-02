@@ -73,8 +73,8 @@ export function useItemGrid<
     onClickOption.current = onClickOptionArg;
   });
 
-  const [selectedRowIndex, setSelectedRowIndex] = React.useState(0);
-  const [selectedColIndex, setSelectedColIndex] = React.useState(0);
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState(-1);
+  const [selectedColIndex, setSelectedColIndex] = React.useState(-1);
 
   const [selectedOption, setSelectedOption] = React.useState<T | null>(null);
 
@@ -87,8 +87,8 @@ export function useItemGrid<
   });
 
   const getOptionId = React.useCallback(
-    (rowIndex: number, colIndex: number, option: T) => {
-      return `${itemRootId}-row-${rowIndex}-col-${colIndex}-option-${option.id}`;
+    (option: T) => {
+      return `${itemRootId}-option-${option.id}`;
     },
     [itemRootId],
   );
@@ -129,13 +129,11 @@ export function useItemGrid<
       let previouslySelectedElement: HTMLElement | null = null;
 
       if (option !== null) {
-        currentlySelectedElement = document.getElementById(
-          getOptionId(newRowIndex, newColIndex, option),
-        );
+        currentlySelectedElement = document.getElementById(getOptionId(option));
       }
       if (previousSelectedOption !== null) {
         previouslySelectedElement = document.getElementById(
-          getOptionId(oldRowIndex, oldColIndex, previousSelectedOption),
+          getOptionId(previousSelectedOption),
         );
       }
 
@@ -161,9 +159,11 @@ export function useItemGrid<
    */
   const moveSelectionDown = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
-    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
 
-    const currentCell = groupedByLines[rowIndex][colIndex];
+    const currentCell =
+      groupedByLines[rowIndex]?.[colIndex] ?? groupedByLines[0]?.[0];
+
+    if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
@@ -203,7 +203,7 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
-        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
+        htmlElementId: getOptionId(newSelectedOption),
       });
     }
   }, [groupedByLines, selectOption, getOptionId]);
@@ -249,7 +249,7 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
-        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
+        htmlElementId: getOptionId(newSelectedOption),
       });
     }
   }, [groupedByLines, selectOption, getOptionId]);
@@ -265,9 +265,10 @@ export function useItemGrid<
    */
   const moveSelectionRight = React.useCallback(() => {
     const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
-    if (!groupedByLines?.[rowIndex]?.[colIndex]) return; // don't do anything if undefined
+    const currentCell =
+      groupedByLines[rowIndex]?.[colIndex] ?? groupedByLines[0]?.[0];
 
-    const currentCell = groupedByLines[rowIndex][colIndex];
+    if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
       (item) => item.id === option?.id,
@@ -308,7 +309,7 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
-        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
+        htmlElementId: getOptionId(newSelectedOption),
       });
     }
   }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
@@ -350,17 +351,17 @@ export function useItemGrid<
         colIndex: newColIndex,
         rowIndex: newRowIndex,
         inputMethod: "keyboard",
-        htmlElementId: getOptionId(newRowIndex, newColIndex, newSelectedOption),
+        htmlElementId: getOptionId(newSelectedOption),
       });
     }
   }, [groupedByLines, selectOption, onSelectOption, getOptionId]);
 
   const scrollOptionIntoView = React.useCallback(() => {
-    const { rowIndex, colIndex, option } = selectedItemPositionRef.current;
+    const { option } = selectedItemPositionRef.current;
 
     if (option) {
       const element = document.getElementById(
-        getOptionId(rowIndex, colIndex, option),
+        getOptionId(option),
       ) as HTMLElement | null;
 
       element?.scrollIntoView({
@@ -457,11 +458,10 @@ export function useItemGrid<
      *      if we try to use arrow keys to move the selection, it will throw an 'undefined' error because that column is empty
      *      to fix it, we just reset the selected column to 0
      */
-    const defaultSelectedItem = groupedByLines[0]?.[0]?.[0];
     selectOption({
-      option: defaultSelectedItem ?? null,
-      rowIndex: 0,
-      colIndex: 0,
+      option: null,
+      rowIndex: -1,
+      colIndex: -1,
     });
   }, [selectOption, groupedByLines]);
 
@@ -480,7 +480,7 @@ export function useItemGrid<
   const registerOptionProps = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
       return {
-        id: getOptionId(rowIndex, colIndex, option),
+        id: getOptionId(option),
         onClick: () => onClickOption.current?.(option),
         onMouseMove: (event: React.MouseEvent) => {
           // This is to fix a bug in SAFARI,
@@ -507,7 +507,7 @@ export function useItemGrid<
               colIndex,
               rowIndex,
               inputMethod: "mouse",
-              htmlElementId: getOptionId(rowIndex, colIndex, option),
+              htmlElementId: getOptionId(option),
             });
           }
         },

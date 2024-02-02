@@ -17,7 +17,7 @@ import {
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { GroupedNetworkChains } from "~/lib/search-options";
+import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
 interface Props {
   optionGroups: GroupedNetworkChains;
 }
@@ -58,7 +58,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           "inline-flex items-center justify-between gap-4 md:gap-5",
           "md:min-w-fit min-w-0 flex-shrink",
           "shadow-sm text-sm",
-          "py-2 px-3.5",
+          "py-2 px-2.5 tab:px-3.5",
         )}
         variant="bordered"
         style={{
@@ -71,7 +71,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           aria-hidden="true"
         />
 
-        <span className="inline-flex gap-2 items-center min-w-0 flex-shrink">
+        <span className="inline-flex gap-2 items-center min-w-0 flex-shrink sr-only tab:not-sr-only">
           {/* Network logo, name & chainName */}
           <span className="inline-flex gap-2 items-center">
             <Image
@@ -80,13 +80,11 @@ export function HeaderSearchButton({ optionGroups }: Props) {
               width={16}
               height={16}
               alt={`Logo ${network.brandName}`}
-              className="object-center object-contain flex-shrink-0"
+              className="object-center object-contain flex-shrink-0 rounded-full"
             />
 
             <span className="whitespace-nowrap text-ellipsis overflow-x-hidden flex-shrink">
-              <span className="sr-only tab:not-sr-only">
-                {capitalize(network.brandName)}
-              </span>
+              <span>{capitalize(network.brandName)}</span>
               <span>&nbsp;/&nbsp;</span>
               <span>{capitalize(network.displayName)}</span>
             </span>
@@ -110,22 +108,19 @@ export function HeaderSearchButton({ optionGroups }: Props) {
               {entityType}&nbsp;{query}
             </span>
 
-            {/* mobile */}
-            <span className="md:hidden" aria-hidden="true">
-              {query ? query : ""}
-            </span>
-
             {/* bigger screens */}
-            <span className="hidden md:inline" aria-hidden="true">
+            <span className="hidden tab:inline" aria-hidden="true">
               {query ? truncateHash(query, 25) : ""}
             </span>
           </span>
         </span>
 
-        <ArrowRight
-          className="text-muted flex-none h-3 w-3"
-          aria-hidden="true"
-        />
+        <div className="flex-none hidden tab:not-block">
+          <ArrowRight
+            className="text-muted flex-none h-3 w-3"
+            aria-hidden="true"
+          />
+        </div>
       </Button>
     </SearchModal>
   );

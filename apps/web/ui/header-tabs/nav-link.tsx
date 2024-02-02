@@ -3,6 +3,7 @@ import * as React from "react";
 
 // components
 import Link from "next/link";
+import { Tooltip } from "~/ui/tooltip";
 
 // utils
 import { useParams } from "next/navigation";
@@ -16,16 +17,9 @@ interface Props {
   currentIndex: number;
   children?: React.ReactNode;
   tabs: string[];
-  isDummy?: boolean;
 }
 
-export function NavLink({
-  href,
-  currentIndex,
-  tabs,
-  children,
-  isDummy = false,
-}: Props) {
+export function NavLink({ href, currentIndex, tabs, children }: Props) {
   const params: HeadlessRoute = useParams();
 
   const pathParams = parseHeadlessRouteVercelFix(params);
@@ -41,65 +35,52 @@ export function NavLink({
   }
 
   const isSelected = currentIndex === activeTabIndex;
+  const linkRef = React.useRef<React.ElementRef<typeof Link>>(null);
+
+  React.useEffect(() => {
+    if (isSelected) {
+      linkRef.current?.scrollIntoView({
+        inline: "start",
+      });
+    }
+  }, [isSelected]);
 
   return (
-    <Link
-      href={href}
-      tabIndex={isDummy ? -1 : 0}
-      aria-hidden={isDummy}
-      className={cn(
-        "flex text-center flex-col group h-full items-center group outline-none text-sm",
-        {
-          "text-foreground bg-white": isSelected,
-          "text-muted  bg-muted-100": !isSelected,
-          "pointer-events-none": isDummy,
-          "rounded-bl-lg": currentIndex === activeTabIndex + 1,
-          "rounded-br-lg": currentIndex === activeTabIndex - 1,
-          "w-48": !isDummy,
-          "flex-grow flex-shrink": isDummy,
-        },
-      )}
-      aria-current={isSelected ? "page" : undefined}
+    <Tooltip
+      className="p-1 pl-2"
+      label={
+        <div className="flex items-center justify-center gap-1 text-xs">
+          <span>Switch Tab</span>
+          <kbd className="border bg-muted-100 rounded-sm p-1">
+            Ctrl+{currentIndex + 1}
+          </kbd>
+        </div>
+      }
+      side="bottom"
+      hideArrow
     >
-      <span
-        className="w-full inline-block h-[1px]"
-        style={{
-          backgroundImage: isSelected ? "var(--gradient-primary)" : "",
-        }}
-      />
-      {children}
-    </Link>
-  );
-}
-
-interface NavLinkSkeletonProps {
-  children?: React.ReactNode;
-  isLast?: boolean;
-  isAfterOverview?: boolean;
-}
-
-export function NavLinkSkeleton({
-  children,
-  isAfterOverview = false,
-  isLast = false,
-}: NavLinkSkeletonProps) {
-  return (
-    <div
-      className={cn(
-        "flex text-center flex-col group h-full items-center group outline-none",
-        "text-muted bg-muted-100",
-        // compensate the 1px space caused by the selection gradient
-        "pt-[1px]",
-        {
-          // TODO: I don't know fully what this logic is for, so we should figure out if this change is ok before merging
-          // "rounded-bl-lg": !params.section && isAfterOverview,
-          "rounded-bl-lg": isAfterOverview,
-          "w-52": !isLast,
-          "flex-grow flex-shrink": isLast,
-        },
-      )}
-    >
-      {children}
-    </div>
+      <Link
+        href={href}
+        ref={linkRef}
+        className={cn(
+          "flex text-center flex-col group items-center group outline-none text-sm",
+          "ring-primary/40 rounded-md",
+          "focus:ring-2 focus:border focus:border-primary",
+          "transition duration-150",
+          "min-w-[12rem] max-w-[12rem]",
+          "flex-none scroll-ml-1",
+          {
+            "text-foreground bg-white border hover:bg-muted/10 [&_svg]:text-primary shadow-sm":
+              isSelected,
+            "text-muted  bg-muted-100 hover:bg-muted/10": !isSelected,
+            "rounded-bl-lg": currentIndex === activeTabIndex + 1,
+            "rounded-br-lg": currentIndex === activeTabIndex - 1,
+          },
+        )}
+        aria-current={isSelected ? "page" : undefined}
+      >
+        {children}
+      </Link>
+    </Tooltip>
   );
 }

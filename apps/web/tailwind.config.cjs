@@ -31,7 +31,7 @@ module.exports = {
       },
       spacing: {
         header: `4rem`,
-        "header-tabs": `2.625rem`,
+        "header-tabs": `4.3125rem`,
       },
       top: {
         header: "4.25rem",

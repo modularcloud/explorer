@@ -49,8 +49,8 @@ export function useItemListNavigation<T>({
   scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
-  const [selectedItemIndex, setSelectedIndex] = React.useState(0);
-  const [selectedItem, setSelectedItem] = React.useState<T | null>(items[0]);
+  const [selectedItemIndex, setSelectedIndex] = React.useState(-1);
+  const [selectedItem, setSelectedItem] = React.useState<T | null>(null);
 
   const selectedItemPositionRef = React.useRef({
     index: selectedItemIndex,
@@ -121,11 +121,14 @@ export function useItemListNavigation<T>({
     [getOptionId],
   );
 
+  const resetSelection = React.useCallback(
+    () => selectItem({ item: null, index: -1 }),
+    [selectItem],
+  );
+
   const moveSelectionDown = React.useCallback(() => {
     const { index } = selectedItemPositionRef.current;
-    if (!items[index]) return; // don't do anything if undefined
-
-    if (index >= 0 && index < items.length - 1) {
+    if (index < items.length - 1) {
       selectItem({
         item: items[index + 1],
         index: index + 1,
@@ -143,7 +146,6 @@ export function useItemListNavigation<T>({
     if (!items[index]) return; // don't do anything if undefined
 
     if (index > 0 && index <= items.length - 1) {
-      // navigation between the same group
       selectItem({
         item: items[index - 1],
         index: index - 1,
@@ -316,6 +318,7 @@ export function useItemListNavigation<T>({
   return {
     selectedItem,
     selectedItemIndex,
+    resetSelection,
     selectItem,
     getOptionId,
     isOptionSelected,

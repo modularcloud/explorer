@@ -40,9 +40,9 @@ export default async function BlockLayout({
             id="main-content"
             tabIndex={0}
             className={cn(
-              "mt-[65px] bg-muted-100 min-h-screen",
+              "mt-[65px] bg-white min-h-screen",
               // style children but not the header nav
-              "[&>*:not(nav)]:rounded-tr-xl [&>*:not(nav)]:bg-white col-span-6",
+              "[&>*:not(nav)]:bg-white col-span-6",
             )}
           >
             {children}
@@ -57,7 +57,7 @@ export default async function BlockLayout({
                 "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
                 "bg-muted-100 hidden lg:block",
                 "fixed top-[63px] bottom-0 right-0",
-                "overflow-hidden",
+                "overflow-hidden z-40",
               )}
             >
               {rightpanel}

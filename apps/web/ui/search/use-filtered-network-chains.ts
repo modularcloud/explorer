@@ -1,5 +1,8 @@
 import * as React from "react";
-import type { GroupedNetworkChains, NetworkChain } from "~/lib/search-options";
+import type {
+  GroupedNetworkChains,
+  NetworkChain,
+} from "~/lib/grouped-network-chains";
 
 export function useFilteredAndSortedNetworkChains(
   networkGrouped: GroupedNetworkChains,
