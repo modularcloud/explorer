@@ -173,14 +173,6 @@ export const PageSchema = z.object({
     title: z.string(),
     description: z.string(),
   }),
-  banner: z
-    .discriminatedUnion("type", [
-      z.object({
-        type: z.literal("ibc"),
-        payload: z.string(),
-      }),
-    ])
-    .optional(),
   body: z.discriminatedUnion("type", [NotebookSchema, CollectionSchema]),
   sidebar: SidebarSchema,
   isIBC: z.boolean().optional(),

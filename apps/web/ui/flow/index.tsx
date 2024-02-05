@@ -167,19 +167,20 @@ function Node({
 
   // const node = nodeResponse.data.result;
 
-  const node = useHubAck || !nodeResponse.data.txHash
-    ? fallbackData.result
-    : {
-        type: "completed",
-        link: `/${nodeResponse.data.slug}/transactions/${nodeResponse.data.txHash}/messages/${nodeResponse.data.messageIndex}`,
-        id: nodeResponse.data.txHash,
-        shortId:
-          nodeResponse.data.txHash.slice(0, 3) +
-          "..." +
-          nodeResponse.data.txHash.slice(-3),
-        label,
-        image: nodeResponse.data.logo,
-      };
+  const node =
+    useHubAck || !nodeResponse.data.txHash
+      ? fallbackData.result
+      : {
+          type: "completed",
+          link: `/${nodeResponse.data.slug}/transactions/${nodeResponse.data.txHash}/messages/${nodeResponse.data.messageIndex}`,
+          id: nodeResponse.data.txHash,
+          shortId:
+            nodeResponse.data.txHash.slice(0, 3) +
+            "..." +
+            nodeResponse.data.txHash.slice(-3),
+          label,
+          image: nodeResponse.data.logo,
+        };
 
   return (
     <Link
@@ -424,6 +425,9 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
+  const msgIndex = path[3];
+  const url = `/api/ibc/integration/${slug}/tx/${txHash}/message/${msgIndex}`;
+
   const [contextValue, setContextValue] = React.useState<{
     transfer: {
       from: {
@@ -443,15 +447,50 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
     };
   }>({
     transfer: {
-      from: {
-        chain: "channel-6743",
-      },
+      from: {},
       to: {},
     },
-    sequence: {
-      forward: "7242",
-    },
+    sequence: {},
   });
+  useSWR(
+    url,
+    async () => {
+      console.log("fetching", url);
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        const newDetails = contextValue;
+        if (!newDetails.transfer.from.address) {
+          newDetails.transfer.from.address = data.from.address;
+        }
+
+        if (!newDetails.transfer.from.chain) {
+          newDetails.transfer.from.chain = data.from.chain;
+        }
+
+        if (!newDetails.transfer.to.address) {
+          newDetails.transfer.to.address = data.to.address;
+        }
+
+        if (!newDetails.transfer.to.chain) {
+          newDetails.transfer.to.chain = data.to.chain;
+        }
+
+        if (!newDetails.sequence.forward) {
+          newDetails.sequence.forward = data.forwardSequence;
+        }
+
+        if (!newDetails.sequence.backward) {
+          newDetails.sequence.backward = data.backwardSequence;
+        }
+
+        setContextValue(newDetails);
+      },
+    },
+  );
 
   // Function to update context
   const setContext = (value: any) => {
