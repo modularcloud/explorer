@@ -68,7 +68,14 @@ function Node({
   const [isHovered, setIsHovered] = React.useState(false);
 
   // TODO fix!!!!!
-  const label = ["Transfer", "Received", "Received", "Acknowledgement"][0];
+  const label = {
+    [Step.ROLLAPP_TR]: "Transfer",
+    [Step.ROLLAPP_RECV]: "Received",
+    [Step.ROLLAPP_ACK]: "Acknowledgement",
+    [Step.HUB_RECV]: "Received",
+    [Step.HUB_ACK]: "Acknowledgement",
+  }[step];
+
   const fallbackData = {
     result: {
       type: "pending",
@@ -160,19 +167,24 @@ function Node({
 
   // const node = nodeResponse.data.result;
 
-  const node = useHubAck
+  const node = useHubAck || !nodeResponse.data.txHash
     ? fallbackData.result
     : {
         type: "completed",
         link: "#",
-        id: "1234",
-        label: "Transfer",
+        id: nodeResponse.data.txHash,
+        shortId:
+          nodeResponse.data.txHash.slice(0, 3) +
+          "..." +
+          nodeResponse.data.txHash.slice(-3),
+        label,
+        image: "/ethereum.png",
       };
 
   const time = 123;
   return (
     <Link
-      href={`${node.type === "completed" ? node.link : "#"}`}
+      href={`${node.type === "completed" && "link" in node ? node.link : "#"}`}
       onClick={(e) => {
         if (node.type === "error") {
           nodeResponse.mutate(fallbackData);
@@ -180,13 +192,13 @@ function Node({
       }}
       onMouseEnter={() => {
         setIsHovered(true);
-        if (node.sidebar) {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Message",
-            properties: node.sidebar,
-          });
-        }
+        // if (node.sidebar) {
+        //   setSpotlight?.({
+        //     headerKey: "Spotlight",
+        //     headerValue: "Message",
+        //     properties: node.sidebar,
+        //   });
+        // }
       }}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -205,7 +217,7 @@ function Node({
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
-          {node.image ? (
+          {"image" in node ? (
             <Image
               src={node.image}
               width={20}
@@ -222,7 +234,9 @@ function Node({
       {node.type === "completed" ? (
         <div className="flex justify-between align-items gap-5 mt-4">
           <div className="text-xs font-medium leading-4 whitespace-nowrap">
-            {node.shortId ?? node.id}
+            {node && (("shortId" in node && node.shortId) || "id" in node)
+              ? node.shortId ?? node.id
+              : null}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
             {time}
@@ -230,11 +244,18 @@ function Node({
         </div>
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
-          {node.type === "error"
-            ? isHovered
-              ? "Try Again"
-              : node.message
-            : `Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
+          {node.type === "error" ? (
+            isHovered ? (
+              "Try Again"
+            ) : (
+              <>("message" in node ? node.message : "Error")</>
+            )
+          ) : (
+            `Waiting for ${("waitingFor" in node && node.waitingFor
+              ? node.waitingFor
+              : node.label
+            ).toLowerCase()}...`
+          )}
         </div>
       )}
     </Link>
