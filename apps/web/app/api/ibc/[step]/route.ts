@@ -194,7 +194,8 @@ export async function GET(
     }`,
   ).then((res) => res.json());
   const rpc = integrationResponse.result.integration.config.rpcUrls.cosmos;
-
+  const slug = integrationResponse.result.integration.slug;
+  const logo = integrationResponse.result.integration.config.logoUrl;
   switch (step) {
     case Step.ROLLAPP_TR:
       const txSearch = await fetch(
@@ -225,6 +226,8 @@ export async function GET(
           ...parseTransfer(log.events),
           txHash: tx.hash,
           messageIndex: log.msg_index,
+          slug,
+          logo,
         }),
         {
           status: 200,
@@ -261,6 +264,8 @@ export async function GET(
           ...parseRecv(log2.events),
           txHash: tx2.hash,
           messageIndex: log2.msg_index,
+          slug,
+          logo,
         }),
         {
           status: 200,
@@ -303,6 +308,8 @@ export async function GET(
           ...parseAcknowledgement(log3.events),
           txHash: tx3.hash,
           messageIndex: log3.msg_index,
+          slug,
+          logo,
         }),
         {
           status: 200,
@@ -341,6 +348,8 @@ export async function GET(
           ...parseRecv(log4.events),
           txHash: tx4.hash,
           messageIndex: log4.msg_index,
+          slug,
+          logo,
         }),
         {
           status: 200,
@@ -379,6 +388,8 @@ export async function GET(
           ...parseAcknowledgement(log5.events),
           txHash: tx5.hash,
           messageIndex: log5.msg_index,
+          slug,
+          logo,
         }),
         {
           status: 200,

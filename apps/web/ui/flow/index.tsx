@@ -171,14 +171,14 @@ function Node({
     ? fallbackData.result
     : {
         type: "completed",
-        link: "#",
+        link: `/${nodeResponse.data.slug}/transactions/${nodeResponse.data.txHash}/messages/${nodeResponse.data.messageIndex}`,
         id: nodeResponse.data.txHash,
         shortId:
           nodeResponse.data.txHash.slice(0, 3) +
           "..." +
           nodeResponse.data.txHash.slice(-3),
         label,
-        image: "/ethereum.png",
+        image: nodeResponse.data.logo,
       };
 
   const time = 123;
