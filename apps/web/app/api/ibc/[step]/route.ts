@@ -213,6 +213,10 @@ export async function GET(
           },
         );
       }
+      const blockResponse = await fetch(
+        `${rpc}/block?height=${tx.height}`,
+      ).then((res) => res.json());
+      const timestamp = blockResponse.result.block.header.time;
       const log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const sendPacket = l.events.find((e: any) => e.type === "send_packet");
         return (
@@ -228,6 +232,7 @@ export async function GET(
           messageIndex: log.msg_index,
           slug,
           logo,
+          timestamp,
         }),
         {
           status: 200,
@@ -250,6 +255,10 @@ export async function GET(
           },
         );
       }
+      const blockResponse2 = await fetch(
+        `https://froopyland.rpc.silknodes.io/block?height=${tx2.height}`,
+      ).then((res) => res.json());
+      const timestamp2 = blockResponse2.result.block.header.time;
       const log2 = JSON.parse(tx2.tx_result.log).find((l: any) => {
         console.log(l);
         const recvPacket = l.events.find((e: any) => e.type === "recv_packet");
@@ -266,6 +275,7 @@ export async function GET(
           messageIndex: log2.msg_index,
           slug,
           logo,
+          timestamp: timestamp2,
         }),
         {
           status: 200,
@@ -291,6 +301,11 @@ export async function GET(
           },
         );
       }
+      const blockResponse3 = await fetch(
+        `https://froopyland.rpc.silknodes.io/block?height=${tx3.height}`,
+      ).then((res) => res.json());
+      console.log(blockResponse3);
+      const timestamp3 = blockResponse3.result.block.header.time;
       const log3 = JSON.parse(tx3.tx_result.log).find((l: any) => {
         const writeAcknowledgement = l.events.find(
           (e: any) => e.type === "write_acknowledgement",
@@ -310,6 +325,7 @@ export async function GET(
           messageIndex: log3.msg_index,
           slug,
           logo,
+          timestamp: timestamp3,
         }),
         {
           status: 200,
@@ -335,6 +351,10 @@ export async function GET(
           },
         );
       }
+      const blockResponse4 = await fetch(
+        `${rpc}/block?height=${tx4.height}`,
+      ).then((res) => res.json());
+      const timestamp4 = blockResponse4.result.block.header.time;
       const log4 = JSON.parse(tx4.tx_result.log).find((l: any) => {
         const recvPacket = l.events.find((e: any) => e.type === "recv_packet");
         return (
@@ -350,6 +370,7 @@ export async function GET(
           messageIndex: log4.msg_index,
           slug,
           logo,
+          timestamp: timestamp4,
         }),
         {
           status: 200,
@@ -372,6 +393,11 @@ export async function GET(
           },
         );
       }
+      const blockResponse5 = await fetch(
+        `${rpc}/block?height=${tx5.height}`,
+      ).then((res) => res.json());
+      console.log(blockResponse5);
+      const timestamp5 = blockResponse5.result.block.header.time;
       const log5 = JSON.parse(tx5.tx_result.log).find((l: any) => {
         const acknowledgePacket = l.events.find(
           (e: any) => e.type === "acknowledge_packet",
@@ -390,6 +416,7 @@ export async function GET(
           messageIndex: log5.msg_index,
           slug,
           logo,
+          timestamp: timestamp5,
         }),
         {
           status: 200,

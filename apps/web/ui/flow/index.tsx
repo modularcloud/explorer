@@ -153,14 +153,14 @@ function Node({
   );
   console.log(nodeResponse.data);
 
-  // const time = useMemo(() => {
-  //   const node = nodeResponse.data?.result;
-  //   if (node && node.timestamp) {
-  //     dayjs.extend(relativeTime);
-  //     return dayjs(node.timestamp * 1000).fromNow();
-  //   }
-  //   return null;
-  // }, [nodeResponse.data]);
+  const time = useMemo(() => {
+    const node = nodeResponse.data;
+    if (node && node.timestamp) {
+      dayjs.extend(relativeTime);
+      return dayjs(node.timestamp).fromNow();
+    }
+    return null;
+  }, [nodeResponse.data]);
 
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
   if (!nodeResponse.data) return null;
@@ -181,7 +181,6 @@ function Node({
         image: nodeResponse.data.logo,
       };
 
-  const time = 123;
   return (
     <Link
       href={`${node.type === "completed" && "link" in node ? node.link : "#"}`}
