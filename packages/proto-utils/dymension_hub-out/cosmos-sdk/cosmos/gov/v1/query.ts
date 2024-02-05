@@ -5,11 +5,13 @@ import { PageRequest, PageResponse } from "../../base/query/v1beta1/pagination";
 import {
   Deposit,
   DepositParams,
+  MessageBasedParams,
   Params,
   Proposal,
   ProposalStatus,
   proposalStatusFromJSON,
   proposalStatusToJSON,
+  ProposalVoteOptions,
   TallyParams,
   TallyResult,
   Vote,
@@ -99,6 +101,9 @@ export interface QueryParamsRequest {
   /**
    * params_type defines which parameters to query for, can be one of "voting",
    * "tallying" or "deposit".
+   * Deprecated: all params are stored in Params.
+   *
+   * @deprecated
    */
   paramsType: string;
 }
@@ -180,6 +185,36 @@ export interface QueryTallyResultRequest {
 export interface QueryTallyResultResponse {
   /** tally defines the requested tally. */
   tally: TallyResult | undefined;
+}
+
+/** QueryProposalVoteOptionsRequest is the request type for the Query/ProposalVoteOptions RPC method. */
+export interface QueryProposalVoteOptionsRequest {
+  /** proposal_id defines the unique id of the proposal. */
+  proposalId: Long;
+}
+
+/** QueryProposalVoteOptionsResponse is the response type for the Query/ProposalVoteOptions RPC method. */
+export interface QueryProposalVoteOptionsResponse {
+  /** vote_options defines the valid voting options for a proposal. */
+  voteOptions: ProposalVoteOptions | undefined;
+}
+
+/**
+ * QueryMessageBasedParamsRequest is the request type for the Query/MessageBasedParams RPC method.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface QueryMessageBasedParamsRequest {
+  msgUrl: string;
+}
+
+/**
+ * QueryMessageBasedParamsResponse is the response for the Query/MessageBasedParams RPC method.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface QueryMessageBasedParamsResponse {
+  params: MessageBasedParams | undefined;
 }
 
 function createBaseQueryConstitutionRequest(): QueryConstitutionRequest {
@@ -1447,6 +1482,250 @@ export const QueryTallyResultResponse = {
   },
 };
 
+function createBaseQueryProposalVoteOptionsRequest(): QueryProposalVoteOptionsRequest {
+  return { proposalId: Long.UZERO };
+}
+
+export const QueryProposalVoteOptionsRequest = {
+  encode(message: QueryProposalVoteOptionsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.proposalId.isZero()) {
+      writer.uint32(8).uint64(message.proposalId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryProposalVoteOptionsRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryProposalVoteOptionsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.proposalId = reader.uint64() as Long;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryProposalVoteOptionsRequest {
+    return { proposalId: isSet(object.proposalId) ? Long.fromValue(object.proposalId) : Long.UZERO };
+  },
+
+  toJSON(message: QueryProposalVoteOptionsRequest): unknown {
+    const obj: any = {};
+    if (!message.proposalId.isZero()) {
+      obj.proposalId = (message.proposalId || Long.UZERO).toString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryProposalVoteOptionsRequest>, I>>(base?: I): QueryProposalVoteOptionsRequest {
+    return QueryProposalVoteOptionsRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryProposalVoteOptionsRequest>, I>>(
+    object: I,
+  ): QueryProposalVoteOptionsRequest {
+    const message = createBaseQueryProposalVoteOptionsRequest();
+    message.proposalId = (object.proposalId !== undefined && object.proposalId !== null)
+      ? Long.fromValue(object.proposalId)
+      : Long.UZERO;
+    return message;
+  },
+};
+
+function createBaseQueryProposalVoteOptionsResponse(): QueryProposalVoteOptionsResponse {
+  return { voteOptions: undefined };
+}
+
+export const QueryProposalVoteOptionsResponse = {
+  encode(message: QueryProposalVoteOptionsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.voteOptions !== undefined) {
+      ProposalVoteOptions.encode(message.voteOptions, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryProposalVoteOptionsResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryProposalVoteOptionsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.voteOptions = ProposalVoteOptions.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryProposalVoteOptionsResponse {
+    return { voteOptions: isSet(object.voteOptions) ? ProposalVoteOptions.fromJSON(object.voteOptions) : undefined };
+  },
+
+  toJSON(message: QueryProposalVoteOptionsResponse): unknown {
+    const obj: any = {};
+    if (message.voteOptions !== undefined) {
+      obj.voteOptions = ProposalVoteOptions.toJSON(message.voteOptions);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryProposalVoteOptionsResponse>, I>>(
+    base?: I,
+  ): QueryProposalVoteOptionsResponse {
+    return QueryProposalVoteOptionsResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryProposalVoteOptionsResponse>, I>>(
+    object: I,
+  ): QueryProposalVoteOptionsResponse {
+    const message = createBaseQueryProposalVoteOptionsResponse();
+    message.voteOptions = (object.voteOptions !== undefined && object.voteOptions !== null)
+      ? ProposalVoteOptions.fromPartial(object.voteOptions)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryMessageBasedParamsRequest(): QueryMessageBasedParamsRequest {
+  return { msgUrl: "" };
+}
+
+export const QueryMessageBasedParamsRequest = {
+  encode(message: QueryMessageBasedParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.msgUrl !== "") {
+      writer.uint32(10).string(message.msgUrl);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryMessageBasedParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryMessageBasedParamsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.msgUrl = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMessageBasedParamsRequest {
+    return { msgUrl: isSet(object.msgUrl) ? globalThis.String(object.msgUrl) : "" };
+  },
+
+  toJSON(message: QueryMessageBasedParamsRequest): unknown {
+    const obj: any = {};
+    if (message.msgUrl !== "") {
+      obj.msgUrl = message.msgUrl;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryMessageBasedParamsRequest>, I>>(base?: I): QueryMessageBasedParamsRequest {
+    return QueryMessageBasedParamsRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryMessageBasedParamsRequest>, I>>(
+    object: I,
+  ): QueryMessageBasedParamsRequest {
+    const message = createBaseQueryMessageBasedParamsRequest();
+    message.msgUrl = object.msgUrl ?? "";
+    return message;
+  },
+};
+
+function createBaseQueryMessageBasedParamsResponse(): QueryMessageBasedParamsResponse {
+  return { params: undefined };
+}
+
+export const QueryMessageBasedParamsResponse = {
+  encode(message: QueryMessageBasedParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.params !== undefined) {
+      MessageBasedParams.encode(message.params, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryMessageBasedParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryMessageBasedParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.params = MessageBasedParams.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMessageBasedParamsResponse {
+    return { params: isSet(object.params) ? MessageBasedParams.fromJSON(object.params) : undefined };
+  },
+
+  toJSON(message: QueryMessageBasedParamsResponse): unknown {
+    const obj: any = {};
+    if (message.params !== undefined) {
+      obj.params = MessageBasedParams.toJSON(message.params);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryMessageBasedParamsResponse>, I>>(base?: I): QueryMessageBasedParamsResponse {
+    return QueryMessageBasedParamsResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryMessageBasedParamsResponse>, I>>(
+    object: I,
+  ): QueryMessageBasedParamsResponse {
+    const message = createBaseQueryMessageBasedParamsResponse();
+    message.params = (object.params !== undefined && object.params !== null)
+      ? MessageBasedParams.fromPartial(object.params)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service for gov module */
 export interface Query {
   /** Constitution queries the chain's constitution. */
@@ -1467,6 +1746,16 @@ export interface Query {
   Deposits(request: QueryDepositsRequest): Promise<QueryDepositsResponse>;
   /** TallyResult queries the tally of a proposal vote. */
   TallyResult(request: QueryTallyResultRequest): Promise<QueryTallyResultResponse>;
+  /**
+   * ProposalVoteOptions queries the valid voting options for a proposal.
+   * Since: cosmos-sdk x/gov v1.0.0
+   */
+  ProposalVoteOptions(request: QueryProposalVoteOptionsRequest): Promise<QueryProposalVoteOptionsResponse>;
+  /**
+   * MessageBasedParams queries the message specific governance params based on a msg url.
+   * Since: cosmos-sdk x/gov v1.0.0
+   */
+  MessageBasedParams(request: QueryMessageBasedParamsRequest): Promise<QueryMessageBasedParamsResponse>;
 }
 
 export const QueryServiceName = "cosmos.gov.v1.Query";
@@ -1485,6 +1774,8 @@ export class QueryClientImpl implements Query {
     this.Deposit = this.Deposit.bind(this);
     this.Deposits = this.Deposits.bind(this);
     this.TallyResult = this.TallyResult.bind(this);
+    this.ProposalVoteOptions = this.ProposalVoteOptions.bind(this);
+    this.MessageBasedParams = this.MessageBasedParams.bind(this);
   }
   Constitution(request: QueryConstitutionRequest): Promise<QueryConstitutionResponse> {
     const data = QueryConstitutionRequest.encode(request).finish();
@@ -1538,6 +1829,18 @@ export class QueryClientImpl implements Query {
     const data = QueryTallyResultRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "TallyResult", data);
     return promise.then((data) => QueryTallyResultResponse.decode(_m0.Reader.create(data)));
+  }
+
+  ProposalVoteOptions(request: QueryProposalVoteOptionsRequest): Promise<QueryProposalVoteOptionsResponse> {
+    const data = QueryProposalVoteOptionsRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "ProposalVoteOptions", data);
+    return promise.then((data) => QueryProposalVoteOptionsResponse.decode(_m0.Reader.create(data)));
+  }
+
+  MessageBasedParams(request: QueryMessageBasedParamsRequest): Promise<QueryMessageBasedParamsResponse> {
+    const data = QueryMessageBasedParamsRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "MessageBasedParams", data);
+    return promise.then((data) => QueryMessageBasedParamsResponse.decode(_m0.Reader.create(data)));
   }
 }
 

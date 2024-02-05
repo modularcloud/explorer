@@ -67,7 +67,7 @@ type ParsedMsg<T extends MsgType["typeUrl"]> = {
 // >;
 
 type DecodedAny = { typeUrl: string; decodedValue: any };
-export function getRegistryMessages(txRaw: string) {
+export function getHubMessages(txRaw: string) {
   const txBuffer = Buffer.from(txRaw, "base64");
 
   const txBody = DymensionHub.Tx.decode(txBuffer).body;
@@ -377,7 +377,7 @@ const LatestHubMessages = createResolver(
       );
       for (const tx of txs) {
         let cachedTxHash;
-        const txMessages = getRegistryMessages(tx);
+        const txMessages = getHubMessages(tx);
         for (const msg of txMessages) {
           if (
             msg.typeUrl === "/ibc.core.channel.v1.MsgRecvPacket" ||
@@ -427,7 +427,6 @@ export {
   RollappBlockHashResolver as getBlockByHash,
   RollappBlockHeightResolver as getBlock,
   RollappTransactionResolver as getTx,
-  getRegistryMessages as getMessages,
   type ParsedMsg,
   getTxHashFromBlockTx,
   type DecodedAny,

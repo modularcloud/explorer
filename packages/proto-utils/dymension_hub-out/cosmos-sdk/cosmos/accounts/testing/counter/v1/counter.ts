@@ -29,6 +29,22 @@ export interface MsgIncreaseCounterResponse {
   newAmount: Long;
 }
 
+/** MsgTestDependencies is used to test the dependencies. */
+export interface MsgTestDependencies {
+}
+
+/** MsgTestDependenciesResponse is used to test the dependencies. */
+export interface MsgTestDependenciesResponse {
+  /** chain_id is used to test that the header service correctly works. */
+  chainId: string;
+  /** address is used to test address codec. */
+  address: string;
+  /** before_gas is used to test the gas meter reporting. */
+  beforeGas: Long;
+  /** after_gas is used to test gas meter increasing. */
+  afterGas: Long;
+}
+
 /** QueryCounterRequest is used to query the counter value. */
 export interface QueryCounterRequest {
 }
@@ -254,6 +270,157 @@ export const MsgIncreaseCounterResponse = {
     const message = createBaseMsgIncreaseCounterResponse();
     message.newAmount = (object.newAmount !== undefined && object.newAmount !== null)
       ? Long.fromValue(object.newAmount)
+      : Long.UZERO;
+    return message;
+  },
+};
+
+function createBaseMsgTestDependencies(): MsgTestDependencies {
+  return {};
+}
+
+export const MsgTestDependencies = {
+  encode(_: MsgTestDependencies, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTestDependencies {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgTestDependencies();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgTestDependencies {
+    return {};
+  },
+
+  toJSON(_: MsgTestDependencies): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgTestDependencies>, I>>(base?: I): MsgTestDependencies {
+    return MsgTestDependencies.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgTestDependencies>, I>>(_: I): MsgTestDependencies {
+    const message = createBaseMsgTestDependencies();
+    return message;
+  },
+};
+
+function createBaseMsgTestDependenciesResponse(): MsgTestDependenciesResponse {
+  return { chainId: "", address: "", beforeGas: Long.UZERO, afterGas: Long.UZERO };
+}
+
+export const MsgTestDependenciesResponse = {
+  encode(message: MsgTestDependenciesResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.chainId !== "") {
+      writer.uint32(10).string(message.chainId);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    if (!message.beforeGas.isZero()) {
+      writer.uint32(24).uint64(message.beforeGas);
+    }
+    if (!message.afterGas.isZero()) {
+      writer.uint32(32).uint64(message.afterGas);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgTestDependenciesResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgTestDependenciesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.chainId = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.address = reader.string();
+          continue;
+        case 3:
+          if (tag !== 24) {
+            break;
+          }
+
+          message.beforeGas = reader.uint64() as Long;
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.afterGas = reader.uint64() as Long;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgTestDependenciesResponse {
+    return {
+      chainId: isSet(object.chainId) ? globalThis.String(object.chainId) : "",
+      address: isSet(object.address) ? globalThis.String(object.address) : "",
+      beforeGas: isSet(object.beforeGas) ? Long.fromValue(object.beforeGas) : Long.UZERO,
+      afterGas: isSet(object.afterGas) ? Long.fromValue(object.afterGas) : Long.UZERO,
+    };
+  },
+
+  toJSON(message: MsgTestDependenciesResponse): unknown {
+    const obj: any = {};
+    if (message.chainId !== "") {
+      obj.chainId = message.chainId;
+    }
+    if (message.address !== "") {
+      obj.address = message.address;
+    }
+    if (!message.beforeGas.isZero()) {
+      obj.beforeGas = (message.beforeGas || Long.UZERO).toString();
+    }
+    if (!message.afterGas.isZero()) {
+      obj.afterGas = (message.afterGas || Long.UZERO).toString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgTestDependenciesResponse>, I>>(base?: I): MsgTestDependenciesResponse {
+    return MsgTestDependenciesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgTestDependenciesResponse>, I>>(object: I): MsgTestDependenciesResponse {
+    const message = createBaseMsgTestDependenciesResponse();
+    message.chainId = object.chainId ?? "";
+    message.address = object.address ?? "";
+    message.beforeGas = (object.beforeGas !== undefined && object.beforeGas !== null)
+      ? Long.fromValue(object.beforeGas)
+      : Long.UZERO;
+    message.afterGas = (object.afterGas !== undefined && object.afterGas !== null)
+      ? Long.fromValue(object.afterGas)
       : Long.UZERO;
     return message;
   },

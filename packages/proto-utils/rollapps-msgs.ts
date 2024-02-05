@@ -23,17 +23,26 @@ import * as _21 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
 import * as _22 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
 import * as _23 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
 import * as _24 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
-import * as _25 from './rollapps-out/go-ibc/ibc/applications/transfer/v1/tx';
-import * as _26 from './rollapps-out/go-ibc/ibc/applications/transfer/v1/tx';
-import * as _27 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/host/v1/tx';
-import * as _28 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
-import * as _29 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
-import * as _30 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
-import * as _31 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
-import * as _32 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
-import * as _33 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
-import * as _34 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
-import * as _35 from './rollapps-out/dymension-rdk/sequencers/tx';
+import * as _25 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _26 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _27 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _28 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _29 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _30 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _31 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _32 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _33 from './rollapps-out/go-ibc/ibc/core/channel/v1/tx';
+import * as _34 from './rollapps-out/go-ibc/ibc/applications/transfer/v1/tx';
+import * as _35 from './rollapps-out/go-ibc/ibc/applications/transfer/v1/tx';
+import * as _36 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/host/v1/tx';
+import * as _37 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
+import * as _38 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
+import * as _39 from './rollapps-out/go-ibc/ibc/applications/interchain_accounts/controller/v1/tx';
+import * as _40 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
+import * as _41 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
+import * as _42 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
+import * as _43 from './rollapps-out/go-ibc/ibc/applications/fee/v1/tx';
+import * as _44 from './rollapps-out/dymension-rdk/sequencers/tx';
 
 export type MsgType =   | { parser: typeof _0.MsgStoreCode, typeUrl: '/ibc.lightclients.wasm.v1.MsgStoreCode' }
   | { parser: typeof _1.MsgRemoveChecksum, typeUrl: '/ibc.lightclients.wasm.v1.MsgRemoveChecksum' }
@@ -60,17 +69,26 @@ export type MsgType =   | { parser: typeof _0.MsgStoreCode, typeUrl: '/ibc.light
   | { parser: typeof _22.MsgTimeout, typeUrl: '/ibc.core.channel.v1.MsgTimeout' }
   | { parser: typeof _23.MsgTimeoutOnClose, typeUrl: '/ibc.core.channel.v1.MsgTimeoutOnClose' }
   | { parser: typeof _24.MsgAcknowledgement, typeUrl: '/ibc.core.channel.v1.MsgAcknowledgement' }
-  | { parser: typeof _25.MsgTransfer, typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' }
-  | { parser: typeof _26.MsgUpdateParams, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParams' }
-  | { parser: typeof _27.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParams' }
-  | { parser: typeof _28.MsgRegisterInterchainAccount, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount' }
-  | { parser: typeof _29.MsgSendTx, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx' }
-  | { parser: typeof _30.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParams' }
-  | { parser: typeof _31.MsgRegisterPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayee' }
-  | { parser: typeof _32.MsgRegisterCounterpartyPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee' }
-  | { parser: typeof _33.MsgPayPacketFee, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFee' }
-  | { parser: typeof _34.MsgPayPacketFeeAsync, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsync' }
-  | { parser: typeof _35.MsgCreateSequencer, typeUrl: '/rollapp.sequencers.types.MsgCreateSequencer' };
+  | { parser: typeof _25.MsgChannelUpgradeInit, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeInit' }
+  | { parser: typeof _26.MsgChannelUpgradeTry, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeTry' }
+  | { parser: typeof _27.MsgChannelUpgradeAck, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeAck' }
+  | { parser: typeof _28.MsgChannelUpgradeConfirm, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeConfirm' }
+  | { parser: typeof _29.MsgChannelUpgradeOpen, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeOpen' }
+  | { parser: typeof _30.MsgChannelUpgradeTimeout, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeTimeout' }
+  | { parser: typeof _31.MsgChannelUpgradeCancel, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeCancel' }
+  | { parser: typeof _32.MsgUpdateParams, typeUrl: '/ibc.core.channel.v1.MsgUpdateParams' }
+  | { parser: typeof _33.MsgPruneAcknowledgements, typeUrl: '/ibc.core.channel.v1.MsgPruneAcknowledgements' }
+  | { parser: typeof _34.MsgTransfer, typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' }
+  | { parser: typeof _35.MsgUpdateParams, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParams' }
+  | { parser: typeof _36.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParams' }
+  | { parser: typeof _37.MsgRegisterInterchainAccount, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount' }
+  | { parser: typeof _38.MsgSendTx, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx' }
+  | { parser: typeof _39.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParams' }
+  | { parser: typeof _40.MsgRegisterPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayee' }
+  | { parser: typeof _41.MsgRegisterCounterpartyPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee' }
+  | { parser: typeof _42.MsgPayPacketFee, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFee' }
+  | { parser: typeof _43.MsgPayPacketFeeAsync, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsync' }
+  | { parser: typeof _44.MsgCreateSequencer, typeUrl: '/rollapp.sequencers.types.MsgCreateSequencer' };
 export const Msgs: MsgType[] = [
   { parser: _0.MsgStoreCode, typeUrl: '/ibc.lightclients.wasm.v1.MsgStoreCode' },
   { parser: _1.MsgRemoveChecksum, typeUrl: '/ibc.lightclients.wasm.v1.MsgRemoveChecksum' },
@@ -97,15 +115,24 @@ export const Msgs: MsgType[] = [
   { parser: _22.MsgTimeout, typeUrl: '/ibc.core.channel.v1.MsgTimeout' },
   { parser: _23.MsgTimeoutOnClose, typeUrl: '/ibc.core.channel.v1.MsgTimeoutOnClose' },
   { parser: _24.MsgAcknowledgement, typeUrl: '/ibc.core.channel.v1.MsgAcknowledgement' },
-  { parser: _25.MsgTransfer, typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' },
-  { parser: _26.MsgUpdateParams, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParams' },
-  { parser: _27.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParams' },
-  { parser: _28.MsgRegisterInterchainAccount, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount' },
-  { parser: _29.MsgSendTx, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx' },
-  { parser: _30.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParams' },
-  { parser: _31.MsgRegisterPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayee' },
-  { parser: _32.MsgRegisterCounterpartyPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee' },
-  { parser: _33.MsgPayPacketFee, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFee' },
-  { parser: _34.MsgPayPacketFeeAsync, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsync' },
-  { parser: _35.MsgCreateSequencer, typeUrl: '/rollapp.sequencers.types.MsgCreateSequencer' },
+  { parser: _25.MsgChannelUpgradeInit, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeInit' },
+  { parser: _26.MsgChannelUpgradeTry, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeTry' },
+  { parser: _27.MsgChannelUpgradeAck, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeAck' },
+  { parser: _28.MsgChannelUpgradeConfirm, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeConfirm' },
+  { parser: _29.MsgChannelUpgradeOpen, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeOpen' },
+  { parser: _30.MsgChannelUpgradeTimeout, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeTimeout' },
+  { parser: _31.MsgChannelUpgradeCancel, typeUrl: '/ibc.core.channel.v1.MsgChannelUpgradeCancel' },
+  { parser: _32.MsgUpdateParams, typeUrl: '/ibc.core.channel.v1.MsgUpdateParams' },
+  { parser: _33.MsgPruneAcknowledgements, typeUrl: '/ibc.core.channel.v1.MsgPruneAcknowledgements' },
+  { parser: _34.MsgTransfer, typeUrl: '/ibc.applications.transfer.v1.MsgTransfer' },
+  { parser: _35.MsgUpdateParams, typeUrl: '/ibc.applications.transfer.v1.MsgUpdateParams' },
+  { parser: _36.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.host.v1.MsgUpdateParams' },
+  { parser: _37.MsgRegisterInterchainAccount, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgRegisterInterchainAccount' },
+  { parser: _38.MsgSendTx, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgSendTx' },
+  { parser: _39.MsgUpdateParams, typeUrl: '/ibc.applications.interchain_accounts.controller.v1.MsgUpdateParams' },
+  { parser: _40.MsgRegisterPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterPayee' },
+  { parser: _41.MsgRegisterCounterpartyPayee, typeUrl: '/ibc.applications.fee.v1.MsgRegisterCounterpartyPayee' },
+  { parser: _42.MsgPayPacketFee, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFee' },
+  { parser: _43.MsgPayPacketFeeAsync, typeUrl: '/ibc.applications.fee.v1.MsgPayPacketFeeAsync' },
+  { parser: _44.MsgCreateSequencer, typeUrl: '/rollapp.sequencers.types.MsgCreateSequencer' },
 ];

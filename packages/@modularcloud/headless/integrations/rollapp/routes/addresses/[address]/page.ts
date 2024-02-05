@@ -1,6 +1,7 @@
 import { createResolver } from "@modularcloud-resolver/core";
 import {
   BalancesResolver,
+  getHubMessages,
   helpers,
   RollAppReceiveAddressResolver,
   RollAppSentAddressResolver,
@@ -337,7 +338,21 @@ export const RollAppAddressPageResolver = createResolver(
         entries: results.map((tx) => {
           const link = `/${context.slug}/transactions/${tx.hash}`;
           const properties = getTransactionProperties({ result: tx });
-          const messages = helpers.getMessages(tx.tx);
+          let messages: ReturnType<typeof helpers.getMessages | typeof getHubMessages> = [];
+          console.log("here", context.slug);
+          // if(context.slug === "dymension-froopyland") {
+          //   console.log("here2");
+          //   messages = getHubMessages(tx.tx);
+          // } else {
+          //   console.log("here3");
+          try {
+            messages = getHubMessages(tx.tx);
+          } catch (e) {
+            console.error("Error getting messages", e);
+            throw e;
+          }
+          // }
+          console.log("messages", messages);
           const type = messages[0]
             ? helpers.getMessageDisplayName(messages[0].typeUrl)
             : "Unknown";

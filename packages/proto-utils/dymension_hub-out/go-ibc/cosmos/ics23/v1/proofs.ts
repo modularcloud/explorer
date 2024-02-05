@@ -9,7 +9,7 @@ export enum HashOp {
   NO_HASH = 0,
   SHA256 = 1,
   SHA512 = 2,
-  KECCAK = 3,
+  KECCAK256 = 3,
   RIPEMD160 = 4,
   /** BITCOIN - ripemd160(sha256(x)) */
   BITCOIN = 5,
@@ -32,8 +32,8 @@ export function hashOpFromJSON(object: any): HashOp {
     case "SHA512":
       return HashOp.SHA512;
     case 3:
-    case "KECCAK":
-      return HashOp.KECCAK;
+    case "KECCAK256":
+      return HashOp.KECCAK256;
     case 4:
     case "RIPEMD160":
       return HashOp.RIPEMD160;
@@ -67,8 +67,8 @@ export function hashOpToJSON(object: HashOp): string {
       return "SHA256";
     case HashOp.SHA512:
       return "SHA512";
-    case HashOp.KECCAK:
-      return "KECCAK";
+    case HashOp.KECCAK256:
+      return "KECCAK256";
     case HashOp.RIPEMD160:
       return "RIPEMD160";
     case HashOp.BITCOIN:

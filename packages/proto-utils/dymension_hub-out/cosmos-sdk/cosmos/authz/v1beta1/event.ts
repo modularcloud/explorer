@@ -4,9 +4,11 @@ import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cosmos.authz.v1beta1";
 
-/** Since: cosmos-sdk 0.43 */
-
-/** EventGrant is emitted on Msg/Grant */
+/**
+ * EventGrant is emitted on Msg/Grant
+ *
+ * Since: cosmos-sdk 0.43
+ */
 export interface EventGrant {
   /** Msg type URL for which an authorization is granted */
   msgTypeUrl: string;
@@ -16,7 +18,11 @@ export interface EventGrant {
   grantee: string;
 }
 
-/** EventRevoke is emitted on Msg/Revoke */
+/**
+ * EventRevoke is emitted on Msg/Revoke
+ *
+ * Since: cosmos-sdk 0.43
+ */
 export interface EventRevoke {
   /** Msg type URL for which an authorization is revoked */
   msgTypeUrl: string;
@@ -24,6 +30,16 @@ export interface EventRevoke {
   granter: string;
   /** Grantee account address */
   grantee: string;
+}
+
+/**
+ * EventPruneExpiredGrants is emitted on Msg/PruneExpiredGrants
+ *
+ * Since: x/authz 1.0.0
+ */
+export interface EventPruneExpiredGrants {
+  /** Address of the pruner */
+  pruner: string;
 }
 
 function createBaseEventGrant(): EventGrant {
@@ -200,6 +216,63 @@ export const EventRevoke = {
     message.msgTypeUrl = object.msgTypeUrl ?? "";
     message.granter = object.granter ?? "";
     message.grantee = object.grantee ?? "";
+    return message;
+  },
+};
+
+function createBaseEventPruneExpiredGrants(): EventPruneExpiredGrants {
+  return { pruner: "" };
+}
+
+export const EventPruneExpiredGrants = {
+  encode(message: EventPruneExpiredGrants, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pruner !== "") {
+      writer.uint32(18).string(message.pruner);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventPruneExpiredGrants {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEventPruneExpiredGrants();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.pruner = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): EventPruneExpiredGrants {
+    return { pruner: isSet(object.pruner) ? globalThis.String(object.pruner) : "" };
+  },
+
+  toJSON(message: EventPruneExpiredGrants): unknown {
+    const obj: any = {};
+    if (message.pruner !== "") {
+      obj.pruner = message.pruner;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<EventPruneExpiredGrants>, I>>(base?: I): EventPruneExpiredGrants {
+    return EventPruneExpiredGrants.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<EventPruneExpiredGrants>, I>>(object: I): EventPruneExpiredGrants {
+    const message = createBaseEventPruneExpiredGrants();
+    message.pruner = object.pruner ?? "";
     return message;
   },
 };

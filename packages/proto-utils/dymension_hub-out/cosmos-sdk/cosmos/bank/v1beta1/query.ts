@@ -236,6 +236,31 @@ export interface QueryDenomOwnersResponse {
 }
 
 /**
+ * QueryDenomOwnersByQueryRequest defines the request type for the DenomOwnersByQuery RPC query,
+ * which queries for a paginated set of all account holders of a particular
+ * denomination.
+ *
+ * Since: cosmos-sdk 0.50.3
+ */
+export interface QueryDenomOwnersByQueryRequest {
+  /** denom defines the coin denomination to query all account holders for. */
+  denom: string;
+  /** pagination defines an optional pagination for the request. */
+  pagination: PageRequest | undefined;
+}
+
+/**
+ * QueryDenomOwnersByQueryResponse defines the RPC response of a DenomOwnersByQuery RPC query.
+ *
+ * Since: cosmos-sdk 0.50.3
+ */
+export interface QueryDenomOwnersByQueryResponse {
+  denomOwners: DenomOwner[];
+  /** pagination defines the pagination in the response. */
+  pagination: PageResponse | undefined;
+}
+
+/**
  * QuerySendEnabledRequest defines the RPC request for looking up SendEnabled entries.
  *
  * Since: cosmos-sdk 0.47
@@ -1821,6 +1846,164 @@ export const QueryDenomOwnersResponse = {
   },
 };
 
+function createBaseQueryDenomOwnersByQueryRequest(): QueryDenomOwnersByQueryRequest {
+  return { denom: "", pagination: undefined };
+}
+
+export const QueryDenomOwnersByQueryRequest = {
+  encode(message: QueryDenomOwnersByQueryRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.denom !== "") {
+      writer.uint32(10).string(message.denom);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryDenomOwnersByQueryRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryDenomOwnersByQueryRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.denom = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDenomOwnersByQueryRequest {
+    return {
+      denom: isSet(object.denom) ? globalThis.String(object.denom) : "",
+      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryDenomOwnersByQueryRequest): unknown {
+    const obj: any = {};
+    if (message.denom !== "") {
+      obj.denom = message.denom;
+    }
+    if (message.pagination !== undefined) {
+      obj.pagination = PageRequest.toJSON(message.pagination);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryDenomOwnersByQueryRequest>, I>>(base?: I): QueryDenomOwnersByQueryRequest {
+    return QueryDenomOwnersByQueryRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryDenomOwnersByQueryRequest>, I>>(
+    object: I,
+  ): QueryDenomOwnersByQueryRequest {
+    const message = createBaseQueryDenomOwnersByQueryRequest();
+    message.denom = object.denom ?? "";
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryDenomOwnersByQueryResponse(): QueryDenomOwnersByQueryResponse {
+  return { denomOwners: [], pagination: undefined };
+}
+
+export const QueryDenomOwnersByQueryResponse = {
+  encode(message: QueryDenomOwnersByQueryResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.denomOwners) {
+      DenomOwner.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryDenomOwnersByQueryResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryDenomOwnersByQueryResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.denomOwners.push(DenomOwner.decode(reader, reader.uint32()));
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDenomOwnersByQueryResponse {
+    return {
+      denomOwners: globalThis.Array.isArray(object?.denomOwners)
+        ? object.denomOwners.map((e: any) => DenomOwner.fromJSON(e))
+        : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryDenomOwnersByQueryResponse): unknown {
+    const obj: any = {};
+    if (message.denomOwners?.length) {
+      obj.denomOwners = message.denomOwners.map((e) => DenomOwner.toJSON(e));
+    }
+    if (message.pagination !== undefined) {
+      obj.pagination = PageResponse.toJSON(message.pagination);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryDenomOwnersByQueryResponse>, I>>(base?: I): QueryDenomOwnersByQueryResponse {
+    return QueryDenomOwnersByQueryResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryDenomOwnersByQueryResponse>, I>>(
+    object: I,
+  ): QueryDenomOwnersByQueryResponse {
+    const message = createBaseQueryDenomOwnersByQueryResponse();
+    message.denomOwners = object.denomOwners?.map((e) => DenomOwner.fromPartial(e)) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
 function createBaseQuerySendEnabledRequest(): QuerySendEnabledRequest {
   return { denoms: [], pagination: undefined };
 }
@@ -2022,9 +2205,9 @@ export interface Query {
   SupplyOf(request: QuerySupplyOfRequest): Promise<QuerySupplyOfResponse>;
   /** Params queries the parameters of x/bank module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
-  /** DenomsMetadata queries the client metadata of a given coin denomination. */
+  /** DenomMetadata queries the client metadata of a given coin denomination. */
   DenomMetadata(request: QueryDenomMetadataRequest): Promise<QueryDenomMetadataResponse>;
-  /** DenomsMetadata queries the client metadata of a given coin denomination. */
+  /** DenomMetadataByQueryString queries the client metadata of a given coin denomination. */
   DenomMetadataByQueryString(
     request: QueryDenomMetadataByQueryStringRequest,
   ): Promise<QueryDenomMetadataByQueryStringResponse>;
@@ -2043,6 +2226,13 @@ export interface Query {
    * Since: cosmos-sdk 0.46
    */
   DenomOwners(request: QueryDenomOwnersRequest): Promise<QueryDenomOwnersResponse>;
+  /**
+   * DenomOwnersByQuery queries for all account addresses that own a particular token
+   * denomination.
+   *
+   * Since: cosmos-sdk 0.50.3
+   */
+  DenomOwnersByQuery(request: QueryDenomOwnersByQueryRequest): Promise<QueryDenomOwnersByQueryResponse>;
   /**
    * SendEnabled queries for SendEnabled entries.
    *
@@ -2073,6 +2263,7 @@ export class QueryClientImpl implements Query {
     this.DenomMetadataByQueryString = this.DenomMetadataByQueryString.bind(this);
     this.DenomsMetadata = this.DenomsMetadata.bind(this);
     this.DenomOwners = this.DenomOwners.bind(this);
+    this.DenomOwnersByQuery = this.DenomOwnersByQuery.bind(this);
     this.SendEnabled = this.SendEnabled.bind(this);
   }
   Balance(request: QueryBalanceRequest): Promise<QueryBalanceResponse> {
@@ -2141,6 +2332,12 @@ export class QueryClientImpl implements Query {
     const data = QueryDenomOwnersRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "DenomOwners", data);
     return promise.then((data) => QueryDenomOwnersResponse.decode(_m0.Reader.create(data)));
+  }
+
+  DenomOwnersByQuery(request: QueryDenomOwnersByQueryRequest): Promise<QueryDenomOwnersByQueryResponse> {
+    const data = QueryDenomOwnersByQueryRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "DenomOwnersByQuery", data);
+    return promise.then((data) => QueryDenomOwnersByQueryResponse.decode(_m0.Reader.create(data)));
   }
 
   SendEnabled(request: QuerySendEnabledRequest): Promise<QuerySendEnabledResponse> {
