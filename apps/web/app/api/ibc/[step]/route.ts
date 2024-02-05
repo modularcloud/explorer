@@ -1,146 +1,10 @@
 import { type NextRequest } from "next/server";
-
-function parseTransfer(events: any) {
-  const sendPacket = events.find(
-    (e: any) => e.type === "send_packet",
-  ).attributes;
-  const packetData = JSON.parse(
-    sendPacket.find((a: any) => a.key === "packet_data").value,
-  );
-  const memo = JSON.parse(packetData.memo);
-  const packetSequence = sendPacket.find(
-    (a: any) => a.key === "packet_sequence",
-  ).value;
-  const packetDstChannel = sendPacket.find(
-    (a: any) => a.key === "packet_dst_channel",
-  ).value;
-  return {
-    from: {
-      chain: packetDstChannel,
-      address: packetData.sender,
-    },
-    to: {
-      chain: memo.forward.channel,
-      address: memo.forward.receiver,
-    },
-    amount: packetData.amount,
-    denom: packetData.denom,
-    forwardSequence: packetSequence,
-  };
-}
-
-function parseRecv(events: any) {
-  const recvPacket = events.find((e: any) => e.type === "recv_packet");
-  const packetData = JSON.parse(
-    recvPacket.attributes.find((a: any) => a.key === "packet_data").value,
-  );
-  const isHub = !!packetData.memo;
-  const packetSequence = recvPacket.attributes.find(
-    (a: any) => a.key === "packet_sequence",
-  ).value;
-
-  if (isHub) {
-    const memo = isHub ? JSON.parse(packetData.memo) : null;
-    const packetDstChannel = recvPacket.attributes.find(
-      (a: any) => a.key === "packet_dst_channel",
-    ).value;
-
-    return {
-      from: {
-        chain: packetDstChannel,
-        address: packetData.sender,
-      },
-      to: {
-        chain: memo.forward.channel,
-        address: memo.forward.receiver,
-      },
-      amount: packetData.amount,
-      denom: packetData.denom,
-      forwardSequnce: packetSequence,
-    };
-  }
-  const packetSrcChannel = recvPacket.attributes.find(
-    (a: any) => a.key === "packet_src_channel",
-  ).value;
-  return {
-    to: {
-      chain: packetSrcChannel,
-      address: packetData.receiver,
-    },
-    amount: packetData.amount,
-    denom: packetData.denom,
-    backwardSequence: packetSequence,
-  };
-}
-
-function parseAcknowledgement(events: any) {
-  console.log(JSON.stringify(events, null, 2));
-  const writeAcknowledgement = events.find(
-    (e: any) => e.type === "write_acknowledgement",
-  );
-  const isHub = !!writeAcknowledgement;
-  if (isHub) {
-    const packetData = JSON.parse(
-      writeAcknowledgement.attributes.find((a: any) => a.key === "packet_data")
-        .value,
-    );
-    const memo = isHub ? JSON.parse(packetData.memo) : null;
-    const forwardSequence = writeAcknowledgement.attributes.find(
-      (a: any) => a.key === "packet_sequence",
-    ).value;
-    const packetDstChannel = writeAcknowledgement.attributes.find(
-      (a: any) => a.key === "packet_dst_channel",
-    ).value;
-    const acknowledgePacket = events.find(
-      (e: any) => e.type === "acknowledge_packet",
-    );
-    const packetSrcChannel = acknowledgePacket.attributes.find(
-      (a: any) => a.key === "packet_src_channel",
-    ).value;
-    const backwardSequence = acknowledgePacket.attributes.find(
-      (a: any) => a.key === "packet_sequence",
-    ).value;
-    if (isHub) {
-      return {
-        from: {
-          chain: packetDstChannel,
-          address: memo.forward.receiver,
-        },
-        to: {
-          chain: packetSrcChannel,
-          address: packetData.sender,
-        },
-        amount: packetData.amount,
-        denom: packetData.denom,
-        forwardSequence,
-        backwardSequence,
-      };
-    }
-  }
-  const acknowledgePacket = events.find(
-    (e: any) => e.type === "acknowledge_packet",
-  );
-  const packetDstChannel = acknowledgePacket.attributes.find(
-    (a: any) => a.key === "packet_dst_channel",
-  ).value;
-  const packetSequence = acknowledgePacket.attributes.find(
-    (a: any) => a.key === "packet_sequence",
-  ).value;
-  return {
-    from: {
-      chain: packetDstChannel,
-    },
-    backwardSequence: packetSequence,
-  };
-}
-
-enum Step {
-  ROLLAPP_TR = "ROLLAPP_TR",
-  HUB_RECV = "HUB_RECV",
-  ROLLAPP_RECV = "ROLLAPP_RECV",
-  HUB_ACK = "HUB_ACK",
-  ROLLAPP_ACK = "ROLLAPP_ACK",
-}
+import {
+  parseAcknowledgement,
+  parseRecv,
+  parseTransfer,
+  Step,
+} from "../helpers";
 
 export async function GET(
   request: NextRequest,
@@ -196,12 +60,13 @@ export async function GET(
   const rpc = integrationResponse.result.integration.config.rpcUrls.cosmos;
   const slug = integrationResponse.result.integration.slug;
   const logo = integrationResponse.result.integration.config.logoUrl;
+
   switch (step) {
     case Step.ROLLAPP_TR:
-      const txSearch = await fetch(
+      var txSearch = await fetch(
         `${rpc}/tx_search?query=send_packet.packet_sequence=${forwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
-      const tx = txSearch.result.txs[0];
+      var tx = txSearch.result.txs[0];
       if (!tx) {
         return new Response(
           JSON.stringify({
@@ -213,11 +78,11 @@ export async function GET(
           },
         );
       }
-      const blockResponse = await fetch(
-        `${rpc}/block?height=${tx.height}`,
-      ).then((res) => res.json());
-      const timestamp = blockResponse.result.block.header.time;
-      const log = JSON.parse(tx.tx_result.log).find((l: any) => {
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const sendPacket = l.events.find((e: any) => e.type === "send_packet");
         return (
           !!sendPacket &&
@@ -240,11 +105,11 @@ export async function GET(
         },
       );
     case Step.HUB_RECV:
-      const txSearch2 = await fetch(
+      var txSearch = await fetch(
         `https://froopyland.rpc.silknodes.io/tx_search?query="recv_packet.packet_sequence=${forwardSequence} AND recv_packet.packet_dst_channel='${sourceChannel}'"`,
       ).then((res) => res.json());
-      const tx2 = txSearch2.result.txs[0];
-      if (!tx2) {
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
         return new Response(
           JSON.stringify({
             error: "Transaction not found.",
@@ -255,12 +120,11 @@ export async function GET(
           },
         );
       }
-      const blockResponse2 = await fetch(
-        `https://froopyland.rpc.silknodes.io/block?height=${tx2.height}`,
+      var blockResponse = await fetch(
+        `https://froopyland.rpc.silknodes.io/block?height=${tx.height}`,
       ).then((res) => res.json());
-      const timestamp2 = blockResponse2.result.block.header.time;
-      const log2 = JSON.parse(tx2.tx_result.log).find((l: any) => {
-        console.log(l);
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const recvPacket = l.events.find((e: any) => e.type === "recv_packet");
         return (
           !!recvPacket &&
@@ -270,12 +134,12 @@ export async function GET(
       });
       return new Response(
         JSON.stringify({
-          ...parseRecv(log2.events),
-          txHash: tx2.hash,
-          messageIndex: log2.msg_index,
+          ...parseRecv(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
           slug,
           logo,
-          timestamp: timestamp2,
+          timestamp,
         }),
         {
           status: 200,
@@ -283,14 +147,11 @@ export async function GET(
         },
       );
     case Step.HUB_ACK:
-      console.log(
-        `https://froopyland.rpc.silknodes.io/tx_search?query="write_acknowledgement.packet_sequence=${forwardSequence} AND write_acknowledgement.packet_dst_channel='${sourceChannel}'"`,
-      );
       const txSearch3 = await fetch(
         `https://froopyland.rpc.silknodes.io/tx_search?query="write_acknowledgement.packet_sequence=${forwardSequence} AND write_acknowledgement.packet_dst_channel='${sourceChannel}'"`,
       ).then((res) => res.json());
-      const tx3 = txSearch3.result.txs[0];
-      if (!tx3) {
+      var tx = txSearch3.result.txs[0];
+      if (!tx) {
         return new Response(
           JSON.stringify({
             error: "Transaction not found.",
@@ -301,12 +162,12 @@ export async function GET(
           },
         );
       }
-      const blockResponse3 = await fetch(
-        `https://froopyland.rpc.silknodes.io/block?height=${tx3.height}`,
+      var blockResponse = await fetch(
+        `https://froopyland.rpc.silknodes.io/block?height=${tx.height}`,
       ).then((res) => res.json());
-      console.log(blockResponse3);
-      const timestamp3 = blockResponse3.result.block.header.time;
-      const log3 = JSON.parse(tx3.tx_result.log).find((l: any) => {
+
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const writeAcknowledgement = l.events.find(
           (e: any) => e.type === "write_acknowledgement",
         );
@@ -320,12 +181,12 @@ export async function GET(
       });
       return new Response(
         JSON.stringify({
-          ...parseAcknowledgement(log3.events),
-          txHash: tx3.hash,
-          messageIndex: log3.msg_index,
+          ...parseAcknowledgement(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
           slug,
           logo,
-          timestamp: timestamp3,
+          timestamp,
         }),
         {
           status: 200,
@@ -333,14 +194,11 @@ export async function GET(
         },
       );
     case Step.ROLLAPP_RECV:
-      console.log(
-        `https://froopyland.rpc.silknodes.io/tx_search?query="recv_packet.packet_sequence=${backwardSequence} AND recv_packet.packet_src_channel='${destinationChannel}'"`,
-      );
-      const txSearch4 = await fetch(
+      var txSearch = await fetch(
         `${rpc}/tx_search?query=recv_packet.packet_sequence=${backwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
-      const tx4 = txSearch4.result.txs[0];
-      if (!tx4) {
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
         return new Response(
           JSON.stringify({
             error: "Transaction not found.",
@@ -351,11 +209,11 @@ export async function GET(
           },
         );
       }
-      const blockResponse4 = await fetch(
-        `${rpc}/block?height=${tx4.height}`,
-      ).then((res) => res.json());
-      const timestamp4 = blockResponse4.result.block.header.time;
-      const log4 = JSON.parse(tx4.tx_result.log).find((l: any) => {
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const recvPacket = l.events.find((e: any) => e.type === "recv_packet");
         return (
           !!recvPacket &&
@@ -365,12 +223,12 @@ export async function GET(
       });
       return new Response(
         JSON.stringify({
-          ...parseRecv(log4.events),
-          txHash: tx4.hash,
-          messageIndex: log4.msg_index,
+          ...parseRecv(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
           slug,
           logo,
-          timestamp: timestamp4,
+          timestamp,
         }),
         {
           status: 200,
@@ -378,11 +236,11 @@ export async function GET(
         },
       );
     case Step.ROLLAPP_ACK:
-      const txSearch5 = await fetch(
+      var txSearch = await fetch(
         `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${backwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
-      const tx5 = txSearch5.result.txs[0];
-      if (!tx5) {
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
         return new Response(
           JSON.stringify({
             error: "Transaction not found.",
@@ -393,12 +251,12 @@ export async function GET(
           },
         );
       }
-      const blockResponse5 = await fetch(
-        `${rpc}/block?height=${tx5.height}`,
-      ).then((res) => res.json());
-      console.log(blockResponse5);
-      const timestamp5 = blockResponse5.result.block.header.time;
-      const log5 = JSON.parse(tx5.tx_result.log).find((l: any) => {
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
         const acknowledgePacket = l.events.find(
           (e: any) => e.type === "acknowledge_packet",
         );
@@ -411,12 +269,12 @@ export async function GET(
       });
       return new Response(
         JSON.stringify({
-          ...parseAcknowledgement(log5.events),
-          txHash: tx5.hash,
-          messageIndex: log5.msg_index,
+          ...parseAcknowledgement(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
           slug,
           logo,
-          timestamp: timestamp5,
+          timestamp,
         }),
         {
           status: 200,
