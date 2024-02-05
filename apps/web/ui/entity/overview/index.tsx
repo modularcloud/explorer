@@ -22,7 +22,7 @@ export async function Overview({ properties, isIBC }: Props) {
   return (
     <>
       {/* TODO : remove for now */}
-      {/* {isIBC ? <FlowChart /> : null} */}
+      {isIBC ? <FlowChart /> : null}
       <section className="pb-4 h-full overflow-y-auto">
         <OverviewEntryList entries={entries} />
       </section>

@@ -46,6 +46,14 @@ type Props = {
   };
 };
 
+enum Step {
+  ROLLAPP_TR = "ROLLAPP_TR",
+  HUB_RECV = "HUB_RECV",
+  ROLLAPP_RECV = "ROLLAPP_RECV",
+  HUB_ACK = "HUB_ACK",
+  ROLLAPP_ACK = "ROLLAPP_ACK",
+}
+
 function Node({
   isNext,
   step,
@@ -53,20 +61,14 @@ function Node({
   slug,
 }: {
   isNext?: boolean;
-  step: number;
+  step: Step;
   hash: string;
   slug: string;
 }) {
   const [isHovered, setIsHovered] = React.useState(false);
-  const body = {
-    resolverId: "rollapp-ibc-0.0.0",
-    input: {
-      hash,
-      step,
-      slug,
-    },
-  };
-  const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+
+  // TODO fix!!!!!
+  const label = ["Transfer", "Received", "Received", "Acknowledgement"][0];
   const fallbackData = {
     result: {
       type: "pending",
@@ -74,16 +76,34 @@ function Node({
       waitingFor: label === "Received" ? "receipt" : undefined,
     },
   };
+  // use context to get the transfer details
+  const flowDetails = React.useContext(FlowChartContext);
+  if (!flowDetails) {
+    console.error("Flow details context is not available");
+    return null;
+  }
+  const sourceChannel = flowDetails.transfer.from.chain;
+  const destinationChannel = flowDetails.transfer.to.chain;
+  const forwardSequence = flowDetails.sequence.forward;
+  const backwardSequence = flowDetails.sequence.backward;
+
+  const useHubAck =
+    (step === Step.ROLLAPP_TR && !forwardSequence) ||
+    (step === Step.ROLLAPP_RECV && !backwardSequence) ||
+    (step === Step.ROLLAPP_ACK && !backwardSequence);
+  const url = `/api/ibc/${useHubAck ? Step.HUB_ACK : step}?${[
+    `sourceChannel=${sourceChannel}`,
+    `destinationChannel=${destinationChannel}`,
+    `forwardSequence=${forwardSequence}`,
+    `backwardSequence=${backwardSequence}`,
+  ]
+    .filter((q) => !q.endsWith("=undefined"))
+    .join("&")}`;
+  console.log(url);
   const nodeResponse = useSWR(
-    ["/api/resolve/ibc", body],
+    url,
     async () => {
-      const response = await fetch("/api/resolve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response = await fetch(url);
       const data = await response.json();
       return data;
     },
@@ -93,24 +113,63 @@ function Node({
       keepPreviousData: true,
       revalidateOnFocus: false,
       fallbackData,
+      onSuccess: (data) => {
+        const newDetails = flowDetails;
+
+        if (!newDetails.transfer.from.address) {
+          newDetails.transfer.from.address = data.from.address;
+        }
+
+        if (!newDetails.transfer.from.chain) {
+          newDetails.transfer.from.chain = data.from.chain;
+        }
+
+        if (!newDetails.transfer.to.address) {
+          newDetails.transfer.to.address = data.to.address;
+        }
+
+        if (!newDetails.transfer.to.chain) {
+          newDetails.transfer.to.chain = data.to.chain;
+        }
+
+        if (!newDetails.sequence.forward) {
+          newDetails.sequence.forward = data.forwardSequence;
+        }
+
+        if (!newDetails.sequence.backward) {
+          newDetails.sequence.backward = data.backwardSequence;
+        }
+
+        flowDetails.setContext?.(newDetails);
+      },
     },
   );
   console.log(nodeResponse.data);
 
-  const time = useMemo(() => {
-    const node = nodeResponse.data?.result;
-    if (node && node.timestamp) {
-      dayjs.extend(relativeTime);
-      return dayjs(node.timestamp * 1000).fromNow();
-    }
-    return null;
-  }, [nodeResponse.data]);
+  // const time = useMemo(() => {
+  //   const node = nodeResponse.data?.result;
+  //   if (node && node.timestamp) {
+  //     dayjs.extend(relativeTime);
+  //     return dayjs(node.timestamp * 1000).fromNow();
+  //   }
+  //   return null;
+  // }, [nodeResponse.data]);
 
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
   if (!nodeResponse.data) return null;
 
-  const node = nodeResponse.data.result;
+  // const node = nodeResponse.data.result;
 
+  const node = useHubAck
+    ? fallbackData.result
+    : {
+        type: "completed",
+        link: "#",
+        id: "1234",
+        label: "Transfer",
+      };
+
+  const time = 123;
   return (
     <Link
       href={`${node.type === "completed" ? node.link : "#"}`}
@@ -275,7 +334,6 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     return null;
   }, [nodeResponse.data]);
 
-
   const node = nodeResponse.data?.result;
   if (!node || !node.sidebar) return null;
 
@@ -322,24 +380,100 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
   );
 }
 
+const FlowChartContext = React.createContext<{
+  transfer: {
+    from: {
+      address?: string;
+      chain?: string;
+    };
+    to: {
+      address?: string;
+      chain?: string;
+    };
+    amount?: string;
+    denom?: string;
+  };
+  sequence: {
+    forward?: string;
+    backward?: string;
+  };
+  setContext?: (value: any) => void; // Added ability to set context
+} | null>(null);
+
+export function FlowChartProvider({ children }: { children: React.ReactNode }) {
+  const params = useParams<{ network: string; path: string[] }>();
+  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
+  const txHash = path[1];
+  const [contextValue, setContextValue] = React.useState<{
+    transfer: {
+      from: {
+        address?: string;
+        chain?: string;
+      };
+      to: {
+        address?: string;
+        chain?: string;
+      };
+      amount?: string;
+      denom?: string;
+    };
+    sequence: {
+      forward?: string;
+      backward?: string;
+    };
+  }>({
+    transfer: {
+      from: {
+        chain: "channel-6743",
+      },
+      to: {},
+    },
+    sequence: {
+      forward: "7242",
+    },
+  });
+
+  // Function to update context
+  const setContext = (value: any) => {
+    setContextValue(value);
+  };
+
+  // Added setContext to the context value
+  const providerValue = React.useMemo(
+    () => ({ ...contextValue, setContext }),
+    [contextValue],
+  );
+
+  return (
+    <FlowChartContext.Provider value={providerValue}>
+      {children}
+    </FlowChartContext.Provider>
+  );
+}
+
 export function FlowChart() {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
 
+  // Example usage of setContext (can be used anywhere within the FlowChart component or its children)
+  // setContext({...context, transfer: {...transfer, amount: '1000'}});
+
   return (
-    <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
-      <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
-        <div className="text-xs font-medium leading-4">IBC Transfer</div>
-        <Transfer hash={txHash} slug={slug} />
+    <FlowChartProvider>
+      <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
+        <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
+          <div className="text-xs font-medium leading-4">IBC Transfer</div>
+          <Transfer hash={txHash} slug={slug} />
+        </div>
+        <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
+          <Node step={Step.ROLLAPP_TR} hash={txHash} slug={slug} />
+          <Node step={Step.ROLLAPP_RECV} hash={txHash} slug={slug} />
+          <Node step={Step.ROLLAPP_ACK} hash={txHash} slug={slug} />
+          {/* <Node step={3} hash={txHash} slug={slug} /> */}
+        </div>
       </div>
-      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
-        <Node step={0} hash={txHash} slug={slug} />
-        <Node step={1} hash={txHash} slug={slug} />
-        <Node step={2} hash={txHash} slug={slug} />
-        <Node step={3} hash={txHash} slug={slug} />
-      </div>
-    </div>
+    </FlowChartProvider>
   );
 }
