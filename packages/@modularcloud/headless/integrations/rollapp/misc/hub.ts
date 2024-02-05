@@ -32,7 +32,7 @@ export const RollAppEvents = createResolver(
         limit: 5,
       }),
       fetch(
-        `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&maxResults=1000`,
+        `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&maxResults=5000`,
       ).then((res) => res.json()),
     ]);
     if (messages.type !== "success") {
@@ -63,7 +63,7 @@ export const RollAppEvents = createResolver(
           timestamp,
           amount: msg.decodedValue.token
             ? msg.decodedValue.token.denom === "udym"
-              ? `${Number(msg.decodedValue.token.amount) / 10 ** 6} DYM`
+              ? `${Number(msg.decodedValue.token.amount) / 10 ** 18} DYM`
               : `${msg.decodedValue.token.amount} ${msg.decodedValue.token.denom}`
             : undefined,
           from: {

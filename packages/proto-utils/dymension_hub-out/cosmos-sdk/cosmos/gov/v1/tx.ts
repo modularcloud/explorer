@@ -5,10 +5,12 @@ import { Any } from "../../../google/protobuf/any";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Coin } from "../../base/v1beta1/coin";
 import {
+  MessageBasedParams,
   Params,
   ProposalType,
   proposalTypeFromJSON,
   proposalTypeToJSON,
+  ProposalVoteOptions,
   VoteOption,
   voteOptionFromJSON,
   voteOptionToJSON,
@@ -59,7 +61,7 @@ export interface MsgSubmitProposal {
    * proposal_type defines the type of proposal
    * When not set defaults to PROPOSAL_TYPE_STANDARD
    *
-   * Since: cosmos-sdk 0.51
+   * Since: x/gov v1.0.0
    */
   proposalType: ProposalType;
 }
@@ -185,6 +187,80 @@ export interface MsgCancelProposalResponse {
     | undefined;
   /** canceled_height defines the block height at which the proposal is canceled. */
   canceledHeight: Long;
+}
+
+/**
+ * MsgSubmitMultipleChoiceProposal defines a message to submit a multiple choice proposal.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgSubmitMultipleChoiceProposal {
+  /** initial_deposit is the deposit value that must be paid at proposal submission. */
+  initialDeposit: Coin[];
+  /** proposer is the account address of the proposer. */
+  proposer: string;
+  /** metadata is any arbitrary metadata attached to the proposal. */
+  metadata: string;
+  /** title is the title of the proposal. */
+  title: string;
+  /** summary is the summary of the proposal */
+  summary: string;
+  /** vote_options defines the vote options for the proposal. */
+  voteOptions: ProposalVoteOptions | undefined;
+}
+
+/**
+ * MsgSubmitMultipleChoiceProposalResponse defines the Msg/SubmitMultipleChoiceProposal response type.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgSubmitMultipleChoiceProposalResponse {
+  /** proposal_id defines the unique id of the proposal. */
+  proposalId: Long;
+}
+
+/**
+ * MsgUpdateMessageParams defines the Msg/UpdateMessageParams response type.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgUpdateMessageParams {
+  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
+  authority: string;
+  /** msg_url is the url of the message to be updated. */
+  msgUrl: string;
+  /** params are the new params to be set for the message. */
+  params: MessageBasedParams | undefined;
+}
+
+/**
+ * MsgUpdateMessageParamsResponse defines the Msg/UpdateMessageParams response type.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgUpdateMessageParamsResponse {
+}
+
+/**
+ * MsgSudoExec defines a message to execute an inner message as the governance module.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgSudoExec {
+  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
+  authority: string;
+  /** msg is the arbitrary message to be executed. */
+  msg: Any | undefined;
+}
+
+/**
+ * MsgSudoExecResponse defines the Msg/SudoExec response type.
+ *
+ * Since: x/gov 1.0.0
+ */
+export interface MsgSudoExecResponse {
+  /** result is the response data from the executed message. */
+  result: Uint8Array;
 }
 
 function createBaseMsgSubmitProposal(): MsgSubmitProposal {
@@ -1262,6 +1338,474 @@ export const MsgCancelProposalResponse = {
   },
 };
 
+function createBaseMsgSubmitMultipleChoiceProposal(): MsgSubmitMultipleChoiceProposal {
+  return { initialDeposit: [], proposer: "", metadata: "", title: "", summary: "", voteOptions: undefined };
+}
+
+export const MsgSubmitMultipleChoiceProposal = {
+  encode(message: MsgSubmitMultipleChoiceProposal, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.initialDeposit) {
+      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.proposer !== "") {
+      writer.uint32(18).string(message.proposer);
+    }
+    if (message.metadata !== "") {
+      writer.uint32(26).string(message.metadata);
+    }
+    if (message.title !== "") {
+      writer.uint32(34).string(message.title);
+    }
+    if (message.summary !== "") {
+      writer.uint32(42).string(message.summary);
+    }
+    if (message.voteOptions !== undefined) {
+      ProposalVoteOptions.encode(message.voteOptions, writer.uint32(50).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSubmitMultipleChoiceProposal {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSubmitMultipleChoiceProposal();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.initialDeposit.push(Coin.decode(reader, reader.uint32()));
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.proposer = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.metadata = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.title = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.summary = reader.string();
+          continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.voteOptions = ProposalVoteOptions.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSubmitMultipleChoiceProposal {
+    return {
+      initialDeposit: globalThis.Array.isArray(object?.initialDeposit)
+        ? object.initialDeposit.map((e: any) => Coin.fromJSON(e))
+        : [],
+      proposer: isSet(object.proposer) ? globalThis.String(object.proposer) : "",
+      metadata: isSet(object.metadata) ? globalThis.String(object.metadata) : "",
+      title: isSet(object.title) ? globalThis.String(object.title) : "",
+      summary: isSet(object.summary) ? globalThis.String(object.summary) : "",
+      voteOptions: isSet(object.voteOptions) ? ProposalVoteOptions.fromJSON(object.voteOptions) : undefined,
+    };
+  },
+
+  toJSON(message: MsgSubmitMultipleChoiceProposal): unknown {
+    const obj: any = {};
+    if (message.initialDeposit?.length) {
+      obj.initialDeposit = message.initialDeposit.map((e) => Coin.toJSON(e));
+    }
+    if (message.proposer !== "") {
+      obj.proposer = message.proposer;
+    }
+    if (message.metadata !== "") {
+      obj.metadata = message.metadata;
+    }
+    if (message.title !== "") {
+      obj.title = message.title;
+    }
+    if (message.summary !== "") {
+      obj.summary = message.summary;
+    }
+    if (message.voteOptions !== undefined) {
+      obj.voteOptions = ProposalVoteOptions.toJSON(message.voteOptions);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgSubmitMultipleChoiceProposal>, I>>(base?: I): MsgSubmitMultipleChoiceProposal {
+    return MsgSubmitMultipleChoiceProposal.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgSubmitMultipleChoiceProposal>, I>>(
+    object: I,
+  ): MsgSubmitMultipleChoiceProposal {
+    const message = createBaseMsgSubmitMultipleChoiceProposal();
+    message.initialDeposit = object.initialDeposit?.map((e) => Coin.fromPartial(e)) || [];
+    message.proposer = object.proposer ?? "";
+    message.metadata = object.metadata ?? "";
+    message.title = object.title ?? "";
+    message.summary = object.summary ?? "";
+    message.voteOptions = (object.voteOptions !== undefined && object.voteOptions !== null)
+      ? ProposalVoteOptions.fromPartial(object.voteOptions)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseMsgSubmitMultipleChoiceProposalResponse(): MsgSubmitMultipleChoiceProposalResponse {
+  return { proposalId: Long.UZERO };
+}
+
+export const MsgSubmitMultipleChoiceProposalResponse = {
+  encode(message: MsgSubmitMultipleChoiceProposalResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.proposalId.isZero()) {
+      writer.uint32(8).uint64(message.proposalId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSubmitMultipleChoiceProposalResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSubmitMultipleChoiceProposalResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.proposalId = reader.uint64() as Long;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSubmitMultipleChoiceProposalResponse {
+    return { proposalId: isSet(object.proposalId) ? Long.fromValue(object.proposalId) : Long.UZERO };
+  },
+
+  toJSON(message: MsgSubmitMultipleChoiceProposalResponse): unknown {
+    const obj: any = {};
+    if (!message.proposalId.isZero()) {
+      obj.proposalId = (message.proposalId || Long.UZERO).toString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgSubmitMultipleChoiceProposalResponse>, I>>(
+    base?: I,
+  ): MsgSubmitMultipleChoiceProposalResponse {
+    return MsgSubmitMultipleChoiceProposalResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgSubmitMultipleChoiceProposalResponse>, I>>(
+    object: I,
+  ): MsgSubmitMultipleChoiceProposalResponse {
+    const message = createBaseMsgSubmitMultipleChoiceProposalResponse();
+    message.proposalId = (object.proposalId !== undefined && object.proposalId !== null)
+      ? Long.fromValue(object.proposalId)
+      : Long.UZERO;
+    return message;
+  },
+};
+
+function createBaseMsgUpdateMessageParams(): MsgUpdateMessageParams {
+  return { authority: "", msgUrl: "", params: undefined };
+}
+
+export const MsgUpdateMessageParams = {
+  encode(message: MsgUpdateMessageParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.msgUrl !== "") {
+      writer.uint32(18).string(message.msgUrl);
+    }
+    if (message.params !== undefined) {
+      MessageBasedParams.encode(message.params, writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateMessageParams {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateMessageParams();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.authority = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.msgUrl = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.params = MessageBasedParams.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateMessageParams {
+    return {
+      authority: isSet(object.authority) ? globalThis.String(object.authority) : "",
+      msgUrl: isSet(object.msgUrl) ? globalThis.String(object.msgUrl) : "",
+      params: isSet(object.params) ? MessageBasedParams.fromJSON(object.params) : undefined,
+    };
+  },
+
+  toJSON(message: MsgUpdateMessageParams): unknown {
+    const obj: any = {};
+    if (message.authority !== "") {
+      obj.authority = message.authority;
+    }
+    if (message.msgUrl !== "") {
+      obj.msgUrl = message.msgUrl;
+    }
+    if (message.params !== undefined) {
+      obj.params = MessageBasedParams.toJSON(message.params);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgUpdateMessageParams>, I>>(base?: I): MsgUpdateMessageParams {
+    return MsgUpdateMessageParams.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateMessageParams>, I>>(object: I): MsgUpdateMessageParams {
+    const message = createBaseMsgUpdateMessageParams();
+    message.authority = object.authority ?? "";
+    message.msgUrl = object.msgUrl ?? "";
+    message.params = (object.params !== undefined && object.params !== null)
+      ? MessageBasedParams.fromPartial(object.params)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseMsgUpdateMessageParamsResponse(): MsgUpdateMessageParamsResponse {
+  return {};
+}
+
+export const MsgUpdateMessageParamsResponse = {
+  encode(_: MsgUpdateMessageParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateMessageParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateMessageParamsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateMessageParamsResponse {
+    return {};
+  },
+
+  toJSON(_: MsgUpdateMessageParamsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgUpdateMessageParamsResponse>, I>>(base?: I): MsgUpdateMessageParamsResponse {
+    return MsgUpdateMessageParamsResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateMessageParamsResponse>, I>>(_: I): MsgUpdateMessageParamsResponse {
+    const message = createBaseMsgUpdateMessageParamsResponse();
+    return message;
+  },
+};
+
+function createBaseMsgSudoExec(): MsgSudoExec {
+  return { authority: "", msg: undefined };
+}
+
+export const MsgSudoExec = {
+  encode(message: MsgSudoExec, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authority !== "") {
+      writer.uint32(10).string(message.authority);
+    }
+    if (message.msg !== undefined) {
+      Any.encode(message.msg, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSudoExec {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSudoExec();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.authority = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.msg = Any.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSudoExec {
+    return {
+      authority: isSet(object.authority) ? globalThis.String(object.authority) : "",
+      msg: isSet(object.msg) ? Any.fromJSON(object.msg) : undefined,
+    };
+  },
+
+  toJSON(message: MsgSudoExec): unknown {
+    const obj: any = {};
+    if (message.authority !== "") {
+      obj.authority = message.authority;
+    }
+    if (message.msg !== undefined) {
+      obj.msg = Any.toJSON(message.msg);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgSudoExec>, I>>(base?: I): MsgSudoExec {
+    return MsgSudoExec.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgSudoExec>, I>>(object: I): MsgSudoExec {
+    const message = createBaseMsgSudoExec();
+    message.authority = object.authority ?? "";
+    message.msg = (object.msg !== undefined && object.msg !== null) ? Any.fromPartial(object.msg) : undefined;
+    return message;
+  },
+};
+
+function createBaseMsgSudoExecResponse(): MsgSudoExecResponse {
+  return { result: new Uint8Array(0) };
+}
+
+export const MsgSudoExecResponse = {
+  encode(message: MsgSudoExecResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.result.length !== 0) {
+      writer.uint32(10).bytes(message.result);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSudoExecResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSudoExecResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.result = reader.bytes();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSudoExecResponse {
+    return { result: isSet(object.result) ? bytesFromBase64(object.result) : new Uint8Array(0) };
+  },
+
+  toJSON(message: MsgSudoExecResponse): unknown {
+    const obj: any = {};
+    if (message.result.length !== 0) {
+      obj.result = base64FromBytes(message.result);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgSudoExecResponse>, I>>(base?: I): MsgSudoExecResponse {
+    return MsgSudoExecResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgSudoExecResponse>, I>>(object: I): MsgSudoExecResponse {
+    const message = createBaseMsgSudoExecResponse();
+    message.result = object.result ?? new Uint8Array(0);
+    return message;
+  },
+};
+
 /** Msg defines the gov Msg service. */
 export interface Msg {
   /** SubmitProposal defines a method to create new proposal given the messages. */
@@ -1290,6 +1834,27 @@ export interface Msg {
    * Since: cosmos-sdk 0.50
    */
   CancelProposal(request: MsgCancelProposal): Promise<MsgCancelProposalResponse>;
+  /**
+   * SubmitMultipleChoiceProposal defines a method to create new multiple choice proposal.
+   *
+   * Since: x/gov 1.0.0
+   */
+  SubmitMultipleChoiceProposal(
+    request: MsgSubmitMultipleChoiceProposal,
+  ): Promise<MsgSubmitMultipleChoiceProposalResponse>;
+  /**
+   * UpdateMessageParams defines a method to create or update message params when used in a governance proposal.
+   *
+   * Since: x/gov 1.0.0
+   */
+  UpdateMessageParams(request: MsgUpdateMessageParams): Promise<MsgUpdateMessageParamsResponse>;
+  /**
+   * SudoExec defines a method to execute an inner message as the governance module.
+   * It permits to execute any message from a proposal, even if they weren't meant to be governance proposals.
+   *
+   * Since: x/gov 1.0.0
+   */
+  SudoExec(request: MsgSudoExec): Promise<MsgSudoExecResponse>;
 }
 
 export const MsgServiceName = "cosmos.gov.v1.Msg";
@@ -1306,6 +1871,9 @@ export class MsgClientImpl implements Msg {
     this.Deposit = this.Deposit.bind(this);
     this.UpdateParams = this.UpdateParams.bind(this);
     this.CancelProposal = this.CancelProposal.bind(this);
+    this.SubmitMultipleChoiceProposal = this.SubmitMultipleChoiceProposal.bind(this);
+    this.UpdateMessageParams = this.UpdateMessageParams.bind(this);
+    this.SudoExec = this.SudoExec.bind(this);
   }
   SubmitProposal(request: MsgSubmitProposal): Promise<MsgSubmitProposalResponse> {
     const data = MsgSubmitProposal.encode(request).finish();
@@ -1348,10 +1916,55 @@ export class MsgClientImpl implements Msg {
     const promise = this.rpc.request(this.service, "CancelProposal", data);
     return promise.then((data) => MsgCancelProposalResponse.decode(_m0.Reader.create(data)));
   }
+
+  SubmitMultipleChoiceProposal(
+    request: MsgSubmitMultipleChoiceProposal,
+  ): Promise<MsgSubmitMultipleChoiceProposalResponse> {
+    const data = MsgSubmitMultipleChoiceProposal.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SubmitMultipleChoiceProposal", data);
+    return promise.then((data) => MsgSubmitMultipleChoiceProposalResponse.decode(_m0.Reader.create(data)));
+  }
+
+  UpdateMessageParams(request: MsgUpdateMessageParams): Promise<MsgUpdateMessageParamsResponse> {
+    const data = MsgUpdateMessageParams.encode(request).finish();
+    const promise = this.rpc.request(this.service, "UpdateMessageParams", data);
+    return promise.then((data) => MsgUpdateMessageParamsResponse.decode(_m0.Reader.create(data)));
+  }
+
+  SudoExec(request: MsgSudoExec): Promise<MsgSudoExecResponse> {
+    const data = MsgSudoExec.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SudoExec", data);
+    return promise.then((data) => MsgSudoExecResponse.decode(_m0.Reader.create(data)));
+  }
 }
 
 interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
+}
+
+function bytesFromBase64(b64: string): Uint8Array {
+  if (globalThis.Buffer) {
+    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+  } else {
+    const bin = globalThis.atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
+  }
+}
+
+function base64FromBytes(arr: Uint8Array): string {
+  if (globalThis.Buffer) {
+    return globalThis.Buffer.from(arr).toString("base64");
+  } else {
+    const bin: string[] = [];
+    arr.forEach((byte) => {
+      bin.push(globalThis.String.fromCharCode(byte));
+    });
+    return globalThis.btoa(bin.join(""));
+  }
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

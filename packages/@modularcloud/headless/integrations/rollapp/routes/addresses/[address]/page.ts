@@ -1,6 +1,7 @@
 import { createResolver } from "@modularcloud-resolver/core";
 import {
   BalancesResolver,
+  getHubMessages,
   helpers,
   RollAppReceiveAddressResolver,
   RollAppSentAddressResolver,
@@ -26,6 +27,94 @@ type AddressPagination = {
     perPage: number;
     index: number;
   };
+};
+
+// @ts-ignore
+import * as cryptoAddrCodec from "crypto-addr-codec";
+
+// From https://github.com/evmos/evmosjs/blob/main/packages/address-converter/src/%40types/crypto-add-codec/index.d.ts
+type Codec = {
+  isValidChecksumAddress(address: string, chainId: number | null): boolean;
+  stripHexPrefix(address: string): string;
+  toChecksumAddress(address: string, chainId: number | null): string;
+};
+const isValidChecksumAddress = (cryptoAddrCodec as Codec)
+  .isValidChecksumAddress;
+const stripHexPrefix = (cryptoAddrCodec as Codec).stripHexPrefix;
+const toChecksumAddress = (cryptoAddrCodec as Codec).toChecksumAddress;
+
+import { bech32 } from "bech32";
+
+// From https://github.com/evmos/evmosjs/blob/main/packages/address-converter/src/converter.ts
+function makeChecksummedHexDecoder(chainId?: number) {
+  return (data: string) => {
+    const stripped = stripHexPrefix(data);
+    if (
+      !isValidChecksumAddress(data, chainId || null) &&
+      stripped !== stripped.toLowerCase() &&
+      stripped !== stripped.toUpperCase()
+    ) {
+      throw Error("Invalid address checksum");
+    }
+    return Buffer.from(stripHexPrefix(data), "hex");
+  };
+}
+
+function makeChecksummedHexEncoder(chainId?: number) {
+  return (data: Buffer) =>
+    toChecksumAddress(data.toString("hex"), chainId || null);
+}
+
+const hexChecksumChain = (name: string, chainId?: number) => ({
+  decoder: makeChecksummedHexDecoder(chainId),
+  encoder: makeChecksummedHexEncoder(chainId),
+  name,
+});
+
+export const ETH = hexChecksumChain("ETH");
+
+function makeBech32Encoder(prefix: string) {
+  return (data: Buffer) => bech32.encode(prefix, bech32.toWords(data));
+}
+
+function makeBech32Decoder(currentPrefix: string) {
+  return (data: string) => {
+    const { prefix, words } = bech32.decode(data);
+    if (prefix !== currentPrefix) {
+      throw Error("Unrecognised address format");
+    }
+    return Buffer.from(bech32.fromWords(words));
+  };
+}
+
+const bech32Chain = (name: string, prefix: string) => ({
+  decoder: makeBech32Decoder(prefix),
+  encoder: makeBech32Encoder(prefix),
+  name,
+});
+
+export const ETHERMINT = bech32Chain("ETHERMINT", "ethm");
+
+export const ethToEthermint = (ethAddress: string) => {
+  const data = ETH.decoder(ethAddress);
+  return ETHERMINT.encoder(data);
+};
+
+export const ethermintToEth = (ethermintAddress: string) => {
+  const data = ETHERMINT.decoder(ethermintAddress);
+  return ETH.encoder(data);
+};
+
+export const DYMENSION = bech32Chain("DYMENSION", "dym");
+
+export const ethToDymension = (ethAddress: string) => {
+  const data = ETH.decoder(ethAddress);
+  return DYMENSION.encoder(data);
+};
+
+export const dymensionToEth = (evmosAddress: string) => {
+  const data = DYMENSION.decoder(evmosAddress);
+  return ETH.encoder(data);
 };
 
 function parseAddressPagination(b64: string): AddressPagination {
@@ -71,6 +160,11 @@ export const RollAppAddressPageResolver = createResolver(
     getSent: typeof RollAppSentAddressResolver,
     getReceived: typeof RollAppReceiveAddressResolver,
   ) => {
+    let dymensionAddress = address;
+    if (address.startsWith("0x")) {
+      dymensionAddress = ethToDymension(address);
+    }
+
     const limit = context.limit ?? 30;
     const addressPagination = context.after
       ? parseAddressPagination(context.after)
@@ -93,39 +187,47 @@ export const RollAppAddressPageResolver = createResolver(
     ] = await Promise.all([
       getBalances({
         endpoint: context.rpcEndpoint,
-        address,
+        address: dymensionAddress,
       }).then((res) => {
         if (res.type === "success") {
           return res.result.balances;
         }
-        console.log("Error getting balances", address, res);
+        console.log("Error getting balances", dymensionAddress, res);
         return [];
       }),
       addressPagination.sent
         ? getSent({
             endpoint: context.rpcEndpoint,
-            address,
+            address: dymensionAddress,
             page: `${addressPagination.sent.page}`,
             perPage: `${addressPagination.sent.perPage * 2}`,
           }).then((res) => {
             if (res.type === "success") {
               return res.result.result.txs;
             }
-            console.log("Error getting sent transactions", address, res);
+            console.log(
+              "Error getting sent transactions",
+              dymensionAddress,
+              res,
+            );
             return [];
           })
         : Promise.resolve(null),
       addressPagination.received
         ? getReceived({
             endpoint: context.rpcEndpoint,
-            address,
+            address: dymensionAddress,
             page: `${addressPagination.received.page}`,
             perPage: `${addressPagination.received.perPage * 2}`,
           }).then((res) => {
             if (res.type === "success") {
               return res.result.result.txs;
             }
-            console.log("Error getting received transactions", address, res);
+            console.log(
+              "Error getting received transactions",
+              dymensionAddress,
+              res,
+            );
             return [];
           })
         : Promise.resolve(null),
@@ -181,12 +283,12 @@ export const RollAppAddressPageResolver = createResolver(
     const page: Page = {
       context,
       metadata: {
-        title: `Address ${address}`,
-        description: `Address ${address} on ${context.chainBrand}`,
+        title: `Address ${dymensionAddress}`,
+        description: `Address ${dymensionAddress} on ${context.chainBrand}`,
       },
       sidebar: {
         headerKey: "Address",
-        headerValue: address,
+        headerValue: dymensionAddress,
         properties: balances.length
           ? Object.fromEntries(
               balances.map((bal) =>
@@ -206,7 +308,7 @@ export const RollAppAddressPageResolver = createResolver(
       tabs: [
         {
           text: "Transactions",
-          route: ["addresses", address],
+          route: ["addresses", dymensionAddress],
         },
       ],
       body: {
@@ -236,7 +338,15 @@ export const RollAppAddressPageResolver = createResolver(
         entries: results.map((tx) => {
           const link = `/${context.slug}/transactions/${tx.hash}`;
           const properties = getTransactionProperties({ result: tx });
-          const messages = helpers.getMessages(tx.tx);
+          let messages: ReturnType<
+            typeof helpers.getMessages | typeof getHubMessages
+          > = [];
+          if (context.slug === "dymension-froopyland") {
+            messages = getHubMessages(tx.tx);
+          } else {
+            messages = helpers.getMessages(tx.tx);
+          }
+          console.log("messages", messages);
           const type = messages[0]
             ? helpers.getMessageDisplayName(messages[0].typeUrl)
             : "Unknown";

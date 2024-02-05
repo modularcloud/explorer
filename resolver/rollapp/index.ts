@@ -67,7 +67,7 @@ type ParsedMsg<T extends MsgType["typeUrl"]> = {
 // >;
 
 type DecodedAny = { typeUrl: string; decodedValue: any };
-export function getRegistryMessages(txRaw: string) {
+export function getHubMessages(txRaw: string) {
   const txBuffer = Buffer.from(txRaw, "base64");
 
   const txBody = DymensionHub.Tx.decode(txBuffer).body;
@@ -147,7 +147,7 @@ const RollappTransactionResolver = createResolver(
       throw new Error("Invalid hash");
     }
     const hash = match[1];
-    const tryHash = async (hash: string) => {
+    const tryHash: any = async (hash: string) => {
       const response = await fetchResolver({
         url: `${input.endpoint}/tx?hash=${hash}&prove=false`,
       });
@@ -179,9 +179,18 @@ const BalancesResolver = createResolver(
     const hex = Buffer.from(
       Shared.QueryAllBalancesRequest.encode(data).finish(),
     ).toString("hex");
-    const balanceResponse: ResolutionResponse = await fetchResolver({
-      url: `${input.endpoint}/abci_query?path=/cosmos.bank.v1beta1.Query/AllBalances&data=${hex}&height=0&prove=false`,
-    });
+
+    let balanceResponse: ResolutionResponse;
+    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+      balanceResponse = await fetchResolver({
+        url: `${input.endpoint}/abci_query?path="/cosmos.bank.v1beta1.Query/AllBalances"&data=0x${hex}&height=0&prove=false`,
+      });
+    } else {
+      balanceResponse = await fetchResolver({
+        url: `${input.endpoint}/abci_query?path=/cosmos.bank.v1beta1.Query/AllBalances&data=${hex}&height=0&prove=false`,
+      });
+    }
+
     if (balanceResponse.type !== "success") {
       throw new Error("Failed to fetch balance");
     }
@@ -192,7 +201,7 @@ const BalancesResolver = createResolver(
   [FetchResolver],
 );
 
-const RollAppSentAddressResolver = createResolver(
+export const RollAppSentAddressResolver = createResolver(
   {
     id: "rollapp-sent-address-0.0.0",
     cache: false,
@@ -206,13 +215,22 @@ const RollAppSentAddressResolver = createResolver(
     },
     fetchResolver: typeof FetchResolver,
   ) => {
-    const transactions = await fetchResolver({
-      url: `${input.endpoint}/tx_search?query=message.sender='${
-        input.address
-      }'&prove=false&page=${input.page ?? 1}&per_page=${
-        input.perPage
-      }&order_by=asc`,
-    });
+    let transactions: ResolutionResponse;
+    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+      transactions = await fetchResolver({
+        url: `${input.endpoint}/tx_search?query="message.sender='${
+          input.address
+        }'"&prove=false&page=${input.page ?? 1}&per_page=${input.perPage}`,
+      });
+    } else {
+      transactions = await fetchResolver({
+        url: `${input.endpoint}/tx_search?query=message.sender='${
+          input.address
+        }'&prove=false&page=${input.page ?? 1}&per_page=${
+          input.perPage
+        }&order_by=asc`,
+      });
+    }
     if (transactions.type !== "success") {
       throw new Error("Failed to fetch transactions");
     }
@@ -235,13 +253,22 @@ export const RollAppReceiveAddressResolver = createResolver(
     },
     fetchResolver,
   ) => {
-    const transactions = await fetchResolver({
-      url: `${input.endpoint}/tx_search?query=transfer.recipient='${
-        input.address
-      }'&prove=false&page=${input.page ?? 1}&per_page=${
-        input.perPage
-      }&order_by=asc`,
-    });
+    let transactions: ResolutionResponse;
+    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+      transactions = await fetchResolver({
+        url: `${input.endpoint}/tx_search?query="transfer.recipient='${
+          input.address
+        }'"&prove=false&page=${input.page ?? 1}&per_page=${input.perPage}`,
+      });
+    } else {
+      transactions = await fetchResolver({
+        url: `${input.endpoint}/tx_search?query=transfer.recipient='${
+          input.address
+        }'&prove=false&page=${input.page ?? 1}&per_page=${
+          input.perPage
+        }&order_by=asc`,
+      });
+    }
     if (transactions.type !== "success") {
       throw new Error("Failed to fetch transactions");
     }
@@ -350,7 +377,7 @@ const LatestHubMessages = createResolver(
       );
       for (const tx of txs) {
         let cachedTxHash;
-        const txMessages = getRegistryMessages(tx);
+        const txMessages = getHubMessages(tx);
         for (const msg of txMessages) {
           if (
             msg.typeUrl === "/ibc.core.channel.v1.MsgRecvPacket" ||
@@ -400,7 +427,6 @@ export {
   RollappBlockHashResolver as getBlockByHash,
   RollappBlockHeightResolver as getBlock,
   RollappTransactionResolver as getTx,
-  getRegistryMessages as getMessages,
   type ParsedMsg,
   getTxHashFromBlockTx,
   type DecodedAny,

@@ -126,14 +126,31 @@ export interface TxBody {
   /**
    * memo is any arbitrary note/comment to be added to the transaction.
    * WARNING: in clients, any publicly exposed text should not be called memo,
-   * but should be called `note` instead (see https://github.com/cosmos/cosmos-sdk/issues/9122).
+   * but should be called `note` instead (see
+   * https://github.com/cosmos/cosmos-sdk/issues/9122).
    */
   memo: string;
   /**
-   * timeout is the block height after which this transaction will not
-   * be processed by the chain
+   * timeout_height is the block height after which this transaction will not
+   * be processed by the chain.
+   *
+   * Note, if unordered=true this value MUST be set
+   * and will act as a short-lived TTL in which the transaction is deemed valid
+   * and kept in memory to prevent duplicates.
    */
   timeoutHeight: Long;
+  /**
+   * unordered, when set to true, indicates that the transaction signer(s)
+   * intend for the transaction to be evaluated and executed in an un-ordered
+   * fashion. Specifically, the account's nonce will NOT be checked or
+   * incremented, which allows for fire-and-forget as well as concurrent
+   * transaction execution.
+   *
+   * Note, when set to true, the existing 'timeout_height' value must be set and
+   * will be used to correspond to a height in which the transaction is deemed
+   * valid.
+   */
+  unordered: boolean;
   /**
    * extension_options are arbitrary options that can be added by chains
    * when the default options are not sufficient. If any of these are present
@@ -257,15 +274,17 @@ export interface Fee {
    */
   gasLimit: Long;
   /**
-   * if unset, the first signer is responsible for paying the fees. If set, the specified account must pay the fees.
-   * the payer must be a tx signer (and thus have signed this field in AuthInfo).
-   * setting this field does *not* change the ordering of required signers for the transaction.
+   * if unset, the first signer is responsible for paying the fees. If set, the
+   * specified account must pay the fees. the payer must be a tx signer (and
+   * thus have signed this field in AuthInfo). setting this field does *not*
+   * change the ordering of required signers for the transaction.
    */
   payer: string;
   /**
-   * if set, the fee payer (either the first signer or the value of the payer field) requests that a fee grant be used
-   * to pay fees instead of the fee payer's own balance. If an appropriate fee grant does not exist or the chain does
-   * not support fee grants, this will fail
+   * if set, the fee payer (either the first signer or the value of the payer
+   * field) requests that a fee grant be used to pay fees instead of the fee
+   * payer's own balance. If an appropriate fee grant does not exist or the
+   * chain does not support fee grants, this will fail
    */
   granter: string;
 }
@@ -751,7 +770,14 @@ export const SignDocDirectAux = {
 };
 
 function createBaseTxBody(): TxBody {
-  return { messages: [], memo: "", timeoutHeight: Long.UZERO, extensionOptions: [], nonCriticalExtensionOptions: [] };
+  return {
+    messages: [],
+    memo: "",
+    timeoutHeight: Long.UZERO,
+    unordered: false,
+    extensionOptions: [],
+    nonCriticalExtensionOptions: [],
+  };
 }
 
 export const TxBody = {
@@ -764,6 +790,9 @@ export const TxBody = {
     }
     if (!message.timeoutHeight.isZero()) {
       writer.uint32(24).uint64(message.timeoutHeight);
+    }
+    if (message.unordered === true) {
+      writer.uint32(32).bool(message.unordered);
     }
     for (const v of message.extensionOptions) {
       Any.encode(v!, writer.uint32(8186).fork()).ldelim();
@@ -802,6 +831,13 @@ export const TxBody = {
 
           message.timeoutHeight = reader.uint64() as Long;
           continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.unordered = reader.bool();
+          continue;
         case 1023:
           if (tag !== 8186) {
             break;
@@ -830,6 +866,7 @@ export const TxBody = {
       messages: globalThis.Array.isArray(object?.messages) ? object.messages.map((e: any) => Any.fromJSON(e)) : [],
       memo: isSet(object.memo) ? globalThis.String(object.memo) : "",
       timeoutHeight: isSet(object.timeoutHeight) ? Long.fromValue(object.timeoutHeight) : Long.UZERO,
+      unordered: isSet(object.unordered) ? globalThis.Boolean(object.unordered) : false,
       extensionOptions: globalThis.Array.isArray(object?.extensionOptions)
         ? object.extensionOptions.map((e: any) => Any.fromJSON(e))
         : [],
@@ -850,6 +887,9 @@ export const TxBody = {
     if (!message.timeoutHeight.isZero()) {
       obj.timeoutHeight = (message.timeoutHeight || Long.UZERO).toString();
     }
+    if (message.unordered === true) {
+      obj.unordered = message.unordered;
+    }
     if (message.extensionOptions?.length) {
       obj.extensionOptions = message.extensionOptions.map((e) => Any.toJSON(e));
     }
@@ -869,6 +909,7 @@ export const TxBody = {
     message.timeoutHeight = (object.timeoutHeight !== undefined && object.timeoutHeight !== null)
       ? Long.fromValue(object.timeoutHeight)
       : Long.UZERO;
+    message.unordered = object.unordered ?? false;
     message.extensionOptions = object.extensionOptions?.map((e) => Any.fromPartial(e)) || [];
     message.nonCriticalExtensionOptions = object.nonCriticalExtensionOptions?.map((e) => Any.fromPartial(e)) || [];
     return message;

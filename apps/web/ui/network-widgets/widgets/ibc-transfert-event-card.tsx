@@ -21,7 +21,7 @@ export type IBCTransferEventCardProps = {
 function formatAmout(amount: string) {
   const [total, unit] = amount.split(" ");
 
-  const totalAmount = Number(total) / 1_000_000;
+  const totalAmount = Number(total);
 
   if (isNaN(totalAmount)) {
     return amount;

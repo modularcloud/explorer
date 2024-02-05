@@ -338,9 +338,28 @@ export interface Proposal {
   /**
    * proposal_type defines the type of the proposal
    *
-   * Since: cosmos-sdk 0.51
+   * Since: x/gov v1.0.0
    */
   proposalType: ProposalType;
+}
+
+/**
+ * ProposalVoteOptions defines the stringified vote options for proposals.
+ * This allows to support multiple choice options for a given proposal.
+ *
+ * Since: x/gov v1.0.0
+ */
+export interface ProposalVoteOptions {
+  /** option_one is the first option of the proposal */
+  optionOne: string;
+  /** option_two is the second option of the proposal */
+  optionTwo: string;
+  /** option_three is the third option of the proposal */
+  optionThree: string;
+  /** option_four is the fourth option of the proposal */
+  optionFour: string;
+  /** option_spam is always present for all proposals. */
+  optionSpam: string;
 }
 
 /** TallyResult defines a standard tally for a governance proposal. */
@@ -429,7 +448,7 @@ export interface Params {
   /** Minimum deposit for a proposal to enter voting period. */
   minDeposit: Coin[];
   /**
-   * Maximum period for Atom holders to deposit on a proposal. Initial value: 2
+   * Maximum period for stake holders to deposit on a proposal. Initial value: 2
    * months.
    */
   maxDepositPeriod:
@@ -482,11 +501,23 @@ export interface Params {
   expeditedThreshold: string;
   /** Minimum expedited deposit for a proposal to enter voting period. */
   expeditedMinDeposit: Coin[];
-  /** burn deposits if a proposal does not meet quorum */
+  /**
+   * burn deposits if a proposal does not meet quorum
+   *
+   * Since: cosmos-sdk 0.47
+   */
   burnVoteQuorum: boolean;
-  /** burn deposits if the proposal does not enter voting period */
+  /**
+   * burn deposits if the proposal does not enter voting period
+   *
+   * Since: cosmos-sdk 0.47
+   */
   burnProposalDepositPrevote: boolean;
-  /** burn deposits if quorum with vote type no_veto is met */
+  /**
+   * burn deposits if quorum with vote type no_veto is met
+   *
+   * Since: cosmos-sdk 0.47
+   */
   burnVoteVeto: boolean;
   /**
    * The ratio representing the proportion of the deposit value minimum that must be met when making a deposit.
@@ -496,6 +527,61 @@ export interface Params {
    * Since: cosmos-sdk 0.50
    */
   minDepositRatio: string;
+  /**
+   * proposal_cancel_max_period defines how far in the voting period a proposer can cancel a proposal.
+   * If the proposal is cancelled before the max cancel period, the deposit will be returned/burn to the
+   * depositors, according to the proposal_cancel_ratio and proposal_cancel_dest parameters.
+   * After the max cancel period, the proposal cannot be cancelled anymore.
+   *
+   * Since: x/gov v1.0.0
+   */
+  proposalCancelMaxPeriod: string;
+  /**
+   * optimistic_authorized_addresses is an optional governance parameter that limits the authorized accounts than can
+   * submit optimistic proposals
+   *
+   * Since: x/gov v1.0.0
+   */
+  optimisticAuthorizedAddresses: string[];
+  /**
+   * optimistic rejected threshold defines at which percentage of NO votes, the optimistic proposal should fail and be
+   * converted to a standard proposal. The threshold is expressed as a percentage of the total bonded tokens.
+   *
+   * Since: x/gov v1.0.0
+   */
+  optimisticRejectedThreshold: string;
+  /**
+   * yes_quorum defines the minimum percentage of Yes votes in quorum for proposal to pass.
+   * Default value: 0 (disabled).
+   *
+   * Since: x/gov v1.0.0
+   */
+  yesQuorum: string;
+}
+
+/**
+ * MessageBasedParams defines the parameters of specific messages in a proposal.
+ * It is used to define the parameters of a proposal that is based on a specific message.
+ * Once a message has message based params, it only supports a standard proposal type.
+ *
+ * Since: x/gov v1.0.0
+ */
+export interface MessageBasedParams {
+  /** Duration of the voting period. */
+  votingPeriod:
+    | Duration
+    | undefined;
+  /** Minimum percentage of total stake needed to vote for a result to be considered valid. */
+  quorum: string;
+  /**
+   * yes_quorum defines the minimum percentage of Yes votes in quorum for proposal to pass.
+   * If zero then the yes_quorum is disabled.
+   */
+  yesQuorum: string;
+  /** Minimum proportion of Yes votes for proposal to pass. */
+  threshold: string;
+  /** Minimum value of Veto votes to Total votes ratio for proposal to be vetoed. */
+  vetoThreshold: string;
 }
 
 function createBaseWeightedVoteOption(): WeightedVoteOption {
@@ -964,6 +1050,125 @@ export const Proposal = {
     message.expedited = object.expedited ?? false;
     message.failedReason = object.failedReason ?? "";
     message.proposalType = object.proposalType ?? 0;
+    return message;
+  },
+};
+
+function createBaseProposalVoteOptions(): ProposalVoteOptions {
+  return { optionOne: "", optionTwo: "", optionThree: "", optionFour: "", optionSpam: "" };
+}
+
+export const ProposalVoteOptions = {
+  encode(message: ProposalVoteOptions, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.optionOne !== "") {
+      writer.uint32(10).string(message.optionOne);
+    }
+    if (message.optionTwo !== "") {
+      writer.uint32(18).string(message.optionTwo);
+    }
+    if (message.optionThree !== "") {
+      writer.uint32(26).string(message.optionThree);
+    }
+    if (message.optionFour !== "") {
+      writer.uint32(34).string(message.optionFour);
+    }
+    if (message.optionSpam !== "") {
+      writer.uint32(42).string(message.optionSpam);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ProposalVoteOptions {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseProposalVoteOptions();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.optionOne = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.optionTwo = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.optionThree = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.optionFour = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.optionSpam = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ProposalVoteOptions {
+    return {
+      optionOne: isSet(object.optionOne) ? globalThis.String(object.optionOne) : "",
+      optionTwo: isSet(object.optionTwo) ? globalThis.String(object.optionTwo) : "",
+      optionThree: isSet(object.optionThree) ? globalThis.String(object.optionThree) : "",
+      optionFour: isSet(object.optionFour) ? globalThis.String(object.optionFour) : "",
+      optionSpam: isSet(object.optionSpam) ? globalThis.String(object.optionSpam) : "",
+    };
+  },
+
+  toJSON(message: ProposalVoteOptions): unknown {
+    const obj: any = {};
+    if (message.optionOne !== "") {
+      obj.optionOne = message.optionOne;
+    }
+    if (message.optionTwo !== "") {
+      obj.optionTwo = message.optionTwo;
+    }
+    if (message.optionThree !== "") {
+      obj.optionThree = message.optionThree;
+    }
+    if (message.optionFour !== "") {
+      obj.optionFour = message.optionFour;
+    }
+    if (message.optionSpam !== "") {
+      obj.optionSpam = message.optionSpam;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ProposalVoteOptions>, I>>(base?: I): ProposalVoteOptions {
+    return ProposalVoteOptions.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ProposalVoteOptions>, I>>(object: I): ProposalVoteOptions {
+    const message = createBaseProposalVoteOptions();
+    message.optionOne = object.optionOne ?? "";
+    message.optionTwo = object.optionTwo ?? "";
+    message.optionThree = object.optionThree ?? "";
+    message.optionFour = object.optionFour ?? "";
+    message.optionSpam = object.optionSpam ?? "";
     return message;
   },
 };
@@ -1439,6 +1644,10 @@ function createBaseParams(): Params {
     burnProposalDepositPrevote: false,
     burnVoteVeto: false,
     minDepositRatio: "",
+    proposalCancelMaxPeriod: "",
+    optimisticAuthorizedAddresses: [],
+    optimisticRejectedThreshold: "",
+    yesQuorum: "",
   };
 }
 
@@ -1491,6 +1700,18 @@ export const Params = {
     }
     if (message.minDepositRatio !== "") {
       writer.uint32(130).string(message.minDepositRatio);
+    }
+    if (message.proposalCancelMaxPeriod !== "") {
+      writer.uint32(138).string(message.proposalCancelMaxPeriod);
+    }
+    for (const v of message.optimisticAuthorizedAddresses) {
+      writer.uint32(146).string(v!);
+    }
+    if (message.optimisticRejectedThreshold !== "") {
+      writer.uint32(154).string(message.optimisticRejectedThreshold);
+    }
+    if (message.yesQuorum !== "") {
+      writer.uint32(162).string(message.yesQuorum);
     }
     return writer;
   },
@@ -1614,6 +1835,34 @@ export const Params = {
 
           message.minDepositRatio = reader.string();
           continue;
+        case 17:
+          if (tag !== 138) {
+            break;
+          }
+
+          message.proposalCancelMaxPeriod = reader.string();
+          continue;
+        case 18:
+          if (tag !== 146) {
+            break;
+          }
+
+          message.optimisticAuthorizedAddresses.push(reader.string());
+          continue;
+        case 19:
+          if (tag !== 154) {
+            break;
+          }
+
+          message.optimisticRejectedThreshold = reader.string();
+          continue;
+        case 20:
+          if (tag !== 162) {
+            break;
+          }
+
+          message.yesQuorum = reader.string();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1651,6 +1900,16 @@ export const Params = {
         : false,
       burnVoteVeto: isSet(object.burnVoteVeto) ? globalThis.Boolean(object.burnVoteVeto) : false,
       minDepositRatio: isSet(object.minDepositRatio) ? globalThis.String(object.minDepositRatio) : "",
+      proposalCancelMaxPeriod: isSet(object.proposalCancelMaxPeriod)
+        ? globalThis.String(object.proposalCancelMaxPeriod)
+        : "",
+      optimisticAuthorizedAddresses: globalThis.Array.isArray(object?.optimisticAuthorizedAddresses)
+        ? object.optimisticAuthorizedAddresses.map((e: any) => globalThis.String(e))
+        : [],
+      optimisticRejectedThreshold: isSet(object.optimisticRejectedThreshold)
+        ? globalThis.String(object.optimisticRejectedThreshold)
+        : "",
+      yesQuorum: isSet(object.yesQuorum) ? globalThis.String(object.yesQuorum) : "",
     };
   },
 
@@ -1704,6 +1963,18 @@ export const Params = {
     if (message.minDepositRatio !== "") {
       obj.minDepositRatio = message.minDepositRatio;
     }
+    if (message.proposalCancelMaxPeriod !== "") {
+      obj.proposalCancelMaxPeriod = message.proposalCancelMaxPeriod;
+    }
+    if (message.optimisticAuthorizedAddresses?.length) {
+      obj.optimisticAuthorizedAddresses = message.optimisticAuthorizedAddresses;
+    }
+    if (message.optimisticRejectedThreshold !== "") {
+      obj.optimisticRejectedThreshold = message.optimisticRejectedThreshold;
+    }
+    if (message.yesQuorum !== "") {
+      obj.yesQuorum = message.yesQuorum;
+    }
     return obj;
   },
 
@@ -1735,6 +2006,131 @@ export const Params = {
     message.burnProposalDepositPrevote = object.burnProposalDepositPrevote ?? false;
     message.burnVoteVeto = object.burnVoteVeto ?? false;
     message.minDepositRatio = object.minDepositRatio ?? "";
+    message.proposalCancelMaxPeriod = object.proposalCancelMaxPeriod ?? "";
+    message.optimisticAuthorizedAddresses = object.optimisticAuthorizedAddresses?.map((e) => e) || [];
+    message.optimisticRejectedThreshold = object.optimisticRejectedThreshold ?? "";
+    message.yesQuorum = object.yesQuorum ?? "";
+    return message;
+  },
+};
+
+function createBaseMessageBasedParams(): MessageBasedParams {
+  return { votingPeriod: undefined, quorum: "", yesQuorum: "", threshold: "", vetoThreshold: "" };
+}
+
+export const MessageBasedParams = {
+  encode(message: MessageBasedParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.votingPeriod !== undefined) {
+      Duration.encode(message.votingPeriod, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.quorum !== "") {
+      writer.uint32(18).string(message.quorum);
+    }
+    if (message.yesQuorum !== "") {
+      writer.uint32(162).string(message.yesQuorum);
+    }
+    if (message.threshold !== "") {
+      writer.uint32(26).string(message.threshold);
+    }
+    if (message.vetoThreshold !== "") {
+      writer.uint32(34).string(message.vetoThreshold);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MessageBasedParams {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMessageBasedParams();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.votingPeriod = Duration.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.quorum = reader.string();
+          continue;
+        case 20:
+          if (tag !== 162) {
+            break;
+          }
+
+          message.yesQuorum = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.threshold = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.vetoThreshold = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MessageBasedParams {
+    return {
+      votingPeriod: isSet(object.votingPeriod) ? Duration.fromJSON(object.votingPeriod) : undefined,
+      quorum: isSet(object.quorum) ? globalThis.String(object.quorum) : "",
+      yesQuorum: isSet(object.yesQuorum) ? globalThis.String(object.yesQuorum) : "",
+      threshold: isSet(object.threshold) ? globalThis.String(object.threshold) : "",
+      vetoThreshold: isSet(object.vetoThreshold) ? globalThis.String(object.vetoThreshold) : "",
+    };
+  },
+
+  toJSON(message: MessageBasedParams): unknown {
+    const obj: any = {};
+    if (message.votingPeriod !== undefined) {
+      obj.votingPeriod = Duration.toJSON(message.votingPeriod);
+    }
+    if (message.quorum !== "") {
+      obj.quorum = message.quorum;
+    }
+    if (message.yesQuorum !== "") {
+      obj.yesQuorum = message.yesQuorum;
+    }
+    if (message.threshold !== "") {
+      obj.threshold = message.threshold;
+    }
+    if (message.vetoThreshold !== "") {
+      obj.vetoThreshold = message.vetoThreshold;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MessageBasedParams>, I>>(base?: I): MessageBasedParams {
+    return MessageBasedParams.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MessageBasedParams>, I>>(object: I): MessageBasedParams {
+    const message = createBaseMessageBasedParams();
+    message.votingPeriod = (object.votingPeriod !== undefined && object.votingPeriod !== null)
+      ? Duration.fromPartial(object.votingPeriod)
+      : undefined;
+    message.quorum = object.quorum ?? "";
+    message.yesQuorum = object.yesQuorum ?? "";
+    message.threshold = object.threshold ?? "";
+    message.vetoThreshold = object.vetoThreshold ?? "";
     return message;
   },
 };

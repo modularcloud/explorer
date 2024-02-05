@@ -42,6 +42,16 @@ export interface Budget {
   period: Duration | undefined;
 }
 
+/** ContinuousFund defines the fields of continuous fund proposal. */
+export interface ContinuousFund {
+  /** Recipient address of the account receiving funds. */
+  recipient: string;
+  /** Percentage is the percentage of funds to be allocated from Community pool. */
+  percentage: string;
+  /** Optional, if expiry is set, removes the state object when expired. */
+  expiry: Date | undefined;
+}
+
 function createBaseBudget(): Budget {
   return {
     recipientAddress: "",
@@ -221,6 +231,95 @@ export const Budget = {
     message.period = (object.period !== undefined && object.period !== null)
       ? Duration.fromPartial(object.period)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseContinuousFund(): ContinuousFund {
+  return { recipient: "", percentage: "", expiry: undefined };
+}
+
+export const ContinuousFund = {
+  encode(message: ContinuousFund, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.recipient !== "") {
+      writer.uint32(10).string(message.recipient);
+    }
+    if (message.percentage !== "") {
+      writer.uint32(18).string(message.percentage);
+    }
+    if (message.expiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(26).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ContinuousFund {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseContinuousFund();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.recipient = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.percentage = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.expiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ContinuousFund {
+    return {
+      recipient: isSet(object.recipient) ? globalThis.String(object.recipient) : "",
+      percentage: isSet(object.percentage) ? globalThis.String(object.percentage) : "",
+      expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
+    };
+  },
+
+  toJSON(message: ContinuousFund): unknown {
+    const obj: any = {};
+    if (message.recipient !== "") {
+      obj.recipient = message.recipient;
+    }
+    if (message.percentage !== "") {
+      obj.percentage = message.percentage;
+    }
+    if (message.expiry !== undefined) {
+      obj.expiry = message.expiry.toISOString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ContinuousFund>, I>>(base?: I): ContinuousFund {
+    return ContinuousFund.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ContinuousFund>, I>>(object: I): ContinuousFund {
+    const message = createBaseContinuousFund();
+    message.recipient = object.recipient ?? "";
+    message.percentage = object.percentage ?? "";
+    message.expiry = object.expiry ?? undefined;
     return message;
   },
 };

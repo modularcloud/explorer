@@ -22,7 +22,9 @@ export interface UserOperation {
    * authentication_data defines the authentication data associated with the authentication method.
    * It is the account implementer duty to assess that the UserOperation is properly signed.
    */
-  authenticationData: Uint8Array;
+  authenticationData:
+    | Any
+    | undefined;
   /**
    * authentication_gas_limit expresses the gas limit to be used for the authentication part of the
    * UserOperation.
@@ -57,6 +59,32 @@ export interface UserOperation {
    * execution messages.
    */
   executionGasLimit: Long;
+  /**
+   * tx_compat is populated only when the operation is composed from a raw tx.
+   * In fact if a TX comes and the sender of the TX is an abstracted account,
+   * we convert the TX into a user operation, and try to authenticate using the
+   * x/accounts authenticate method. If a bundler tries to send a UserOperation
+   * with a populated tx_compat, the operation will immediately yield a failure.
+   */
+  txCompat: TxCompat | undefined;
+}
+
+/**
+ * TxCompat provides compatibility for x/accounts abstracted account with the cosmos-sdk's Txs.
+ * In fact TxCompat contains fields coming from the Tx in raw and decoded format. The Raw format
+ * is mainly needed for proper sig verification.
+ */
+export interface TxCompat {
+  /**
+   * auth_info_bytes contains the auth info bytes of the tx.
+   * Must not be modified.
+   */
+  authInfoBytes: Uint8Array;
+  /**
+   * body_bytes contains the body bytes of the tx.
+   * must not be modified.
+   */
+  bodyBytes: Uint8Array;
 }
 
 /**
@@ -91,12 +119,13 @@ function createBaseUserOperation(): UserOperation {
   return {
     sender: "",
     authenticationMethod: "",
-    authenticationData: new Uint8Array(0),
+    authenticationData: undefined,
     authenticationGasLimit: Long.UZERO,
     bundlerPaymentMessages: [],
     bundlerPaymentGasLimit: Long.UZERO,
     executionMessages: [],
     executionGasLimit: Long.UZERO,
+    txCompat: undefined,
   };
 }
 
@@ -108,8 +137,8 @@ export const UserOperation = {
     if (message.authenticationMethod !== "") {
       writer.uint32(18).string(message.authenticationMethod);
     }
-    if (message.authenticationData.length !== 0) {
-      writer.uint32(26).bytes(message.authenticationData);
+    if (message.authenticationData !== undefined) {
+      Any.encode(message.authenticationData, writer.uint32(26).fork()).ldelim();
     }
     if (!message.authenticationGasLimit.isZero()) {
       writer.uint32(32).uint64(message.authenticationGasLimit);
@@ -125,6 +154,9 @@ export const UserOperation = {
     }
     if (!message.executionGasLimit.isZero()) {
       writer.uint32(64).uint64(message.executionGasLimit);
+    }
+    if (message.txCompat !== undefined) {
+      TxCompat.encode(message.txCompat, writer.uint32(74).fork()).ldelim();
     }
     return writer;
   },
@@ -155,7 +187,7 @@ export const UserOperation = {
             break;
           }
 
-          message.authenticationData = reader.bytes();
+          message.authenticationData = Any.decode(reader, reader.uint32());
           continue;
         case 4:
           if (tag !== 32) {
@@ -192,6 +224,13 @@ export const UserOperation = {
 
           message.executionGasLimit = reader.uint64() as Long;
           continue;
+        case 9:
+          if (tag !== 74) {
+            break;
+          }
+
+          message.txCompat = TxCompat.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -205,9 +244,7 @@ export const UserOperation = {
     return {
       sender: isSet(object.sender) ? globalThis.String(object.sender) : "",
       authenticationMethod: isSet(object.authenticationMethod) ? globalThis.String(object.authenticationMethod) : "",
-      authenticationData: isSet(object.authenticationData)
-        ? bytesFromBase64(object.authenticationData)
-        : new Uint8Array(0),
+      authenticationData: isSet(object.authenticationData) ? Any.fromJSON(object.authenticationData) : undefined,
       authenticationGasLimit: isSet(object.authenticationGasLimit)
         ? Long.fromValue(object.authenticationGasLimit)
         : Long.UZERO,
@@ -221,6 +258,7 @@ export const UserOperation = {
         ? object.executionMessages.map((e: any) => Any.fromJSON(e))
         : [],
       executionGasLimit: isSet(object.executionGasLimit) ? Long.fromValue(object.executionGasLimit) : Long.UZERO,
+      txCompat: isSet(object.txCompat) ? TxCompat.fromJSON(object.txCompat) : undefined,
     };
   },
 
@@ -232,8 +270,8 @@ export const UserOperation = {
     if (message.authenticationMethod !== "") {
       obj.authenticationMethod = message.authenticationMethod;
     }
-    if (message.authenticationData.length !== 0) {
-      obj.authenticationData = base64FromBytes(message.authenticationData);
+    if (message.authenticationData !== undefined) {
+      obj.authenticationData = Any.toJSON(message.authenticationData);
     }
     if (!message.authenticationGasLimit.isZero()) {
       obj.authenticationGasLimit = (message.authenticationGasLimit || Long.UZERO).toString();
@@ -250,6 +288,9 @@ export const UserOperation = {
     if (!message.executionGasLimit.isZero()) {
       obj.executionGasLimit = (message.executionGasLimit || Long.UZERO).toString();
     }
+    if (message.txCompat !== undefined) {
+      obj.txCompat = TxCompat.toJSON(message.txCompat);
+    }
     return obj;
   },
 
@@ -260,7 +301,9 @@ export const UserOperation = {
     const message = createBaseUserOperation();
     message.sender = object.sender ?? "";
     message.authenticationMethod = object.authenticationMethod ?? "";
-    message.authenticationData = object.authenticationData ?? new Uint8Array(0);
+    message.authenticationData = (object.authenticationData !== undefined && object.authenticationData !== null)
+      ? Any.fromPartial(object.authenticationData)
+      : undefined;
     message.authenticationGasLimit =
       (object.authenticationGasLimit !== undefined && object.authenticationGasLimit !== null)
         ? Long.fromValue(object.authenticationGasLimit)
@@ -274,6 +317,83 @@ export const UserOperation = {
     message.executionGasLimit = (object.executionGasLimit !== undefined && object.executionGasLimit !== null)
       ? Long.fromValue(object.executionGasLimit)
       : Long.UZERO;
+    message.txCompat = (object.txCompat !== undefined && object.txCompat !== null)
+      ? TxCompat.fromPartial(object.txCompat)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseTxCompat(): TxCompat {
+  return { authInfoBytes: new Uint8Array(0), bodyBytes: new Uint8Array(0) };
+}
+
+export const TxCompat = {
+  encode(message: TxCompat, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.authInfoBytes.length !== 0) {
+      writer.uint32(10).bytes(message.authInfoBytes);
+    }
+    if (message.bodyBytes.length !== 0) {
+      writer.uint32(18).bytes(message.bodyBytes);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): TxCompat {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTxCompat();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.authInfoBytes = reader.bytes();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.bodyBytes = reader.bytes();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TxCompat {
+    return {
+      authInfoBytes: isSet(object.authInfoBytes) ? bytesFromBase64(object.authInfoBytes) : new Uint8Array(0),
+      bodyBytes: isSet(object.bodyBytes) ? bytesFromBase64(object.bodyBytes) : new Uint8Array(0),
+    };
+  },
+
+  toJSON(message: TxCompat): unknown {
+    const obj: any = {};
+    if (message.authInfoBytes.length !== 0) {
+      obj.authInfoBytes = base64FromBytes(message.authInfoBytes);
+    }
+    if (message.bodyBytes.length !== 0) {
+      obj.bodyBytes = base64FromBytes(message.bodyBytes);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TxCompat>, I>>(base?: I): TxCompat {
+    return TxCompat.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TxCompat>, I>>(object: I): TxCompat {
+    const message = createBaseTxCompat();
+    message.authInfoBytes = object.authInfoBytes ?? new Uint8Array(0);
+    message.bodyBytes = object.bodyBytes ?? new Uint8Array(0);
     return message;
   },
 };

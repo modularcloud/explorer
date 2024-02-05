@@ -56,6 +56,23 @@ export interface MsgRevoke {
 export interface MsgRevokeResponse {
 }
 
+/**
+ * MsgPruneExpiredGrants prunes the expired grants.
+ *
+ * Since x/authz v1.0.0
+ */
+export interface MsgPruneExpiredGrants {
+  pruner: string;
+}
+
+/**
+ * MsgPruneExpiredGrantsResponse defines the Msg/MsgPruneExpiredGrantsResponse response type.
+ *
+ * Since x/authz v1.0.0
+ */
+export interface MsgPruneExpiredGrantsResponse {
+}
+
 function createBaseMsgGrant(): MsgGrant {
   return { granter: "", grantee: "", grant: undefined };
 }
@@ -453,6 +470,106 @@ export const MsgRevokeResponse = {
   },
 };
 
+function createBaseMsgPruneExpiredGrants(): MsgPruneExpiredGrants {
+  return { pruner: "" };
+}
+
+export const MsgPruneExpiredGrants = {
+  encode(message: MsgPruneExpiredGrants, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pruner !== "") {
+      writer.uint32(10).string(message.pruner);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPruneExpiredGrants {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPruneExpiredGrants();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.pruner = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgPruneExpiredGrants {
+    return { pruner: isSet(object.pruner) ? globalThis.String(object.pruner) : "" };
+  },
+
+  toJSON(message: MsgPruneExpiredGrants): unknown {
+    const obj: any = {};
+    if (message.pruner !== "") {
+      obj.pruner = message.pruner;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPruneExpiredGrants>, I>>(base?: I): MsgPruneExpiredGrants {
+    return MsgPruneExpiredGrants.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgPruneExpiredGrants>, I>>(object: I): MsgPruneExpiredGrants {
+    const message = createBaseMsgPruneExpiredGrants();
+    message.pruner = object.pruner ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgPruneExpiredGrantsResponse(): MsgPruneExpiredGrantsResponse {
+  return {};
+}
+
+export const MsgPruneExpiredGrantsResponse = {
+  encode(_: MsgPruneExpiredGrantsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgPruneExpiredGrantsResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgPruneExpiredGrantsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgPruneExpiredGrantsResponse {
+    return {};
+  },
+
+  toJSON(_: MsgPruneExpiredGrantsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgPruneExpiredGrantsResponse>, I>>(base?: I): MsgPruneExpiredGrantsResponse {
+    return MsgPruneExpiredGrantsResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgPruneExpiredGrantsResponse>, I>>(_: I): MsgPruneExpiredGrantsResponse {
+    const message = createBaseMsgPruneExpiredGrantsResponse();
+    return message;
+  },
+};
+
 /** Msg defines the authz Msg service. */
 export interface Msg {
   /**
@@ -473,6 +590,12 @@ export interface Msg {
    * granter's account that has been granted to the grantee.
    */
   Revoke(request: MsgRevoke): Promise<MsgRevokeResponse>;
+  /**
+   * PruneExpiredGrants prunes the expired grants. Currently up to 75 at a time.
+   *
+   * Since cosmos-sdk 0.51
+   */
+  PruneExpiredGrants(request: MsgPruneExpiredGrants): Promise<MsgPruneExpiredGrantsResponse>;
 }
 
 export const MsgServiceName = "cosmos.authz.v1beta1.Msg";
@@ -485,6 +608,7 @@ export class MsgClientImpl implements Msg {
     this.Grant = this.Grant.bind(this);
     this.Exec = this.Exec.bind(this);
     this.Revoke = this.Revoke.bind(this);
+    this.PruneExpiredGrants = this.PruneExpiredGrants.bind(this);
   }
   Grant(request: MsgGrant): Promise<MsgGrantResponse> {
     const data = MsgGrant.encode(request).finish();
@@ -502,6 +626,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgRevoke.encode(request).finish();
     const promise = this.rpc.request(this.service, "Revoke", data);
     return promise.then((data) => MsgRevokeResponse.decode(_m0.Reader.create(data)));
+  }
+
+  PruneExpiredGrants(request: MsgPruneExpiredGrants): Promise<MsgPruneExpiredGrantsResponse> {
+    const data = MsgPruneExpiredGrants.encode(request).finish();
+    const promise = this.rpc.request(this.service, "PruneExpiredGrants", data);
+    return promise.then((data) => MsgPruneExpiredGrantsResponse.decode(_m0.Reader.create(data)));
   }
 }
 

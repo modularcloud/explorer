@@ -694,7 +694,7 @@ export interface Query {
   Streams(request: StreamsRequest): Promise<StreamsResponse>;
   /** ActiveStreams returns active streams */
   ActiveStreams(request: ActiveStreamsRequest): Promise<ActiveStreamsResponse>;
-  /** Returns scheduled streams that have not yet occured */
+  /** Returns scheduled streams that have not yet occurred */
   UpcomingStreams(request: UpcomingStreamsRequest): Promise<UpcomingStreamsResponse>;
 }
 
