@@ -150,10 +150,15 @@ export async function GET(
         },
       );
     case Step.CHAIN_RECV:
+      var preferDestination = !!destinationChannel;
+      if (destinationChannel && sourceChannel) {
+        // we don't want to use the hub, which has sequence collisions (and can be easily recognized by its shorter channel name)
+        preferDestination = destinationChannel.length > sourceChannel.length;
+      }
       console.log(
         isHubBaseRpc
           ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
-              destinationChannel
+              preferDestination
                 ? `recv_packet.packet_src_channel='${destinationChannel}'`
                 : `recv_packet.packet_dst_channel='${sourceChannel}'`
             }"&prove=false&page=1&per_page=1`
@@ -162,7 +167,7 @@ export async function GET(
       var txSearch = await fetch(
         isHubBaseRpc
           ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
-              destinationChannel
+              preferDestination
                 ? `recv_packet.packet_src_channel='${destinationChannel}'`
                 : `recv_packet.packet_dst_channel='${sourceChannel}'`
             }"&prove=false&page=1&per_page=1`
