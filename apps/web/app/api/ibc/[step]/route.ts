@@ -456,7 +456,7 @@ export async function GET(
       );
     case Step.ROLLAPP_ACK:
       var txSearch = await fetch(
-        `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${backwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
+        `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${backwardSequence} AND acknowledge_packet.packet_dst_channel=${destinationChannel}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
       var tx = txSearch.result.txs[0];
       if (!tx) {
