@@ -128,6 +128,7 @@ function Node({
         `destinationChannel=${destinationChannel}`,
         `forwardSequence=${forwardSequence}`,
         `backwardSequence=${backwardSequence}`,
+        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
       ]
         .filter((q) => !q.endsWith("=undefined"))
         .join("&")}`,
@@ -147,6 +148,7 @@ function Node({
         `sourceChannel=${sourceChannel}`,
         `destinationChannel=${destinationChannel}`,
         `sequence=${regularSequence}`,
+        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
       ]
         .filter((q) => !q.endsWith("=undefined"))
         .join("&")}`,
@@ -226,6 +228,10 @@ function Node({
 
         if (!newDetails.sequence.regular) {
           newDetails.sequence.regular = data.sequence;
+        }
+
+        if (!newDetails.transfer.from.penultimate) {
+          newDetails.transfer.from.penultimate = data.penultimateChannel;
         }
 
         flowDetails.setContext?.(newDetails);
@@ -486,6 +492,7 @@ const FlowChartContext = React.createContext<{
     from: {
       address?: string;
       chain?: string;
+      penultimate?: string;
     };
     to: {
       address?: string;
@@ -515,6 +522,7 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
       from: {
         address?: string;
         chain?: string;
+        penultimate?: string;
       };
       to: {
         address?: string;
@@ -576,6 +584,10 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
 
         if (!newDetails.sequence.regular) {
           newDetails.sequence.regular = data.sequence;
+        }
+
+        if (!newDetails.transfer.from.penultimate) {
+          newDetails.transfer.from.penultimate = data.penultimateChannel;
         }
 
         setContextValue(newDetails);

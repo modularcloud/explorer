@@ -25,6 +25,7 @@ export async function GET(
   const sourceChannel = searchParams.get("sourceChannel");
   const destinationChannel = searchParams.get("destinationChannel");
   const sequence = searchParams.get("sequence");
+  const penultimateChannel = searchParams.get("penultimateChannel");
 
   const missingForwardSequence =
     (step === Step.ROLLAPP_TR || step === Step.HUB_RECV) && !forwardSequence;
@@ -56,10 +57,16 @@ export async function GET(
       },
     );
   }
+  const inferredSource =
+    (step === Step.CHAIN_ACK || step === Step.CHAIN_TR) &&
+    destinationChannel &&
+    destinationChannel.replace("channel-", "").length < 2
+      ? penultimateChannel
+      : sourceChannel;
   const channel =
     step === Step.ROLLAPP_RECV || step === Step.CHAIN_RECV
       ? destinationChannel
-      : sourceChannel;
+      : inferredSource;
   var integrationResponse = await fetch(
     `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations/dym/devnet/hub-channel-id/${channel}`,
   )
@@ -68,7 +75,7 @@ export async function GET(
   if (!integrationResponse) {
     if (
       !channel ||
-      channel.replace("channel-", "").length < 4 ||
+      channel.replace("channel-", "").length < 2 ||
       step === Step.HUB_ACK ||
       step === Step.HUB_RECV
     ) {
@@ -97,7 +104,11 @@ export async function GET(
     case Step.CHAIN_TR:
       var txSearch = await fetch(
         isHubBaseRpc
-          ? `${rpc}/tx_search?query="send_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1 `
+          ? `${rpc}/tx_search?query="send_packet.packet_sequence=${sequence} AND ${
+              destinationChannel
+                ? `send_packet.packet_src_channel='${destinationChannel}'`
+                : `send_packet.packet_dst_channel='${sourceChannel}'`
+            }"&prove=false&page=1&per_page=1 `
           : `${rpc}/tx_search?query=send_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
       var tx = txSearch.result.txs[0];
@@ -139,9 +150,22 @@ export async function GET(
         },
       );
     case Step.CHAIN_RECV:
+      console.log(
+        isHubBaseRpc
+          ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
+              destinationChannel
+                ? `recv_packet.packet_src_channel='${destinationChannel}'`
+                : `recv_packet.packet_dst_channel='${sourceChannel}'`
+            }"&prove=false&page=1&per_page=1`
+          : `${rpc}/tx_search?query=recv_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
+      );
       var txSearch = await fetch(
         isHubBaseRpc
-          ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1`
+          ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
+              destinationChannel
+                ? `recv_packet.packet_src_channel='${destinationChannel}'`
+                : `recv_packet.packet_dst_channel='${sourceChannel}'`
+            }"&prove=false&page=1&per_page=1`
           : `${rpc}/tx_search?query=recv_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
       var tx = txSearch.result.txs[0];
@@ -183,11 +207,26 @@ export async function GET(
         },
       );
     case Step.CHAIN_ACK:
+      console.log(
+        "=========",
+        isHubBaseRpc
+          ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence} AND ${
+              destinationChannel
+                ? `acknowledge_packet.packet_src_channel='${destinationChannel}'`
+                : `acknowledge_packet.packet_dst_channel='${sourceChannel}'`
+            }"&prove=false&page=1&per_page=1`
+          : `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
+      );
       var txSearch = await fetch(
         isHubBaseRpc
-          ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1`
+          ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence} AND ${
+              destinationChannel
+                ? `acknowledge_packet.packet_src_channel='${destinationChannel}'`
+                : `acknowledge_packet.packet_dst_channel='${sourceChannel}'`
+            }"&prove=false&page=1&per_page=1`
           : `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
+      console.log(txSearch);
       var tx = txSearch.result.txs[0];
       if (!tx) {
         return new Response(

@@ -57,12 +57,11 @@ export function parseRecv(events: any) {
   const packetSequence = recvPacket.attributes.find(
     (a: any) => a.key === "packet_sequence",
   ).value;
-
+  const packetDstChannel = recvPacket.attributes.find(
+    (a: any) => a.key === "packet_dst_channel",
+  ).value;
   if (packetData.memo) {
     const memo = JSON.parse(packetData.memo);
-    const packetDstChannel = recvPacket.attributes.find(
-      (a: any) => a.key === "packet_dst_channel",
-    ).value;
 
     return {
       from: {
@@ -88,6 +87,7 @@ export function parseRecv(events: any) {
       address: packetData.receiver,
     },
     from: {},
+    penultimateChannel: packetDstChannel,
     amount: packetData.amount,
     denom: packetData.denom,
     backwardSequence: packetSequence,
