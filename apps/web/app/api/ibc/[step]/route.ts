@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import { getSingleNetwork } from "~/lib/network";
 import {
   parseAcknowledgement,
   parseRecv,
@@ -23,8 +24,8 @@ export async function GET(
   const backwardSequence = searchParams.get("backwardSequence");
   const sourceChannel = searchParams.get("sourceChannel");
   const destinationChannel = searchParams.get("destinationChannel");
+  const sequence = searchParams.get("sequence");
 
-  const noSequences = !forwardSequence && !backwardSequence;
   const missingForwardSequence =
     (step === Step.ROLLAPP_TR || step === Step.HUB_RECV) && !forwardSequence;
   const missingBackwardSequence =
@@ -34,34 +35,202 @@ export async function GET(
     (step === Step.ROLLAPP_TR || step === Step.ROLLAPP_ACK) && !sourceChannel;
   const missingDestinationChannel =
     step === Step.ROLLAPP_RECV && !destinationChannel;
+  const missingRegularSequence =
+    (step === Step.CHAIN_TR ||
+      step === Step.CHAIN_RECV ||
+      step === Step.CHAIN_ACK) &&
+    !sequence;
 
   if (
-    noSequences ||
     missingForwardSequence ||
     missingBackwardSequence ||
     missingSourceChannel ||
-    missingDestinationChannel
+    missingDestinationChannel ||
+    missingRegularSequence
   ) {
     return new Response(
       JSON.stringify({ error: "Not enough information provided." }),
       {
-        status: 404,
+        status: 400,
         headers: { "Content-Type": "application/json" },
       },
     );
   }
-  const integrationResponse = await fetch(
-    `${
-      process.env.INTERNAL_INTEGRATION_API_URL
-    }/integrations/dym/devnet/hub-channel-id/${
-      step === Step.ROLLAPP_RECV ? destinationChannel : sourceChannel
-    }`,
-  ).then((res) => res.json());
+  const channel =
+    step === Step.ROLLAPP_RECV || step === Step.CHAIN_RECV
+      ? destinationChannel
+      : sourceChannel;
+  var integrationResponse = await fetch(
+    `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations/dym/devnet/hub-channel-id/${channel}`,
+  )
+    .then((res) => res.json())
+    .catch(() => {});
+  if (!integrationResponse) {
+    if (
+      !channel ||
+      channel.replace("channel-", "").length < 4 ||
+      step === Step.HUB_ACK ||
+      step === Step.HUB_RECV
+    ) {
+      const integration = await getSingleNetwork("dymension-froopyland");
+      integrationResponse = { result: { integration } };
+    } else {
+      return new Response(
+        JSON.stringify({
+          error: "Integration not found.",
+        }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  }
   const rpc = integrationResponse.result.integration.config.rpcUrls.cosmos;
+  const isHubBaseRpc = rpc === "https://froopyland.rpc.silknodes.io";
+
   const slug = integrationResponse.result.integration.slug;
   const logo = integrationResponse.result.integration.config.logoUrl;
 
   switch (step) {
+    // Single hop
+    case Step.CHAIN_TR:
+      var txSearch = await fetch(
+        isHubBaseRpc
+          ? `${rpc}/tx_search?query="send_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1 `
+          : `${rpc}/tx_search?query=send_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
+      ).then((res) => res.json());
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
+        return new Response(
+          JSON.stringify({
+            error: "Transaction not found.",
+          }),
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
+        const sendPacket = l.events.find((e: any) => e.type === "send_packet");
+        return (
+          !!sendPacket &&
+          sendPacket.attributes.find((a: any) => a.key === "packet_sequence")
+            .value === sequence
+        );
+      });
+      return new Response(
+        JSON.stringify({
+          ...parseTransfer(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
+          slug,
+          logo,
+          timestamp,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    case Step.CHAIN_RECV:
+      var txSearch = await fetch(
+        isHubBaseRpc
+          ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1`
+          : `${rpc}/tx_search?query=recv_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
+      ).then((res) => res.json());
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
+        return new Response(
+          JSON.stringify({
+            error: "Transaction not found.",
+          }),
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
+        const recvPacket = l.events.find((e: any) => e.type === "recv_packet");
+        return (
+          !!recvPacket &&
+          recvPacket.attributes.find((a: any) => a.key === "packet_sequence")
+            .value === sequence
+        );
+      });
+      return new Response(
+        JSON.stringify({
+          ...parseRecv(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
+          slug,
+          logo,
+          timestamp,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    case Step.CHAIN_ACK:
+      var txSearch = await fetch(
+        isHubBaseRpc
+          ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence}"&prove=false&page=1&per_page=1`
+          : `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
+      ).then((res) => res.json());
+      var tx = txSearch.result.txs[0];
+      if (!tx) {
+        return new Response(
+          JSON.stringify({
+            error: "Transaction not found.",
+          }),
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+      var blockResponse = await fetch(`${rpc}/block?height=${tx.height}`).then(
+        (res) => res.json(),
+      );
+      var timestamp = blockResponse.result.block.header.time;
+      var log = JSON.parse(tx.tx_result.log).find((l: any) => {
+        const acknowledgePacket = l.events.find(
+          (e: any) => e.type === "acknowledge_packet",
+        );
+        return (
+          !!acknowledgePacket &&
+          acknowledgePacket.attributes.find(
+            (a: any) => a.key === "packet_sequence",
+          ).value === sequence
+        );
+      });
+      return new Response(
+        JSON.stringify({
+          ...parseAcknowledgement(log.events),
+          txHash: tx.hash,
+          messageIndex: log.msg_index,
+          slug,
+          logo,
+          timestamp,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+    // Multi hop
     case Step.ROLLAPP_TR:
       var txSearch = await fetch(
         `${rpc}/tx_search?query=send_packet.packet_sequence=${forwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
@@ -148,7 +317,13 @@ export async function GET(
       );
     case Step.HUB_ACK:
       const txSearch3 = await fetch(
-        `https://froopyland.rpc.silknodes.io/tx_search?query="write_acknowledgement.packet_sequence=${forwardSequence} AND write_acknowledgement.packet_dst_channel='${sourceChannel}'"`,
+        `https://froopyland.rpc.silknodes.io/tx_search?query="${
+          forwardSequence
+            ? `write_acknowledgement.packet_sequence=${forwardSequence}`
+            : `acknowledge_packet.packet_sequence=${backwardSequence}`
+        } AND write_acknowledgement.packet_dst_channel='${
+          forwardSequence ? sourceChannel : destinationChannel
+        }'"`,
       ).then((res) => res.json());
       var tx = txSearch3.result.txs[0];
       if (!tx) {

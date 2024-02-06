@@ -2,29 +2,51 @@ export function parseTransfer(events: any) {
   const sendPacket = events.find(
     (e: any) => e.type === "send_packet",
   ).attributes;
-  const packetData = JSON.parse(
-    sendPacket.find((a: any) => a.key === "packet_data").value,
-  );
-  const memo = JSON.parse(packetData.memo);
   const packetSequence = sendPacket.find(
     (a: any) => a.key === "packet_sequence",
   ).value;
   const packetDstChannel = sendPacket.find(
     (a: any) => a.key === "packet_dst_channel",
   ).value;
-  return {
-    from: {
-      chain: packetDstChannel,
-      address: packetData.sender,
-    },
-    to: {
-      chain: memo.forward.channel,
-      address: memo.forward.receiver,
-    },
-    amount: packetData.amount,
-    denom: packetData.denom,
-    forwardSequence: packetSequence,
-  };
+  const packetSrcChannel = sendPacket.find(
+    (a: any) => a.key === "packet_src_channel",
+  ).value;
+  const packetData = JSON.parse(
+    sendPacket.find((a: any) => a.key === "packet_data").value,
+  );
+  const memo = packetData.memo ? JSON.parse(packetData.memo) : null;
+
+  if (memo) {
+    return {
+      from: {
+        chain: packetDstChannel,
+        address: packetData.sender,
+      },
+      to: {
+        chain: memo.forward.channel,
+        address: memo.forward.receiver,
+      },
+      amount: packetData.amount,
+      denom: packetData.denom,
+      forwardSequence: packetSequence,
+      hops: 2,
+    };
+  } else {
+    return {
+      from: {
+        chain: packetDstChannel,
+        address: packetData.sender,
+      },
+      to: {
+        chain: packetSrcChannel,
+        address: packetData.receiver,
+      },
+      amount: packetData.amount,
+      denom: packetData.denom,
+      sequence: packetSequence,
+      hops: 1,
+    };
+  }
 }
 
 export function parseRecv(events: any) {
@@ -32,13 +54,12 @@ export function parseRecv(events: any) {
   const packetData = JSON.parse(
     recvPacket.attributes.find((a: any) => a.key === "packet_data").value,
   );
-  const isHub = !!packetData.memo;
   const packetSequence = recvPacket.attributes.find(
     (a: any) => a.key === "packet_sequence",
   ).value;
 
-  if (isHub) {
-    const memo = isHub ? JSON.parse(packetData.memo) : null;
+  if (packetData.memo) {
+    const memo = JSON.parse(packetData.memo);
     const packetDstChannel = recvPacket.attributes.find(
       (a: any) => a.key === "packet_dst_channel",
     ).value;
@@ -55,6 +76,7 @@ export function parseRecv(events: any) {
       amount: packetData.amount,
       denom: packetData.denom,
       forwardSequnce: packetSequence,
+      hops: 2,
     };
   }
   const packetSrcChannel = recvPacket.attributes.find(
@@ -69,11 +91,11 @@ export function parseRecv(events: any) {
     amount: packetData.amount,
     denom: packetData.denom,
     backwardSequence: packetSequence,
+    sequence: packetSequence,
   };
 }
 
 export function parseAcknowledgement(events: any) {
-  console.log(JSON.stringify(events, null, 2));
   const writeAcknowledgement = events.find(
     (e: any) => e.type === "write_acknowledgement",
   );
@@ -83,7 +105,7 @@ export function parseAcknowledgement(events: any) {
       writeAcknowledgement.attributes.find((a: any) => a.key === "packet_data")
         .value,
     );
-    const memo = isHub ? JSON.parse(packetData.memo) : null;
+    const memo = packetData.memo ? JSON.parse(packetData.memo) : null;
     const forwardSequence = writeAcknowledgement.attributes.find(
       (a: any) => a.key === "packet_sequence",
     ).value;
@@ -99,7 +121,7 @@ export function parseAcknowledgement(events: any) {
     const backwardSequence = acknowledgePacket.attributes.find(
       (a: any) => a.key === "packet_sequence",
     ).value;
-    if (isHub) {
+    if (memo) {
       return {
         from: {
           chain: packetDstChannel,
@@ -113,6 +135,22 @@ export function parseAcknowledgement(events: any) {
         denom: packetData.denom,
         forwardSequence,
         backwardSequence,
+        hops: 2,
+      };
+    } else {
+      return {
+        from: {
+          chain: packetDstChannel,
+          address: packetData.receiver,
+        },
+        to: {
+          chain: packetSrcChannel,
+          address: packetData.sender,
+        },
+        amount: packetData.amount,
+        denom: packetData.denom,
+        sequence: forwardSequence,
+        hops: 1,
       };
     }
   }
@@ -131,6 +169,7 @@ export function parseAcknowledgement(events: any) {
     },
     to: {},
     backwardSequence: packetSequence,
+    sequence: packetSequence,
   };
 }
 
@@ -140,4 +179,7 @@ export enum Step {
   ROLLAPP_RECV = "ROLLAPP_RECV",
   HUB_ACK = "HUB_ACK",
   ROLLAPP_ACK = "ROLLAPP_ACK",
+  CHAIN_TR = "CHAIN_TR",
+  CHAIN_RECV = "CHAIN_RECV",
+  CHAIN_ACK = "CHAIN_ACK",
 }
