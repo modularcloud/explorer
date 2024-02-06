@@ -93,7 +93,7 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   allIntegrations = allIntegrations.sort((a, b) => {
     // prioritize celestia before every other chain
     if (a.brand === "celestia") return -1;
-    if (a.brand === "celestia") return 1;
+    if (b.brand === "celestia") return 1;
 
     // put non paid chains at the end
     if (!a.paidVersion) return 1;
