@@ -155,15 +155,6 @@ export async function GET(
         // we don't want to use the hub, which has sequence collisions (and can be easily recognized by its shorter channel name)
         preferDestination = destinationChannel.length > sourceChannel.length;
       }
-      console.log(
-        isHubBaseRpc
-          ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
-              preferDestination
-                ? `recv_packet.packet_src_channel='${destinationChannel}'`
-                : `recv_packet.packet_dst_channel='${sourceChannel}'`
-            }"&prove=false&page=1&per_page=1`
-          : `${rpc}/tx_search?query=recv_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
-      );
       var txSearch = await fetch(
         isHubBaseRpc
           ? `${rpc}/tx_search?query="recv_packet.packet_sequence=${sequence} AND ${
@@ -212,16 +203,6 @@ export async function GET(
         },
       );
     case Step.CHAIN_ACK:
-      console.log(
-        "=========",
-        isHubBaseRpc
-          ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence} AND ${
-              destinationChannel
-                ? `acknowledge_packet.packet_src_channel='${destinationChannel}'`
-                : `acknowledge_packet.packet_dst_channel='${sourceChannel}'`
-            }"&prove=false&page=1&per_page=1`
-          : `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
-      );
       var txSearch = await fetch(
         isHubBaseRpc
           ? `${rpc}/tx_search?query="acknowledge_packet.packet_sequence=${sequence} AND ${
@@ -231,7 +212,7 @@ export async function GET(
             }"&prove=false&page=1&per_page=1`
           : `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${sequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
-      console.log(txSearch);
+
       var tx = txSearch.result.txs[0];
       if (!tx) {
         return new Response(
@@ -456,7 +437,7 @@ export async function GET(
       );
     case Step.ROLLAPP_ACK:
       var txSearch = await fetch(
-        `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${backwardSequence} AND acknowledge_packet.packet_dst_channel=${destinationChannel}&prove=false&page=1&per_page=1&order_by=desc`,
+        `${rpc}/tx_search?query=acknowledge_packet.packet_sequence=${backwardSequence}&prove=false&page=1&per_page=1&order_by=desc`,
       ).then((res) => res.json());
       var tx = txSearch.result.txs[0];
       if (!tx) {

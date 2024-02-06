@@ -20,6 +20,7 @@ export async function GET(
       params.hash
     }&prove=false`,
   ).then((res) => res.json());
+  console.log("xxxxxxxxxxxxxxxx")
   const log = JSON.parse(tx.result.tx_result.log);
   const message = log.find((l: any) => l.msg_index === parseInt(params.index));
   const messageEntry = message.events.find((e: any) => e.type === "message");
@@ -63,6 +64,7 @@ export async function GET(
         },
       );
     case "/ibc.core.channel.v1.MsgAcknowledgement":
+      console.log("message.events", message.events);
       return new Response(
         JSON.stringify({
           ...parseAcknowledgement(message.events),
