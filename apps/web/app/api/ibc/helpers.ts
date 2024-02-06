@@ -65,6 +65,7 @@ export function parseRecv(events: any) {
       chain: packetSrcChannel,
       address: packetData.receiver,
     },
+    from: {},
     amount: packetData.amount,
     denom: packetData.denom,
     backwardSequence: packetSequence,
@@ -128,6 +129,7 @@ export function parseAcknowledgement(events: any) {
     from: {
       chain: packetDstChannel,
     },
+    to: {},
     backwardSequence: packetSequence,
   };
 }
