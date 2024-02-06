@@ -52,20 +52,38 @@ enum Step {
   ROLLAPP_RECV = "ROLLAPP_RECV",
   HUB_ACK = "HUB_ACK",
   ROLLAPP_ACK = "ROLLAPP_ACK",
+  CHAIN_TR = "CHAIN_TR",
+  CHAIN_RECV = "CHAIN_RECV",
+  CHAIN_ACK = "CHAIN_ACK",
 }
 
 function Node({
   isNext,
-  step,
+  num,
   hash,
-  slug,
 }: {
+  num: number;
   isNext?: boolean;
-  step: Step;
   hash: string;
   slug: string;
 }) {
   const [isHovered, setIsHovered] = React.useState(false);
+  const params = useParams<{ network: string; path: string[] }>();
+  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
+  const txHash = path[1];
+  const msgIndex = path[3];
+
+  // use context to get the transfer details
+  const flowDetails = React.useContext(FlowChartContext);
+  if (!flowDetails) {
+    console.error("Flow details context is not available");
+    return null;
+  }
+
+  const twoHopStep = [Step.ROLLAPP_TR, Step.ROLLAPP_RECV, Step.ROLLAPP_ACK][
+    num
+  ];
+  const oneHopStep = [Step.CHAIN_TR, Step.CHAIN_RECV, Step.CHAIN_ACK][num];
 
   // TODO fix!!!!!
   const label = {
@@ -74,7 +92,10 @@ function Node({
     [Step.ROLLAPP_ACK]: "Acknowledgement",
     [Step.HUB_RECV]: "Received",
     [Step.HUB_ACK]: "Acknowledgement",
-  }[step];
+    [Step.CHAIN_TR]: "Transfer",
+    [Step.CHAIN_RECV]: "Received",
+    [Step.CHAIN_ACK]: "Acknowledgement",
+  }[twoHopStep];
 
   const fallbackData = {
     result: {
@@ -83,30 +104,68 @@ function Node({
       waitingFor: label === "Received" ? "receipt" : undefined,
     },
   };
-  // use context to get the transfer details
-  const flowDetails = React.useContext(FlowChartContext);
-  if (!flowDetails) {
-    console.error("Flow details context is not available");
-    return null;
-  }
+
   const sourceChannel = flowDetails.transfer.from.chain;
   const destinationChannel = flowDetails.transfer.to.chain;
   const forwardSequence = flowDetails.sequence.forward;
   const backwardSequence = flowDetails.sequence.backward;
+  const regularSequence = flowDetails.sequence.regular;
 
-  const useHubAck =
-    (step === Step.ROLLAPP_TR && !forwardSequence) ||
-    (step === Step.ROLLAPP_RECV && !backwardSequence) ||
-    (step === Step.ROLLAPP_ACK && !backwardSequence);
-  const url = `/api/ibc/${useHubAck ? Step.HUB_ACK : step}?${[
-    `sourceChannel=${sourceChannel}`,
-    `destinationChannel=${destinationChannel}`,
-    `forwardSequence=${forwardSequence}`,
-    `backwardSequence=${backwardSequence}`,
-  ]
-    .filter((q) => !q.endsWith("=undefined"))
-    .join("&")}`;
-  console.log(url);
+  const useHubAck = React.useMemo(
+    () =>
+      (flowDetails.sequence.hops === 2 &&
+        twoHopStep === Step.ROLLAPP_TR &&
+        !forwardSequence) ||
+      (twoHopStep === Step.ROLLAPP_RECV && !backwardSequence) ||
+      (twoHopStep === Step.ROLLAPP_ACK && !backwardSequence),
+    [twoHopStep, forwardSequence, backwardSequence, flowDetails.sequence.hops],
+  );
+
+  const twoHopUrl = React.useMemo(
+    () =>
+      `/api/ibc/${useHubAck ? Step.HUB_ACK : twoHopStep}?${[
+        `sourceChannel=${sourceChannel}`,
+        `destinationChannel=${destinationChannel}`,
+        `forwardSequence=${forwardSequence}`,
+        `backwardSequence=${backwardSequence}`,
+        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
+      ]
+        .filter((q) => !q.endsWith("=undefined"))
+        .join("&")}`,
+    [
+      useHubAck,
+      twoHopStep,
+      sourceChannel,
+      destinationChannel,
+      forwardSequence,
+      backwardSequence,
+    ],
+  );
+
+  const oneHopUrl = React.useMemo(
+    () =>
+      `/api/ibc/${oneHopStep}?${[
+        `sourceChannel=${sourceChannel}`,
+        `destinationChannel=${destinationChannel}`,
+        `sequence=${regularSequence}`,
+        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
+      ]
+        .filter((q) => !q.endsWith("=undefined"))
+        .join("&")}`,
+    [oneHopStep, sourceChannel, destinationChannel, regularSequence],
+  );
+  const url = useMemo(() => {
+    if (oneHopUrl.endsWith("?") || twoHopUrl.endsWith("?"))
+      return `/api/ibc/integration/${slug}/tx/${txHash}/message/${msgIndex}`;
+    if (!flowDetails.sequence.hops && useHubAck) {
+      return twoHopUrl;
+    }
+    if (flowDetails.sequence.hops === 2) {
+      return twoHopUrl;
+    }
+    return oneHopUrl;
+  }, [flowDetails.sequence.hops, useHubAck, twoHopUrl, oneHopUrl]);
+
   const nodeResponse = useSWR(
     url,
     async () => {
@@ -120,6 +179,22 @@ function Node({
       keepPreviousData: true,
       revalidateOnFocus: false,
       fallbackData,
+      onError: (error) => {
+        // Transfer should always exist since it is the first in the flow
+        if (error.status === 404) {
+          const newDetails = flowDetails;
+
+          if (!flowDetails.sequence.hops && twoHopStep === Step.ROLLAPP_TR) {
+            newDetails.sequence.hops = 1;
+          }
+
+          if (!flowDetails.sequence.hops && oneHopStep === Step.CHAIN_TR) {
+            newDetails.sequence.hops = 2;
+          }
+
+          flowDetails.setContext?.(newDetails);
+        }
+      },
       onSuccess: (data) => {
         const newDetails = flowDetails;
 
@@ -147,11 +222,22 @@ function Node({
           newDetails.sequence.backward = data.backwardSequence;
         }
 
+        if (!newDetails.sequence.hops) {
+          newDetails.sequence.hops = data.hops;
+        }
+
+        if (!newDetails.sequence.regular) {
+          newDetails.sequence.regular = data.sequence;
+        }
+
+        if (!newDetails.transfer.from.penultimate) {
+          newDetails.transfer.from.penultimate = data.penultimateChannel;
+        }
+
         flowDetails.setContext?.(newDetails);
       },
     },
   );
-  console.log(nodeResponse.data);
 
   const time = useMemo(() => {
     const node = nodeResponse.data;
@@ -168,7 +254,7 @@ function Node({
   // const node = nodeResponse.data.result;
 
   const node =
-    useHubAck || !nodeResponse.data.txHash
+    (flowDetails.sequence.hops !== 1 && useHubAck) || !nodeResponse.data.txHash
       ? fallbackData.result
       : {
           type: "completed",
@@ -406,6 +492,7 @@ const FlowChartContext = React.createContext<{
     from: {
       address?: string;
       chain?: string;
+      penultimate?: string;
     };
     to: {
       address?: string;
@@ -417,6 +504,8 @@ const FlowChartContext = React.createContext<{
   sequence: {
     forward?: string;
     backward?: string;
+    regular?: string;
+    hops?: 1 | 2;
   };
   setContext?: (value: any) => void; // Added ability to set context
 } | null>(null);
@@ -433,6 +522,7 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
       from: {
         address?: string;
         chain?: string;
+        penultimate?: string;
       };
       to: {
         address?: string;
@@ -444,6 +534,8 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
     sequence: {
       forward?: string;
       backward?: string;
+      regular?: string;
+      hops?: 1 | 2;
     };
   }>({
     transfer: {
@@ -455,7 +547,6 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
   useSWR(
     url,
     async () => {
-      console.log("fetching", url);
       const response = await fetch(url);
       const data = await response.json();
       return data;
@@ -485,6 +576,18 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
 
         if (!newDetails.sequence.backward) {
           newDetails.sequence.backward = data.backwardSequence;
+        }
+
+        if (!newDetails.sequence.hops) {
+          newDetails.sequence.hops = data.hops;
+        }
+
+        if (!newDetails.sequence.regular) {
+          newDetails.sequence.regular = data.sequence;
+        }
+
+        if (!newDetails.transfer.from.penultimate) {
+          newDetails.transfer.from.penultimate = data.penultimateChannel;
         }
 
         setContextValue(newDetails);
@@ -527,9 +630,9 @@ export function FlowChart() {
           <Transfer hash={txHash} slug={slug} />
         </div>
         <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
-          <Node step={Step.ROLLAPP_TR} hash={txHash} slug={slug} />
-          <Node step={Step.ROLLAPP_RECV} hash={txHash} slug={slug} />
-          <Node step={Step.ROLLAPP_ACK} hash={txHash} slug={slug} />
+          <Node num={0} hash={txHash} slug={slug} />
+          <Node num={1} hash={txHash} slug={slug} />
+          <Node num={2} hash={txHash} slug={slug} />
           {/* <Node step={3} hash={txHash} slug={slug} /> */}
         </div>
       </div>
