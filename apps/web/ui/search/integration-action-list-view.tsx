@@ -194,9 +194,11 @@ export const IntegrationActionListView = React.memo(
         : actionItems;
     }, [actionItems, ecosystemNetworks]);
 
-    const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid<
-      ListItemType | NetworkChain
-    >({
+    const {
+      registerOptionProps,
+      groupedByLines: groupedItems,
+      selectOption,
+    } = useItemGrid<ListItemType | NetworkChain>({
       noOfColumns: 1,
       optionGroups: gridItems,
       onClickOption: (option) => {
@@ -267,6 +269,14 @@ export const IntegrationActionListView = React.memo(
         registerOptionProps(rowIndex, 0, option),
       [registerOptionProps],
     );
+
+    React.useEffect(() => {
+      selectOption({
+        rowIndex: 0,
+        colIndex: 0,
+        option: gridItems[0][0],
+      });
+    }, [selectOption, gridItems]);
 
     return (
       <div
