@@ -60,18 +60,19 @@ enum Step {
 function Node({
   isNext,
   num,
-  hash,
+  index,
 }: {
   num: number;
   isNext?: boolean;
   hash: string;
   slug: string;
+  index: number;
 }) {
   const [isHovered, setIsHovered] = React.useState(false);
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
-  const msgIndex = path[3];
+  const msgIndex = path[3] ?? index;
 
   // use context to get the transfer details
   const flowDetails = React.useContext(FlowChartContext);
@@ -613,7 +614,7 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function FlowChart() {
+export function FlowChart({ index }: { index: number }) {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
@@ -630,9 +631,9 @@ export function FlowChart() {
           <Transfer hash={txHash} slug={slug} />
         </div>
         <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
-          <Node num={0} hash={txHash} slug={slug} />
-          <Node num={1} hash={txHash} slug={slug} />
-          <Node num={2} hash={txHash} slug={slug} />
+          <Node num={0} index={index} hash={txHash} slug={slug} />
+          <Node num={1} index={index} hash={txHash} slug={slug} />
+          <Node num={2} index={index} hash={txHash} slug={slug} />
           {/* <Node step={3} hash={txHash} slug={slug} /> */}
         </div>
       </div>

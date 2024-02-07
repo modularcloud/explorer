@@ -31,10 +31,8 @@ export const RollappTransactionMessagesResolver = createResolver(
       messages = helpers.getMessages(transacitonResponse.result.tx);
     }
 
-    const isIBC = !!(
-      messages.findIndex((m: any) =>
-        /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
-      ) + 1
+    const isIBC = messages.findIndex((m: any) =>
+      /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
     );
 
     const page: Page = {
