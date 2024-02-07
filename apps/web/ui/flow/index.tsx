@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { cn } from "../shadcn/utils";
+import { cn } from "~/ui/shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useMemo } from "react";
 import Link from "next/link";
-import { useSpotlightStore } from "../right-panel/spotlight-store";
+import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { useParams } from "next/navigation";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
@@ -35,17 +35,6 @@ type Node =
       image?: string;
     };
 
-type Props = {
-  title: string;
-  nodes: Node[];
-  transfer: {
-    from: string;
-    to: string;
-    amount: string;
-    denom: string;
-  };
-};
-
 enum Step {
   ROLLAPP_TR = "ROLLAPP_TR",
   HUB_RECV = "HUB_RECV",
@@ -57,28 +46,36 @@ enum Step {
   CHAIN_ACK = "CHAIN_ACK",
 }
 
-function Node({
-  isNext,
-  num,
-  hash,
-}: {
+type NodeProps = {
   num: number;
   isNext?: boolean;
   hash: string;
   slug: string;
+};
+
+function Node(props: NodeProps) {
+  const flowDetails = React.useContext(FlowChartContext);
+  if (!flowDetails) {
+    console.error("Flow details context is not available");
+    return null;
+  }
+
+  return <NodeContent {...props} flowDetails={flowDetails} />;
+}
+
+function NodeContent({
+  isNext,
+  num,
+  hash,
+  flowDetails,
+}: NodeProps & {
+  flowDetails: FlowChartContextType;
 }) {
   const [isHovered, setIsHovered] = React.useState(false);
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
   const msgIndex = path[3];
-
-  // use context to get the transfer details
-  const flowDetails = React.useContext(FlowChartContext);
-  if (!flowDetails) {
-    console.error("Flow details context is not available");
-    return null;
-  }
 
   const twoHopStep = [Step.ROLLAPP_TR, Step.ROLLAPP_RECV, Step.ROLLAPP_ACK][
     num
@@ -139,6 +136,7 @@ function Node({
       destinationChannel,
       forwardSequence,
       backwardSequence,
+      flowDetails.transfer.from.penultimate,
     ],
   );
 
@@ -152,7 +150,13 @@ function Node({
       ]
         .filter((q) => !q.endsWith("=undefined"))
         .join("&")}`,
-    [oneHopStep, sourceChannel, destinationChannel, regularSequence],
+    [
+      oneHopStep,
+      sourceChannel,
+      destinationChannel,
+      regularSequence,
+      flowDetails.transfer.from.penultimate,
+    ],
   );
   const url = useMemo(() => {
     if (oneHopUrl.endsWith("?") || twoHopUrl.endsWith("?"))
@@ -164,7 +168,15 @@ function Node({
       return twoHopUrl;
     }
     return oneHopUrl;
-  }, [flowDetails.sequence.hops, useHubAck, twoHopUrl, oneHopUrl]);
+  }, [
+    oneHopUrl,
+    twoHopUrl,
+    slug,
+    txHash,
+    msgIndex,
+    flowDetails.sequence.hops,
+    useHubAck,
+  ]);
 
   const nodeResponse = useSWR(
     url,
@@ -334,7 +346,9 @@ function Node({
             isHovered ? (
               "Try Again"
             ) : (
-              <>("message" in node ? node.message : "Error")</>
+              <>
+                (&quot;message&quot; in node ? node.message : &quot;Error&quot;)
+              </>
             )
           ) : (
             `Waiting for ${("waitingFor" in node && node.waitingFor
@@ -487,7 +501,7 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
   );
 }
 
-const FlowChartContext = React.createContext<{
+type FlowChartContextType = {
   transfer: {
     from: {
       address?: string;
@@ -507,8 +521,10 @@ const FlowChartContext = React.createContext<{
     regular?: string;
     hops?: 1 | 2;
   };
-  setContext?: (value: any) => void; // Added ability to set context
-} | null>(null);
+  setContext?: (value: any) => void;
+};
+
+const FlowChartContext = React.createContext<FlowChartContextType | null>(null);
 
 export function FlowChartProvider({ children }: { children: React.ReactNode }) {
   const params = useParams<{ network: string; path: string[] }>();
@@ -595,15 +611,9 @@ export function FlowChartProvider({ children }: { children: React.ReactNode }) {
     },
   );
 
-  // Function to update context
-  const setContext = (value: any) => {
-    setContextValue(value);
-  };
-
-  // Added setContext to the context value
   const providerValue = React.useMemo(
-    () => ({ ...contextValue, setContext }),
-    [contextValue],
+    () => ({ ...contextValue, setContext: setContextValue }),
+    [contextValue, setContextValue],
   );
 
   return (
@@ -617,7 +627,8 @@ export function FlowChart() {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
-  if (!slug || typeof slug !== "string" || !txHash) return null;
+  const msgIndex = path[3];
+  if (!slug || typeof slug !== "string" || !txHash || !msgIndex) return null;
 
   // Example usage of setContext (can be used anywhere within the FlowChart component or its children)
   // setContext({...context, transfer: {...transfer, amount: '1000'}});
