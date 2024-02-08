@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { SIZE } from "~/app/api/og/utils";
+import { OG_SIZE } from "~/lib/constants";
 import { getSingleNetworkCached } from "~/lib/network";
 
 export type OpenGraphHomeProps = {
@@ -16,7 +16,7 @@ export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
     <div
       style={{
         background: "linear-gradient(180deg, #0D0D12 0%, #000 100%)",
-        height: `${SIZE.height}px`,
+        height: `${OG_SIZE.height}px`,
       }}
       tw="relative w-full text-white flex flex-col items-center pt-[150px]"
     >

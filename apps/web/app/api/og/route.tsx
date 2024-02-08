@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { SIZE } from "./utils";
+import { OG_SIZE } from "~/lib/constants";
 import { OpenGraphHome } from "./components/opengraph-home";
 
 const ogSearchParamsSchema = z.union([
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   return new ImageResponse(
     <>{await OpenGraphHome({ networkSlug: params.networkSlug })}</>,
     {
-      ...SIZE,
+      ...OG_SIZE,
       fonts: [
         {
           name: "Geist",
