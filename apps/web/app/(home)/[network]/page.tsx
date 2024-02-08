@@ -22,6 +22,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   return {
     title: `${capitalize(network.brand)}`,
     description: `A block explorer for the ${network.brand} ecosystem.`,
+    openGraph: {
+      type: "website",
+      images: [`/api/og?model=network-home&networkSlug=${network.slug}`],
+    },
   };
 }
 
