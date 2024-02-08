@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { SIZE, geistMedium } from "./utils";
-import { OpenGraphHome } from "./components/opgraph-home";
+import { OpenGraphHome } from "./components/opengraph-home";
 
 const ogSearchParamsSchema = z.union([
   z.object({

@@ -13,6 +13,7 @@ export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
 
   const primaryColor = `hsl(${network.config.primaryColor})`;
   console.log({
+    default: DEFAULT_URL,
     url: new URL("/images/og-grid.png", DEFAULT_URL).toString(),
   });
   return (
