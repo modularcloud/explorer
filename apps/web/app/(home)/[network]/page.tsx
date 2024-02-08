@@ -10,7 +10,6 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
-import { DEFAULT_URL } from "~/app/api/og/utils";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -24,7 +23,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${capitalize(network.brand)}`,
     description: `A block explorer for the ${network.brand} ecosystem.`,
     openGraph: {
-      url: DEFAULT_URL + `/${network.slug}`,
+      url: `/${network.slug}`,
       type: "website",
       images: [`/api/og?model=network-home&networkSlug=${network.slug}`],
     },

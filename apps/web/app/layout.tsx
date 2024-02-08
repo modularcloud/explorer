@@ -6,6 +6,7 @@ import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { env } from "~/env.mjs";
 
 // utils
 import localFont from "next/font/local";
@@ -48,6 +49,7 @@ export const metadata: Metadata = {
   description: "A block exporer for modular blockchains.",
   keywords:
     "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
+  metadataBase: new URL(env.NEXT_PUBLIC_PRODUCTION_URL),
 };
 
 export default async function RootLayout({
