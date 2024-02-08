@@ -17,3 +17,5 @@ export const DYMENSION_ROLLAPP_IBC_RESOLVER_ID = "rollapp-events-0.0.0";
 export const DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT = {
   endpoint: "https://froopyland.rpc.silknodes.io",
 } as const;
+export const DYMENSION_LOGO_URL =
+  "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";

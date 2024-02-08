@@ -13,6 +13,8 @@ import type {
 } from "~/lib/grouped-network-chains";
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
+import { DYMENSION_LOGO_URL } from "~/lib/constants";
+
 interface Props {
   className?: string;
   optionGroups: GroupedNetworkChains;
@@ -151,8 +153,6 @@ const BrandChains = React.memo(function BrandChains({
 }: BrandChainsProps) {
   const options = chains;
   const groupName = options[0].brandName;
-  const DYMENSION_LOGO_URL =
-    "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";
   const isInDymensionEcosystem = options[0].platform === "dymension";
   return (
     <div
