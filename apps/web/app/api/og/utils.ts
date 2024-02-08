@@ -6,5 +6,5 @@ export const SIZE = {
 };
 
 export const DEFAULT_URL = env.VERCEL_URL
-  ? `https://${env.VERCEL_URL}`
+  ? env.VERCEL_URL
   : "http://localhost:3000";
