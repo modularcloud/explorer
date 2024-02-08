@@ -12,6 +12,9 @@ export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
   if (!network) return null;
 
   const primaryColor = `hsl(${network.config.primaryColor})`;
+  console.log({
+    url: new URL("/images/og-grid.png", DEFAULT_URL).toString(),
+  });
   return (
     <div
       style={{
@@ -23,6 +26,8 @@ export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
       <img
         src={new URL("/images/og-grid.png", DEFAULT_URL).toString()}
         alt=""
+        width={SIZE.width}
+        height={SIZE.height}
         tw="absolute inset-0"
       />
 
@@ -31,6 +36,8 @@ export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
         <img
           src={network.config.logoUrl}
           alt=""
+          width={120}
+          height={120}
           tw="relative z-20 h-[120px] w-[120px] rounded-full"
           style={{
             filter: network.brand === "eclipse" ? "invert(1)" : "none",
