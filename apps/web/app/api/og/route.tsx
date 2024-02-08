@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { SIZE, geistMedium } from "./utils";
+import { SIZE } from "./utils";
 import { OpenGraphHome } from "./components/opengraph-home";
 
 const ogSearchParamsSchema = z.union([
@@ -33,6 +33,10 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  const geistMedium = await fetch(
+    new URL("../../../public/fonts/Geist/Geist-Medium.otf", import.meta.url),
+  ).then((res) => res.arrayBuffer());
+
   return new ImageResponse(
     <>{await OpenGraphHome({ networkSlug: params.networkSlug })}</>,
     {
@@ -40,7 +44,7 @@ export async function GET(req: NextRequest) {
       fonts: [
         {
           name: "Geist",
-          data: await geistMedium,
+          data: geistMedium,
           style: "normal",
           weight: 500,
         },
