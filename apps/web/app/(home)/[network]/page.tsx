@@ -25,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     openGraph: {
       url: `/${network.slug}`,
       type: "website",
-      images: [`/api/og?model=network-home&networkSlug=${network.slug}`],
+      images: `/api/og?model=network-home&networkSlug=${network.slug}`,
     },
   };
 }
