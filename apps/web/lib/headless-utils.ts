@@ -9,7 +9,7 @@ import {
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
-import { parseHeadlessRouteVercelFix } from "./shared-utils";
+import { parseHeadlessRouteVercelFix, wait } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
@@ -33,7 +33,6 @@ export async function loadIntegration(
   if (!network) {
     notFound();
   }
-
 
   let integration: ReturnType<
     | typeof createSVMIntegration
@@ -107,11 +106,15 @@ export async function loadIntegration(
             additionalContext,
           );
 
-          if (response === null || response.type !== "success") {
-            throw new Error("Not found");
+          if (response !== null && response.type === "pending") {
+            notFound();
           }
 
-          if (!includeTrace && response !== null) {
+          if (response === null || response.type === "error") {
+            throw response?.error ?? new Error("unknown Error");
+          }
+
+          if (!includeTrace) {
             const { trace, ...rest } = response;
             return rest;
           }
@@ -158,31 +161,29 @@ export async function loadPage({
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  try {
-    const resolution = await integration.resolveRoute(fixedPath, context);
+  // TODO : to remove
+  if (route.path.length !== 1) throw new Error("Load Page error");
+  const resolution = await integration.resolveRoute(fixedPath, context);
 
-    if (!resolution) {
-      notFound();
-    }
-
-    if (resolution.type === "pending") {
-      /**
-       * Pending responses are for items that cannot be found, but may exist in the future.
-       * For example, if the latest block is 100, and we request block 101, we will get a pending response.
-       * Therefore, in the short-term we will treat this as any other page that is not found.
-       * However, we will have a special treatment for this in the future.
-       */
-      notFound();
-    }
-
-    if (resolution.type === "error") {
-      throw new Error(resolution.error);
-    }
-
-    return resolution.result as Page;
-  } catch (error) {
+  if (!resolution) {
     notFound();
   }
+
+  if (resolution.type === "pending") {
+    /**
+     * Pending responses are for items that cannot be found, but may exist in the future.
+     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+     * Therefore, in the short-term we will treat this as any other page that is not found.
+     * However, we will have a special treatment for this in the future.
+     */
+    notFound();
+  }
+
+  if (resolution.type === "error") {
+    throw new Error(resolution.error);
+  }
+
+  return resolution.result as Page;
 }
 
 export async function search(networkSlug: string, query: string) {

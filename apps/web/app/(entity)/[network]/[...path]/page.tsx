@@ -7,6 +7,43 @@ import { notFound, redirect } from "next/navigation";
 import { getSingleNetworkCached } from "~/lib/network";
 import { displayFiltersSchema } from "~/lib/display-filters";
 
+function shortenId(str: string) {
+  if (str.length < 12) {
+    return str;
+  }
+  if (str.match(/^(?:[0-9]+\.){3}[0-9]+$/)) {
+    return str.substring(0, 12) + "...";
+  }
+  return str.slice(0, 6) + "..." + str.slice(-6);
+}
+
+function formatTypeName(str: string, singular?: boolean) {
+  const pluralToSingular: Record<string, string> = {
+    addresses: "address",
+  };
+
+  const formatMap: Record<string, string> = {
+    eth: "ETH",
+    spl: "SPL",
+  };
+  const parts = str.split("-");
+
+  return parts
+    .map((part, index) => {
+      if (singular && index === parts.length - 1) {
+        let mappedSingular = pluralToSingular[part.toLowerCase()];
+        if (mappedSingular) {
+          return capitalize(mappedSingular);
+        }
+        if (part.endsWith("s")) {
+          return capitalize(str.slice(0, -1));
+        }
+      }
+      return formatMap[part.toLowerCase()] || capitalize(part);
+    })
+    .join(" ");
+}
+
 export async function generateMetadata({
   params: _params,
 }: {
@@ -37,43 +74,6 @@ export async function generateMetadata({
         network.brand,
       )} ${capitalize(network.chainName)}, brought to you by Modular Cloud.`,
     };
-  }
-
-  function shortenId(str: string) {
-    if (str.length < 12) {
-      return str;
-    }
-    if (str.match(/^(?:[0-9]+\.){3}[0-9]+$/)) {
-      return str.substring(0, 12) + "...";
-    }
-    return str.slice(0, 6) + "..." + str.slice(-6);
-  }
-
-  const pluralToSingular: Record<string, string> = {
-    addresses: "address",
-  };
-
-  const formatMap: Record<string, string> = {
-    eth: "ETH",
-    spl: "SPL",
-  };
-
-  function formatTypeName(str: string, singular?: boolean) {
-    const parts = str.split("-");
-    return parts
-      .map((part, index) => {
-        if (singular && index === parts.length - 1) {
-          let mappedSingular = pluralToSingular[part.toLowerCase()];
-          if (mappedSingular) {
-            return capitalize(mappedSingular);
-          }
-          if (part.endsWith("s")) {
-            return capitalize(str.slice(0, -1));
-          }
-        }
-        return formatMap[part.toLowerCase()] || capitalize(part);
-      })
-      .join(" ");
   }
 
   let titleParts = [];
@@ -138,17 +138,12 @@ async function AyncPageContent({
     }
   }
 
-  try {
-    const displayFilters = displayFiltersSchema.parse(searchParams);
-    const page = await loadPage({ route: params, context: displayFilters });
+  const displayFilters = displayFiltersSchema.parse(searchParams);
+  const page = await loadPage({ route: params, context: displayFilters });
 
-    if (page.body.type === "notebook") {
-      return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
-    }
-
-    return <Table initialData={page} route={params} />;
-  } catch (error) {
-    console.error(error);
-    notFound();
+  if (page.body.type === "notebook") {
+    return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
   }
+
+  return <Table initialData={page} route={params} />;
 }
