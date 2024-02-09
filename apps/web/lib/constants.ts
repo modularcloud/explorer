@@ -19,3 +19,8 @@ export const DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT = {
 } as const;
 export const DYMENSION_LOGO_URL =
   "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";
+
+export const OG_SIZE = {
+  width: 1600,
+  height: 900,
+};

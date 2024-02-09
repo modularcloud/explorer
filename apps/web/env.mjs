@@ -30,6 +30,7 @@ export const env = createEnv({
     }, z.string().url().optional()),
   },
   client: {
+    NEXT_PUBLIC_PRODUCTION_URL: z.string().url().optional().default("https://explorer.modular.cloud"),
     NEXT_PUBLIC_ADOBE_EMBED_API_KEY: z.string(),
     NEXT_PUBLIC_SVM_METRICS: z.string().url(),
     // add scheme to VERCEL_URL
@@ -39,6 +40,7 @@ export const env = createEnv({
     }, z.string().url().optional()),
   },
   runtimeEnv: {
+    NEXT_PUBLIC_PRODUCTION_URL: process.env.NEXT_PUBLIC_PRODUCTION_URL,
     REVALIDATE_TOKEN: process.env.REVALIDATE_TOKEN,
     INTERNAL_INTEGRATION_API_URL: process.env.INTERNAL_INTEGRATION_API_URL,
     METRICS_API_URL: process.env.METRICS_API_URL,

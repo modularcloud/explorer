@@ -10,7 +10,8 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
-import { DEFAULT_URL } from "~/app/api/og/utils";
+import { env } from "~/env.mjs";
+import { OG_SIZE } from "~/lib/constants";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -22,11 +23,18 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${capitalize(network.brand)}`,
-    description: `A block explorer for the ${network.brand} ecosystem.`,
+    description: `A block explorer for the ${capitalize(
+      network.brand,
+    )} ecosystem.`,
     openGraph: {
-      url: DEFAULT_URL + `/${network.slug}`,
+      url: `/${network.slug}`,
       type: "website",
-      images: [`/api/og?model=network-home&networkSlug=${network.slug}`],
+      images: [
+        {
+          url: `${env.NEXT_PUBLIC_PRODUCTION_URL}/api/og?model=network-home&networkSlug=${network.slug}`,
+          ...OG_SIZE,
+        },
+      ],
     },
   };
 }
