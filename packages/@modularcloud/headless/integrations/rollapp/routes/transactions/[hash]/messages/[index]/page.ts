@@ -1,6 +1,6 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { Page, PageContext } from "../../../../../../../schemas/page";
-import { resolvers, helpers } from "@modularcloud-resolver/rollapp";
+import { getHubMessages, getTx, helpers } from "@modularcloud-resolver/rollapp";
 import { TransactionResponse } from "../../../../../types";
 import { getDefaultNestedSidebar } from "../../../../../../../helpers";
 import { Link, Standard } from "../../../../../utils/values";
@@ -20,7 +20,7 @@ export const RollappMessageResolver = createResolver(
       hash,
       index,
     }: { context: PageContext; hash: string; index: string },
-    getTransaction: typeof resolvers.getTx,
+    getTransaction: typeof getTx,
   ) => {
     const response = await getTransaction({
       endpoint: context.rpcEndpoint,
@@ -30,7 +30,14 @@ export const RollappMessageResolver = createResolver(
     if (response.type === "pending") throw PendingException;
 
     const transacitonResponse: TransactionResponse = response.result;
-    const messages = helpers.getMessages(transacitonResponse.result.tx);
+    let messages: ReturnType<
+      typeof helpers.getMessages | typeof getHubMessages
+    > = [];
+    if (context.slug === "dymension-froopyland") {
+      messages = getHubMessages(transacitonResponse.result.tx);
+    } else {
+      messages = helpers.getMessages(transacitonResponse.result.tx);
+    }
     const message = messages[parseInt(index)];
     if (!message) throw new Error("Message not found");
 
@@ -42,7 +49,9 @@ export const RollappMessageResolver = createResolver(
 
     const isIBC = !!/MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(
       message.typeUrl,
-    );
+    )
+      ? parseInt(index)
+      : undefined;
 
     const page: Page = {
       isIBC,
@@ -86,5 +95,5 @@ export const RollappMessageResolver = createResolver(
     };
     return page;
   },
-  [resolvers.getTx],
+  [getTx],
 );

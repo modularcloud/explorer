@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DEFAULT_WIDGET_REVALIDATE_TIME } from "~/lib/constants";
+import { DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS } from "~/lib/constants";
 
 export const celestiaMetricsSchema = z.object({
   metrics: z.object({
@@ -18,13 +18,13 @@ export type CelestiaMetrics = z.TypeOf<typeof celestiaMetricsSchema>;
 export async function getCelestiaWidgetMetrics(networkSlug: string) {
   let id = 7;
   if (networkSlug.indexOf("mocha") !== -1) id = 6;
-  else if (networkSlug.indexOf("arabica") !== -1) id = 5;
+  else if (networkSlug.indexOf("arabica") !== -1) id = 943;
 
   return await fetch(
     `https://a1evbjtjuf.execute-api.us-west-2.amazonaws.com/prod/${id}/metrics`,
     {
       next: {
-        revalidate: DEFAULT_WIDGET_REVALIDATE_TIME,
+        revalidate: DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS,
       },
     },
   )

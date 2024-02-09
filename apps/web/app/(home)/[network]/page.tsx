@@ -1,11 +1,7 @@
 import * as React from "react";
 
 import { notFound } from "next/navigation";
-import {
-  getAllPaidNetworks,
-  getNetworksForPlatformCached,
-  getSingleNetworkCached,
-} from "~/lib/network";
+import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
@@ -14,6 +10,8 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
+import { env } from "~/env.mjs";
+import { OG_SIZE } from "~/lib/constants";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -24,8 +22,20 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   if (!network) notFound();
 
   return {
-    title: `${capitalize(network.chainBrand)}`,
-    description: `A block explorer for the ${network.chainBrand} ecosystem.`,
+    title: `${capitalize(network.brand)}`,
+    description: `A block explorer for the ${capitalize(
+      network.brand,
+    )} ecosystem.`,
+    openGraph: {
+      url: `/${network.slug}`,
+      type: "website",
+      images: [
+        {
+          url: `${env.NEXT_PUBLIC_PRODUCTION_URL}/api/og?model=network-home&networkSlug=${network.slug}`,
+          ...OG_SIZE,
+        },
+      ],
+    },
   };
 }
 
@@ -36,20 +46,7 @@ export default async function NetworkWidgetPage({ params }: Props) {
   // exist (even though technically it should always exist)
   if (!network) notFound();
 
-  if (network.config.platform === "dymension") {
-    const dymensionNetworks = await getNetworksForPlatformCached("dymension");
-    return (
-      <DymensionWidgetLayout
-        networkSlug={network.slug}
-        allDymensionNetworks={dymensionNetworks}
-      />
-    );
-  }
-
   switch (network.config.widgetLayout) {
-    // TODO : When EVM is ready, we should follow the same code structure as the other layouts
-    // case "EvmWithPrice":
-    //   return <EvmWithPriceWidgetLayout network={searchOption!} />;
     case "SVM":
       return (
         <SVMWidgetLayout
@@ -64,6 +61,8 @@ export default async function NetworkWidgetPage({ params }: Props) {
           networkBrandColor={network.config.primaryColor}
         />
       );
+    case "Dymension":
+      return <DymensionWidgetLayout />;
     default:
       return null;
   }

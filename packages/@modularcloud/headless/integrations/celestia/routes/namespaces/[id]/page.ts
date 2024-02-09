@@ -60,7 +60,7 @@ export const CelestiaNamespaceResolver = createResolver(
       chain = "6";
     }
     if (context.chainName.indexOf("arabica") !== -1) {
-      chain = "5";
+      chain = "943";
     }
     const mc = createModularCloud(`${process.env.NAMESPACE_ENDPOINT}`);
     const blobs = await mc.celestia.listBlobsByNamespace(

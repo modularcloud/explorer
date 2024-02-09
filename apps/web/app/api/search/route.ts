@@ -1,8 +1,4 @@
-import {
-  SearchBuilders,
-  registerResolvers,
-  resolve,
-} from "@modularcloud/headless";
+import { SearchBuilders } from "@modularcloud/headless";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { loadIntegration } from "~/lib/headless-utils";

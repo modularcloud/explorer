@@ -5,10 +5,12 @@ const TransactionMetaSchema = z.object({
   err: z.union([z.any(), z.null()]), // Adjust this based on the actual structure of `err`
   fee: z.number(),
   innerInstructions: z.array(z.any()).nullable(), // Adjust this based on the actual structure
-  loadedAddresses: z.object({
-    readonly: z.array(z.string()),
-    writable: z.array(z.string()),
-  }),
+  loadedAddresses: z
+    .object({
+      readonly: z.array(z.string()),
+      writable: z.array(z.string()),
+    })
+    .optional(),
   logMessages: z.array(z.string()).nullable(),
   postBalances: z.array(z.number()),
   postTokenBalances: z.array(z.any()), // Adjust this based on the actual structure
@@ -24,19 +26,52 @@ export const InstructionSchema = z.object({
   programIdIndex: z.number(),
 });
 
+export const ParsedInstructionSchema = z.object({
+  parsed: z.object({
+    info: z
+      .object({
+        destination: z.string(),
+        lamports: z.number(),
+        source: z.string(),
+      })
+      .or(
+        z.object({
+          authority: z.string(),
+          destination: z.string(),
+          mint: z.string(),
+          source: z.string(),
+          tokenAmount: z.object({
+            amount: z.string(),
+            decimals: z.number(),
+            uiAmount: z.number(),
+            uiAmountString: z.string(),
+          }),
+        }),
+      ),
+    type: z.string(),
+  }),
+  program: z.string(),
+  programId: z.string(),
+  stackHeight: z.number().nullable(),
+});
+
 export const TransactionSchema = z.object({
   blockTime: z.number().optional(),
   slot: z.number().optional(),
   meta: TransactionMetaSchema,
   transaction: z.object({
     message: z.object({
-      accountKeys: z.array(z.string()),
-      header: z.object({
-        numReadonlySignedAccounts: z.number(),
-        numReadonlyUnsignedAccounts: z.number(),
-        numRequiredSignatures: z.number(),
-      }),
-      instructions: z.array(InstructionSchema),
+      accountKeys: z.array(z.any()),
+      header: z
+        .object({
+          numReadonlySignedAccounts: z.number(),
+          numReadonlyUnsignedAccounts: z.number(),
+          numRequiredSignatures: z.number(),
+        })
+        .optional(),
+      instructions: z
+        .array(InstructionSchema)
+        .or(z.array(ParsedInstructionSchema)),
       recentBlockhash: z.string(),
     }),
     signatures: z.array(z.string()),

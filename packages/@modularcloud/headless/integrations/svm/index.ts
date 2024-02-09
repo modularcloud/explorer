@@ -23,6 +23,14 @@ export function createSVMIntegration(context: PageContext) {
     name: "Address",
   });
   addRoute(
+    ["addresses", "[address]", "eth-transfers"],
+    "svm-address-native-transfers-0.0.0",
+  );
+  addRoute(
+    ["addresses", "[address]", "spl-transfers"],
+    "svm-address-spl-transfers-0.0.0",
+  );
+  addRoute(
     ["addresses", "[address]", "transactions"],
     "svm-address-transactions-0.0.0",
   );

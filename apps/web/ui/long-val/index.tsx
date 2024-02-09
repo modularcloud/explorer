@@ -18,7 +18,7 @@ export function forceLength(
       const removal = Math.floor(diff / 2);
       let start = str.slice(0, midpoint - removal);
       let end = str.slice(midpoint + removal);
-      if (start.length + end.length < MIN) {
+      if ((midpoint - removal) * 2 < MIN) {
         start = str.slice(0, MIN);
         end = str.slice(-MIN);
       }

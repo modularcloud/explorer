@@ -39,29 +39,35 @@ export function SVMWidgetLayoutContent({
 
   const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
 
-  if (error) {
+  if (!data) {
     return (
       <SVMWidgetSkeleton
-        error={{
-          message: error.toString(),
-        }}
+        error={
+          error
+            ? {
+                message: error.toString(),
+              }
+            : undefined
+        }
       />
     );
-  }
-
-  if (!data) {
-    return <SVMWidgetSkeleton />;
   }
 
   const [apiResult, latestBlocks, latestTransactions] = data;
 
   const {
-    metrics: { CONTRACT, TRANSACTION, UNIQUE_ADDRESS },
+    metrics: {
+      CONTRACT,
+      TRANSACTION,
+      UNIQUE_ADDRESS,
+      AVG_TRANSACTION_FEE_LAST_10_BLOCKS,
+      TPS_LAST_10_BLOCKS,
+    },
     slotNumber,
   } = apiResult;
 
   return (
-    <div className="max-w-[1060px] mx-auto flex flex-col gap-4 w-full">
+    <div className="max-w-[1060px] mx-auto grid gap-4 w-full">
       <div className="hidden tab:inline-block h-4 mx-auto text-center">
         {lastUpdatedTime && (
           <time
@@ -88,8 +94,7 @@ export function SVMWidgetLayoutContent({
           "[grid-template-areas:var(--grid-area-mobile)]",
           "tab:[grid-template-areas:var(--grid-area-tab)]",
           "lg:[grid-template-areas:var(--grid-area-lg)]",
-          "auto-rows-[160px] auto-cols-[145px]",
-          "w-full gap-4 font-medium",
+          "w-full gap-8 tab:gap-10 font-medium",
           "accent-primary place-items-stretch",
         )}
       >
@@ -136,9 +141,23 @@ export function SVMWidgetLayoutContent({
           value={TRANSACTION.toLocaleString("en-US")}
         />
 
+        <IconCard
+          label="TPS"
+          className="[grid-area:TP]"
+          icon={BarChart}
+          value={TPS_LAST_10_BLOCKS.toLocaleString("en-US")}
+        />
+
         <Placeholder className="hidden lg:block [grid-area:P1]" />
-        <Placeholder className="hidden lg:block [grid-area:P2]" />
-        <Placeholder className="hidden lg:block [grid-area:P3]" />
+
+        <IconCard
+          label="Average Fee"
+          className="[grid-area:AF]"
+          icon={Document}
+          value={`${AVG_TRANSACTION_FEE_LAST_10_BLOCKS.toLocaleString(
+            "en-US",
+          )} Gwei`}
+        />
 
         <LatestBlocks
           networkSlug={networkSlug}

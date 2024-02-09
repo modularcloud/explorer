@@ -119,7 +119,11 @@ export const QueryConfigResponse = {
 
 /** Query is the app module query service. */
 export interface Query {
-  /** Config returns the current app config. */
+  /**
+   * Config returns the current app config.
+   *
+   * @deprecated
+   */
   Config(request: QueryConfigRequest): Promise<QueryConfigResponse>;
 }
 

@@ -1,30 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import * as React from "react";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
 import { toast } from "~/ui/shadcn/components/ui/use-toast";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+import Script from "next/script";
 import { ButtonBody } from "./button-body";
 import Link from "next/link";
 
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url,
-).toString();
+import { env } from "~/env.mjs";
 
 export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
-  const { data, isLoading } = useSWR(url, async (url) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
-    const arrayBuffer = await blob.arrayBuffer();
-    return { text, arrayBuffer };
-  });
-  const [numPages, setNumPages] = useState<number>();
-  const onClick = async () => {
+  const { data, isLoading } = useBlobData(url);
+
+  async function copyBase64Value() {
     if (!data) return;
     const text = Buffer.from(data.text).toString("base64");
     const copied = await copyValueToClipboard(text);
@@ -35,10 +23,8 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
         description: `"${truncateHash(text)}" copied to clipboard`,
       });
     }
-  };
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
+  }
+
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex gap-2">
@@ -46,7 +32,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
           <ButtonBody className="cursor-not-allowed">Loading...</ButtonBody>
         )}
         {data && (
-          <ButtonBody className="cursor-pointer" onClick={onClick}>
+          <ButtonBody className="cursor-pointer" onClick={copyBase64Value}>
             Copy Base64
           </ButtonBody>
         )}
@@ -58,17 +44,68 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
       {mimeType.startsWith("video/") && (
         <video controls src={url} className="w-full" />
       )}
-      {mimeType === "application/pdf" && data ? (
-        <div className="overflow-auto w-full max-h-screen">
-          <Document file={data.arrayBuffer} onLoadSuccess={onDocumentLoadSuccess}>
-            {Array.from({ length: numPages || 0 }, (_, i) => i + 1).map(
-              (page: number) => (
-                <Page key={page} pageNumber={page} />
-              ),
-            )}
-          </Document>
-        </div>
-      ) : null}
+      {mimeType === "application/pdf" && data && <BlobPDFViewer url={url} />}
     </div>
   );
+}
+
+type BlobPDFViewerProps = {
+  url: string;
+};
+
+function BlobPDFViewer({ url }: BlobPDFViewerProps) {
+  const id = React.useId();
+
+  const showPreview = React.useCallback(() => {
+    // @ts-expect-error AdobeDC is injected by the adobe embed script
+    if (window.AdobeDC !== undefined) {
+      // @ts-expect-error
+      let adobeDCView = new (window.AdobeDC as any).View({
+        clientId: env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
+        divId: id,
+      });
+
+      const urlParts = url.split("/");
+      adobeDCView.previewFile(
+        {
+          content: {
+            location: {
+              url,
+            },
+          },
+          metaData: { fileName: urlParts[urlParts.length - 1] },
+        },
+        { embedMode: "SIZED_CONTAINER" },
+      );
+    }
+  }, [url, id]);
+
+  React.useEffect(() => {
+    document.addEventListener("adobe_dc_view_sdk.ready", showPreview);
+  }, [showPreview]);
+
+  return (
+    <>
+      <Script
+        src="https://acrobatservices.adobe.com/view-sdk/viewer.js"
+        onReady={showPreview}
+      />
+      <div
+        className="w-full h-[350px] mb-20 bg-mid-dark-100 flex items-center justify-center"
+        id={id}
+      >
+        loading pdf...
+      </div>
+    </>
+  );
+}
+
+function useBlobData(url: string) {
+  return useSWRImmutable(url, async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
+    const arrayBuffer = await blob.arrayBuffer();
+    return { text, arrayBuffer };
+  });
 }

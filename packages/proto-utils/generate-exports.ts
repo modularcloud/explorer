@@ -77,8 +77,8 @@ function findMsgExports(fileNames: string[], options: ts.CompilerOptions) {
               if (
                 exportedName.startsWith("Msg") &&
                 !exportedName.endsWith("Response") &&
-                exportedName !== "MsgClientImpl" &&
-                exportedName !== "MsgServiceName" &&
+                !exportedName.endsWith("ServiceName") &&
+                !exportedName.endsWith("ClientImpl") &&
                 exportedName !== "Msg"
               ) {
                 exportObjects.push({

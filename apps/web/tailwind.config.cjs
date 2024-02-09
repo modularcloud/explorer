@@ -1,4 +1,4 @@
-const config = require("tailwind-config/tailwind.config.js");
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,7 +12,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      ...config.theme.extend,
+      screens: {
+        xs: "375px",
+        sm: "475px",
+        md: "595px",
+        tab: "720px",
+        tablet: "860px",
+        lp: "1150px",
+        xl: "1440px",
+        "2xl": "1726px",
+      },
       container: {
         center: true,
         padding: "2rem",
@@ -22,10 +31,12 @@ module.exports = {
       },
       spacing: {
         header: `4rem`,
-        "header-tabs": `2.625rem`,
+        "header-tabs": `4.3125rem`,
+      },
+      top: {
+        header: "4.25rem",
       },
       colors: {
-        ...config.theme.extend.colors,
         foreground: {
           DEFAULT: "hsl(var(--color-foreground))",
         },
@@ -38,21 +49,17 @@ module.exports = {
           50: "#FCFDFD",
         },
         primary: "hsl(var(--color-primary))",
+        "mid-dark": {
+          100: "#EAEAEA",
+        },
+        ocean: {
+          DEFAULT: "#4A70FE",
+        },
+        royal: {
+          DEFAULT: "#B160FE",
+        },
       },
-      // borderRadius: {
-      //   lg: "var(--radius)",
-      //   md: "calc(var(--radius) - 2px)",
-      //   sm: "calc(var(--radius) - 4px)",
-      // },
       keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
         slideDownAndFade: {
           from: { opacity: 0, transform: "translateY(-2px)" },
           to: { opacity: 1, transform: "translateY(0)" },
@@ -86,8 +93,6 @@ module.exports = {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
         slideDownAndFade:
           "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideLeftAndFade:
@@ -110,15 +115,17 @@ module.exports = {
         lg: ["1.125rem", "1.75rem"], // 18px, 28px
         xl: ["1.5rem", "2rem"], // 24px, 32px
       },
-      fontSize: {
-        xxs: ["0.65625rem", "0.875rem"], // 10px, 14px
-        xs: ["0.75rem", "1rem"], // 12px, 16px
-        sm: ["0.875rem", "1.25rem"], // 14px, 20px
-        base: ["1rem", "1.5rem"], // 16px, 24px
-        lg: ["1.125rem", "1.75rem"], // 18px, 28px
-        xl: ["1.5rem", "2rem"], // 24px, 32px
+      fontFamily: {
+        logo: ["var(--font-inter-display)", ...fontFamily.sans],
+        sans: ["var(--font-inter)", ...fontFamily.sans],
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
+  variants: {
+    scrollbar: ["rounded"],
+  },
 };

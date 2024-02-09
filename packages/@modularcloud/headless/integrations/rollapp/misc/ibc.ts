@@ -1,4 +1,4 @@
-import { createResolver } from "@modularcloud-resolver/core";
+import { createResolver, NotFound } from "@modularcloud-resolver/core";
 import { z } from "zod";
 import { Value } from "../../../schemas/page";
 import * as Rollapp from "@modularcloud-resolver/rollapp";
@@ -13,7 +13,20 @@ const Step = z.object({
   name: z.string(),
   integrationId: z.string(),
   status: z.string(),
-  transaction: Transaction,
+  transaction: Transaction.optional(),
+  data: z.object({
+    result: z
+      .object({
+        transaction: Transaction,
+      })
+      .optional(),
+    error: z
+      .object({
+        code: z.number(),
+        message: z.string(),
+      })
+      .optional(),
+  }),
 });
 
 const IntegrationConfig = z.object({
@@ -43,16 +56,23 @@ const Result = z.object({
   }),
 });
 
-type node = {
-  type: "completed";
-  id: string;
-  shortId?: string;
-  label: string;
-  timestamp: string | number;
-  link: string;
-  sidebar: Record<string, Value>;
-  image: string;
-};
+type node =
+  | {
+      type: "completed";
+      id: string;
+      shortId?: string;
+      label: string;
+      timestamp: string | number;
+      link: string;
+      sidebar: Record<string, Value>;
+      image: string;
+    }
+  | {
+      type: "error";
+      message: string;
+      label: string;
+      image: string;
+    };
 
 export const IBCResolver = createResolver(
   {
@@ -79,18 +99,40 @@ export const IBCResolver = createResolver(
       "IBCRecevied_DST",
       "IBCAcknowledgement_SRC",
     ][step];
+
     const response = await fetch(
-      `https://aptaki5hsk.execute-api.us-west-2.amazonaws.com/prod/v1/integration/${integrationId}/ibc-info/tx-hash/${hash}?step=${stepName}`,
+      `${process.env.IBC_API}/integration/${integrationId}/ibc-info/tx-hash/${hash}?step=${stepName}`,
     ).then((res) => res.json());
     const data = Result.parse(response);
-    const id = data.result.ibc.steps[0].transaction.transactionHash;
-    const integrations = await fetch(
-      `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations-summary`,
+    const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
+    const targetSlug = data.result.metadata.integrationConfigs.find(
+      (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
+    )?.slug;
+    const image = `${data.result.metadata.integrationConfigs.find(
+      (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
+    )?.config.logoUrl}`;
+    const rpcIntegration = await fetch(
+      `${process.env.INTERNAL_INTEGRATION_API_URL}/integrations/slug/${targetSlug}`,
     ).then((res) => res.json());
-    const rpcIntegration = integrations.result.integrations.find(
-      (i: any) => i.integrationId === data.result.ibc.steps[0].integrationId,
-    );
-    const rpcEndpoint = rpcIntegration.config.rpcUrls.cosmos;
+    if (
+      data.result.ibc.steps[0].data?.error ||
+      !data.result.ibc.steps[0].transaction
+    ) {
+      if (data.result.ibc.steps[0].data?.error?.code === 404) {
+        NotFound();
+      }
+      return {
+        type: "error",
+        label,
+        image,
+        message:
+          data.result.ibc.steps[0].data?.error?.code === 503
+            ? "Unavailable RPC"
+            : "Error",
+      };
+    }
+    const id = data.result.ibc.steps[0].transaction.transactionHash;
+    const rpcEndpoint = rpcIntegration.result.integration.config.rpcUrls.cosmos;
     const tx = await fetch(
       `${rpcEndpoint}/tx?hash=${step === 1 ? "0x" : ""}${id}&prove=false`,
     ).then((res) => res.json());
@@ -104,7 +146,6 @@ export const IBCResolver = createResolver(
     const messageIndex = messages.findIndex(
       (m) => m.typeUrl.indexOf(msgName) !== -1,
     );
-    const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
     const message = messages[messageIndex];
     const node: node = {
       type: "completed",
@@ -112,7 +153,7 @@ export const IBCResolver = createResolver(
       id,
       shortId: id.slice(0, 3) + "..." + id.slice(-3),
       timestamp: data.result.ibc.steps[0].transaction.timeStamp,
-      link: `/${rpcIntegration.slug}/transactions/${id}/messages/${messageIndex}`,
+      link: `/${targetSlug}/transactions/${id}/messages/${messageIndex}`,
       sidebar: Object.entries(
         Rollapp.helpers.convertMessageToKeyValue(message),
       ).reduce((acc, [key, value]) => {
@@ -124,9 +165,7 @@ export const IBCResolver = createResolver(
           },
         };
       }, {}),
-      image: `${data.result.metadata.integrationConfigs.find(
-        (i) => i.integrationId === data.result.ibc.steps[0].integrationId,
-      )?.config.logoUrl}?raw=true`,
+      image,
     };
     return node;
   },

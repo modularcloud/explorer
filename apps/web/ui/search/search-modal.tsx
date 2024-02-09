@@ -19,18 +19,24 @@ import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
-import { useFilteredOptionGroup } from "./use-filtered-option-group";
+import {
+  useChainsFilteredByEcosystem,
+  useFilteredAndSortedNetworkChains,
+} from "./use-filtered-network-chains";
 
 // types
-import type { SearchOption, OptionGroups } from "~/lib/shared-utils";
+import type {
+  GroupedNetworkChains,
+  NetworkChain,
+} from "~/lib/grouped-network-chains";
 interface Props {
   defaultNetwork: {
-    value: SearchOption;
+    value: NetworkChain;
     selected?: boolean;
   };
   children?: React.ReactNode;
   brandColor: string;
-  optionGroups: OptionGroups;
+  optionGroups: GroupedNetworkChains;
   position?: "top" | "middle";
 }
 
@@ -47,15 +53,16 @@ export function SearchModal({
     searchValue: inputValue,
     setSearchValue: setInputValue,
   } = React.use(GlobalHotkeyContext);
+  const deferredInputValue = React.useDeferredValue(inputValue);
 
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   const [selectedNetwork, setSelectedNetwork] =
-    React.useState<SearchOption | null>(
+    React.useState<NetworkChain | null>(
       defaultNetwork.selected ? defaultNetwork.value : null,
     );
 
   const onSelectOption = React.useCallback(
-    (option: SearchOption) => {
+    (option: NetworkChain) => {
       setSelectedNetwork(option);
       inputRef.current?.focus();
       setInputValue("");
@@ -63,7 +70,11 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredOptionGroup(optionGroups, inputValue);
+  const filteredOptionGroup = useFilteredAndSortedNetworkChains(
+    optionGroups,
+    deferredInputValue,
+    defaultNetwork.value,
+  );
 
   const isNetworkQuery =
     !selectedNetwork && Object.keys(filteredOptionGroup).length > 0;
@@ -80,6 +91,30 @@ export function SearchModal({
   });
 
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
+  // TODO : This is temporary because in the future we want to support other ecosystems as well, not only dymension
+  //        we need to change the way we filter chains passed for the ecosystem
+  const ecosystemChains = useChainsFilteredByEcosystem(
+    optionGroups,
+    "dymension",
+    deferredInputValue,
+  );
+
+  // Memoized callbacks for `IntegrationActionListView` since it is Memoized
+  const onListItemActionNavigate = React.useCallback(() => {
+    setSelectedNetwork(null);
+    setInputValue("");
+    setIsDialogOpen(false);
+  }, [setIsDialogOpen, setInputValue]);
+
+  const onListItemActionChangeChainClicked = React.useCallback(() => {
+    setSelectedNetwork(null);
+    setInputValue("");
+  }, [setInputValue]);
+
+  const onListItemActionSelectEcosystemChain = React.useCallback(
+    onSelectOption,
+    [onSelectOption],
+  );
 
   return (
     <Dialog
@@ -174,19 +209,22 @@ export function SearchModal({
 
           {currentNetwork && !isNetworkQuery && (
             <IntegrationActionListView
-              query={inputValue}
+              query={deferredInputValue}
               parentDialogRef={dialogRef}
-              searcheableTypes={searcheableTypes ?? []}
+              searcheableTypes={searcheableTypes}
               selectedNetwork={currentNetwork}
-              onChangeChainClicked={() => {
-                setSelectedNetwork(null);
-                setInputValue("");
-              }}
-              onNavigate={() => {
-                setSelectedNetwork(null);
-                setInputValue("");
-                setIsDialogOpen(false);
-              }}
+              onChangeChainClicked={onListItemActionChangeChainClicked}
+              onNavigate={onListItemActionNavigate}
+              onSelectEcosystemChain={onListItemActionSelectEcosystemChain}
+              ecosystemNetworks={
+                // TODO : This is temporary because in the future we want to support other ecosystems as well
+                //        we need to change the way we filter chains passed for the ecosystem
+                // only for dymension chains for now
+                currentNetwork.platform === "dymension" ||
+                currentNetwork.id === "dymension-froopyland"
+                  ? ecosystemChains
+                  : null
+              }
             />
           )}
         </div>

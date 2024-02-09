@@ -88,23 +88,12 @@ export interface MsgClaimBudgetResponse {
 
 /** MsgCreateContinuousFund defines a message for adding continuous funds. */
 export interface MsgCreateContinuousFund {
-  /** Title is the title of the funds. */
-  title: string;
-  /** Description of the funds. */
-  description: string;
   /** Authority is the address that controls the module (defaults to x/gov unless overwritten). */
   authority: string;
   /** Recipient address of the account receiving funds. */
   recipient: string;
-  /** Metadata is any arbitrary metadata attached. */
-  metadata: string;
-  /**
-   * Percentage is the percentage of funds to be allocated from Community pool share on block by block,
-   * till the `cap` is reached or expired.
-   */
+  /** Percentage is the percentage of funds to be allocated from Community pool. */
   percentage: string;
-  /** Cap is the capital amount, which when its met funds are no longer distributed. */
-  cap: Coin[];
   /** Optional, if expiry is set, removes the state object when expired. */
   expiry: Date | undefined;
 }
@@ -137,6 +126,25 @@ export interface MsgCancelContinuousFundResponse {
   canceledHeight: Long;
   /** RecipientAddress is the account address of recipient whose funds are cancelled. */
   recipientAddress: string;
+  /**
+   * withdrawnAllocatedFund represents the fund allocated to this recipient (if any) that have not been withdrawn yet,
+   * before a cancellation request has been initiated.
+   * It involves first withdrawing the funds and then canceling the request.
+   */
+  withdrawnAllocatedFund: Coin | undefined;
+}
+
+/** MsgWithdrawContinuousFund defines a message for withdrawing the continuous fund allocated to it. */
+export interface MsgWithdrawContinuousFund {
+  recipientAddress: string;
+}
+
+/**
+ * MsgWithdrawContinuousFundResponse defines the response to executing a
+ * MsgWithdrawContinuousFund message.
+ */
+export interface MsgWithdrawContinuousFundResponse {
+  amount: Coin | undefined;
 }
 
 function createBaseMsgFundCommunityPool(): MsgFundCommunityPool {
@@ -695,43 +703,22 @@ export const MsgClaimBudgetResponse = {
 };
 
 function createBaseMsgCreateContinuousFund(): MsgCreateContinuousFund {
-  return {
-    title: "",
-    description: "",
-    authority: "",
-    recipient: "",
-    metadata: "",
-    percentage: "",
-    cap: [],
-    expiry: undefined,
-  };
+  return { authority: "", recipient: "", percentage: "", expiry: undefined };
 }
 
 export const MsgCreateContinuousFund = {
   encode(message: MsgCreateContinuousFund, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.title !== "") {
-      writer.uint32(10).string(message.title);
-    }
-    if (message.description !== "") {
-      writer.uint32(18).string(message.description);
-    }
     if (message.authority !== "") {
-      writer.uint32(26).string(message.authority);
+      writer.uint32(10).string(message.authority);
     }
     if (message.recipient !== "") {
-      writer.uint32(34).string(message.recipient);
-    }
-    if (message.metadata !== "") {
-      writer.uint32(42).string(message.metadata);
+      writer.uint32(18).string(message.recipient);
     }
     if (message.percentage !== "") {
-      writer.uint32(50).string(message.percentage);
-    }
-    for (const v of message.cap) {
-      Coin.encode(v!, writer.uint32(58).fork()).ldelim();
+      writer.uint32(26).string(message.percentage);
     }
     if (message.expiry !== undefined) {
-      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(66).fork()).ldelim();
+      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -748,52 +735,24 @@ export const MsgCreateContinuousFund = {
             break;
           }
 
-          message.title = reader.string();
+          message.authority = reader.string();
           continue;
         case 2:
           if (tag !== 18) {
             break;
           }
 
-          message.description = reader.string();
+          message.recipient = reader.string();
           continue;
         case 3:
           if (tag !== 26) {
             break;
           }
 
-          message.authority = reader.string();
+          message.percentage = reader.string();
           continue;
         case 4:
           if (tag !== 34) {
-            break;
-          }
-
-          message.recipient = reader.string();
-          continue;
-        case 5:
-          if (tag !== 42) {
-            break;
-          }
-
-          message.metadata = reader.string();
-          continue;
-        case 6:
-          if (tag !== 50) {
-            break;
-          }
-
-          message.percentage = reader.string();
-          continue;
-        case 7:
-          if (tag !== 58) {
-            break;
-          }
-
-          message.cap.push(Coin.decode(reader, reader.uint32()));
-          continue;
-        case 8:
-          if (tag !== 66) {
             break;
           }
 
@@ -810,39 +769,23 @@ export const MsgCreateContinuousFund = {
 
   fromJSON(object: any): MsgCreateContinuousFund {
     return {
-      title: isSet(object.title) ? globalThis.String(object.title) : "",
-      description: isSet(object.description) ? globalThis.String(object.description) : "",
       authority: isSet(object.authority) ? globalThis.String(object.authority) : "",
       recipient: isSet(object.recipient) ? globalThis.String(object.recipient) : "",
-      metadata: isSet(object.metadata) ? globalThis.String(object.metadata) : "",
       percentage: isSet(object.percentage) ? globalThis.String(object.percentage) : "",
-      cap: globalThis.Array.isArray(object?.cap) ? object.cap.map((e: any) => Coin.fromJSON(e)) : [],
       expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
     };
   },
 
   toJSON(message: MsgCreateContinuousFund): unknown {
     const obj: any = {};
-    if (message.title !== "") {
-      obj.title = message.title;
-    }
-    if (message.description !== "") {
-      obj.description = message.description;
-    }
     if (message.authority !== "") {
       obj.authority = message.authority;
     }
     if (message.recipient !== "") {
       obj.recipient = message.recipient;
     }
-    if (message.metadata !== "") {
-      obj.metadata = message.metadata;
-    }
     if (message.percentage !== "") {
       obj.percentage = message.percentage;
-    }
-    if (message.cap?.length) {
-      obj.cap = message.cap.map((e) => Coin.toJSON(e));
     }
     if (message.expiry !== undefined) {
       obj.expiry = message.expiry.toISOString();
@@ -855,13 +798,9 @@ export const MsgCreateContinuousFund = {
   },
   fromPartial<I extends Exact<DeepPartial<MsgCreateContinuousFund>, I>>(object: I): MsgCreateContinuousFund {
     const message = createBaseMsgCreateContinuousFund();
-    message.title = object.title ?? "";
-    message.description = object.description ?? "";
     message.authority = object.authority ?? "";
     message.recipient = object.recipient ?? "";
-    message.metadata = object.metadata ?? "";
     message.percentage = object.percentage ?? "";
-    message.cap = object.cap?.map((e) => Coin.fromPartial(e)) || [];
     message.expiry = object.expiry ?? undefined;
     return message;
   },
@@ -985,7 +924,12 @@ export const MsgCancelContinuousFund = {
 };
 
 function createBaseMsgCancelContinuousFundResponse(): MsgCancelContinuousFundResponse {
-  return { canceledTime: undefined, canceledHeight: Long.UZERO, recipientAddress: "" };
+  return {
+    canceledTime: undefined,
+    canceledHeight: Long.UZERO,
+    recipientAddress: "",
+    withdrawnAllocatedFund: undefined,
+  };
 }
 
 export const MsgCancelContinuousFundResponse = {
@@ -998,6 +942,9 @@ export const MsgCancelContinuousFundResponse = {
     }
     if (message.recipientAddress !== "") {
       writer.uint32(26).string(message.recipientAddress);
+    }
+    if (message.withdrawnAllocatedFund !== undefined) {
+      Coin.encode(message.withdrawnAllocatedFund, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -1030,6 +977,13 @@ export const MsgCancelContinuousFundResponse = {
 
           message.recipientAddress = reader.string();
           continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.withdrawnAllocatedFund = Coin.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1044,6 +998,9 @@ export const MsgCancelContinuousFundResponse = {
       canceledTime: isSet(object.canceledTime) ? fromJsonTimestamp(object.canceledTime) : undefined,
       canceledHeight: isSet(object.canceledHeight) ? Long.fromValue(object.canceledHeight) : Long.UZERO,
       recipientAddress: isSet(object.recipientAddress) ? globalThis.String(object.recipientAddress) : "",
+      withdrawnAllocatedFund: isSet(object.withdrawnAllocatedFund)
+        ? Coin.fromJSON(object.withdrawnAllocatedFund)
+        : undefined,
     };
   },
 
@@ -1057,6 +1014,9 @@ export const MsgCancelContinuousFundResponse = {
     }
     if (message.recipientAddress !== "") {
       obj.recipientAddress = message.recipientAddress;
+    }
+    if (message.withdrawnAllocatedFund !== undefined) {
+      obj.withdrawnAllocatedFund = Coin.toJSON(message.withdrawnAllocatedFund);
     }
     return obj;
   },
@@ -1073,6 +1033,130 @@ export const MsgCancelContinuousFundResponse = {
       ? Long.fromValue(object.canceledHeight)
       : Long.UZERO;
     message.recipientAddress = object.recipientAddress ?? "";
+    message.withdrawnAllocatedFund =
+      (object.withdrawnAllocatedFund !== undefined && object.withdrawnAllocatedFund !== null)
+        ? Coin.fromPartial(object.withdrawnAllocatedFund)
+        : undefined;
+    return message;
+  },
+};
+
+function createBaseMsgWithdrawContinuousFund(): MsgWithdrawContinuousFund {
+  return { recipientAddress: "" };
+}
+
+export const MsgWithdrawContinuousFund = {
+  encode(message: MsgWithdrawContinuousFund, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.recipientAddress !== "") {
+      writer.uint32(10).string(message.recipientAddress);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgWithdrawContinuousFund {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgWithdrawContinuousFund();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.recipientAddress = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgWithdrawContinuousFund {
+    return { recipientAddress: isSet(object.recipientAddress) ? globalThis.String(object.recipientAddress) : "" };
+  },
+
+  toJSON(message: MsgWithdrawContinuousFund): unknown {
+    const obj: any = {};
+    if (message.recipientAddress !== "") {
+      obj.recipientAddress = message.recipientAddress;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgWithdrawContinuousFund>, I>>(base?: I): MsgWithdrawContinuousFund {
+    return MsgWithdrawContinuousFund.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgWithdrawContinuousFund>, I>>(object: I): MsgWithdrawContinuousFund {
+    const message = createBaseMsgWithdrawContinuousFund();
+    message.recipientAddress = object.recipientAddress ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgWithdrawContinuousFundResponse(): MsgWithdrawContinuousFundResponse {
+  return { amount: undefined };
+}
+
+export const MsgWithdrawContinuousFundResponse = {
+  encode(message: MsgWithdrawContinuousFundResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgWithdrawContinuousFundResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgWithdrawContinuousFundResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.amount = Coin.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgWithdrawContinuousFundResponse {
+    return { amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined };
+  },
+
+  toJSON(message: MsgWithdrawContinuousFundResponse): unknown {
+    const obj: any = {};
+    if (message.amount !== undefined) {
+      obj.amount = Coin.toJSON(message.amount);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgWithdrawContinuousFundResponse>, I>>(
+    base?: I,
+  ): MsgWithdrawContinuousFundResponse {
+    return MsgWithdrawContinuousFundResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgWithdrawContinuousFundResponse>, I>>(
+    object: I,
+  ): MsgWithdrawContinuousFundResponse {
+    const message = createBaseMsgWithdrawContinuousFundResponse();
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     return message;
   },
 };
@@ -1097,6 +1181,8 @@ export interface Msg {
   ClaimBudget(request: MsgClaimBudget): Promise<MsgClaimBudgetResponse>;
   /** CreateContinuousFund defines a method to add funds continuously. */
   CreateContinuousFund(request: MsgCreateContinuousFund): Promise<MsgCreateContinuousFundResponse>;
+  /** WithdrawContinuousFund defines a method to withdraw continuous fund allocated. */
+  WithdrawContinuousFund(request: MsgWithdrawContinuousFund): Promise<MsgWithdrawContinuousFundResponse>;
   /** CancelContinuousFund defines a method for cancelling continuous fund. */
   CancelContinuousFund(request: MsgCancelContinuousFund): Promise<MsgCancelContinuousFundResponse>;
 }
@@ -1113,6 +1199,7 @@ export class MsgClientImpl implements Msg {
     this.SubmitBudgetProposal = this.SubmitBudgetProposal.bind(this);
     this.ClaimBudget = this.ClaimBudget.bind(this);
     this.CreateContinuousFund = this.CreateContinuousFund.bind(this);
+    this.WithdrawContinuousFund = this.WithdrawContinuousFund.bind(this);
     this.CancelContinuousFund = this.CancelContinuousFund.bind(this);
   }
   FundCommunityPool(request: MsgFundCommunityPool): Promise<MsgFundCommunityPoolResponse> {
@@ -1143,6 +1230,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgCreateContinuousFund.encode(request).finish();
     const promise = this.rpc.request(this.service, "CreateContinuousFund", data);
     return promise.then((data) => MsgCreateContinuousFundResponse.decode(_m0.Reader.create(data)));
+  }
+
+  WithdrawContinuousFund(request: MsgWithdrawContinuousFund): Promise<MsgWithdrawContinuousFundResponse> {
+    const data = MsgWithdrawContinuousFund.encode(request).finish();
+    const promise = this.rpc.request(this.service, "WithdrawContinuousFund", data);
+    return promise.then((data) => MsgWithdrawContinuousFundResponse.decode(_m0.Reader.create(data)));
   }
 
   CancelContinuousFund(request: MsgCancelContinuousFund): Promise<MsgCancelContinuousFundResponse> {

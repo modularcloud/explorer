@@ -39,18 +39,17 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
     ref,
   ) {
     const id = React.useId();
-    const validationId = React.useId();
+    const errorId = React.useId();
     const helpId = React.useId();
 
     return (
       <div className={cn(className, "flex w-full flex-col gap-1")}>
-        <label htmlFor={id} className={cn(hideLabel && "sr-only")}>
+        <label htmlFor={defaultId ?? id} className={cn(hideLabel && "sr-only")}>
           {label}
         </label>
         <div
           className={cn(
-            className,
-            "flex w-full items-center gap-2 rounded-md border px-3",
+            "flex w-full items-center gap-2 rounded-lg border px-3",
             "bg-white shadow-sm focus-within:border",
             "transition duration-150",
             {
@@ -63,6 +62,7 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
               "py-3": size === "large",
               "cursor-not-allowed bg-disabled": disabled,
             },
+            className,
           )}
         >
           <div className="inline-grid place-items-center flex-shrink-0">
@@ -76,7 +76,7 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
           <input
             {...otherProps}
             ref={ref}
-            aria-describedby={helpId}
+            aria-describedby={`${helpId} ${errorId}`}
             id={defaultId ?? id}
             autoComplete={autoComplete}
             type={type}
@@ -101,9 +101,8 @@ export const Input = React.forwardRef<React.ElementRef<"input">, InputProps>(
 
         {error && (
           <small
-            id={validationId}
-            aria-live="assertive"
-            role="alert"
+            id={errorId}
+            aria-live="polite"
             className={cn("flex gap-1 text-red-400 flex-wrap")}
           >
             {typeof error === "string"

@@ -6,6 +6,10 @@ export const protobufPackage = "celestia.blob.v1";
 
 /** MsgPayForBlobs pays for the inclusion of a blob in the block. */
 export interface MsgPayForBlobs {
+  /**
+   * signer is the bech32 encoded signer address. See
+   * https://en.bitcoin.it/wiki/Bech32.
+   */
   signer: string;
   /**
    * namespaces is a list of namespaces that the blobs are associated with. A
@@ -13,6 +17,7 @@ export interface MsgPayForBlobs {
    * namespaceVersion and the subsequent 28 bytes are the namespaceId.
    */
   namespaces: Uint8Array[];
+  /** blob_sizes is a list of blob sizes (one per blob). Each size is in bytes. */
   blobSizes: number[];
   /** share_commitments is a list of share commitments (one per blob). */
   shareCommitments: Uint8Array[];

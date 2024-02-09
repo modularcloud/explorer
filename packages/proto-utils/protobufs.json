@@ -39,10 +39,7 @@
       "name": "dymension-rdk",
       "main_repo": ["https://github.com/dymensionxyz/dymension-rdk", "proto"],
       "dependencies": [
-        [
-          "https://github.com/dymensionxyz/dymension-rdk",
-          "third_party/proto"
-        ],
+        ["https://github.com/dymensionxyz/dymension-rdk", "third_party/proto"],
         ["https://github.com/regen-network/protobuf", "."]
       ]
     },
@@ -85,6 +82,16 @@
       "main_repo": ["https://github.com/cosmos/cosmos-sdk", "proto"],
       "dependencies": [
         ["https://github.com/regen-network/protobuf", "."],
+        ["https://github.com/cosmos/cosmos-proto", "proto"],
+        ["https://github.com/googleapis/googleapis", "."]
+      ]
+    },
+    {
+      "name": "osmosis",
+      "main_repo": ["https://github.com/osmosis-labs/osmosis", "proto"],
+      "dependencies": [
+        ["https://github.com/cosmos/cosmos-sdk", "proto"],
+        ["https://github.com/cosmos/gogoproto", "."],
         ["https://github.com/cosmos/cosmos-proto", "proto"],
         ["https://github.com/googleapis/googleapis", "."]
       ]
