@@ -22,12 +22,12 @@ export default function Error() {
       <HomeBgMobile className="absolute left-0 top-0 right-0 tab:hidden block z-[1]" />
       <div className="relative z-10 h-full w-full flex flex-col justify-center items-center flex-grow gap-4 p-4 tab:max-w-min mt-12">
         <div className="p-6 tab:p-[3.75rem] h-auto flex-none bg-muted-100 rounded-lg w-full flex justify-center">
-          <ErrorBox networkName={network.displayName} />
+          <ErrorBox networkName={capitalize(network.displayName)} />
         </div>
         <div className="p-2 w-full bg-muted-100 rounded-lg text-sm">
           The&nbsp;
           <strong className="font-medium">
-            {capitalize(network.brandName)} {network.displayName}
+            {capitalize(network.brandName)} {capitalize(network.displayName)}
           </strong>
           &nbsp; network could not be reached. Please try again later.
         </div>
