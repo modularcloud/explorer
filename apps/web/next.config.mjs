@@ -16,7 +16,6 @@ const config = {
   transpilePackages: ["service-manager"],
   experimental: {
     useDeploymentId: true,
-    esmExternals: "loose",
   },
   logging: {
     fetches: {
