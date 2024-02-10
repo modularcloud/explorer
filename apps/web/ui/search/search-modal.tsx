@@ -119,7 +119,7 @@ export function SearchModal({
 
   const { data } = useNetworkStatus(currentNetwork?.id ?? null);
   const currentNetworkHealthStatus = currentNetwork
-    ? data?.[currentNetwork.id].healthy ?? null
+    ? data?.[currentNetwork.id]?.healthy ?? null
     : null;
 
   return (
@@ -213,6 +213,14 @@ export function SearchModal({
                 }
               />
             </div>
+            {currentNetwork && currentNetworkHealthStatus !== null && (
+              <div className="h-full flex tab:hidden items-center justify-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                <Warning className="text-yellow-500 flex-none h-5 w-5" />
+                <span className="whitespace-nowrap text-yellow-900">
+                  Network Unavailable
+                </span>
+              </div>
+            )}
           </DialogHeader>
 
           {!currentNetwork && isNetworkQuery && (
