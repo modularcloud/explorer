@@ -14,6 +14,7 @@ import type {
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { DYMENSION_LOGO_URL } from "~/lib/constants";
+import { useNetworkStatuses } from "./use-network-status";
 
 interface Props {
   className?: string;
@@ -58,7 +59,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
     count: groupedByLines.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_SIZE,
-    overscan: 3,
+    overscan: 2,
     scrollPaddingEnd: 0,
     scrollPaddingStart: 0,
   });
@@ -154,6 +155,9 @@ const BrandChains = React.memo(function BrandChains({
   const options = chains;
   const groupName = options[0].brandName;
   const isInDymensionEcosystem = options[0].platform === "dymension";
+
+  const { data } = useNetworkStatuses(chains.map((network) => network.id));
+
   return (
     <div
       role="gridcell"
@@ -228,6 +232,7 @@ const BrandChains = React.memo(function BrandChains({
         </div>
 
         {options.map((option) => {
+          const healthStatus = data?.[option.id].healthy ?? null;
           return (
             <div
               key={option.id}
@@ -255,6 +260,26 @@ const BrandChains = React.memo(function BrandChains({
                 )}
               >
                 Select
+              </div>
+              <div
+                aria-hidden="true"
+                className={cn(
+                  "opacity-100 relative flex items-center justify-center",
+                  "group-aria-[selected=true]:hidden",
+                  "rounded-lg font-medium pr-1.5",
+                )}
+              >
+                {healthStatus !== null &&
+                  (healthStatus ? (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                    </>
+                  ))}
               </div>
             </div>
           );

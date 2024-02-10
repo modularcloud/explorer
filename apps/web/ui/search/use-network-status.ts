@@ -8,6 +8,8 @@ const networkStatusResponseSchema = z.record(
   }),
 );
 
+const THIRTY_SECONDS_IN_MILLISECONDS = 30 * 1000;
+
 export function useNetworkStatuses(networkSlugs: string[]) {
   const sp = new URLSearchParams();
   for (const slug of networkSlugs) {
@@ -22,9 +24,9 @@ export function useNetworkStatuses(networkSlugs: string[]) {
     },
     {
       errorRetryCount: 2,
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
       keepPreviousData: true,
-      refreshInterval: 5,
+      refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
       revalidateIfStale: true,
     },
   );
@@ -40,9 +42,9 @@ export function useNetworkStatus(networkSlug: string) {
     },
     {
       errorRetryCount: 2,
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
       keepPreviousData: true,
-      refreshInterval: 5,
+      refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
       revalidateIfStale: true,
     },
   );
