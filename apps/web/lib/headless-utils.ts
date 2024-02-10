@@ -22,6 +22,14 @@ export const HeadlessRouteSchema = z.object({
   path: z.array(z.string()),
 });
 
+class PendingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PendingError";
+    Object.setPrototypeOf(this, PendingError.prototype);
+  }
+}
+
 export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
 export async function loadIntegration(
@@ -107,7 +115,7 @@ export async function loadIntegration(
           );
 
           if (response !== null && response.type === "pending") {
-            notFound();
+            throw new PendingError("Pending Resource");
           }
 
           if (response === null || response.type === "error") {
@@ -159,11 +167,29 @@ export async function loadPage({
     revalidateTimeInSeconds,
   );
 
+  if (route.path.length > 1) throw new Error("Not connected");
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
-  // TODO : to remove
-  if (route.path.length !== 1) throw new Error("Load Page error");
-  const resolution = await integration.resolveRoute(fixedPath, context);
+  let resolution: Awaited<ReturnType<typeof integration.resolveRoute>> = null;
+
+  try {
+    resolution = await integration.resolveRoute(fixedPath, context);
+  } catch (error) {
+    if (error instanceof PendingError) {
+      /**
+       * Pending responses are for items that cannot be found, but may exist in the future.
+       * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+       * Therefore, in the short-term we will treat this as any other page that is not found.
+       * However, we will have a special treatment for this in the future.
+       */
+      notFound();
+    }
+
+    const networkStatus = await checkIfNetworkIsOnline(route.network);
+    if (!networkStatus) {
+      throw error;
+    }
+  }
 
   if (!resolution) {
     notFound();
@@ -180,10 +206,19 @@ export async function loadPage({
   }
 
   if (resolution.type === "error") {
-    throw new Error(resolution.error);
+    const networkStatus = await checkIfNetworkIsOnline(route.network);
+    if (!networkStatus) {
+      throw new Error(resolution.error);
+    }
+    notFound();
   }
 
   return resolution.result as Page;
+}
+
+// TODO : call the correct API
+export async function checkIfNetworkIsOnline(network: string) {
+  return Math.random() > 0.5;
 }
 
 export async function search(networkSlug: string, query: string) {

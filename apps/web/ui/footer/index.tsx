@@ -1,9 +1,18 @@
 import * as React from "react";
 import Link from "next/link";
+import { cn } from "~/ui/shadcn/utils";
 
-export function Footer() {
+interface Props {
+  className?: string;
+}
+export function Footer(props: Props) {
   return (
-    <footer className="py-10 text-center w-full flex flex-col gap-5 text-xs">
+    <footer
+      className={cn(
+        "py-10 text-center w-full flex flex-col gap-5 text-xs",
+        props.className,
+      )}
+    >
       <hr />
       <span className="text-muted">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.

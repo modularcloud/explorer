@@ -5,8 +5,9 @@ import { Text } from "./text";
 
 type Props = {
   type?: "working" | "warning" | "error";
+  networkName: string;
 };
-export function Remote({ type = "working" }: Props) {
+export function Remote({ type = "working", networkName }: Props) {
   return (
     <div>
       <svg
@@ -151,7 +152,7 @@ export function Remote({ type = "working" }: Props) {
           </filter>
         </defs>
       </svg>
-      <Text type={type} subtitle="Coin Hunter" title="Node" />
+      <Text type={type} subtitle={networkName} title="Node" />
     </div>
   );
 }
