@@ -117,7 +117,16 @@ export function SearchModal({
     [onSelectOption],
   );
 
-  const { data } = useNetworkStatus(currentNetwork?.id ?? null);
+  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
+  let currentNetworkToCheck: string | null = null;
+  if (
+    currentNetwork &&
+    !alwaysOnlineChainBrands.includes(currentNetwork.brandName)
+  ) {
+    currentNetworkToCheck = currentNetwork.id;
+  }
+
+  const { data } = useNetworkStatus(currentNetworkToCheck);
   const currentNetworkHealthStatus = currentNetwork
     ? data?.[currentNetwork.id]?.healthy ?? null
     : null;
@@ -170,7 +179,8 @@ export function SearchModal({
                 helpText="Search blocks, transactions, addresses, or namespaces"
                 renderTrailingIcon={(cls) =>
                   currentNetwork &&
-                  currentNetworkHealthStatus !== null && (
+                  currentNetworkHealthStatus !== null &&
+                  currentNetworkHealthStatus && (
                     <div className="h-full hidden tab:flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
                       <Warning className="text-yellow-500 flex-none h-4 w-4" />
                       <span className="whitespace-nowrap text-yellow-900">
@@ -213,14 +223,16 @@ export function SearchModal({
                 }
               />
             </div>
-            {currentNetwork && currentNetworkHealthStatus !== null && (
-              <div className="h-full flex tab:hidden items-center justify-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
-                <Warning className="text-yellow-500 flex-none h-5 w-5" />
-                <span className="whitespace-nowrap text-yellow-900">
-                  Network Unavailable
-                </span>
-              </div>
-            )}
+            {currentNetwork &&
+              currentNetworkHealthStatus !== null &&
+              currentNetworkHealthStatus && (
+                <div className="h-full flex tab:hidden items-center justify-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                  <Warning className="text-yellow-500 flex-none h-5 w-5" />
+                  <span className="whitespace-nowrap text-yellow-900">
+                    Network Unavailable
+                  </span>
+                </div>
+              )}
           </DialogHeader>
 
           {!currentNetwork && isNetworkQuery && (

@@ -156,10 +156,10 @@ const BrandChains = React.memo(function BrandChains({
   const groupName = options[0].brandName;
   const isInDymensionEcosystem = options[0].platform === "dymension";
 
-  const excludedChainBrands = ["celestia", "eclipse"];
+  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   const { data } = useNetworkStatuses(
     chains.map((network) => network.id),
-    !excludedChainBrands.includes(chains[0].brandName),
+    !alwaysOnlineChainBrands.includes(chains[0].brandName),
   );
 
   return (
@@ -231,7 +231,9 @@ const BrandChains = React.memo(function BrandChains({
 
         {options.map((option) => {
           const healthStatus = data?.[option.id].healthy ?? null;
-          const isAlwaysOnline = excludedChainBrands.includes(option.brandName);
+          const isAlwaysOnline = alwaysOnlineChainBrands.includes(
+            option.brandName,
+          );
           return (
             <div
               key={option.id}

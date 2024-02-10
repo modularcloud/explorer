@@ -30,7 +30,7 @@ export function useNetworkStatuses(
       revalidateOnFocus: false,
       keepPreviousData: true,
       refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
-      revalidateIfStale: true,
+      revalidateIfStale: false,
     },
   );
 }
@@ -48,7 +48,7 @@ export function useNetworkStatus(networkSlug: string | null) {
       revalidateOnFocus: false,
       keepPreviousData: true,
       refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
-      revalidateIfStale: true,
+      revalidateIfStale: false,
     },
   );
 }
