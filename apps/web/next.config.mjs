@@ -24,6 +24,7 @@ const config = {
     },
   },
   images: {
+    dangerouslyAllowSVG: true,
     minimumCacheTTL: 31_536_000, // One year
     remotePatterns: [
       {
