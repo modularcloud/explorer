@@ -156,7 +156,11 @@ const BrandChains = React.memo(function BrandChains({
   const groupName = options[0].brandName;
   const isInDymensionEcosystem = options[0].platform === "dymension";
 
-  const { data } = useNetworkStatuses(chains.map((network) => network.id));
+  const excludedChainBrands = ["celestia", "eclipse"];
+  const { data } = useNetworkStatuses(
+    chains.map((network) => network.id),
+    !excludedChainBrands.includes(chains[0].brandName),
+  );
 
   return (
     <div
@@ -175,7 +179,7 @@ const BrandChains = React.memo(function BrandChains({
         aria-labelledby={`row-${rowIndex}-col-${colIndex}-header`}
       >
         <div
-          className="flex items-center justify-between gap-2 px-3 py-1.5"
+          className="flex items-center justify-between gap-2 pl-3 py-1.5"
           aria-hidden="true"
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
@@ -233,6 +237,7 @@ const BrandChains = React.memo(function BrandChains({
 
         {options.map((option) => {
           const healthStatus = data?.[option.id].healthy ?? null;
+          const isAlwaysOnline = excludedChainBrands.includes(option.brandName);
           return (
             <div
               key={option.id}
@@ -269,7 +274,13 @@ const BrandChains = React.memo(function BrandChains({
                   "rounded-lg font-medium pr-1.5",
                 )}
               >
-                {healthStatus !== null &&
+                {isAlwaysOnline ? (
+                  <>
+                    <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                  </>
+                ) : (
+                  healthStatus !== null &&
                   (healthStatus ? (
                     <>
                       <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
@@ -279,7 +290,8 @@ const BrandChains = React.memo(function BrandChains({
                     <>
                       <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500"></span>
                     </>
-                  ))}
+                  ))
+                )}
               </div>
             </div>
           );

@@ -10,13 +10,16 @@ const networkStatusResponseSchema = z.record(
 
 const THIRTY_SECONDS_IN_MILLISECONDS = 30 * 1000;
 
-export function useNetworkStatuses(networkSlugs: string[]) {
+export function useNetworkStatuses(
+  networkSlugs: string[],
+  enabled: boolean = true,
+) {
   const sp = new URLSearchParams();
   for (const slug of networkSlugs) {
     sp.append("networkSlugs", slug);
   }
   return useSWR(
-    `/api/health?${sp.toString()}`,
+    enabled ? `/api/health?${sp.toString()}` : null,
     async (url) => {
       return fetch(url)
         .then((r) => r.json())
@@ -32,9 +35,9 @@ export function useNetworkStatuses(networkSlugs: string[]) {
   );
 }
 
-export function useNetworkStatus(networkSlug: string) {
+export function useNetworkStatus(networkSlug: string | null) {
   return useSWR(
-    `/api/health?networkSlugs=${networkSlug}`,
+    networkSlug ? `/api/health?networkSlugs=${networkSlug}` : null,
     async (url) => {
       return fetch(url)
         .then((r) => r.json())

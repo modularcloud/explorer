@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "~/ui/shadcn/components/ui/dialog";
 import { Input } from "~/ui/input";
-import { ArrowRight, Search } from "~/ui/icons";
+import { ArrowRight, Search, Warning } from "~/ui/icons";
 import { LoadingIndicator } from "~/ui/loading-indicator";
 import { IntegrationActionListView } from "./integration-action-list-view";
 import { useSearcheableEntities } from "./use-searcheable-entities";
@@ -29,6 +29,7 @@ import type {
   GroupedNetworkChains,
   NetworkChain,
 } from "~/lib/grouped-network-chains";
+import { useNetworkStatus } from "./use-network-status";
 interface Props {
   defaultNetwork: {
     value: NetworkChain;
@@ -116,6 +117,11 @@ export function SearchModal({
     [onSelectOption],
   );
 
+  const { data } = useNetworkStatus(currentNetwork?.id ?? null);
+  const currentNetworkHealthStatus = currentNetwork
+    ? data?.[currentNetwork.id].healthy ?? null
+    : null;
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -162,6 +168,17 @@ export function SearchModal({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 helpText="Search blocks, transactions, addresses, or namespaces"
+                renderTrailingIcon={(cls) =>
+                  currentNetwork &&
+                  currentNetworkHealthStatus !== null && (
+                    <div className="h-full flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                      <Warning className="text-yellow-500 flex-none h-4 w-4" />
+                      <span className="whitespace-nowrap text-yellow-900">
+                        Network Unavailable
+                      </span>
+                    </div>
+                  )
+                }
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
                     <div className="flex items-center gap-2 p-1">
