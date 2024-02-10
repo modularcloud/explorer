@@ -171,7 +171,7 @@ export function SearchModal({
                 renderTrailingIcon={(cls) =>
                   currentNetwork &&
                   currentNetworkHealthStatus !== null && (
-                    <div className="h-full flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                    <div className="h-full hidden tab:flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
                       <Warning className="text-yellow-500 flex-none h-4 w-4" />
                       <span className="whitespace-nowrap text-yellow-900">
                         Network Unavailable
