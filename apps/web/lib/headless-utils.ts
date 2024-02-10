@@ -167,7 +167,6 @@ export async function loadPage({
     revalidateTimeInSeconds,
   );
 
-  if (route.path.length > 1) throw new Error("Not connected");
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
   let resolution: Awaited<ReturnType<typeof integration.resolveRoute>> = null;

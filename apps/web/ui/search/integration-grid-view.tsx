@@ -171,40 +171,59 @@ const BrandChains = React.memo(function BrandChains({
         aria-labelledby={`row-${rowIndex}-col-${colIndex}-header`}
       >
         <div
-          className="flex items-center gap-2 px-3 py-1.5"
+          className="flex items-center justify-between gap-2 px-3 py-1.5"
           aria-hidden="true"
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
+          style={{
+            // @ts-expect-error this is a CSS variable
+            "--color-primary": chains[0].brandColor.replaceAll(",", ""),
+          }}
         >
-          <span>{capitalize(groupName)}</span>
-          <span className="sr-only" aria-hidden="true" id={`${groupName}-logo`}>
-            {groupName} logo
-          </span>
-          <Image
-            src={options[0].logoURL}
-            height="16"
-            width="16"
-            alt={``}
-            aria-describedby={`${groupName}-logo`}
-            className="border-none rounded-full object-center w-4 h-4 aspect-square"
-          />
-          {isInDymensionEcosystem && (
-            <Tooltip label="Froopyland">
-              <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
-                <Image
-                  src={DYMENSION_LOGO_URL}
-                  height="18"
-                  width="18"
-                  alt={``}
-                  aria-describedby={`${groupName}-logo`}
-                  className="border-none rounded-full object-center w-[1.125rem] h-[1.125rem] aspect-square"
-                />
-                <FancyCheck
-                  className="text-gray-400 w-6 h-6 flex-none"
-                  aria-hidden="true"
-                />
-              </div>
-            </Tooltip>
+          <div className="flex gap-2 items-center">
+            <span>{capitalize(groupName)}</span>
+            <span
+              className="sr-only"
+              aria-hidden="true"
+              id={`${groupName}-logo`}
+            >
+              {groupName} logo
+            </span>
+            <Image
+              src={options[0].logoURL}
+              height="16"
+              width="16"
+              alt={``}
+              aria-describedby={`${groupName}-logo`}
+              className="border-none rounded-full object-center w-4 h-4 aspect-square"
+            />
+            {isInDymensionEcosystem && (
+              <Tooltip label="Froopyland">
+                <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
+                  <Image
+                    src={DYMENSION_LOGO_URL}
+                    height="18"
+                    width="18"
+                    alt={``}
+                    aria-describedby={`${groupName}-logo`}
+                    className="border-none rounded-full object-center w-[1.125rem] h-[1.125rem] aspect-square"
+                  />
+                  <FancyCheck
+                    className="text-gray-400 w-6 h-6 flex-none"
+                    aria-hidden="true"
+                  />
+                </div>
+              </Tooltip>
+            )}
+          </div>
+          {chains[0].verified && (
+            <div className="flex text-xs rounded-full pl-2.5 pr-1 gap-1 items-center bg-primary/10 border border-primary/5">
+              <span>Verified</span>
+              <FancyCheck
+                className="text-primary h-6 w-6 flex-none"
+                aria-hidden="true"
+              />
+            </div>
           )}
         </div>
 
