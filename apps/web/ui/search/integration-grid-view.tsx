@@ -14,6 +14,7 @@ import type {
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { DYMENSION_LOGO_URL } from "~/lib/constants";
+import { useNetworkStatuses } from "./use-network-status";
 
 interface Props {
   className?: string;
@@ -58,7 +59,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
     count: groupedByLines.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_SIZE,
-    overscan: 3,
+    overscan: 2,
     scrollPaddingEnd: 0,
     scrollPaddingStart: 0,
   });
@@ -154,6 +155,13 @@ const BrandChains = React.memo(function BrandChains({
   const options = chains;
   const groupName = options[0].brandName;
   const isInDymensionEcosystem = options[0].platform === "dymension";
+
+  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
+  const { data } = useNetworkStatuses(
+    chains.map((network) => network.id),
+    !alwaysOnlineChainBrands.includes(chains[0].brandName),
+  );
+
   return (
     <div
       role="gridcell"
@@ -175,6 +183,10 @@ const BrandChains = React.memo(function BrandChains({
           aria-hidden="true"
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
+          style={{
+            // @ts-expect-error this is a CSS variable
+            "--color-primary": chains[0].brandColor.replaceAll(",", ""),
+          }}
         >
           <span>{capitalize(groupName)}</span>
           <span className="sr-only" aria-hidden="true" id={`${groupName}-logo`}>
@@ -206,9 +218,22 @@ const BrandChains = React.memo(function BrandChains({
               </div>
             </Tooltip>
           )}
+          {chains[0].verified && (
+            <div className="flex text-xs rounded-full pl-2.5 pr-1 gap-1 items-center bg-primary/10 border border-primary/5">
+              <span>Verified</span>
+              <FancyCheck
+                className="text-primary h-6 w-6 flex-none"
+                aria-hidden="true"
+              />
+            </div>
+          )}
         </div>
 
         {options.map((option) => {
+          const healthStatus = data?.[option.id].healthy ?? null;
+          const isAlwaysOnline = alwaysOnlineChainBrands.includes(
+            option.brandName,
+          );
           return (
             <div
               key={option.id}
@@ -236,6 +261,33 @@ const BrandChains = React.memo(function BrandChains({
                 )}
               >
                 Select
+              </div>
+              <div
+                aria-hidden="true"
+                className={cn(
+                  "opacity-100 relative flex items-center justify-center",
+                  "group-aria-[selected=true]:hidden",
+                  "rounded-lg font-medium pr-1.5",
+                )}
+              >
+                {isAlwaysOnline ? (
+                  <>
+                    <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                  </>
+                ) : (
+                  healthStatus !== null &&
+                  (healthStatus ? (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                    </>
+                  ))
+                )}
               </div>
             </div>
           );

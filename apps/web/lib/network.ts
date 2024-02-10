@@ -3,6 +3,7 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
+import { DYMENSION_LOGO_URL } from "./constants";
 
 export const singleNetworkSchema = z.object({
   config: z.object({

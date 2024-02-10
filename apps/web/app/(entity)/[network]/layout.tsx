@@ -50,19 +50,7 @@ export default async function BlockLayout({
 
           {/* Down gradient  */}
           <div className="fixed w-full bottom-0 z-30 left-0 h-10 !bg-gradient-to-b !rounded-none from-transparent bg-transparent to-mid-dark-100" />
-          {rightpanel && (
-            <aside
-              className={cn(
-                // the height of the sidebar is the total height of the screen - the height of the <Header /> component
-                "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
-                "bg-muted-100 hidden lg:block",
-                "fixed top-[63px] bottom-0 right-0",
-                "overflow-hidden z-40",
-              )}
-            >
-              {rightpanel}
-            </aside>
-          )}
+          {rightpanel}
         </div>
       </main>
     </RQTableProvider>

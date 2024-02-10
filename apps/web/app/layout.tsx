@@ -14,6 +14,7 @@ import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 // types
 import type { Metadata } from "next";
+import { SearchOptionProvider } from "~/ui/search-options-provider";
 
 const interDisplay = localFont({
   src: [
@@ -71,13 +72,15 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <SkipToMainContent />
-        <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
-          {children}
-          {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
-          <Toaster />
-          <Analytics />
-          <SpeedInsights />
-        </GlobalHotkeyProvider>
+        <SearchOptionProvider value={searchOptionGroups}>
+          <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
+            {children}
+            {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
+            <Toaster />
+            <Analytics />
+            <SpeedInsights />
+          </GlobalHotkeyProvider>
+        </SearchOptionProvider>
       </body>
     </html>
   );

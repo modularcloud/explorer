@@ -41,10 +41,10 @@ export async function HeaderTabs({ params }: Props) {
       getSingleNetworkCached(params.network),
     ]);
   } catch (error) {
-    // pass
+    throw error;
   }
 
-  if (!page || !network) {
+  if (!network) {
     notFound();
   }
 
