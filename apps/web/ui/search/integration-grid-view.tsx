@@ -219,13 +219,14 @@ const BrandChains = React.memo(function BrandChains({
             </Tooltip>
           )}
           {chains[0].verified && (
-            <div className="flex text-xs rounded-full pl-2.5 pr-1 gap-1 items-center bg-primary/10 border border-primary/5">
-              <span>Verified</span>
-              <FancyCheck
-                className="text-primary h-6 w-6 flex-none"
-                aria-hidden="true"
-              />
-            </div>
+            <Tooltip label="This chain is verified">
+              <span>
+                <FancyCheck
+                  className="text-primary h-6 w-6 flex-none"
+                  aria-hidden="true"
+                />
+              </span>
+            </Tooltip>
           )}
         </div>
 
