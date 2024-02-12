@@ -143,6 +143,7 @@ export async function getSingleNetwork(slug: string) {
     if (integration.brand === "dymension") {
       integration.config.widgetLayout = "Dymension";
       integration.config.primaryColor = "29 13% 45%";
+      integration.config.logoUrl = DYMENSION_LOGO_URL;
     }
 
     return integration;
