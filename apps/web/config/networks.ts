@@ -125,7 +125,7 @@ const NETWORK_CONFIGS: Record<string, NetworkConfig> = {
     },
   },
   ECLIPSE_WORLDS: {
-    mcId: "ep/3",
+    mcId: "1290",
     displayName: "Worlds",
     isTestnet: true,
     isVerified: false,
