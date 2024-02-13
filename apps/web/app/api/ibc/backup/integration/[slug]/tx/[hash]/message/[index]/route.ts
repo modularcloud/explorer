@@ -3,7 +3,7 @@ import {
   parseAcknowledgement,
   parseRecv,
   parseTransfer,
-} from "~/app/api/ibc/helpers";
+} from "~/app/api/ibc/backup/helpers";
 import { getSingleNetwork } from "~/lib/network";
 
 export async function GET(
