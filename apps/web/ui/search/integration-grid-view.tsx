@@ -264,7 +264,6 @@ const BrandChains = React.memo(function BrandChains({
                 Select
               </div>
               <div
-                aria-hidden="true"
                 className={cn(
                   "opacity-100 relative flex items-center justify-center",
                   "group-aria-[selected=true]:hidden",
@@ -274,19 +273,23 @@ const BrandChains = React.memo(function BrandChains({
                 {isAlwaysOnline ? (
                   <>
                     <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
-                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                      <span className="sr-only">Network online</span>
+                    </span>
                   </>
                 ) : (
                   healthStatus !== null &&
-                  (healthStatus ? (
+                  (healthStatus === true ? (
                     <>
                       <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
-                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                        <span className="sr-only">Network online</span>
+                      </span>
                     </>
                   ) : (
-                    <>
-                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                    </>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                      <span className="sr-only">Network unavailable</span>
+                    </span>
                   ))
                 )}
               </div>

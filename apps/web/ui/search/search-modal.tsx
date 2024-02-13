@@ -180,7 +180,7 @@ export function SearchModal({
                 renderTrailingIcon={(cls) =>
                   currentNetwork &&
                   currentNetworkHealthStatus !== null &&
-                  currentNetworkHealthStatus && (
+                  currentNetworkHealthStatus === false && (
                     <div className="h-full hidden tab:flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
                       <Warning className="text-yellow-500 flex-none h-4 w-4" />
                       <span className="whitespace-nowrap text-yellow-900">
@@ -225,7 +225,7 @@ export function SearchModal({
             </div>
             {currentNetwork &&
               currentNetworkHealthStatus !== null &&
-              currentNetworkHealthStatus && (
+              currentNetworkHealthStatus === false && (
                 <div className="h-full flex tab:hidden items-center justify-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
                   <Warning className="text-yellow-500 flex-none h-5 w-5" />
                   <span className="whitespace-nowrap text-yellow-900">
