@@ -278,7 +278,7 @@ const BrandChains = React.memo(function BrandChains({
                   </>
                 ) : (
                   healthStatus !== null &&
-                  (healthStatus ? (
+                  (healthStatus === true ? (
                     <>
                       <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
                       <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500"></span>
