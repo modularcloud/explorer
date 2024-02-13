@@ -11,6 +11,7 @@ import {
   truncateHash,
 } from "~/lib/shared-utils";
 import { cn } from "../shadcn/utils";
+import { CopyableValue } from "../copyable-value";
 
 export type HeaderEntityHighlightProps = {
   groupedNetworks: GroupedNetworkChains;
@@ -44,7 +45,6 @@ export function HeaderEntityHighlight({
       {/* Network logo, name & chainName */}
       <div className="inline-flex gap-2 items-center flex-none">
         <Image
-          // FIXME : this is hardcoded, but it needs to be returned from the API
           src={network.logoURL}
           width={16}
           height={16}
@@ -61,14 +61,15 @@ export function HeaderEntityHighlight({
       </div>
 
       {/* Query */}
-      <p
+      <CopyableValue
+        value={query}
         className={cn(
           "text-muted min-w-0",
           "whitespace-nowrap text-ellipsis overflow-x-hidden flex-shrink flex-grow-0",
         )}
       >
         {entityType}&nbsp;{query}
-      </p>
+      </CopyableValue>
     </div>
   );
 }
