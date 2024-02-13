@@ -194,7 +194,7 @@ export async function loadPage({
 
     const networkStatus = await checkIfNetworkIsOnline(route.network);
     if (!networkStatus) {
-      throw error;
+      throw new UnhealthyNetworkError(String(error));
     }
   }
 
