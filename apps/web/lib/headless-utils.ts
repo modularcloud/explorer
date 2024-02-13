@@ -9,7 +9,7 @@ import {
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
-import { parseHeadlessRouteVercelFix } from "./shared-utils";
+import { jsonFetch, parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
@@ -21,6 +21,22 @@ export const HeadlessRouteSchema = z.object({
   network: z.string(),
   path: z.array(z.string()),
 });
+
+class PendingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PendingError";
+    Object.setPrototypeOf(this, PendingError.prototype);
+  }
+}
+
+class UnhealthyNetworkError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnhealthyNetworkError";
+    Object.setPrototypeOf(this, UnhealthyNetworkError.prototype);
+  }
+}
 
 export type HeadlessRoute = z.infer<typeof HeadlessRouteSchema>;
 
@@ -106,11 +122,15 @@ export async function loadIntegration(
             additionalContext,
           );
 
-          if (response === null || response.type !== "success") {
-            throw new Error("Not found");
+          if (response !== null && response.type === "pending") {
+            throw new PendingError("Pending Resource");
           }
 
-          if (!includeTrace && response !== null) {
+          if (response === null || response.type === "error") {
+            throw response?.error ?? new Error("unknown Error");
+          }
+
+          if (!includeTrace) {
             const { trace, ...rest } = response;
             return rest;
           }
@@ -157,14 +177,12 @@ export async function loadPage({
 
   const fixedPath = parseHeadlessRouteVercelFix(route).path;
 
+  let resolution: Awaited<ReturnType<typeof integration.resolveRoute>> = null;
+
   try {
-    const resolution = await integration.resolveRoute(fixedPath, context);
-
-    if (!resolution) {
-      notFound();
-    }
-
-    if (resolution.type === "pending") {
+    resolution = await integration.resolveRoute(fixedPath, context);
+  } catch (error) {
+    if (error instanceof PendingError) {
       /**
        * Pending responses are for items that cannot be found, but may exist in the future.
        * For example, if the latest block is 100, and we request block 101, we will get a pending response.
@@ -174,14 +192,87 @@ export async function loadPage({
       notFound();
     }
 
-    if (resolution.type === "error") {
-      throw new Error(resolution.error);
+    const networkStatus = await checkIfNetworkIsOnline(route.network);
+    if (!networkStatus) {
+      throw new UnhealthyNetworkError(String(error));
     }
+  }
 
-    return resolution.result as Page;
-  } catch (error) {
+  if (!resolution) {
     notFound();
   }
+
+  if (resolution.type === "pending") {
+    /**
+     * Pending responses are for items that cannot be found, but may exist in the future.
+     * For example, if the latest block is 100, and we request block 101, we will get a pending response.
+     * Therefore, in the short-term we will treat this as any other page that is not found.
+     * However, we will have a special treatment for this in the future.
+     */
+    notFound();
+  }
+
+  if (resolution.type === "error") {
+    const networkStatus = await checkIfNetworkIsOnline(route.network);
+    if (!networkStatus) {
+      throw new UnhealthyNetworkError(resolution.error);
+    }
+    notFound();
+  }
+
+  return resolution.result as Page;
+}
+
+type NetworkStatusResponse = {
+  healthy: boolean;
+  catchingUp: boolean;
+  earliestBlockHeight: number;
+  latestBlockHeight: number;
+} | null;
+
+export async function checkIfNetworkIsOnline(
+  network: string,
+): Promise<NetworkStatusResponse> {
+  const rpcStatusResponseSchema = z.object({
+    result: z.object({
+      sync_info: z.object({
+        catching_up: z.boolean(),
+        earliest_block_height: z.coerce.number(),
+        latest_block_height: z.coerce.number(),
+      }),
+    }),
+  });
+
+  const ONE_MINUTE = 1 * 60;
+
+  const fn = nextCache(
+    async (network: string) => {
+      const chain = await getSingleNetworkCached(network);
+      const rpcUrl = chain?.config.rpcUrls.cosmos;
+      if (!rpcUrl) {
+        return null;
+      }
+      try {
+        const { result } = await jsonFetch(`${rpcUrl}/status`).then(
+          (response) => rpcStatusResponseSchema.parse(response),
+        );
+
+        return {
+          healthy: true,
+          catchingUp: result.sync_info.catching_up,
+          latestBlockHeight: result.sync_info.latest_block_height,
+          earliestBlockHeight: result.sync_info.earliest_block_height,
+        } satisfies NetworkStatusResponse;
+      } catch (error) {
+        return null;
+      }
+    },
+    {
+      tags: CACHE_KEYS.networks.status(network),
+      revalidateTimeInSeconds: ONE_MINUTE,
+    },
+  );
+  return await fn(network);
 }
 
 export async function search(networkSlug: string, query: string) {

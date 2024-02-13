@@ -10,11 +10,12 @@ export const metadata = {
 export default function NotFound() {
   return (
     <main
-      className="flex h-screen w-full flex-col items-center justify-center gap-6 text-center"
+      id="main-content"
       style={{
         // @ts-expect-error this is a CSS variable
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
+      className="flex w-full flex-col h-lvh items-center justify-center gap-6 text-center"
     >
       <svg
         width="40"
@@ -44,9 +45,9 @@ export default function NotFound() {
         <h1 className="text-foreground text-xl font-semibold">
           Page Not Found
         </h1>
-        <p className="text-night-700">This page does not exist.</p>
+        <p className="text-muted">Please request something else.</p>
         <Link href="/" className="underline text-primary">
-          Go home
+          Go to the homepage
         </Link>
       </div>
     </main>

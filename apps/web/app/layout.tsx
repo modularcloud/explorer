@@ -6,6 +6,7 @@ import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { env } from "~/env.mjs";
 
 // utils
 import localFont from "next/font/local";
@@ -13,6 +14,7 @@ import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 // types
 import type { Metadata } from "next";
+import { SearchOptionProvider } from "~/ui/search-options-provider";
 
 const interDisplay = localFont({
   src: [
@@ -48,6 +50,7 @@ export const metadata: Metadata = {
   description: "A block exporer for modular blockchains.",
   keywords:
     "block explorer, modular cloud, modular, blockchain, ethereum, evm, cosmos, ibc, rollapp, rollups, namespace, data availability, celestia, eclipse, nautilus, dymension, caldera, worlds, aeg, aether games",
+  metadataBase: new URL(env.NEXT_PUBLIC_PRODUCTION_URL),
 };
 
 export default async function RootLayout({
@@ -69,13 +72,15 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <SkipToMainContent />
-        <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
-          {children}
-          {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
-          <Toaster />
-          <Analytics />
-          <SpeedInsights />
-        </GlobalHotkeyProvider>
+        <SearchOptionProvider value={searchOptionGroups}>
+          <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
+            {children}
+            {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
+            <Toaster />
+            <Analytics />
+            <SpeedInsights />
+          </GlobalHotkeyProvider>
+        </SearchOptionProvider>
       </body>
     </html>
   );

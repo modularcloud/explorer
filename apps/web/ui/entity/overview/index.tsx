@@ -12,7 +12,7 @@ import { FlowChart } from "~/ui/flow";
 
 type Props = {
   properties: Record<string, Value>;
-  isIBC?: boolean;
+  isIBC?: number;
 };
 
 export async function Overview({ properties, isIBC }: Props) {
@@ -21,7 +21,9 @@ export async function Overview({ properties, isIBC }: Props) {
   }, [properties]);
   return (
     <>
-      {isIBC ? <FlowChart /> : null}
+      {isIBC !== undefined && Number(isIBC) >= 0 ? (
+        <FlowChart index={isIBC} />
+      ) : null}
       <section className="pb-4 h-full overflow-y-auto">
         <OverviewEntryList entries={entries} />
       </section>

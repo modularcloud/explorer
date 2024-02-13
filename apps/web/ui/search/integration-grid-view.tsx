@@ -13,6 +13,9 @@ import type {
 } from "~/lib/grouped-network-chains";
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
+import { DYMENSION_LOGO_URL } from "~/lib/constants";
+import { useNetworkStatuses } from "./use-network-status";
+
 interface Props {
   className?: string;
   optionGroups: GroupedNetworkChains;
@@ -56,7 +59,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
     count: groupedByLines.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => ROW_SIZE,
-    overscan: 3,
+    overscan: 2,
     scrollPaddingEnd: 0,
     scrollPaddingStart: 0,
   });
@@ -151,9 +154,14 @@ const BrandChains = React.memo(function BrandChains({
 }: BrandChainsProps) {
   const options = chains;
   const groupName = options[0].brandName;
-  const DYMENSION_LOGO_URL =
-    "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";
   const isInDymensionEcosystem = options[0].platform === "dymension";
+
+  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
+  const { data } = useNetworkStatuses(
+    chains.map((network) => network.id),
+    !alwaysOnlineChainBrands.includes(chains[0].brandName),
+  );
+
   return (
     <div
       role="gridcell"
@@ -175,6 +183,10 @@ const BrandChains = React.memo(function BrandChains({
           aria-hidden="true"
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
+          style={{
+            // @ts-expect-error this is a CSS variable
+            "--color-primary": chains[0].brandColor.replaceAll(",", ""),
+          }}
         >
           <span>{capitalize(groupName)}</span>
           <span className="sr-only" aria-hidden="true" id={`${groupName}-logo`}>
@@ -206,9 +218,23 @@ const BrandChains = React.memo(function BrandChains({
               </div>
             </Tooltip>
           )}
+          {chains[0].verified && (
+            <Tooltip label="This chain is verified">
+              <span>
+                <FancyCheck
+                  className="text-primary h-6 w-6 flex-none"
+                  aria-hidden="true"
+                />
+              </span>
+            </Tooltip>
+          )}
         </div>
 
         {options.map((option) => {
+          const healthStatus = data?.[option.id].healthy ?? null;
+          const isAlwaysOnline = alwaysOnlineChainBrands.includes(
+            option.brandName,
+          );
           return (
             <div
               key={option.id}
@@ -236,6 +262,36 @@ const BrandChains = React.memo(function BrandChains({
                 )}
               >
                 Select
+              </div>
+              <div
+                className={cn(
+                  "opacity-100 relative flex items-center justify-center",
+                  "group-aria-[selected=true]:hidden",
+                  "rounded-lg font-medium pr-1.5",
+                )}
+              >
+                {isAlwaysOnline ? (
+                  <>
+                    <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                      <span className="sr-only">Network online</span>
+                    </span>
+                  </>
+                ) : (
+                  healthStatus !== null &&
+                  (healthStatus === true ? (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                        <span className="sr-only">Network online</span>
+                      </span>
+                    </>
+                  ) : (
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                      <span className="sr-only">Network unavailable</span>
+                    </span>
+                  ))
+                )}
               </div>
             </div>
           );

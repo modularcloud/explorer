@@ -38,7 +38,7 @@ const SvgRadialBgIcon = (props: SVGProps<SVGSVGElement>) => (
         width="957"
         height="378"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend

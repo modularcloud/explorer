@@ -1,6 +1,20 @@
+import Link from "next/link";
+import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+
+export const metadata = {
+  title: "Page Not found - Modular Cloud",
+};
+
 export default function NotFound() {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-6 text-center">
+    <main
+      id="main-content"
+      style={{
+        // @ts-expect-error this is a CSS variable
+        "--color-primary": DEFAULT_BRAND_COLOR,
+      }}
+      className="flex w-full flex-col h-lvh items-center justify-center gap-6 text-center"
+    >
       <svg
         width="40"
         height="40"
@@ -26,9 +40,14 @@ export default function NotFound() {
       </svg>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-foreground text-xl font-semibold">Not Found</h2>
+        <h1 className="text-foreground text-xl font-semibold">
+          Page Not Found
+        </h1>
         <p className="text-muted">Please request something else.</p>
+        <Link href="/" className="underline text-primary">
+          Go to the homepage
+        </Link>
       </div>
-    </div>
+    </main>
   );
 }
