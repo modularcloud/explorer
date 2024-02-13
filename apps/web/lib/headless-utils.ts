@@ -9,7 +9,7 @@ import {
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "./network";
-import { parseHeadlessRouteVercelFix, wait } from "./shared-utils";
+import { jsonFetch, parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
@@ -27,6 +27,14 @@ class PendingError extends Error {
     super(message);
     this.name = "PendingError";
     Object.setPrototypeOf(this, PendingError.prototype);
+  }
+}
+
+class UnhealthyNetworkError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnhealthyNetworkError";
+    Object.setPrototypeOf(this, UnhealthyNetworkError.prototype);
   }
 }
 
@@ -207,7 +215,7 @@ export async function loadPage({
   if (resolution.type === "error") {
     const networkStatus = await checkIfNetworkIsOnline(route.network);
     if (!networkStatus) {
-      throw new Error(resolution.error);
+      throw new UnhealthyNetworkError(resolution.error);
     }
     notFound();
   }
@@ -215,9 +223,56 @@ export async function loadPage({
   return resolution.result as Page;
 }
 
-// TODO : call the correct API
-export async function checkIfNetworkIsOnline(network: string) {
-  return Math.random() > 0.5;
+type NetworkStatusResponse = {
+  healthy: boolean;
+  catchingUp: boolean;
+  earliestBlockHeight: number;
+  latestBlockHeight: number;
+} | null;
+
+export async function checkIfNetworkIsOnline(
+  network: string,
+): Promise<NetworkStatusResponse> {
+  const rpcStatusResponseSchema = z.object({
+    result: z.object({
+      sync_info: z.object({
+        catching_up: z.boolean(),
+        earliest_block_height: z.coerce.number(),
+        latest_block_height: z.coerce.number(),
+      }),
+    }),
+  });
+
+  const ONE_MINUTE = 1 * 60;
+
+  const fn = nextCache(
+    async (network: string) => {
+      const chain = await getSingleNetworkCached(network);
+      const rpcUrl = chain?.config.rpcUrls.cosmos;
+      if (!rpcUrl) {
+        return null;
+      }
+      try {
+        const { result } = await jsonFetch(`${rpcUrl}/status`).then(
+          (response) => rpcStatusResponseSchema.parse(response),
+        );
+
+        return {
+          healthy: true,
+          catchingUp: result.sync_info.catching_up,
+          latestBlockHeight: result.sync_info.latest_block_height,
+          earliestBlockHeight: result.sync_info.earliest_block_height,
+        } satisfies NetworkStatusResponse;
+      } catch (error) {
+        return null;
+      }
+    },
+    {
+      tags: CACHE_KEYS.networks.status(network),
+      revalidateTimeInSeconds: ONE_MINUTE,
+    },
+  );
+  return await fn(network);
 }
 
 export async function search(networkSlug: string, query: string) {
