@@ -94,7 +94,7 @@ export async function GET(
     }
   }
   const rpc = integrationResponse.result.integration.config.rpcUrls.cosmos;
-  const isHubBaseRpc = rpc === "https://froopyland.rpc.silknodes.io";
+  const isHubBaseRpc = rpc === "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4";
 
   const slug = integrationResponse.result.integration.slug;
   const logo = integrationResponse.result.integration.config.logoUrl;
@@ -300,7 +300,7 @@ export async function GET(
       );
     case Step.HUB_RECV:
       var txSearch = await fetch(
-        `https://froopyland.rpc.silknodes.io/tx_search?query="recv_packet.packet_sequence=${forwardSequence} AND recv_packet.packet_dst_channel='${sourceChannel}'"`,
+        `https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4/tx_search?query="recv_packet.packet_sequence=${forwardSequence} AND recv_packet.packet_dst_channel='${sourceChannel}'"`,
       ).then((res) => res.json());
       var tx = txSearch.result.txs[0];
       if (!tx) {
@@ -315,7 +315,7 @@ export async function GET(
         );
       }
       var blockResponse = await fetch(
-        `https://froopyland.rpc.silknodes.io/block?height=${tx.height}`,
+        `https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4/block?height=${tx.height}`,
       ).then((res) => res.json());
       var timestamp = blockResponse.result.block.header.time;
       var log = JSON.parse(tx.tx_result.log).find((l: any) => {
@@ -342,7 +342,7 @@ export async function GET(
       );
     case Step.HUB_ACK:
       const txSearch3 = await fetch(
-        `https://froopyland.rpc.silknodes.io/tx_search?query="${
+        `https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4/tx_search?query="${
           forwardSequence
             ? `write_acknowledgement.packet_sequence=${forwardSequence}`
             : `acknowledge_packet.packet_sequence=${backwardSequence}`
@@ -363,7 +363,7 @@ export async function GET(
         );
       }
       var blockResponse = await fetch(
-        `https://froopyland.rpc.silknodes.io/block?height=${tx.height}`,
+        `https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4/block?height=${tx.height}`,
       ).then((res) => res.json());
 
       var timestamp = blockResponse.result.block.header.time;
