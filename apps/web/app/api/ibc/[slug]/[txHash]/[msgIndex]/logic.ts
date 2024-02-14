@@ -48,12 +48,14 @@ class Chain {
   private readonly hubChannel: string | undefined;
 
   public readonly slug: string;
+  public readonly logo: string;
 
   constructor(integration: Integration) {
     this.isHub = integration.chainBrand.toLowerCase() === "dymension";
     this.rpc = integration.config.rpcUrls.cosmos;
     this.hubChannel = integration.config.platformData.appData?.ibcChannel;
     this.slug = integration.slug;
+    this.logo = integration.config.logoUrl;
   }
 
   private formatHash(hash: string) {
@@ -204,16 +206,19 @@ export async function getIBCFlow({
       } catch {}
       return {
         transfer: {
+          logo: chainA.logo,
           slug: params.slug,
           txHash: params.txHash,
           msgIndex: parseInt(params.msgIndex),
         },
         receive: recv && {
+          logo: chainB.logo,
           slug: chainB.slug,
           txHash: recv.txHash,
           msgIndex: recv.msgIndex,
         },
         acknowledge: ack && {
+          logo: chainA.logo,
           slug: params.slug,
           txHash: ack.txHash,
           msgIndex: ack.msgIndex,
@@ -255,16 +260,19 @@ export async function getIBCFlow({
       } catch {}
       return {
         receive: {
+          logo: chain.logo,
           slug: params.slug,
           txHash: params.txHash,
           msgIndex: parseInt(params.msgIndex),
         },
         acknowledge: ack && {
+          logo: chainA.logo,
           slug: chainA.slug,
           txHash: ack.txHash,
           msgIndex: ack.msgIndex,
         },
         transfer: transfer && {
+          logo: chainA.logo,
           slug: chainA.slug,
           txHash: transfer.txHash,
           msgIndex: transfer.msgIndex,
@@ -310,16 +318,19 @@ export async function getIBCFlow({
       } catch {}
       return {
         acknowledge: {
+          logo: chainA.logo,
           slug: params.slug,
           txHash: params.txHash,
           msgIndex: parseInt(params.msgIndex),
         },
         receive: recv && {
+          logo: chainB.logo,
           slug: chainB.slug,
           txHash: recv.txHash,
           msgIndex: recv.msgIndex,
         },
         transfer: transfer && {
+          logo: chainA.logo,
           slug: chainA.slug,
           txHash: transfer.txHash,
           msgIndex: transfer.msgIndex,
