@@ -21,14 +21,13 @@ export async function GET(request: NextRequest) {
   );
 
   const statuses = networkStatusesResults
-    .map((networkStatus, index) => ({
+    .map((result, index) => ({
       network: networks[index],
-      healthy:
-        networkStatus.status === "rejected" ? false : networkStatus.value,
+      response: result.status === "rejected" ? null : result.value,
     }))
     .reduce(
       (acc, current) => {
-        acc[current.network] = { healthy: current.healthy };
+        acc[current.network] = { healthy: Boolean(current.response?.healthy) };
         return acc;
       },
       {} as Record<string, { healthy: boolean }>,

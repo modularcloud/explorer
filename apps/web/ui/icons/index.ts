@@ -61,6 +61,7 @@ export { default as KeyboardArrowDown } from "./KeyboardArrowDown";
 export { default as KeyboardArrowLeft } from "./KeyboardArrowLeft";
 export { default as KeyboardArrowRight } from "./KeyboardArrowRight";
 export { default as KeyboardArrowUp } from "./KeyboardArrowUp";
+export { default as LinkOut } from "./LinkOut";
 export { default as ListView } from "./ListView";
 export { default as List } from "./List";
 export { default as ListViewOff } from "./ListViewOff";

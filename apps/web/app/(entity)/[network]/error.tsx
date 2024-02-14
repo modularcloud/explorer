@@ -6,7 +6,7 @@ import { ErrorBox } from "~/ui/error/box";
 import { Footer } from "~/ui/footer";
 import { HomeBg } from "~/ui/home-bg";
 import { HomeBgMobile } from "~/ui/home-bg/mobile";
-import { useSearchOptionsContext } from "~/ui/search-options-provider";
+import { useSearchOptionsContext } from "~/ui/search-options-context";
 
 export default function Error() {
   const params = useParams();
