@@ -199,6 +199,7 @@ const BrandChains = React.memo(function BrandChains({
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
           style={{
+            // @ts-expect-error This is a CSS variable
             "--color-primary": options[0].brandColor.replaceAll(",", ""),
           }}
         >
