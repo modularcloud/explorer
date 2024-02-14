@@ -160,11 +160,23 @@ const BrandChains = React.memo(function BrandChains({
   const groupName = options[0].brandName;
 
   const allNetworkChains = useSearchOptionsContext();
+
+  // I AM NOT PROUD OF THIS as it is very inefficient 😑
+  // the good part is that it works 🤷‍♂️
   const ecosystemNetworks = React.useMemo(() => {
     const values = allNetworkChains.flat();
-    return values.filter((network) =>
-      (options[0].ecosystems ?? []).includes(network.id),
+    const brandEcosystems = options[0].ecosystems ?? [];
+    const foundNetworks = values.filter((network) =>
+      brandEcosystems.includes(network.id),
     );
+    return brandEcosystems
+      .map(
+        (ecosystem) =>
+          foundNetworks.find(
+            (network) => network.id === ecosystem,
+          ) as NetworkChain,
+      )
+      .filter(Boolean);
   }, [allNetworkChains, options]);
 
   const alwaysOnlineChainBrands = ["celestia", "eclipse"];
