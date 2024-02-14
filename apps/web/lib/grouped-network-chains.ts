@@ -20,6 +20,7 @@ export async function getGroupedNetworkChains() {
     logoURL: currentNetwork.config.logoUrl,
     platform: currentNetwork.config.platform,
     accountId: currentNetwork.accountId,
+    ecosystems: currentNetwork.config.ecosystems,
   }));
 
   return arrayGroupByTo2DArray(options, "accountId");
@@ -39,4 +40,5 @@ export type NetworkChain = {
   layout?: SingleNetwork["config"]["widgetLayout"];
   logoURL: string;
   id: string;
+  ecosystems: string[];
 };
