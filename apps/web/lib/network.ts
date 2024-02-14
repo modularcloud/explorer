@@ -143,11 +143,6 @@ export async function getSingleNetwork(slug: string) {
     if (integration.brand === "dymension") {
       integration.config.widgetLayout = "Dymension";
       integration.config.primaryColor = "29 13% 45%";
-      // TODO : to remove, this is temporary until it is updated on the backend
-      if (integration.slug === "dymension-froopyland") {
-        integration.config.rpcUrls.cosmos =
-          "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4";
-      }
     }
 
     return integration;
