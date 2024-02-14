@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { z } from "zod";
 import { CACHE_KEYS } from "~/lib/cache-keys";
+import { jsonFetch } from "~/lib/shared-utils";
 
 type UseSearcheableEntitiesArgs = {
   network: string;
@@ -23,16 +24,13 @@ export function useSearcheableEntities({
         networkSlug: network,
         query,
       });
-      return fetch("/api/search?" + sp.toString())
-        .then((r) => r.json())
+      return jsonFetch("/api/search?" + sp.toString())
         .then(searhableEntitiesResponseSchema.parse)
         .then((res) => res.data);
     },
     {
       errorRetryCount: 2,
       revalidateOnFocus: false,
-      keepPreviousData: true,
-      revalidateIfStale: false,
       fallbackData: [],
     },
   );
