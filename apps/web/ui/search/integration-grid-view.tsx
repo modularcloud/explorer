@@ -13,8 +13,8 @@ import type {
 } from "~/lib/grouped-network-chains";
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
-import { LOGOS_PER_ECOSYSTEM } from "~/lib/constants";
 import { useNetworkStatuses } from "./use-network-status";
+import { useSearchOptionsContext } from "~/ui/search-options-context";
 
 interface Props {
   className?: string;
@@ -160,6 +160,14 @@ const BrandChains = React.memo(function BrandChains({
   const options = chains;
   const groupName = options[0].brandName;
 
+  const allNetworkChains = useSearchOptionsContext();
+  const ecosystemNetworks = React.useMemo(() => {
+    const values = allNetworkChains.flat();
+    return values.filter((network) =>
+      (options[0].ecosystems ?? []).includes(network.id),
+    );
+  }, [allNetworkChains, options]);
+
   const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   const { data } = useNetworkStatuses(
     chains.map((network) => network.id),
@@ -207,12 +215,12 @@ const BrandChains = React.memo(function BrandChains({
             aria-describedby={`${groupName}-logo`}
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
-          {(options[0].ecosystems ?? []).length > 0 && (
+          {ecosystemNetworks.length > 0 && (
             <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
               <ul className="flex items-center gap-0">
-                {options[0].ecosystems.map((ecosystem, index) => (
+                {ecosystemNetworks.map((ecosystem, index) => (
                   <li
-                    key={ecosystem}
+                    key={ecosystem.id}
                     className="relative rounded-full p-0.5 bg-white"
                     style={{
                       zIndex: MAX_Z_INDEX - index,
@@ -221,25 +229,17 @@ const BrandChains = React.memo(function BrandChains({
                   >
                     <Tooltip
                       label={`These chains are in ${formatEcosystemName(
-                        ecosystem,
+                        ecosystem.id,
                       )} ecosystem`}
                     >
-                      {LOGOS_PER_ECOSYSTEM[ecosystem] ? (
-                        <Image
-                          src={LOGOS_PER_ECOSYSTEM[ecosystem]}
-                          height="18"
-                          width="18"
-                          alt={`Logo ${LOGOS_PER_ECOSYSTEM[ecosystem]}`}
-                          aria-describedby={`${groupName}-logo`}
-                          className="border-none rounded-full bg-mid-dark-100 object-center w-[1.125rem] h-[1.125rem] aspect-square"
-                        />
-                      ) : (
-                        <div className="border-none rounded-full bg-mid-dark-100 w-[1.125rem] h-[1.125rem] aspect-square">
-                          <span className="sr-only">
-                            Logo {ecosystem} (missing)
-                          </span>
-                        </div>
-                      )}
+                      <Image
+                        src={ecosystem.logoURL}
+                        height="18"
+                        width="18"
+                        alt={`Logo ${ecosystem.displayName}`}
+                        aria-describedby={`${groupName}-logo`}
+                        className="border-none rounded-full bg-mid-dark-100 object-center w-[1.125rem] h-[1.125rem] aspect-square"
+                      />
                     </Tooltip>
                   </li>
                 ))}

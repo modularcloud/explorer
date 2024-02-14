@@ -14,7 +14,7 @@ import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 // types
 import type { Metadata } from "next";
-import { SearchOptionProvider } from "~/ui/search-options-provider";
+import { SearchOptionProvider } from "~/ui/search-options-context";
 
 const interDisplay = localFont({
   src: [
