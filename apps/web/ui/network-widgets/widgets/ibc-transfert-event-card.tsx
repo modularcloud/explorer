@@ -6,12 +6,25 @@ import {
   ChevronDoubleDown,
   Clock,
   CornerUpRight,
+  LinkOut,
 } from "~/ui/icons";
 import { ClientTime } from "~/ui/client-time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
 import type { IBCTransferEvent } from "~/lib/dymension-utils";
 import { Skeleton } from "~/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+} from "~/ui/shadcn/components/ui/dropdown-menu";
+import {
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+import useSWR from "swr";
+import { z } from "zod";
+import { jsonFetch } from "~/lib/shared-utils";
+import { useRouter } from "next/navigation";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -37,20 +50,160 @@ function formatAmout(amount: string) {
   return totalFormatted + " " + unit;
 }
 
+const ibcMessageSchema = z.object({
+  label: z.enum(["Transfer", "Receipt", "Acknowledgement"]),
+  color: z.enum(["yellow", "green", "red", "gray"]),
+  link: z.string().optional(),
+});
+
+const ibcMessageArraySchema = z.tuple([
+  ibcMessageSchema,
+  ibcMessageSchema,
+  ibcMessageSchema,
+]);
+
+type IBCMessageArray = z.TypeOf<typeof ibcMessageArraySchema>;
+
 export function IBCTransferEventCard({
   event,
   networkSlug,
 }: IBCTransferEventCardProps) {
+  const router = useRouter();
+  const initialMessages = [
+    {
+      label: "Transfer",
+      color: "gray",
+    },
+    {
+      label: "Receipt",
+      color: "gray",
+    },
+    {
+      label: "Acknowledgement",
+      color: "gray",
+    },
+  ] satisfies IBCMessageArray;
+  const THIRTY_SECONDS = 30 * 1000;
+  const { data: messages = initialMessages } = useSWR(
+    `/api/ibc/messages/${event.hash}/0`,
+    (url) => jsonFetch(url).then(ibcMessageArraySchema.parse),
+    {
+      errorRetryCount: 2,
+      keepPreviousData: true,
+      revalidateOnFocus: false,
+      revalidateIfStale: true,
+      refreshInterval: THIRTY_SECONDS,
+    },
+  );
+
+  const messagesWithLinks = messages.filter(
+    (msg) => "link" in msg && !!msg.link,
+  ) as IBCMessageArray;
+
   return (
     <Card className="p-0 grid w-full shadow-none">
       <div className="p-5 rounded-t-lg flex items-start justify-between">
-        <Link
-          href={`/${networkSlug}/transactions/${event.hash}`}
-          className="inline-flex gap-1 px-2 py-1 bg-teal-50 border border-teal-100/75 rounded-md"
-        >
-          <CornerUpRight className="h-5 w-5 text-teal-500" aria-hidden="true" />
-          <span className="text-teal-900">Transfer</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/${networkSlug}/transactions/${event.hash}`}
+            className="inline-flex gap-1 px-2 py-1 bg-teal-50 border border-teal-100/75 rounded-md"
+          >
+            <CornerUpRight
+              className="h-5 w-5 text-teal-500"
+              aria-hidden="true"
+            />
+            <span className="text-teal-900">Transfer</span>
+          </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger className="items-center gap-0 hidden tab:flex">
+              <div
+                className={cn("h-2 w-2 rounded-full", {
+                  "bg-gray-400": messages[0].color === "gray",
+                  "bg-teal-400": messages[0].color === "green",
+                  "bg-yellow-400": messages[0].color === "yellow",
+                  "bg-red-500": messages[0].color === "red",
+                })}
+              >
+                <span className="sr-only">Transfer</span>
+              </div>
+              <div
+                aria-hidden="true"
+                className="h-[1px] bg-mid-dark-100 w-8 flex-none"
+              />
+              <div
+                className={cn("h-2 w-2 rounded-full", {
+                  "bg-gray-400": messages[1].color === "gray",
+                  "bg-teal-400": messages[1].color === "green",
+                  "bg-yellow-400": messages[1].color === "yellow",
+                  "bg-red-500": messages[1].color === "red",
+                })}
+              >
+                <span className="sr-only">Receipt</span>
+              </div>
+              <div
+                aria-hidden="true"
+                className="h-[1px] bg-mid-dark-100 w-8 flex-none"
+              />
+              <div
+                className={cn("h-2 w-2 rounded-full", {
+                  "bg-gray-400": messages[2].color === "gray",
+                  "bg-teal-400": messages[2].color === "green",
+                  "bg-yellow-400": messages[2].color === "yellow",
+                  "bg-red-500": messages[2].color === "red",
+                })}
+              >
+                <span className="sr-only">Acknowledgement</span>
+              </div>
+            </DropdownMenuTrigger>
+            {messagesWithLinks.length > 0 && (
+              <DropdownMenuContent
+                className="p-2 min-w-[200px]"
+                side="bottom"
+                align="start"
+              >
+                {messagesWithLinks.map((msg, index) => (
+                  <DropdownMenuItem
+                    key={msg.label}
+                    className="flex flex-col items-stretch group focus-visible:outline-none focus:outline-none"
+                    onClick={() => {
+                      router.push(`/${networkSlug}/${msg.link}`);
+                    }}
+                  >
+                    <>
+                      <Link
+                        href={`/${networkSlug}/${msg.link}`}
+                        className="rounded-md border text-sm font-medium px-2 py-1 flex items-center justify-between group-data-[highlighted]:bg-mid-dark-100/80"
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <div
+                            aria-hidden="true"
+                            className={cn("h-2 w-2 rounded-full", {
+                              "bg-gray-400": msg.color === "gray",
+                              "bg-teal-400": msg.color === "green",
+                              "bg-yellow-400": msg.color === "yellow",
+                              "bg-red-500": msg.color === "red",
+                            })}
+                          />
+                          <span>{msg.label}</span>
+                        </div>
+
+                        <LinkOut className="h-4 w-4 text-neutral flex-none" />
+                      </Link>
+                      {index < messagesWithLinks.length - 1 && (
+                        <div
+                          aria-hidden="true"
+                          className="w-[1px] bg-mid-dark-100 h-2 self-start relative left-5"
+                        />
+                      )}
+                    </>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            )}
+          </DropdownMenu>
+        </div>
+
         <div className="flex items-center text-muted gap-1">
           <Clock className="h-4 w-4 flex-none" aria-hidden="true" />
           <ClientTime
