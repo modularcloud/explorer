@@ -145,6 +145,11 @@ type BrandChainsProps = {
   ) => OptionProps;
 };
 
+function formatEcosystemName(ecosystem: string) {
+  const nameParts = ecosystem.split("-").filter(Boolean);
+  return nameParts.map(capitalize).join(" ");
+}
+
 const BrandChains = React.memo(function BrandChains({
   chains,
   rowIndex,
@@ -160,6 +165,9 @@ const BrandChains = React.memo(function BrandChains({
     chains.map((network) => network.id),
     !alwaysOnlineChainBrands.includes(chains[0].brandName),
   );
+
+  // arbitrary, but this is decent value
+  const MAX_Z_INDEX = 999_999_999;
 
   return (
     <div
@@ -199,27 +207,43 @@ const BrandChains = React.memo(function BrandChains({
             aria-describedby={`${groupName}-logo`}
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
-          {options[0].ecosystems.length > 0 && (
+          {(options[0].ecosystems ?? []).length > 0 && (
             <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
-              {options[0].ecosystems.map((ecosystem) => (
-                <Tooltip
-                  label={`These chains are in ${LOGOS_PER_ECOSYSTEM[ecosystem].brand} ecosystem`}
-                  key={ecosystem}
-                >
-                  {LOGOS_PER_ECOSYSTEM[ecosystem].logoURL ? (
-                    <Image
-                      src={LOGOS_PER_ECOSYSTEM[ecosystem].logoURL}
-                      height="18"
-                      width="18"
-                      alt={`Logo ${LOGOS_PER_ECOSYSTEM[ecosystem].brand}`}
-                      aria-describedby={`${groupName}-logo`}
-                      className="border-none rounded-full bg-mid-dark-100 object-center w-[1.125rem] h-[1.125rem] aspect-square"
-                    />
-                  ) : (
-                    <div className="border-none rounded-full bg-mid-dark-100 w-[1.125rem] h-[1.125rem] aspect-square" />
-                  )}
-                </Tooltip>
-              ))}
+              <ul className="flex items-center gap-0">
+                {options[0].ecosystems.map((ecosystem, index) => (
+                  <li
+                    key={ecosystem}
+                    className="relative rounded-full p-0.5 bg-white"
+                    style={{
+                      zIndex: MAX_Z_INDEX - index,
+                      marginLeft: `-${index * 9}px`,
+                    }}
+                  >
+                    <Tooltip
+                      label={`These chains are in ${formatEcosystemName(
+                        ecosystem,
+                      )} ecosystem`}
+                    >
+                      {LOGOS_PER_ECOSYSTEM[ecosystem] ? (
+                        <Image
+                          src={LOGOS_PER_ECOSYSTEM[ecosystem]}
+                          height="18"
+                          width="18"
+                          alt={`Logo ${LOGOS_PER_ECOSYSTEM[ecosystem]}`}
+                          aria-describedby={`${groupName}-logo`}
+                          className="border-none rounded-full bg-mid-dark-100 object-center w-[1.125rem] h-[1.125rem] aspect-square"
+                        />
+                      ) : (
+                        <div className="border-none rounded-full bg-mid-dark-100 w-[1.125rem] h-[1.125rem] aspect-square">
+                          <span className="sr-only">
+                            Logo {ecosystem} (missing)
+                          </span>
+                        </div>
+                      )}
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
               <FancyCheck
                 className="text-gray-400 w-6 h-6 flex-none"
                 aria-hidden="true"
