@@ -16,7 +16,6 @@ const config = {
   transpilePackages: ["service-manager"],
   experimental: {
     useDeploymentId: true,
-    esmExternals: "loose",
   },
   logging: {
     fetches: {
@@ -24,6 +23,7 @@ const config = {
     },
   },
   images: {
+    dangerouslyAllowSVG: true,
     minimumCacheTTL: 31_536_000, // One year
     remotePatterns: [
       {
@@ -45,6 +45,10 @@ const config = {
       {
         protocol: "https",
         hostname: "github.com",
+      },
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
       },
     ],
   },

@@ -1,15 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import { cn } from "../shadcn/utils";
+import { cn } from "~/ui/shadcn/utils";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useMemo } from "react";
 import Link from "next/link";
-import { useSpotlightStore } from "../right-panel/spotlight-store";
+import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { useParams } from "next/navigation";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
+
+type MsgRef = {
+  slug: string;
+  txHash: string;
+  msgIndex: string;
+  logo: string;
+};
+type IBCFlow = {
+  transfer?: MsgRef;
+  receive?: MsgRef;
+  acknowledge?: MsgRef;
+};
 
 type Node =
   | {
@@ -35,99 +47,66 @@ type Node =
       image?: string;
     };
 
-type Props = {
-  title: string;
-  nodes: Node[];
-  transfer: {
-    from: string;
-    to: string;
-    amount: string;
-    denom: string;
-  };
+enum Step {
+  ROLLAPP_TR = "ROLLAPP_TR",
+  HUB_RECV = "HUB_RECV",
+  ROLLAPP_RECV = "ROLLAPP_RECV",
+  HUB_ACK = "HUB_ACK",
+  ROLLAPP_ACK = "ROLLAPP_ACK",
+  CHAIN_TR = "CHAIN_TR",
+  CHAIN_RECV = "CHAIN_RECV",
+  CHAIN_ACK = "CHAIN_ACK",
+}
+
+type NodeProps = {
+  num: number;
+  data?: MsgRef;
+  image?: string;
 };
 
-function Node({
-  isNext,
-  step,
-  hash,
-  slug,
-}: {
-  isNext?: boolean;
-  step: number;
-  hash: string;
-  slug: string;
-}) {
+function Node({ num, data, image }: NodeProps) {
   const [isHovered, setIsHovered] = React.useState(false);
-  const body = {
-    resolverId: "rollapp-ibc-0.0.0",
-    input: {
-      hash,
-      step,
-      slug,
-    },
-  };
-  const label = ["Transfer", "Received", "Received", "Acknowledgement"][step];
-  const fallbackData = {
-    result: {
-      type: "pending",
-      label,
-      waitingFor: label === "Received" ? "receipt" : undefined,
-    },
-  };
-  const nodeResponse = useSWR(
-    ["/api/resolve/ibc", body],
-    async () => {
-      const response = await fetch("/api/resolve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-      const data = await response.json();
-      return data;
-    },
-    {
-      refreshInterval: 5000,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      fallbackData,
-    },
-  );
-  console.log(nodeResponse.data);
 
-  const time = useMemo(() => {
-    const node = nodeResponse.data?.result;
-    if (node && node.timestamp) {
-      dayjs.extend(relativeTime);
-      return dayjs(node.timestamp * 1000).fromNow();
+  const label = useMemo(() => {
+    switch (num) {
+      case 0:
+        return "Transfer";
+      case 1:
+        return "Receipt";
+      case 2:
+        return "Acknowledgement";
+      default:
+        return "Unknown";
     }
-    return null;
-  }, [nodeResponse.data]);
-
-  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-  if (!nodeResponse.data) return null;
-
-  const node = nodeResponse.data.result;
-
+  }, [num]);
+  const shortHash = useMemo(
+    () => `${data?.txHash.slice(0, 3)}...${data?.txHash.slice(-3)}`,
+    [data?.txHash],
+  );
+  
+  const isNext = false;
+  const time = "";
   return (
     <Link
-      href={`${node.type === "completed" ? node.link : "#"}`}
+      href={
+        data
+          ? `/${data.slug}/transactions/${data.txHash}/messages/${data.msgIndex}`
+          : "#"
+      }
       onClick={(e) => {
-        if (node.type === "error") {
-          nodeResponse.mutate(fallbackData);
-        }
+        // if (node.type === "error") {
+        //   //nodeResponse.mutate(fallbackData);
+        // }
       }}
       onMouseEnter={() => {
         setIsHovered(true);
-        if (node.sidebar) {
-          setSpotlight?.({
-            headerKey: "Spotlight",
-            headerValue: "Message",
-            properties: node.sidebar,
-          });
-        }
+        // if (node.sidebar) {
+        //   setSpotlight?.({
+        //     headerKey: "Spotlight",
+        //     headerValue: "Message",
+        //     properties: node.sidebar,
+        //   });
+        // }
       }}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -136,34 +115,34 @@ function Node({
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
         {
           "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6":
-            !isNext && node.type !== "completed",
+            !isNext && !data,
           "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]":
             isNext,
           "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]":
-            node.type === "completed",
+            !!data,
         },
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
-          {node.image ? (
+          {data ? (
             <Image
-              src={node.image}
+              src={data.logo}
               width={20}
               height={20}
-              alt={`${node.label} chain logo`}
+              alt={`${label} chain logo`}
               className="rounded-full"
             />
           ) : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
-          {node.label}
+          {label}
         </div>
       </div>
-      {node.type === "completed" ? (
+      {data ? (
         <div className="flex justify-between align-items gap-5 mt-4">
           <div className="text-xs font-medium leading-4 whitespace-nowrap">
-            {node.shortId ?? node.id}
+            {shortHash}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
             {time}
@@ -171,11 +150,21 @@ function Node({
         </div>
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
-          {node.type === "error"
-            ? isHovered
-              ? "Try Again"
-              : node.message
-            : `Waiting for ${(node.waitingFor ?? node.label).toLowerCase()}...`}
+          {/* {node.type === "error" ? (
+            isHovered ? (
+              "Try Again"
+            ) : (
+              <>
+                (&quot;message&quot; in node ? node.message : &quot;Error&quot;)
+              </>
+            )
+          ) : (
+            `Waiting for ${("waitingFor" in node && node.waitingFor
+              ? node.waitingFor
+              : node.label
+            ).toLowerCase()}...`
+          )} */}
+          {`Waiting for ${label.toLowerCase()}...`}
         </div>
       )}
     </Link>
@@ -275,7 +264,6 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     return null;
   }, [nodeResponse.data]);
 
-
   const node = nodeResponse.data?.result;
   if (!node || !node.sidebar) return null;
 
@@ -322,11 +310,139 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
   );
 }
 
-export function FlowChart() {
+type FlowChartContextType = {
+  transfer: {
+    from: {
+      address?: string;
+      chain?: string;
+      penultimate?: string;
+    };
+    to: {
+      address?: string;
+      chain?: string;
+    };
+    amount?: string;
+    denom?: string;
+  };
+  sequence: {
+    forward?: string;
+    backward?: string;
+    regular?: string;
+    hops?: 1 | 2;
+  };
+  setContext?: (value: any) => void;
+};
+
+const FlowChartContext = React.createContext<FlowChartContextType | null>(null);
+
+export function FlowChartProvider({ children }: { children: React.ReactNode }) {
+  const params = useParams<{ network: string; path: string[] }>();
+  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
+  const txHash = path[1];
+  const msgIndex = path[3];
+  const url = `/api/ibc/integration/${slug}/tx/${txHash}/message/${msgIndex}`;
+
+  const [contextValue, setContextValue] = React.useState<{
+    transfer: {
+      from: {
+        address?: string;
+        chain?: string;
+        penultimate?: string;
+      };
+      to: {
+        address?: string;
+        chain?: string;
+      };
+      amount?: string;
+      denom?: string;
+    };
+    sequence: {
+      forward?: string;
+      backward?: string;
+      regular?: string;
+      hops?: 1 | 2;
+    };
+  }>({
+    transfer: {
+      from: {},
+      to: {},
+    },
+    sequence: {},
+  });
+  useSWR(
+    url,
+    async () => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        const newDetails = contextValue;
+        if (!newDetails.transfer.from.address) {
+          newDetails.transfer.from.address = data.from.address;
+        }
+
+        if (!newDetails.transfer.from.chain) {
+          newDetails.transfer.from.chain = data.from.chain;
+        }
+
+        if (!newDetails.transfer.to.address) {
+          newDetails.transfer.to.address = data.to.address;
+        }
+
+        if (!newDetails.transfer.to.chain) {
+          newDetails.transfer.to.chain = data.to.chain;
+        }
+
+        if (!newDetails.sequence.forward) {
+          newDetails.sequence.forward = data.forwardSequence;
+        }
+
+        if (!newDetails.sequence.backward) {
+          newDetails.sequence.backward = data.backwardSequence;
+        }
+
+        if (!newDetails.sequence.hops) {
+          newDetails.sequence.hops = data.hops;
+        }
+
+        if (!newDetails.sequence.regular) {
+          newDetails.sequence.regular = data.sequence;
+        }
+
+        if (!newDetails.transfer.from.penultimate) {
+          newDetails.transfer.from.penultimate = data.penultimateChannel;
+        }
+
+        setContextValue(newDetails);
+      },
+    },
+  );
+
+  const providerValue = React.useMemo(
+    () => ({ ...contextValue, setContext: setContextValue }),
+    [contextValue, setContextValue],
+  );
+
+  return (
+    <FlowChartContext.Provider value={providerValue}>
+      {children}
+    </FlowChartContext.Provider>
+  );
+}
+
+export function FlowChart({ index }: { index: number }) {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
   const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
+
+  const { data } = useSWR<IBCFlow>(
+    `/api/ibc/${slug}/${txHash}/${index}`,
+    (url) => fetch(url).then((res) => res.json()),
+    { fallbackData: {} },
+  );
 
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
@@ -335,10 +451,9 @@ export function FlowChart() {
         <Transfer hash={txHash} slug={slug} />
       </div>
       <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
-        <Node step={0} hash={txHash} slug={slug} />
-        <Node step={1} hash={txHash} slug={slug} />
-        <Node step={2} hash={txHash} slug={slug} />
-        <Node step={3} hash={txHash} slug={slug} />
+        <Node num={0} data={data?.transfer} />
+        <Node num={1} data={data?.receive} />
+        <Node num={2} data={data?.acknowledge} />
       </div>
     </div>
   );

@@ -142,30 +142,30 @@ export const IntegrationActionListView = React.memo(
             router.push(`/${selectedNetwork.id}`);
           },
         },
-        {
-          id: "latest-blocks",
-          groupName: "Pages",
-          icon: ({ className }) => (
-            <MenuHorizontal className={cn("h-4 w-4", className)} />
-          ),
-          label: "Go to latest blocks",
-          onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.id}/blocks`);
-          },
-        },
-        {
-          id: "latest-transactions",
-          groupName: "Pages",
-          icon: ({ className }) => (
-            <MenuHorizontal className={cn("h-4 w-4", className)} />
-          ),
-          label: "Go to latest transactions",
-          onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.id}/transactions`);
-          },
-        },
+        // {
+        //   id: "latest-blocks",
+        //   groupName: "Pages",
+        //   icon: ({ className }) => (
+        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
+        //   ),
+        //   label: "Go to latest blocks",
+        //   onSelect: () => {
+        //     onNavigate();
+        //     router.push(`/${selectedNetwork.id}/blocks`);
+        //   },
+        // },
+        // {
+        //   id: "latest-transactions",
+        //   groupName: "Pages",
+        //   icon: ({ className }) => (
+        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
+        //   ),
+        //   label: "Go to latest transactions",
+        //   onSelect: () => {
+        //     onNavigate();
+        //     router.push(`/${selectedNetwork.id}/transactions`);
+        //   },
+        // },
       ]);
       items.push([
         {
@@ -194,9 +194,11 @@ export const IntegrationActionListView = React.memo(
         : actionItems;
     }, [actionItems, ecosystemNetworks]);
 
-    const { registerOptionProps, groupedByLines: groupedItems } = useItemGrid<
-      ListItemType | NetworkChain
-    >({
+    const {
+      registerOptionProps,
+      groupedByLines: groupedItems,
+      selectOption,
+    } = useItemGrid<ListItemType | NetworkChain>({
       noOfColumns: 1,
       optionGroups: gridItems,
       onClickOption: (option) => {
@@ -267,6 +269,14 @@ export const IntegrationActionListView = React.memo(
         registerOptionProps(rowIndex, 0, option),
       [registerOptionProps],
     );
+
+    React.useEffect(() => {
+      selectOption({
+        rowIndex: 0,
+        colIndex: 0,
+        option: gridItems[0][0],
+      });
+    }, [selectOption, gridItems]);
 
     return (
       <div

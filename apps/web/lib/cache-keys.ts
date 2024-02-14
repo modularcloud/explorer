@@ -14,6 +14,7 @@ export const CACHE_KEYS = {
       "platform",
       platform,
     ],
+    status: (slug: string) => [...CACHE_KEYS.networks.single(slug), "STATUS"],
   },
   widgets: {
     evmWithPrice: (networkSlug: string) => ["EVM_WITH_PRICE", networkSlug],

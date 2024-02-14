@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "~/ui/shadcn/components/ui/dialog";
 import { Input } from "~/ui/input";
-import { ArrowRight, Search } from "~/ui/icons";
+import { ArrowRight, Search, Warning } from "~/ui/icons";
 import { LoadingIndicator } from "~/ui/loading-indicator";
 import { IntegrationActionListView } from "./integration-action-list-view";
 import { useSearcheableEntities } from "./use-searcheable-entities";
@@ -29,6 +29,7 @@ import type {
   GroupedNetworkChains,
   NetworkChain,
 } from "~/lib/grouped-network-chains";
+import { useNetworkStatus } from "./use-network-status";
 interface Props {
   defaultNetwork: {
     value: NetworkChain;
@@ -116,6 +117,20 @@ export function SearchModal({
     [onSelectOption],
   );
 
+  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
+  let currentNetworkToCheck: string | null = null;
+  if (
+    currentNetwork &&
+    !alwaysOnlineChainBrands.includes(currentNetwork.brandName)
+  ) {
+    currentNetworkToCheck = currentNetwork.id;
+  }
+
+  const { data } = useNetworkStatus(currentNetworkToCheck);
+  const currentNetworkHealthStatus = currentNetwork
+    ? data?.[currentNetwork.id]?.healthy ?? null
+    : null;
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -162,6 +177,18 @@ export function SearchModal({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 helpText="Search blocks, transactions, addresses, or namespaces"
+                renderTrailingIcon={(cls) =>
+                  currentNetwork &&
+                  currentNetworkHealthStatus !== null &&
+                  currentNetworkHealthStatus === false && (
+                    <div className="h-full hidden tab:flex items-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                      <Warning className="text-yellow-500 flex-none h-4 w-4" />
+                      <span className="whitespace-nowrap text-yellow-900">
+                        Network Unavailable
+                      </span>
+                    </div>
+                  )
+                }
                 renderLeadingIcon={(cls) =>
                   currentNetwork ? (
                     <div className="flex items-center gap-2 p-1">
@@ -196,6 +223,16 @@ export function SearchModal({
                 }
               />
             </div>
+            {currentNetwork &&
+              currentNetworkHealthStatus !== null &&
+              currentNetworkHealthStatus === false && (
+                <div className="h-full flex tab:hidden items-center justify-center text-sm gap-2 rounded-md border px-2 py-1 bg-amber-100 border-amber-200">
+                  <Warning className="text-yellow-500 flex-none h-5 w-5" />
+                  <span className="whitespace-nowrap text-yellow-900">
+                    Network Unavailable
+                  </span>
+                </div>
+              )}
           </DialogHeader>
 
           {!currentNetwork && isNetworkQuery && (

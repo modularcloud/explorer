@@ -7,17 +7,16 @@ type IntegrationResponse = ResolutionResponse | null;
 
 export function createRollappIntegration(context: PageContext) {
   registerResolvers();
-  addRoute(["addresses", "[address]"], "rollapp-page-address-0.0.0");
-  // addRoute(["addresses", "[address]"], "celestia-address-balances-0.0.0", {
-  //   enabled: true,
-  //   regex: /^celestia\w{39}$/,
-  //   key: "address",
-  //   name: "Address",
-  // });
-  // addRoute(
-  //   ["addresses", "[address]", "transactions"],
-  //   "celestia-address-transactions-0.0.0",
-  // );
+  addRoute(["addresses", "[address]"], "rollapp-page-address-balances-0.0.0", {
+    enabled: true,
+    regex: /^(?:[a-z0-9]{3,5}1[a-z0-9]{38})$|^0x[a-fA-F0-9]{40}$/,
+    key: "address",
+    name: "Address",
+  });
+  addRoute(
+    ["addresses", "[address]", "transactions"],
+    "rollapp-page-address-0.0.0",
+  );
 
   // addRoute(["transactions"], "celestia-latest-transactions-0.0.0");
 

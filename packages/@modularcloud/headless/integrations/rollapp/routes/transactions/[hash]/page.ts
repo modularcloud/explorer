@@ -1,5 +1,10 @@
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
-import { getBlock, getTx, getTx, helpers } from "@modularcloud-resolver/rollapp";
+import {
+  getBlock,
+  getHubMessages,
+  getTx,
+  helpers,
+} from "@modularcloud-resolver/rollapp";
 import { Page, PageContext, Value } from "../../../../../schemas/page";
 import { TransactionResponse } from "../../../types";
 import {
@@ -49,11 +54,16 @@ export const RollappTransactionResolver = createResolver(
       }
     }
 
-    const messages = helpers.getMessages(response.result.result.tx);
-    const isIBC = !!(
-      messages.findIndex((m: any) =>
-        /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
-      ) + 1
+    let messages: ReturnType<
+      typeof helpers.getMessages | typeof getHubMessages
+    > = [];
+    if (context.slug === "dymension-froopyland") {
+      messages = getHubMessages(response.result.result.tx);
+    } else {
+      messages = helpers.getMessages(response.result.result.tx);
+    }
+    const isIBC = messages.findIndex((m: any) =>
+      /MsgTransfer|MsgRecvPacket|MsgAcknowledgement/.test(m.typeUrl),
     );
 
     const page: Page = {

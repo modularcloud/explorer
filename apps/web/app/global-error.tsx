@@ -8,7 +8,7 @@ export const metadata = {
   title: "Page Not found - Modular Cloud",
 };
 
-export default function NotFound() {
+export default function GlobalError() {
   return (
     <html>
       <body>
@@ -44,13 +44,17 @@ export default function NotFound() {
           </svg>
 
           <div className="flex flex-col gap-2">
-            <h1 className="text-foreground text-xl font-semibold">
-              Page Not Found
-            </h1>
-            <p className="text-night-700">This page does not exist.</p>
-            <Link href="/" className="underline text-primary">
-              Go home
-            </Link>
+            <h1 className="text-foreground text-xl font-semibold">SORRY !</h1>
+            <p className="text-night-700">
+              An unknown Error occured, this is surely on our end, no need to do
+              anything
+            </p>
+            <p>
+              In the meantime, you can&nbsp;
+              <Link href="/" className="underline text-primary">
+                Go to the homepage
+              </Link>
+            </p>
           </div>
         </main>
       </body>

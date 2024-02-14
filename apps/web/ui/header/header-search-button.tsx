@@ -55,8 +55,8 @@ export function HeaderSearchButton({ optionGroups }: Props) {
     >
       <Button
         className={cn(
-          "inline-flex items-center justify-between gap-4 md:gap-5",
-          "md:min-w-fit min-w-0 flex-shrink",
+          "inline-flex items-center justify-between gap-3 lg:gap-5",
+          "min-w-0 md:min-w-fit flex-shrink lg:flex-grow tab:max-w-[560px]",
           "shadow-sm text-sm",
           "py-2 px-2.5 tab:px-3.5",
         )}
@@ -66,10 +66,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           "--color-primary": network.brandColor,
         }}
       >
-        <Search
-          className="h-4 w-4 text-muted flex-shrink-0"
-          aria-hidden="true"
-        />
+        <Search className="h-4 w-4 text-muted flex-none" aria-hidden="true" />
 
         <span className="inline-flex gap-2 items-center min-w-0 flex-shrink sr-only tab:not-sr-only">
           {/* Network logo, name & chainName */}
@@ -115,7 +112,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           </span>
         </span>
 
-        <div className="flex-none hidden tab:not-block">
+        <div className="flex-none hidden tab:block">
           <ArrowRight
             className="text-muted flex-none h-3 w-3"
             aria-hidden="true"

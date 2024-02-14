@@ -12,9 +12,9 @@ export interface ConfigRequest {
 /** ConfigResponse defines the response structure for the Config gRPC query. */
 export interface ConfigResponse {
   minimumGasPrice: string;
-  /** pruning settings */
   pruningKeepRecent: string;
   pruningInterval: string;
+  haltHeight: Long;
 }
 
 /** StateRequest defines the request structure for the status of a node. */
@@ -81,7 +81,7 @@ export const ConfigRequest = {
 };
 
 function createBaseConfigResponse(): ConfigResponse {
-  return { minimumGasPrice: "", pruningKeepRecent: "", pruningInterval: "" };
+  return { minimumGasPrice: "", pruningKeepRecent: "", pruningInterval: "", haltHeight: Long.UZERO };
 }
 
 export const ConfigResponse = {
@@ -94,6 +94,9 @@ export const ConfigResponse = {
     }
     if (message.pruningInterval !== "") {
       writer.uint32(26).string(message.pruningInterval);
+    }
+    if (!message.haltHeight.isZero()) {
+      writer.uint32(32).uint64(message.haltHeight);
     }
     return writer;
   },
@@ -126,6 +129,13 @@ export const ConfigResponse = {
 
           message.pruningInterval = reader.string();
           continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.haltHeight = reader.uint64() as Long;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -140,6 +150,7 @@ export const ConfigResponse = {
       minimumGasPrice: isSet(object.minimumGasPrice) ? globalThis.String(object.minimumGasPrice) : "",
       pruningKeepRecent: isSet(object.pruningKeepRecent) ? globalThis.String(object.pruningKeepRecent) : "",
       pruningInterval: isSet(object.pruningInterval) ? globalThis.String(object.pruningInterval) : "",
+      haltHeight: isSet(object.haltHeight) ? Long.fromValue(object.haltHeight) : Long.UZERO,
     };
   },
 
@@ -154,6 +165,9 @@ export const ConfigResponse = {
     if (message.pruningInterval !== "") {
       obj.pruningInterval = message.pruningInterval;
     }
+    if (!message.haltHeight.isZero()) {
+      obj.haltHeight = (message.haltHeight || Long.UZERO).toString();
+    }
     return obj;
   },
 
@@ -165,6 +179,9 @@ export const ConfigResponse = {
     message.minimumGasPrice = object.minimumGasPrice ?? "";
     message.pruningKeepRecent = object.pruningKeepRecent ?? "";
     message.pruningInterval = object.pruningInterval ?? "";
+    message.haltHeight = (object.haltHeight !== undefined && object.haltHeight !== null)
+      ? Long.fromValue(object.haltHeight)
+      : Long.UZERO;
     return message;
   },
 };
