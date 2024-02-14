@@ -13,7 +13,7 @@ import type {
 } from "~/lib/grouped-network-chains";
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
-import { DYMENSION_LOGO_URL } from "~/lib/constants";
+import { LOGOS_PER_ECOSYSTEM } from "~/lib/constants";
 import { useNetworkStatuses } from "./use-network-status";
 
 interface Props {
@@ -154,7 +154,6 @@ const BrandChains = React.memo(function BrandChains({
 }: BrandChainsProps) {
   const options = chains;
   const groupName = options[0].brandName;
-  const isInDymensionEcosystem = options[0].platform === "dymension";
 
   const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   const { data } = useNetworkStatuses(
@@ -200,23 +199,32 @@ const BrandChains = React.memo(function BrandChains({
             aria-describedby={`${groupName}-logo`}
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
-          {isInDymensionEcosystem && (
-            <Tooltip label="Froopyland">
-              <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
-                <Image
-                  src={DYMENSION_LOGO_URL}
-                  height="18"
-                  width="18"
-                  alt={``}
-                  aria-describedby={`${groupName}-logo`}
-                  className="border-none rounded-full object-center w-[1.125rem] h-[1.125rem] aspect-square"
-                />
-                <FancyCheck
-                  className="text-gray-400 w-6 h-6 flex-none"
-                  aria-hidden="true"
-                />
-              </div>
-            </Tooltip>
+          {options[0].ecosystems.length > 0 && (
+            <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
+              {options[0].ecosystems.map((ecosystem) => (
+                <Tooltip
+                  label={`These chains are in ${LOGOS_PER_ECOSYSTEM[ecosystem].brand} ecosystem`}
+                  key={ecosystem}
+                >
+                  {LOGOS_PER_ECOSYSTEM[ecosystem].logoURL ? (
+                    <Image
+                      src={LOGOS_PER_ECOSYSTEM[ecosystem].logoURL}
+                      height="18"
+                      width="18"
+                      alt={`Logo ${LOGOS_PER_ECOSYSTEM[ecosystem].brand}`}
+                      aria-describedby={`${groupName}-logo`}
+                      className="border-none rounded-full bg-mid-dark-100 object-center w-[1.125rem] h-[1.125rem] aspect-square"
+                    />
+                  ) : (
+                    <div className="border-none rounded-full bg-mid-dark-100 w-[1.125rem] h-[1.125rem] aspect-square" />
+                  )}
+                </Tooltip>
+              ))}
+              <FancyCheck
+                className="text-gray-400 w-6 h-6 flex-none"
+                aria-hidden="true"
+              />
+            </div>
           )}
           {chains[0].verified && (
             <Tooltip label="This chain is verified">

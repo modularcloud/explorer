@@ -19,6 +19,25 @@ export const DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT = {
 } as const;
 export const DYMENSION_LOGO_URL =
   "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png";
+export const CELESTIA_LOGO_URL =
+  "https://mc-config.s3.us-west-2.amazonaws.com/celestia.png";
+
+export const LOGOS_PER_ECOSYSTEM: Record<
+  string,
+  {
+    logoURL: string;
+    brand: string;
+  }
+> = {
+  "celestia-arabica": {
+    logoURL: CELESTIA_LOGO_URL,
+    brand: "Celestia",
+  },
+  "dymension-froopyland": {
+    logoURL: DYMENSION_LOGO_URL,
+    brand: "Dymension",
+  },
+};
 
 export const OG_SIZE = {
   width: 1600,

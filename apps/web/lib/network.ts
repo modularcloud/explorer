@@ -3,7 +3,6 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
-import { DYMENSION_LOGO_URL } from "./constants";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -31,6 +30,7 @@ export const singleNetworkSchema = z.object({
       .default(
         `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`,
       ),
+    ecosystems: z.array(z.string()).optional().default([]),
   }),
   paidVersion: z.boolean(),
   slug: z.string(),
