@@ -151,13 +151,12 @@ function formatEcosystemName(ecosystem: string) {
 }
 
 const BrandChains = React.memo(function BrandChains({
-  chains,
+  chains: options,
   rowIndex,
   colIndex,
   noOfColumns,
   registerItemProps,
 }: BrandChainsProps) {
-  const options = chains;
   const groupName = options[0].brandName;
 
   const allNetworkChains = useSearchOptionsContext();
@@ -170,12 +169,13 @@ const BrandChains = React.memo(function BrandChains({
 
   const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   const { data } = useNetworkStatuses(
-    chains.map((network) => network.id),
-    !alwaysOnlineChainBrands.includes(chains[0].brandName),
+    options.map((network) => network.id),
+    !alwaysOnlineChainBrands.includes(options[0].brandName),
   );
 
   // arbitrary, but this is decent value
   const MAX_Z_INDEX = 999_999_999;
+  const isPremiumChain = options[0].verified;
 
   return (
     <div
@@ -199,8 +199,7 @@ const BrandChains = React.memo(function BrandChains({
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
           style={{
-            // @ts-expect-error this is a CSS variable
-            "--color-primary": chains[0].brandColor.replaceAll(",", ""),
+            "--color-primary": options[0].brandColor.replaceAll(",", ""),
           }}
         >
           <span>{capitalize(groupName)}</span>
@@ -215,7 +214,7 @@ const BrandChains = React.memo(function BrandChains({
             aria-describedby={`${groupName}-logo`}
             className="border-none rounded-full object-center w-4 h-4 aspect-square"
           />
-          {ecosystemNetworks.length > 0 && (
+          {!isPremiumChain && ecosystemNetworks.length > 0 && (
             <div className="flex items-center gap-0.5 bg-muted-100 pl-1 pr-0 rounded-full">
               <ul className="flex items-center gap-0">
                 {ecosystemNetworks.map((ecosystem, index) => (
@@ -250,7 +249,7 @@ const BrandChains = React.memo(function BrandChains({
               />
             </div>
           )}
-          {chains[0].verified && (
+          {isPremiumChain && (
             <Tooltip label="This chain is verified">
               <span>
                 <FancyCheck
