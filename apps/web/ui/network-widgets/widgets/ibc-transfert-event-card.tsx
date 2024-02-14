@@ -169,7 +169,7 @@ export function IBCTransferEventCard({
                         className="flex flex-col items-stretch group focus-visible:outline-none focus:outline-none"
                       >
                         <Link
-                          href={`/${networkSlug}/${msg.link}`}
+                          href={msg.link ?? "#"}
                           className="rounded-md border text-sm font-medium px-2 py-1 flex items-center justify-between hover:bg-mid-dark-100/80"
                         >
                           <div className="flex items-center gap-1.5">
