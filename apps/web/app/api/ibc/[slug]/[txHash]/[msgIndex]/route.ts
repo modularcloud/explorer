@@ -71,6 +71,14 @@ class Chain {
     return `${this.rpc}/tx_search?query=${queryStr}&prove=false&page=1&per_page=1&order_by=desc`;
   }
 
+  async getEvents(hash: string, msgIndex: string) {
+    const url = `${this.rpc}/tx?hash=${this.formatHash(hash)}&prove=false`;
+    const txResult = await fetch(url).then((res) => res.json());
+    return JSON.parse(txResult.result.tx_result.log).find(
+      (l: any) => l.msg_index === parseInt(msgIndex),
+    );
+  }
+
   async msgSearch(params: {
     send_packet?: QueryPacketParams;
     recv_packet?: QueryPacketParams;
@@ -172,14 +180,15 @@ export async function GET(
       packet_dst_channel: "channel-6743",
     },
   });
-  if (!msg) {
+  const resp = await chain3?.getEvents(msg?.txHash, msg?.msgIndex);
+  if (!resp) {
     return new Response(JSON.stringify({ error: "Message not found." }), {
       status: 404,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  return new Response(JSON.stringify(msg), {
+  return new Response(JSON.stringify(resp), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
