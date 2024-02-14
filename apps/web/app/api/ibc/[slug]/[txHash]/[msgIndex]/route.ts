@@ -76,7 +76,7 @@ class Chain {
     const txResult = await fetch(url).then((res) => res.json());
     return JSON.parse(txResult.result.tx_result.log).find(
       (l: any) => l.msg_index === parseInt(msgIndex),
-    );
+    ).events;
   }
 
   async msgSearch(params: {
@@ -167,20 +167,20 @@ export async function GET(
   // });
   const chain2 = await chain.getChain("channel-8128");
   // const chain2 = await Chain.createFromSlug("feku_5882173-1");
-  //   const msg = await chain2?.msgSearch({
-  //     recv_packet: {
-  //       packet_sequence: "6369",
-  //       packet_src_channel: "channel-8128",
-  //     },
-  //   });
-  const chain3 = await chain2?.getChain("channel-0");
-  const msg = await chain3?.msgSearch({
-    write_acknowledgement: {
-      packet_sequence: "7242",
-      packet_dst_channel: "channel-6743",
+  const msg = await chain2?.msgSearch({
+    recv_packet: {
+      packet_sequence: "6369",
+      packet_src_channel: "channel-8128",
     },
   });
-  const resp = await chain3?.getEvents(msg?.txHash, msg?.msgIndex);
+  //   const chain3 = await chain2?.getChain("channel-0");
+  //   const msg = await chain3?.msgSearch({
+  //     write_acknowledgement: {
+  //       packet_sequence: "7242",
+  //       packet_dst_channel: "channel-6743",
+  //     },
+  //   });
+  const resp = await chain2?.getEvents(msg?.txHash, msg?.msgIndex);
   if (!resp) {
     return new Response(JSON.stringify({ error: "Message not found." }), {
       status: 404,
