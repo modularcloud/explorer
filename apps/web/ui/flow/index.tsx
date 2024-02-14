@@ -15,6 +15,7 @@ type MsgRef = {
   slug: string;
   txHash: string;
   msgIndex: string;
+  logo: string;
 };
 type IBCFlow = {
   transfer?: MsgRef;
@@ -82,20 +83,7 @@ function Node({ num, data, image }: NodeProps) {
     () => `${data?.txHash.slice(0, 3)}...${data?.txHash.slice(-3)}`,
     [data?.txHash],
   );
-  const node: Node = useMemo(() => {
-    if (!data) return { type: "pending", label: "Pending" };
-    return {
-      type: "completed",
-      id: data.txHash,
-      shortId: "sho",
-      label: "Transfer",
-      // waitingFor: "Receipt",
-      timestamp: "then", //dayjs().format("YYYY-MM-DD"),
-      link: `/${data.slug}/transactions/${data.txHash}/messages/${data.msgIndex}`,
-      //image: image ?? "",
-      image: "",
-    };
-  }, [data]);
+  
   const isNext = false;
   const time = "";
   return (
@@ -137,15 +125,15 @@ function Node({ num, data, image }: NodeProps) {
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
-          {/* {"image" in node ? (
+          {data ? (
             <Image
-              src={node.image}
+              src={data.logo}
               width={20}
               height={20}
-              alt={`${node.label} chain logo`}
+              alt={`${label} chain logo`}
               className="rounded-full"
             />
-          ) : null} */}
+          ) : null}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
           {label}
