@@ -9,6 +9,7 @@ export async function getDymensionIBCTransfertEvents(): Promise<
     "hash" VARCHAR(255) NOT NULL,
     "timestamp" BIGINT NOT NULL,
     "amount" VARCHAR(255),
+    "msg_index" INTEGER DEFAULT 0 NOT NULL,
     "from_address" VARCHAR(255) NOT NULL,
     "from_chainname" VARCHAR(255) NOT NULL,
     "from_chainslug" VARCHAR(255) NOT NULL,
@@ -26,6 +27,7 @@ export async function getDymensionIBCTransfertEvents(): Promise<
     type: "transfer" as const,
     hash: row.hash,
     timestamp: Number(row.timestamp),
+    msgIndex: Number(row.msg_index),
     amount: row.amount,
     from: {
       address: row.from_address,
@@ -44,6 +46,7 @@ export async function getDymensionIBCTransfertEvents(): Promise<
 
 type IBCTransferEventRow = {
   id: number;
+  msg_index: number;
   type: string;
   hash: string;
   timestamp: string;
@@ -62,6 +65,7 @@ export type IBCTransferEvent = {
   type: "transfer";
   hash: string;
   timestamp: number;
+  msgIndex: number;
   amount?: string | null;
   from: {
     address: string;
