@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { getAction, getValue } from "./event-utils";
 
 type Integration = {
   accountId: string;
@@ -43,13 +44,17 @@ type QueryPacketParams = {
 
 // I don't normally use classes in TS, but this is a nice way to organize the code
 class Chain {
-  private isHub: boolean;
-  private rpc: string;
-  private hubChannel: string | undefined;
+  private readonly isHub: boolean;
+  private readonly rpc: string;
+  private readonly hubChannel: string | undefined;
+
+  public readonly slug: string;
+
   constructor(integration: Integration) {
     this.isHub = integration.chainBrand.toLowerCase() === "dymension";
     this.rpc = integration.config.rpcUrls.cosmos;
     this.hubChannel = integration.config.platformData.appData?.ibcChannel;
+    this.slug = integration.slug;
   }
 
   private formatHash(hash: string) {
@@ -98,6 +103,7 @@ class Chain {
     }
 
     const url = this.txSearchUrl(queries.join(" AND "));
+    console.log("url", url);
     const txSearch = await fetch(url).then((res) => res.json());
     if (parseInt(txSearch.result.total_count) > 1) {
       console.warn("Multiple transactions found for query", url);
@@ -158,38 +164,208 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { txHash: string; msgIndex: string; slug: string } },
 ) {
-  const chain = await Chain.createFromSlug("dymension-froopyland");
-  // const msg = await chain.msgSearch({
-  //   write_acknowledgement: {
-  //     packet_sequence: "7242",
-  //     packet_dst_channel: "channel-6743",
-  //   },
-  // });
-  const chain2 = await chain.getChain("channel-8128");
-  // const chain2 = await Chain.createFromSlug("feku_5882173-1");
-  const msg = await chain2?.msgSearch({
-    recv_packet: {
-      packet_sequence: "6369",
-      packet_src_channel: "channel-8128",
-    },
-  });
-  //   const chain3 = await chain2?.getChain("channel-0");
-  //   const msg = await chain3?.msgSearch({
-  //     write_acknowledgement: {
-  //       packet_sequence: "7242",
-  //       packet_dst_channel: "channel-6743",
-  //     },
-  //   });
-  const resp = await chain2?.getEvents(msg?.txHash, msg?.msgIndex);
-  if (!resp) {
+  const chain = await Chain.createFromSlug(params.slug);
+  const msg = await chain.getEvents(params.txHash, params.msgIndex);
+  if (!msg) {
     return new Response(JSON.stringify({ error: "Message not found." }), {
       status: 404,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  return new Response(JSON.stringify(resp), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  const action = getAction(msg);
+  if (!action) {
+    return new Response(JSON.stringify({ error: "Action not found." }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  switch (action) {
+    case "/ibc.applications.transfer.v1.MsgTransfer":
+      var srcChannel = getValue(msg, "send_packet", "packet_src_channel")!;
+      var packetSequence = getValue(msg, "send_packet", "packet_sequence")!;
+      var chainA = chain;
+      var chainB = await chain.getChain(srcChannel);
+      if (!chainB) {
+        return new Response(JSON.stringify({ error: "Chain not found." }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      var recv;
+      try {
+        recv = await chainB.msgSearch({
+          recv_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      var ack;
+      try {
+        ack = await chainA.msgSearch({
+          acknowledge_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      return new Response(
+        JSON.stringify({
+          transfer: {
+            slug: params.slug,
+            txHash: params.txHash,
+            msgIndex: parseInt(params.msgIndex),
+          },
+          receive: recv && {
+            slug: chainB.slug,
+            txHash: recv.txHash,
+            msgIndex: recv.msgIndex,
+          },
+          acknowledge: ack && {
+            slug: params.slug,
+            txHash: ack.txHash,
+            msgIndex: ack.msgIndex,
+          },
+          //   context: {
+          //     recv,
+          //     ack,
+          //   },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    case "/ibc.core.channel.v1.MsgRecvPacket":
+      var dstChannel = getValue(msg, "recv_packet", "packet_dst_channel")!;
+      var srcChannel = getValue(msg, "recv_packet", "packet_src_channel")!;
+      var packetSequence = getValue(msg, "recv_packet", "packet_sequence")!;
+
+      // dumb type system and scoping quirk with switch statements and classes
+      var _chainA = await chain.getChain(dstChannel);
+      if (!_chainA) {
+        return new Response(JSON.stringify({ error: "Chain not found." }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      var chainA = _chainA;
+
+      var ack;
+      try {
+        ack = await chainA.msgSearch({
+          acknowledge_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      var transfer;
+      try {
+        transfer = await chainA.msgSearch({
+          send_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      return new Response(
+        JSON.stringify({
+          receive: {
+            slug: params.slug,
+            txHash: params.txHash,
+            msgIndex: parseInt(params.msgIndex),
+          },
+          acknowledge: ack && {
+            slug: chainA.slug,
+            txHash: ack.txHash,
+            msgIndex: ack.msgIndex,
+          },
+          transfer: transfer && {
+            slug: chainA.slug,
+            txHash: transfer.txHash,
+            msgIndex: transfer.msgIndex,
+          },
+          // context: {
+          //   ack,
+          //   transfer,
+          // },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    case "/ibc.core.channel.v1.MsgAcknowledgement":
+      var srcChannel = getValue(
+        msg,
+        "acknowledge_packet",
+        "packet_src_channel",
+      )!;
+      var packetSequence = getValue(
+        msg,
+        "acknowledge_packet",
+        "packet_sequence",
+      )!;
+      var chainA = chain;
+      var chainB = await chain.getChain(srcChannel);
+      if (!chainB) {
+        return new Response(JSON.stringify({ error: "Chain not found." }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      var recv;
+      try {
+        recv = await chainB.msgSearch({
+          recv_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      var transfer;
+      try {
+        transfer = await chainA.msgSearch({
+          send_packet: {
+            packet_sequence: packetSequence,
+            packet_src_channel: srcChannel,
+          },
+        });
+      } catch {}
+      return new Response(
+        JSON.stringify({
+          acknowledge: {
+            slug: params.slug,
+            txHash: params.txHash,
+            msgIndex: parseInt(params.msgIndex),
+          },
+          receive: recv && {
+            slug: chainB.slug,
+            txHash: recv.txHash,
+            msgIndex: recv.msgIndex,
+          },
+          transfer: transfer && {
+            slug: chainA.slug,
+            txHash: transfer.txHash,
+            msgIndex: transfer.msgIndex,
+          },
+          // context: {
+          //   recv,
+          //   transfer,
+          // },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    default:
+      return new Response(JSON.stringify({ error: "Action not found." }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+  }
 }
