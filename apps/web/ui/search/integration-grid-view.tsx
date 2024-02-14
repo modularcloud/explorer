@@ -147,7 +147,7 @@ type BrandChainsProps = {
 
 function formatEcosystemName(ecosystem: string) {
   const nameParts = ecosystem.split("-").filter(Boolean);
-  return nameParts.map(capitalize).join(" ");
+  return nameParts.map((str, i) => i === nameParts.length - 1 ? `(${capitalize(str)})` : capitalize(str)).join(" ");
 }
 
 const BrandChains = React.memo(function BrandChains({
@@ -242,9 +242,9 @@ const BrandChains = React.memo(function BrandChains({
                     }}
                   >
                     <Tooltip
-                      label={`These chains are in ${formatEcosystemName(
+                      label={`${formatEcosystemName(
                         ecosystem.id,
-                      )} ecosystem`}
+                      )} Ecosystem`}
                     >
                       <Image
                         src={ecosystem.logoURL}
