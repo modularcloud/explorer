@@ -20,7 +20,7 @@ export async function GET(
       params.hash
     }&prove=false`,
   ).then((res) => res.json());
-  console.log("xxxxxxxxxxxxxxxx")
+  console.log("xxxxxxxxxxxxxxxx");
   const log = JSON.parse(tx.result.tx_result.log);
   const message = log.find((l: any) => l.msg_index === parseInt(params.index));
   const messageEntry = message.events.find((e: any) => e.type === "message");
