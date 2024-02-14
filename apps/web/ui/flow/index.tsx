@@ -11,6 +11,17 @@ import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { useParams } from "next/navigation";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 
+type MsgRef = {
+  slug: string;
+  txHash: string;
+  msgIndex: string;
+};
+type IBCFlow = {
+  transfer?: MsgRef;
+  receive?: MsgRef;
+  acknowledge?: MsgRef;
+};
+
 type Node =
   | {
       type: "completed";
@@ -48,246 +59,56 @@ enum Step {
 
 type NodeProps = {
   num: number;
-  isNext?: boolean;
-  hash: string;
-  slug: string;
-  index: number;
+  data?: MsgRef;
+  image?: string;
 };
 
-function Node(props: NodeProps) {
-  const flowDetails = React.useContext(FlowChartContext);
-  if (!flowDetails) {
-    console.error("Flow details context is not available");
-    return null;
-  }
-
-  return <NodeContent {...props} flowDetails={flowDetails} />;
-}
-
-function NodeContent({
-  isNext,
-  num,
-  index,
-  flowDetails,
-}: NodeProps & {
-  flowDetails: FlowChartContextType;
-}) {
+function Node({ num, data, image }: NodeProps) {
   const [isHovered, setIsHovered] = React.useState(false);
-  const params = useParams<{ network: string; path: string[] }>();
-  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
-  const txHash = path[1];
-  const msgIndex = path[3] ?? index;
 
-  const twoHopStep = [Step.ROLLAPP_TR, Step.ROLLAPP_RECV, Step.ROLLAPP_ACK][
-    num
-  ];
-  const oneHopStep = [Step.CHAIN_TR, Step.CHAIN_RECV, Step.CHAIN_ACK][num];
-
-  // TODO fix!!!!!
-  const label = {
-    [Step.ROLLAPP_TR]: "Transfer",
-    [Step.ROLLAPP_RECV]: "Received",
-    [Step.ROLLAPP_ACK]: "Acknowledgement",
-    [Step.HUB_RECV]: "Received",
-    [Step.HUB_ACK]: "Acknowledgement",
-    [Step.CHAIN_TR]: "Transfer",
-    [Step.CHAIN_RECV]: "Received",
-    [Step.CHAIN_ACK]: "Acknowledgement",
-  }[twoHopStep];
-
-  const fallbackData = {
-    result: {
-      type: "pending",
-      label,
-      waitingFor: label === "Received" ? "receipt" : undefined,
-    },
-  };
-
-  const sourceChannel = flowDetails.transfer.from.chain;
-  const destinationChannel = flowDetails.transfer.to.chain;
-  const forwardSequence = flowDetails.sequence.forward;
-  const backwardSequence = flowDetails.sequence.backward;
-  const regularSequence = flowDetails.sequence.regular;
-
-  const useHubAck = React.useMemo(
-    () =>
-      (flowDetails.sequence.hops === 2 &&
-        twoHopStep === Step.ROLLAPP_TR &&
-        !forwardSequence) ||
-      (twoHopStep === Step.ROLLAPP_RECV && !backwardSequence) ||
-      (twoHopStep === Step.ROLLAPP_ACK && !backwardSequence),
-    [twoHopStep, forwardSequence, backwardSequence, flowDetails.sequence.hops],
-  );
-
-  const twoHopUrl = React.useMemo(
-    () =>
-      `/api/ibc/${useHubAck ? Step.HUB_ACK : twoHopStep}?${[
-        `sourceChannel=${sourceChannel}`,
-        `destinationChannel=${destinationChannel}`,
-        `forwardSequence=${forwardSequence}`,
-        `backwardSequence=${backwardSequence}`,
-        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
-      ]
-        .filter((q) => !q.endsWith("=undefined"))
-        .join("&")}`,
-    [
-      useHubAck,
-      twoHopStep,
-      sourceChannel,
-      destinationChannel,
-      forwardSequence,
-      backwardSequence,
-      flowDetails.transfer.from.penultimate,
-    ],
-  );
-
-  const oneHopUrl = React.useMemo(
-    () =>
-      `/api/ibc/${oneHopStep}?${[
-        `sourceChannel=${sourceChannel}`,
-        `destinationChannel=${destinationChannel}`,
-        `sequence=${regularSequence}`,
-        `penultimateChannel=${flowDetails.transfer.from.penultimate}`,
-      ]
-        .filter((q) => !q.endsWith("=undefined"))
-        .join("&")}`,
-    [
-      oneHopStep,
-      sourceChannel,
-      destinationChannel,
-      regularSequence,
-      flowDetails.transfer.from.penultimate,
-    ],
-  );
-  const url = useMemo(() => {
-    if (oneHopUrl.endsWith("?") || twoHopUrl.endsWith("?"))
-      return `/api/ibc/integration/${slug}/tx/${txHash}/message/${msgIndex}`;
-    if (!flowDetails.sequence.hops && useHubAck) {
-      return twoHopUrl;
+  const label = useMemo(() => {
+    switch (num) {
+      case 0:
+        return "Transfer";
+      case 1:
+        return "Receipt";
+      case 2:
+        return "Acknowledgement";
+      default:
+        return "Unknown";
     }
-    if (flowDetails.sequence.hops === 2) {
-      return twoHopUrl;
-    }
-    return oneHopUrl;
-  }, [
-    oneHopUrl,
-    twoHopUrl,
-    slug,
-    txHash,
-    msgIndex,
-    flowDetails.sequence.hops,
-    useHubAck,
-  ]);
-
-  const nodeResponse = useSWR(
-    url,
-    async () => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    },
-    {
-      refreshInterval: 5000,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      fallbackData,
-      onError: (error) => {
-        // Transfer should always exist since it is the first in the flow
-        if (error.status === 404) {
-          const newDetails = flowDetails;
-
-          if (!flowDetails.sequence.hops && twoHopStep === Step.ROLLAPP_TR) {
-            newDetails.sequence.hops = 1;
-          }
-
-          if (!flowDetails.sequence.hops && oneHopStep === Step.CHAIN_TR) {
-            newDetails.sequence.hops = 2;
-          }
-
-          flowDetails.setContext?.(newDetails);
-        }
-      },
-      onSuccess: (data) => {
-        const newDetails = flowDetails;
-
-        if (!newDetails.transfer.from.address) {
-          newDetails.transfer.from.address = data.from.address;
-        }
-
-        if (!newDetails.transfer.from.chain) {
-          newDetails.transfer.from.chain = data.from.chain;
-        }
-
-        if (!newDetails.transfer.to.address) {
-          newDetails.transfer.to.address = data.to.address;
-        }
-
-        if (!newDetails.transfer.to.chain) {
-          newDetails.transfer.to.chain = data.to.chain;
-        }
-
-        if (!newDetails.sequence.forward) {
-          newDetails.sequence.forward = data.forwardSequence;
-        }
-
-        if (!newDetails.sequence.backward) {
-          newDetails.sequence.backward = data.backwardSequence;
-        }
-
-        if (!newDetails.sequence.hops) {
-          newDetails.sequence.hops = data.hops;
-        }
-
-        if (!newDetails.sequence.regular) {
-          newDetails.sequence.regular = data.sequence;
-        }
-
-        if (!newDetails.transfer.from.penultimate) {
-          newDetails.transfer.from.penultimate = data.penultimateChannel;
-        }
-
-        flowDetails.setContext?.(newDetails);
-      },
-    },
+  }, [num]);
+  const shortHash = useMemo(
+    () => `${data?.txHash.slice(0, 3)}...${data?.txHash.slice(-3)}`,
+    [data?.txHash],
   );
-
-  const time = useMemo(() => {
-    const node = nodeResponse.data;
-    if (node && node.timestamp) {
-      dayjs.extend(relativeTime);
-      return dayjs(node.timestamp).fromNow();
-    }
-    return null;
-  }, [nodeResponse.data]);
-
-  const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
-  if (!nodeResponse.data) return null;
-
-  // const node = nodeResponse.data.result;
-
-  const node =
-    (flowDetails.sequence.hops !== 1 && useHubAck) || !nodeResponse.data.txHash
-      ? fallbackData.result
-      : {
-          type: "completed",
-          link: `/${nodeResponse.data.slug}/transactions/${nodeResponse.data.txHash}/messages/${nodeResponse.data.messageIndex}`,
-          id: nodeResponse.data.txHash,
-          shortId:
-            nodeResponse.data.txHash.slice(0, 3) +
-            "..." +
-            nodeResponse.data.txHash.slice(-3),
-          label,
-          image: nodeResponse.data.logo,
-        };
-
+  const node: Node = useMemo(() => {
+    if (!data) return { type: "pending", label: "Pending" };
+    return {
+      type: "completed",
+      id: data.txHash,
+      shortId: "sho",
+      label: "Transfer",
+      // waitingFor: "Receipt",
+      timestamp: "then", //dayjs().format("YYYY-MM-DD"),
+      link: `/${data.slug}/transactions/${data.txHash}/messages/${data.msgIndex}`,
+      //image: image ?? "",
+      image: "",
+    };
+  }, [data]);
+  const isNext = false;
+  const time = "";
   return (
     <Link
-      href={`${node.type === "completed" && "link" in node ? node.link : "#"}`}
+      href={
+        data
+          ? `/${data.slug}/transactions/${data.txHash}/messages/${data.msgIndex}`
+          : "#"
+      }
       onClick={(e) => {
-        if (node.type === "error") {
-          nodeResponse.mutate(fallbackData);
-        }
+        // if (node.type === "error") {
+        //   //nodeResponse.mutate(fallbackData);
+        // }
       }}
       onMouseEnter={() => {
         setIsHovered(true);
@@ -306,17 +127,17 @@ function NodeContent({
         "border flex grow basis-[0%] flex-col items-stretch p-2.5 rounded-lg border-solid",
         {
           "border-[color:var(--gray-50,#ECEFF3)] bg-slate-50 text-[#272835] hover:border-[#E6EAEF] hover:bg-[#EFF2F6":
-            !isNext && node.type !== "completed",
+            !isNext && !data,
           "border-[color:var(--yellow-100,#FAEDCC)] bg-yellow-50 text-yellow-900 hover:bg-[#FFF1CC] hover:border-[#FAEDCC]":
             isNext,
           "border-[color:var(--green-100,#DDF3EF)] bg-teal-50 text-teal-900 hover:border-[#DDF3EF] hover:bg-[#DDFDF4]":
-            node.type === "completed",
+            !!data,
         },
       )}
     >
       <div className="flex items-stretch justify-between gap-2">
         <div className="items-center shadow bg-white flex aspect-square flex-col p-1 rounded-md w-7 h-7">
-          {"image" in node ? (
+          {/* {"image" in node ? (
             <Image
               src={node.image}
               width={20}
@@ -324,18 +145,16 @@ function NodeContent({
               alt={`${node.label} chain logo`}
               className="rounded-full"
             />
-          ) : null}
+          ) : null} */}
         </div>
         <div className="text-sm font-medium leading-5 tracking-tight self-center grow whitespace-nowrap my-auto">
-          {node.label}
+          {label}
         </div>
       </div>
-      {node.type === "completed" ? (
+      {data ? (
         <div className="flex justify-between align-items gap-5 mt-4">
           <div className="text-xs font-medium leading-4 whitespace-nowrap">
-            {node && (("shortId" in node && node.shortId) || "id" in node)
-              ? node.shortId ?? node.id
-              : null}
+            {shortHash}
           </div>
           <div className="text-right text-xs font-medium leading-4 self-stretch whitespace-nowrap">
             {time}
@@ -343,7 +162,7 @@ function NodeContent({
         </div>
       ) : (
         <div className="overflow-hidden text-ellipsis text-xs font-medium leading-4 whitespace-nowrap mt-4">
-          {node.type === "error" ? (
+          {/* {node.type === "error" ? (
             isHovered ? (
               "Try Again"
             ) : (
@@ -356,7 +175,8 @@ function NodeContent({
               ? node.waitingFor
               : node.label
             ).toLowerCase()}...`
-          )}
+          )} */}
+          {`Waiting for ${label.toLowerCase()}...`}
         </div>
       )}
     </Link>
@@ -630,23 +450,23 @@ export function FlowChart({ index }: { index: number }) {
   const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
 
-  // Example usage of setContext (can be used anywhere within the FlowChart component or its children)
-  // setContext({...context, transfer: {...transfer, amount: '1000'}});
+  const { data } = useSWR<IBCFlow>(
+    `/api/ibc/${slug}/${txHash}/${index}`,
+    (url) => fetch(url).then((res) => res.json()),
+    { fallbackData: {} },
+  );
 
   return (
-    <FlowChartProvider>
-      <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
-        <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
-          <div className="text-xs font-medium leading-4">IBC Transfer</div>
-          <Transfer hash={txHash} slug={slug} />
-        </div>
-        <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
-          <Node num={0} index={index} hash={txHash} slug={slug} />
-          <Node num={1} index={index} hash={txHash} slug={slug} />
-          <Node num={2} index={index} hash={txHash} slug={slug} />
-          {/* <Node step={3} hash={txHash} slug={slug} /> */}
-        </div>
+    <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
+      <div className="flex w-full justify-between items-center gap-5 mt-3 flex-wrap">
+        <div className="text-xs font-medium leading-4">IBC Transfer</div>
+        <Transfer hash={txHash} slug={slug} />
       </div>
-    </FlowChartProvider>
+      <div className="items-stretch flex gap-2 mt-3 mb-4 max-md:max-w-full max-md:flex-wrap max-md:justify-center flex-col md:flex-row  ">
+        <Node num={0} data={data?.transfer} />
+        <Node num={1} data={data?.receive} />
+        <Node num={2} data={data?.acknowledge} />
+      </div>
+    </div>
   );
 }
