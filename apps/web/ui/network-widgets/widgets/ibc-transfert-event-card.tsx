@@ -13,18 +13,10 @@ import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
 import type { IBCTransferEvent } from "~/lib/dymension-utils";
 import { Skeleton } from "~/ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-} from "~/ui/shadcn/components/ui/dropdown-menu";
-import {
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
 import useSWR from "swr";
 import { z } from "zod";
 import { jsonFetch } from "~/lib/shared-utils";
-import { useRouter } from "next/navigation";
+import * as HoverCard from "@radix-ui/react-hover-card";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -68,7 +60,6 @@ export function IBCTransferEventCard({
   event,
   networkSlug,
 }: IBCTransferEventCardProps) {
-  const router = useRouter();
   const initialMessages = [
     {
       label: "Transfer",
@@ -115,8 +106,8 @@ export function IBCTransferEventCard({
             <span className="text-teal-900">Transfer</span>
           </Link>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="items-center gap-0 hidden tab:flex">
+          <HoverCard.Root openDelay={0}>
+            <HoverCard.Trigger className="items-center gap-0 hidden tab:flex cursor-default">
               <div
                 className={cn("h-2 w-2 rounded-full", {
                   "bg-gray-400": messages[0].color === "gray",
@@ -155,53 +146,58 @@ export function IBCTransferEventCard({
               >
                 <span className="sr-only">Acknowledgement</span>
               </div>
-            </DropdownMenuTrigger>
+            </HoverCard.Trigger>
             {messagesWithLinks.length > 0 && (
-              <DropdownMenuContent
-                className="p-2 min-w-[200px]"
-                side="bottom"
-                align="start"
-              >
-                {messagesWithLinks.map((msg, index) => (
-                  <DropdownMenuItem
-                    key={msg.label}
-                    className="flex flex-col items-stretch group focus-visible:outline-none focus:outline-none"
-                    onClick={() => {
-                      router.push(`/${networkSlug}/${msg.link}`);
-                    }}
-                  >
-                    <>
-                      <Link
-                        href={`/${networkSlug}/${msg.link}`}
-                        className="rounded-md border text-sm font-medium px-2 py-1 flex items-center justify-between group-data-[highlighted]:bg-mid-dark-100/80"
+              <HoverCard.Portal>
+                <HoverCard.Content
+                  sideOffset={10}
+                  className={cn(
+                    "p-2 min-w-[200px] rounded-lg bg-white shadow-md border",
+                    // animation classes
+                    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+                    " data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+                  )}
+                  side="bottom"
+                  align="start"
+                >
+                  <ul>
+                    {messagesWithLinks.map((msg, index) => (
+                      <li
+                        key={msg.label}
+                        className="flex flex-col items-stretch group focus-visible:outline-none focus:outline-none"
                       >
-                        <div className="flex items-center gap-1.5">
+                        <Link
+                          href={`/${networkSlug}/${msg.link}`}
+                          className="rounded-md border text-sm font-medium px-2 py-1 flex items-center justify-between hover:bg-mid-dark-100/80"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <div
+                              aria-hidden="true"
+                              className={cn("h-2 w-2 rounded-full", {
+                                "bg-gray-400": msg.color === "gray",
+                                "bg-teal-400": msg.color === "green",
+                                "bg-yellow-400": msg.color === "yellow",
+                                "bg-red-500": msg.color === "red",
+                              })}
+                            />
+                            <span>{msg.label}</span>
+                          </div>
+
+                          <LinkOut className="h-4 w-4 text-neutral flex-none" />
+                        </Link>
+                        {index < messagesWithLinks.length - 1 && (
                           <div
                             aria-hidden="true"
-                            className={cn("h-2 w-2 rounded-full", {
-                              "bg-gray-400": msg.color === "gray",
-                              "bg-teal-400": msg.color === "green",
-                              "bg-yellow-400": msg.color === "yellow",
-                              "bg-red-500": msg.color === "red",
-                            })}
+                            className="w-[1px] bg-mid-dark-100 h-2 self-start relative left-5"
                           />
-                          <span>{msg.label}</span>
-                        </div>
-
-                        <LinkOut className="h-4 w-4 text-neutral flex-none" />
-                      </Link>
-                      {index < messagesWithLinks.length - 1 && (
-                        <div
-                          aria-hidden="true"
-                          className="w-[1px] bg-mid-dark-100 h-2 self-start relative left-5"
-                        />
-                      )}
-                    </>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </HoverCard.Content>
+              </HoverCard.Portal>
             )}
-          </DropdownMenu>
+          </HoverCard.Root>
         </div>
 
         <div className="flex items-center text-muted gap-1">
