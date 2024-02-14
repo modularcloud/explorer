@@ -107,45 +107,47 @@ export function IBCTransferEventCard({
           </Link>
 
           <HoverCard.Root openDelay={0}>
-            <HoverCard.Trigger className="items-center gap-0 hidden tab:flex cursor-default">
-              <div
-                className={cn("h-2 w-2 rounded-full", {
-                  "bg-gray-400": messages[0].color === "gray",
-                  "bg-teal-400": messages[0].color === "green",
-                  "bg-yellow-400": messages[0].color === "yellow",
-                  "bg-red-500": messages[0].color === "red",
-                })}
-              >
-                <span className="sr-only">Transfer</span>
-              </div>
-              <div
-                aria-hidden="true"
-                className="h-[1px] bg-mid-dark-100 w-8 flex-none"
-              />
-              <div
-                className={cn("h-2 w-2 rounded-full", {
-                  "bg-gray-400": messages[1].color === "gray",
-                  "bg-teal-400": messages[1].color === "green",
-                  "bg-yellow-400": messages[1].color === "yellow",
-                  "bg-red-500": messages[1].color === "red",
-                })}
-              >
-                <span className="sr-only">Receipt</span>
-              </div>
-              <div
-                aria-hidden="true"
-                className="h-[1px] bg-mid-dark-100 w-8 flex-none"
-              />
-              <div
-                className={cn("h-2 w-2 rounded-full", {
-                  "bg-gray-400": messages[2].color === "gray",
-                  "bg-teal-400": messages[2].color === "green",
-                  "bg-yellow-400": messages[2].color === "yellow",
-                  "bg-red-500": messages[2].color === "red",
-                })}
-              >
-                <span className="sr-only">Acknowledgement</span>
-              </div>
+            <HoverCard.Trigger asChild>
+              <button className="items-center gap-0 hidden tab:flex cursor-default py-1.5 px-3">
+                <div
+                  className={cn("h-2 w-2 rounded-full", {
+                    "bg-gray-400": messages[0].color === "gray",
+                    "bg-teal-400": messages[0].color === "green",
+                    "bg-yellow-400": messages[0].color === "yellow",
+                    "bg-red-500": messages[0].color === "red",
+                  })}
+                >
+                  <span className="sr-only">Transfer</span>
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="h-[1px] bg-mid-dark-100 w-8 flex-none"
+                />
+                <div
+                  className={cn("h-2 w-2 rounded-full", {
+                    "bg-gray-400": messages[1].color === "gray",
+                    "bg-teal-400": messages[1].color === "green",
+                    "bg-yellow-400": messages[1].color === "yellow",
+                    "bg-red-500": messages[1].color === "red",
+                  })}
+                >
+                  <span className="sr-only">Receipt</span>
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="h-[1px] bg-mid-dark-100 w-8 flex-none"
+                />
+                <div
+                  className={cn("h-2 w-2 rounded-full", {
+                    "bg-gray-400": messages[2].color === "gray",
+                    "bg-teal-400": messages[2].color === "green",
+                    "bg-yellow-400": messages[2].color === "yellow",
+                    "bg-red-500": messages[2].color === "red",
+                  })}
+                >
+                  <span className="sr-only">Acknowledgement</span>
+                </div>
+              </button>
             </HoverCard.Trigger>
             {messagesWithLinks.length > 0 && (
               <HoverCard.Portal>
