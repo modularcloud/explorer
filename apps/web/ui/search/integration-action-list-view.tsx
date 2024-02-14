@@ -142,30 +142,30 @@ export const IntegrationActionListView = React.memo(
             router.push(`/${selectedNetwork.id}`);
           },
         },
-        {
-          id: "latest-blocks",
-          groupName: "Pages",
-          icon: ({ className }) => (
-            <MenuHorizontal className={cn("h-4 w-4", className)} />
-          ),
-          label: "Go to latest blocks",
-          onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.id}/blocks`);
-          },
-        },
-        {
-          id: "latest-transactions",
-          groupName: "Pages",
-          icon: ({ className }) => (
-            <MenuHorizontal className={cn("h-4 w-4", className)} />
-          ),
-          label: "Go to latest transactions",
-          onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.id}/transactions`);
-          },
-        },
+        // {
+        //   id: "latest-blocks",
+        //   groupName: "Pages",
+        //   icon: ({ className }) => (
+        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
+        //   ),
+        //   label: "Go to latest blocks",
+        //   onSelect: () => {
+        //     onNavigate();
+        //     router.push(`/${selectedNetwork.id}/blocks`);
+        //   },
+        // },
+        // {
+        //   id: "latest-transactions",
+        //   groupName: "Pages",
+        //   icon: ({ className }) => (
+        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
+        //   ),
+        //   label: "Go to latest transactions",
+        //   onSelect: () => {
+        //     onNavigate();
+        //     router.push(`/${selectedNetwork.id}/transactions`);
+        //   },
+        // },
       ]);
       items.push([
         {
