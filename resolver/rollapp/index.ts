@@ -181,7 +181,7 @@ const BalancesResolver = createResolver(
     ).toString("hex");
 
     let balanceResponse: ResolutionResponse;
-    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+    if (input.endpoint === "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4") {
       balanceResponse = await fetchResolver({
         url: `${input.endpoint}/abci_query?path="/cosmos.bank.v1beta1.Query/AllBalances"&data=0x${hex}&height=0&prove=false`,
       });
@@ -216,7 +216,7 @@ export const RollAppSentAddressResolver = createResolver(
     fetchResolver: typeof FetchResolver,
   ) => {
     let transactions: ResolutionResponse;
-    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+    if (input.endpoint === "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4") {
       transactions = await fetchResolver({
         url: `${input.endpoint}/tx_search?query="message.sender='${
           input.address
@@ -254,7 +254,7 @@ export const RollAppReceiveAddressResolver = createResolver(
     fetchResolver,
   ) => {
     let transactions: ResolutionResponse;
-    if (input.endpoint === "https://froopyland.rpc.silknodes.io") {
+    if (input.endpoint === "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4") {
       transactions = await fetchResolver({
         url: `${input.endpoint}/tx_search?query="transfer.recipient='${
           input.address
