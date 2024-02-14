@@ -161,14 +161,16 @@ const BrandChains = React.memo(function BrandChains({
 
   const allNetworkChains = useSearchOptionsContext();
 
-  // I AM NOT PROUD OF THIS as it is very inefficient 😑
-  // the good part is that it works 🤷‍♂️
   const ecosystemNetworks = React.useMemo(() => {
     const values = allNetworkChains.flat();
     const brandEcosystems = options[0].ecosystems ?? [];
     const foundNetworks = values.filter((network) =>
       brandEcosystems.includes(network.id),
     );
+    // I AM NOT PROUD OF THIS as it is very inefficient 😑
+    // the good part is that it works 🤷‍♂️
+    // we map other the `brandEcosystems` instead of returning `foundNetworks`
+    // because we want to keep the same order
     return brandEcosystems
       .map(
         (ecosystem) =>
