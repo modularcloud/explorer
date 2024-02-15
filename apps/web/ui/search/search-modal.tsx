@@ -19,10 +19,6 @@ import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
-import {
-  useChainsFilteredByEcosystem,
-  useFilteredAndSortedNetworkChains,
-} from "./use-filtered-network-chains";
 
 // types
 import type {
@@ -71,7 +67,7 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredAndSortedNetworkChains(
+  const filteredOptionGroup = filterAndSortNetworkChains(
     optionGroups,
     deferredInputValue,
     defaultNetwork.value,
@@ -93,19 +89,9 @@ export function SearchModal({
 
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
 
-  let currentEcosystem: string | null = null;
-  if (
-    currentNetwork?.platform === "dymension" ||
-    currentNetwork?.id === "dymension-froopyland"
-  ) {
-    currentEcosystem = "dymension-froopyland";
-  } else if (currentNetwork?.id === "celestia-arabica") {
-    currentEcosystem = "celestia-arabica";
-  }
-
-  const ecosystemChains = useChainsFilteredByEcosystem(
+  const ecosystemChains = filterChainsByEcosystem(
     optionGroups,
-    currentEcosystem,
+    currentNetwork ? [currentNetwork.id, ...currentNetwork.ecosystems] : [],
     deferredInputValue,
   );
 
@@ -269,4 +255,53 @@ export function SearchModal({
       </DialogContent>
     </Dialog>
   );
+}
+
+function filterAndSortNetworkChains(
+  networkGrouped: GroupedNetworkChains,
+  filter: string,
+  networkToPrioritize?: NetworkChain,
+) {
+  const filteredChains: GroupedNetworkChains = [];
+
+  for (const networks of networkGrouped) {
+    const filtered =
+      // this is a little perf optimization, because we are sure that the filter will match all networks
+      filter.trim().length === 0
+        ? networks
+        : networks.filter(
+            (chain) =>
+              chain.displayName.toLowerCase().startsWith(filter) ||
+              chain.brandName.toLowerCase().startsWith(filter),
+          );
+
+    if (filtered.length > 0) {
+      if (filtered[0].accountId === networkToPrioritize?.accountId) {
+        filteredChains.unshift(filtered);
+      } else {
+        filteredChains.push(filtered);
+      }
+    }
+  }
+
+  return filteredChains;
+}
+
+function filterChainsByEcosystem(
+  optionGroups: GroupedNetworkChains,
+  ecosystems: string[],
+  filter: string,
+) {
+  const chains =
+    ecosystems.length === 0
+      ? []
+      : optionGroups.filter((group) =>
+          group.every((chain) =>
+            ecosystems.some((ecosystem) =>
+              chain.ecosystems.includes(ecosystem),
+            ),
+          ),
+        );
+
+  return filterAndSortNetworkChains(chains, filter);
 }
