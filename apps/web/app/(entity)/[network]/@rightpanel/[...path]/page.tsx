@@ -40,7 +40,7 @@ async function RightPanelPageContent({ params: _params }: Props) {
     }
 
     if (searchResult.status === "fulfilled" && searchResult.value) {
-      return <RightPanelSkeleton />;
+      return (params.path = searchResult.value);
     }
 
     return null;
