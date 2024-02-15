@@ -79,7 +79,7 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
         nextToken = result?.nextToken;
 
         if (result?.integrations) {
-          // @ts-expect-error
+          // @ts-expect-error non null integrations are filtered out
           allIntegrations = [
             ...allIntegrations,
             ...result.integrations.filter(Boolean),

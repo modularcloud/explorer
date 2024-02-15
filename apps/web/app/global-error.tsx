@@ -15,7 +15,6 @@ export default function GlobalError() {
         <main
           className="flex h-screen w-full flex-col items-center justify-center gap-6 text-center"
           style={{
-            // @ts-expect-error this is a CSS variable
             "--color-primary": DEFAULT_BRAND_COLOR,
           }}
         >
