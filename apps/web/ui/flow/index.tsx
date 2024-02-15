@@ -83,7 +83,7 @@ function Node({ num, data, image }: NodeProps) {
     () => `${data?.txHash.slice(0, 3)}...${data?.txHash.slice(-3)}`,
     [data?.txHash],
   );
-  
+
   const isNext = false;
   const time = "";
   return (
@@ -438,6 +438,16 @@ export function FlowChart({ index }: { index: number }) {
   const txHash = path[1];
   if (!slug || typeof slug !== "string" || !txHash) return null;
 
+  return <FlowChartContent slug={slug} txHash={txHash} index={index} />;
+}
+
+type FlowChartContentProps = {
+  slug: string;
+  txHash: string;
+  index: number;
+};
+
+function FlowChartContent({ slug, txHash, index }: FlowChartContentProps) {
   const { data } = useSWR<IBCFlow>(
     `/api/ibc/${slug}/${txHash}/${index}`,
     (url) => fetch(url).then((res) => res.json()),
