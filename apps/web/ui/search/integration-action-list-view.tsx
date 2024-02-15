@@ -129,6 +129,33 @@ export const IntegrationActionListView = React.memo(
         ];
       }
 
+      const latestBlocksAndTransactions = [
+        {
+          id: "latest-blocks",
+          groupName: "Pages",
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
+          label: "Go to latest blocks",
+          onSelect: () => {
+            onNavigate();
+            router.push(`/${selectedNetwork.id}/blocks`);
+          },
+        },
+        {
+          id: "latest-transactions",
+          groupName: "Pages",
+          icon: ({ className }) => (
+            <MenuHorizontal className={cn("h-4 w-4", className)} />
+          ),
+          label: "Go to latest transactions",
+          onSelect: () => {
+            onNavigate();
+            router.push(`/${selectedNetwork.id}/transactions`);
+          },
+        },
+      ] satisfies (typeof items)[number];
+
       items.push([
         {
           id: "chain-homepage",
@@ -142,30 +169,10 @@ export const IntegrationActionListView = React.memo(
             router.push(`/${selectedNetwork.id}`);
           },
         },
-        // {
-        //   id: "latest-blocks",
-        //   groupName: "Pages",
-        //   icon: ({ className }) => (
-        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
-        //   ),
-        //   label: "Go to latest blocks",
-        //   onSelect: () => {
-        //     onNavigate();
-        //     router.push(`/${selectedNetwork.id}/blocks`);
-        //   },
-        // },
-        // {
-        //   id: "latest-transactions",
-        //   groupName: "Pages",
-        //   icon: ({ className }) => (
-        //     <MenuHorizontal className={cn("h-4 w-4", className)} />
-        //   ),
-        //   label: "Go to latest transactions",
-        //   onSelect: () => {
-        //     onNavigate();
-        //     router.push(`/${selectedNetwork.id}/transactions`);
-        //   },
-        // },
+        ...(selectedNetwork.brandName === "celestia" ||
+        selectedNetwork.brandName === "eclipse"
+          ? latestBlocksAndTransactions
+          : []),
       ]);
       items.push([
         {
