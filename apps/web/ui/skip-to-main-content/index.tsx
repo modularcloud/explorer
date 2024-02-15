@@ -6,7 +6,6 @@ export function SkipToMainContent() {
   return (
     <a
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
       className={cn(

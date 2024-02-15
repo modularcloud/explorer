@@ -62,7 +62,6 @@ export function HeaderSearchButton({ optionGroups }: Props) {
         )}
         variant="bordered"
         style={{
-          // @ts-expect-error this is a CSS variable
           "--color-primary": network.brandColor,
         }}
       >

@@ -26,7 +26,6 @@ export default async function BlockLayout({
       <main
         className="min-h-screen flex flex-col h-full"
         style={{
-          // @ts-expect-error this is a CSS variable
           "--color-primary": network?.config.primaryColor,
           "--gradient-primary": network?.config.cssGradient,
         }}

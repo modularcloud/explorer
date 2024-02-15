@@ -38,7 +38,6 @@ export async function CelestiaWidgetLayout({
          * We define them as variables here because we use the same layout in the skeleton,
          * For more infos about how to use grid-template-areas see here :https://developer.mozilla.org/fr/docs/Web/CSS/grid-template-areas
          */
-        // @ts-expect-error this is a CSS variable
         "--grid-area-mobile": `
             "LT LT"
             "LT LT"

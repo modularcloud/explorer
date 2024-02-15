@@ -16,7 +16,6 @@ export default async function NetworkLogo(props: Props) {
     <div
       className="flex flex-col gap-8 items-center pt-44"
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": network.config.primaryColor,
       }}
     >

@@ -44,7 +44,6 @@ export function SearchForm({ optionGroups }: Props) {
   return (
     <div
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": primaryColor,
       }}
       className={cn(

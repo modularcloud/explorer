@@ -66,7 +66,6 @@ export function CelestiaWidgetLayoutContent({
 
       <div
         style={{
-          // @ts-expect-error this is a CSS variable
           "--color-primary": networkBrandColor,
         }}
         className={cn(

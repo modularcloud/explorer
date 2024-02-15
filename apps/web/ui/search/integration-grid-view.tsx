@@ -147,7 +147,11 @@ type BrandChainsProps = {
 
 function formatEcosystemName(ecosystem: string) {
   const nameParts = ecosystem.split("-").filter(Boolean);
-  return nameParts.map((str, i) => i === nameParts.length - 1 ? `(${capitalize(str)})` : capitalize(str)).join(" ");
+  return nameParts
+    .map((str, i) =>
+      i === nameParts.length - 1 ? `(${capitalize(str)})` : capitalize(str),
+    )
+    .join(" ");
 }
 
 const BrandChains = React.memo(function BrandChains({
@@ -213,7 +217,6 @@ const BrandChains = React.memo(function BrandChains({
           role="presentation"
           id={`row-${rowIndex}-col-${colIndex}-header`}
           style={{
-            // @ts-expect-error This is a CSS variable
             "--color-primary": options[0].brandColor.replaceAll(",", ""),
           }}
         >
@@ -242,9 +245,7 @@ const BrandChains = React.memo(function BrandChains({
                     }}
                   >
                     <Tooltip
-                      label={`${formatEcosystemName(
-                        ecosystem.id,
-                      )} Ecosystem`}
+                      label={`${formatEcosystemName(ecosystem.id)} Ecosystem`}
                     >
                       <Image
                         src={ecosystem.logoURL}

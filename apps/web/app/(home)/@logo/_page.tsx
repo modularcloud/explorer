@@ -7,7 +7,6 @@ export default function HomeLogo() {
     <div
       className="flex flex-col gap-8 items-center pt-44"
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
     >
