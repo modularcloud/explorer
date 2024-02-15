@@ -22,7 +22,7 @@ export const HeadlessRouteSchema = z.object({
   path: z.array(z.string()),
 });
 
-class PendingError extends Error {
+export class PendingError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "PendingError";
@@ -30,7 +30,7 @@ class PendingError extends Error {
   }
 }
 
-class UnhealthyNetworkError extends Error {
+export class UnhealthyNetworkError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "UnhealthyNetworkError";
@@ -184,6 +184,7 @@ export async function loadPage({
   try {
     resolution = await integration.resolveRoute(fixedPath, context);
   } catch (error) {
+    console.error(error);
     const networkStatus = await checkIfNetworkIsOnline(route.network);
     if (!networkStatus) {
       throw new UnhealthyNetworkError(String(error));

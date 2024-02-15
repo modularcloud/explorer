@@ -1,6 +1,12 @@
 import * as React from "react";
 import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
-import { loadPage, HeadlessRoute, search } from "~/lib/headless-utils";
+import {
+  loadPage,
+  HeadlessRoute,
+  search,
+  checkIfNetworkIsOnline,
+  UnhealthyNetworkError,
+} from "~/lib/headless-utils";
 import { Table } from "~/ui/entity/table";
 import { capitalize, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound, redirect } from "next/navigation";
@@ -129,9 +135,20 @@ async function AyncPageContent({
 
   if (entityType === "search") {
     const query = params.path[1];
-    const redirectPath = await search(params.network, query);
+    const [searchResult, networkStatusResult] = await Promise.allSettled([
+      search(params.network, query),
+      checkIfNetworkIsOnline(params.network),
+    ]);
 
-    if (redirectPath) {
+    if (
+      networkStatusResult.status === "rejected" ||
+      !networkStatusResult.value?.healthy
+    ) {
+      throw new UnhealthyNetworkError("Network is unhealthy");
+    }
+
+    if (searchResult.status === "fulfilled" && searchResult.value) {
+      const redirectPath = searchResult.value;
       redirect(`/${params.network}/${redirectPath.join("/")}`);
     } else {
       notFound();
