@@ -38,12 +38,13 @@ export function useFilteredAndSortedNetworkChains(
 
 export function useChainsFilteredByEcosystem(
   optionGroups: GroupedNetworkChains,
-  ecosystem: string,
+  ecosystem: string | null,
   filter: string,
 ) {
   const chains = React.useMemo(() => {
+    if (!ecosystem) return [];
     return optionGroups.filter((group) =>
-      group.every((chain) => chain.platform === ecosystem),
+      group.every((chain) => chain.ecosystems.includes(ecosystem)),
     );
   }, [optionGroups, ecosystem]);
 

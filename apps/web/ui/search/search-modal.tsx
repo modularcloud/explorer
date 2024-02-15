@@ -92,11 +92,20 @@ export function SearchModal({
   });
 
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
-  // TODO : This is temporary because in the future we want to support other ecosystems as well, not only dymension
-  //        we need to change the way we filter chains passed for the ecosystem
+
+  let currentEcosystem: string | null = null;
+  if (
+    currentNetwork?.platform === "dymension" ||
+    currentNetwork?.brandName === "dymension"
+  ) {
+    currentEcosystem = "dymension-froopyland";
+  } else if (currentNetwork?.brandName === "celestia") {
+    currentEcosystem = "celestia-arabica";
+  }
+
   const ecosystemChains = useChainsFilteredByEcosystem(
     optionGroups,
-    "dymension",
+    currentEcosystem,
     deferredInputValue,
   );
 
@@ -253,15 +262,7 @@ export function SearchModal({
               onChangeChainClicked={onListItemActionChangeChainClicked}
               onNavigate={onListItemActionNavigate}
               onSelectEcosystemChain={onListItemActionSelectEcosystemChain}
-              ecosystemNetworks={
-                // TODO : This is temporary because in the future we want to support other ecosystems as well
-                //        we need to change the way we filter chains passed for the ecosystem
-                // only for dymension chains for now
-                currentNetwork.platform === "dymension" ||
-                currentNetwork.id === "dymension-froopyland"
-                  ? ecosystemChains
-                  : null
-              }
+              ecosystemNetworks={ecosystemChains}
             />
           )}
         </div>
