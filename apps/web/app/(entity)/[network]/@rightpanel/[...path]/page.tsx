@@ -26,26 +26,24 @@ async function RightPanelPageContent({ params: _params }: Props) {
   const entityType = params.path[0];
 
   if (entityType === "search") {
-    if (entityType === "search") {
-      const query = params.path[1];
-      const [searchResult, networkStatusResult] = await Promise.allSettled([
-        search(params.network, query),
-        checkIfNetworkIsOnline(params.network),
-      ]);
+    const query = params.path[1];
+    const [searchResult, networkStatusResult] = await Promise.allSettled([
+      search(params.network, query),
+      checkIfNetworkIsOnline(params.network),
+    ]);
 
-      if (
-        networkStatusResult.status === "rejected" ||
-        !networkStatusResult.value?.healthy
-      ) {
-        return null;
-      }
-
-      if (searchResult.status === "fulfilled" && searchResult.value) {
-        return <RightPanelSkeleton />;
-      }
-
+    if (
+      networkStatusResult.status === "rejected" ||
+      !networkStatusResult.value?.healthy
+    ) {
       return null;
     }
+
+    if (searchResult.status === "fulfilled" && searchResult.value) {
+      return <RightPanelSkeleton />;
+    }
+
+    return null;
   }
 
   const network = await getSingleNetworkCached(params.network);
