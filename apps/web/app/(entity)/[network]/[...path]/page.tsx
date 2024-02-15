@@ -1,11 +1,18 @@
 import * as React from "react";
 import { Overview, OverviewSkeleton } from "~/ui/entity/overview";
-import { loadPage, HeadlessRoute, search } from "~/lib/headless-utils";
+import {
+  loadPage,
+  HeadlessRoute,
+  search,
+  checkIfNetworkIsOnline,
+  UnhealthyNetworkError,
+} from "~/lib/headless-utils";
 import { Table } from "~/ui/entity/table";
 import { capitalize, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound, redirect } from "next/navigation";
 import { getSingleNetworkCached } from "~/lib/network";
 import { displayFiltersSchema } from "~/lib/display-filters";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 function shortenId(str: string) {
   if (str.length < 12) {
@@ -129,13 +136,32 @@ async function AyncPageContent({
 
   if (entityType === "search") {
     const query = params.path[1];
-    const redirectPath = await search(params.network, query);
+    const [networkResult, searchResult, networkStatusResult] =
+      await Promise.allSettled([
+        getSingleNetworkCached(params.network),
+        search(params.network, query),
+        checkIfNetworkIsOnline(params.network),
+      ]);
 
-    if (redirectPath) {
-      redirect(`/${params.network}/${redirectPath.join("/")}`);
-    } else {
+    const network = networkResult.status === "fulfilled" && networkResult.value;
+    if (!network) {
       notFound();
     }
+
+    if (
+      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
+      (networkStatusResult.status === "rejected" ||
+        !networkStatusResult.value?.healthy)
+    ) {
+      throw new UnhealthyNetworkError("Network is unhealthy");
+    }
+
+    if (searchResult.status !== "fulfilled" || !searchResult.value) {
+      notFound();
+    }
+
+    const redirectPath = searchResult.value;
+    redirect(`/${params.network}/${redirectPath.join("/")}`);
   }
 
   const displayFilters = displayFiltersSchema.parse(searchParams);
