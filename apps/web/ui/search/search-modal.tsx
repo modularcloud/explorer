@@ -96,10 +96,10 @@ export function SearchModal({
   let currentEcosystem: string | null = null;
   if (
     currentNetwork?.platform === "dymension" ||
-    currentNetwork?.brandName === "dymension"
+    currentNetwork?.id === "dymension-froopyland"
   ) {
     currentEcosystem = "dymension-froopyland";
-  } else if (currentNetwork?.brandName === "celestia") {
+  } else if (currentNetwork?.id === "celestia-arabica") {
     currentEcosystem = "celestia-arabica";
   }
 
