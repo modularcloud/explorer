@@ -30,6 +30,7 @@ import type {
   NetworkChain,
 } from "~/lib/grouped-network-chains";
 import { useNetworkStatus } from "./use-network-status";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 interface Props {
   defaultNetwork: {
     value: NetworkChain;
@@ -117,11 +118,10 @@ export function SearchModal({
     [onSelectOption],
   );
 
-  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   let currentNetworkToCheck: string | null = null;
   if (
     currentNetwork &&
-    !alwaysOnlineChainBrands.includes(currentNetwork.brandName)
+    !ALWAYS_ONLINE_NETWORKS.includes(currentNetwork.brandName)
   ) {
     currentNetworkToCheck = currentNetwork.id;
   }
