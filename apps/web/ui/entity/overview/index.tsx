@@ -21,10 +21,10 @@ export async function Overview({ properties, isIBC }: Props) {
   }, [properties]);
   return (
     <>
-      {isIBC !== undefined && Number(isIBC) >= 0 ? (
-        <FlowChart index={isIBC} />
-      ) : null}
       <section className="pb-4 h-full overflow-y-auto">
+        {isIBC !== undefined && Number(isIBC) >= 0 ? (
+          <FlowChart index={isIBC} />
+        ) : null}
         <OverviewEntryList entries={entries} />
       </section>
     </>
