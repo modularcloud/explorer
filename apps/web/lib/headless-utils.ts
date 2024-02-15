@@ -123,7 +123,9 @@ export async function loadIntegration(
           );
 
           if (response !== null && response.type === "pending") {
-            throw new PendingError("Pending Resource");
+            throw new PendingError(
+              "This resource doesn't exist yet or has already been pruned",
+            );
           }
 
           if (response === null || response.type === "error") {
@@ -182,6 +184,11 @@ export async function loadPage({
   try {
     resolution = await integration.resolveRoute(fixedPath, context);
   } catch (error) {
+    const networkStatus = await checkIfNetworkIsOnline(route.network);
+    if (!networkStatus) {
+      throw new UnhealthyNetworkError(String(error));
+    }
+
     if (error instanceof PendingError) {
       /**
        * Pending responses are for items that cannot be found, but may exist in the future.
@@ -190,11 +197,6 @@ export async function loadPage({
        * However, we will have a special treatment for this in the future.
        */
       notFound();
-    }
-
-    const networkStatus = await checkIfNetworkIsOnline(route.network);
-    if (!networkStatus) {
-      throw new UnhealthyNetworkError(String(error));
     }
   }
 
