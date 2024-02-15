@@ -15,7 +15,6 @@ export default function RegisterPage() {
       id="main-content"
       className="h-[100dvh] flex flex-col items-stretch"
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": "212 100% 49%",
       }}
     >

@@ -92,7 +92,6 @@ export function HeaderTabsFilterButton({
         side="bottom"
         align="end"
         style={{
-          // @ts-expect-error
           "--color-primary": primaryColor,
         }}
         className="bg-white w-56 flex flex-col gap-1 p-1 rounded-xl"
@@ -130,7 +129,6 @@ export function HeaderTabsFilterButton({
               align="end"
               className="bg-white p-0 rounded-md w-min"
               style={{
-                // @ts-expect-error
                 "--color-primary": primaryColor,
               }}
             >

@@ -10,7 +10,6 @@ export default function NotFound() {
     <main
       id="main-content"
       style={{
-        // @ts-expect-error this is a CSS variable
         "--color-primary": DEFAULT_BRAND_COLOR,
       }}
       className="flex w-full flex-col h-lvh items-center justify-center gap-6 text-center"

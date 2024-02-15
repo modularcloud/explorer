@@ -149,7 +149,6 @@ export function SearchModal({
         ref={dialogRef}
         onCloseAutoFocus={(e) => e.preventDefault()}
         style={{
-          // @ts-expect-error this is a CSS variable
           "--color-primary": brandColor,
         }}
         className={cn(
