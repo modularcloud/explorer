@@ -105,7 +105,6 @@ export function Table({ initialData, route }: Props) {
     },
     getNextPageParam: (lastGroup) =>
       "nextToken" in lastGroup.body ? lastGroup.body.nextToken : undefined,
-    refetchOnWindowFocus: false,
     initialPageParam: undefined,
     placeholderData: keepPreviousData,
   });
