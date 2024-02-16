@@ -3,7 +3,7 @@ import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import { getBlockProperties } from "../../../helpers";
 import { getDefaultSidebar } from "../../../../../helpers";
 
-import type { Page, PageContext } from "../../../../../schemas/page";
+import type { Page, PageContext, Value } from "../../../../../schemas/page";
 
 export const RollappBlockResolver = createResolver(
   {
@@ -34,7 +34,17 @@ export const RollappBlockResolver = createResolver(
     if (response.type === "error") throw response.error;
     if (response.type === "pending") throw PendingException;
 
-    const properties = getBlockProperties(response.result);
+    let properties: Record<string, Value>;
+    if (response.result.error) {
+      properties = {
+        Data: {
+          type: "standard",
+          payload: response.result.error.data,
+        },
+      };
+    } else {
+      properties = getBlockProperties(response.result);
+    }
 
     const page: Page = {
       context,
