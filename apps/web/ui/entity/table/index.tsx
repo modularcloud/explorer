@@ -12,7 +12,7 @@ import {
   OnSelectItemArgs,
   useItemListNavigation,
 } from "~/lib/hooks/use-item-list-navigation";
-import { NotFound } from "~/ui/not-found";
+import { Empty } from "~/ui/empty";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { displayFiltersSchema } from "~/lib/display-filters";
 import { range } from "~/lib/shared-utils";
@@ -325,7 +325,7 @@ export function Table({ initialData, route }: Props) {
           )}
         </div>
       ) : (
-        <NotFound
+        <Empty
           heading="Nothing to see here!"
           description="This table is empty"
         />
