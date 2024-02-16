@@ -10,6 +10,8 @@ import type {
 } from "~/lib/grouped-network-chains";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
+import { useNetworkStatuses } from "./use-network-status";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 interface Props {
   query: string;
@@ -407,9 +409,12 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
   rowOffSet: offSet,
 }: EcosystemNetworkChainsProps) {
   const items = networks;
-  const firstItem = networks[0];
+  const firstItem = networks[0] as NetworkChain;
 
-  if (!("brandName" in firstItem)) return null;
+  const { data: networkStatuses } = useNetworkStatuses(
+    networks.map((network) => network.id),
+    !ALWAYS_ONLINE_NETWORKS.includes(firstItem.brandName),
+  );
 
   const groupName = firstItem.brandName;
   return (
@@ -435,6 +440,8 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
 
       {items.map((item) => {
         item = item as NetworkChain;
+        const healthStatus = networkStatuses?.[item.id].healthy ?? null;
+        const isAlwaysOnline = ALWAYS_ONLINE_NETWORKS.includes(item.brandName);
         return (
           <div
             key={item.id}
@@ -447,6 +454,45 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
             )}
           >
             <span className="w-[97%]">{item.displayName}</span>
+
+            <div
+              className={cn(
+                "opacity-100 relative flex items-center justify-center",
+                "rounded-lg font-medium pr-1.5",
+              )}
+            >
+              {isAlwaysOnline ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                  ></span>
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                    <span className="sr-only">Network online</span>
+                  </span>
+                </>
+              ) : healthStatus === null ? (
+                <>
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
+                    <span className="sr-only">Fetching network status...</span>
+                  </span>
+                </>
+              ) : healthStatus === true ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                  ></span>
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                    <span className="sr-only">Network online</span>
+                  </span>
+                </>
+              ) : (
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                  <span className="sr-only">Network unavailable</span>
+                </span>
+              )}
+            </div>
           </div>
         );
       })}

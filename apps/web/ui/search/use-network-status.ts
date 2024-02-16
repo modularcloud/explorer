@@ -1,5 +1,7 @@
-import useSWR from "swr";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
+import { CACHE_KEYS } from "~/lib/cache-keys";
+import { jsonFetch } from "~/lib/shared-utils";
 
 const networkStatusResponseSchema = z.record(
   z.string(),
@@ -18,37 +20,29 @@ export function useNetworkStatuses(
   for (const slug of networkSlugs) {
     sp.append("networkSlugs", slug);
   }
-  return useSWR(
-    enabled ? `/api/health?${sp.toString()}` : null,
-    async (url) => {
-      return fetch(url)
-        .then((r) => r.json())
-        .then(networkStatusResponseSchema.parse);
+  return useQuery({
+    queryKey: CACHE_KEYS.networks.status(sp.toString()),
+    queryFn: ({ signal }) => {
+      return jsonFetch(`/api/health?${sp.toString()}`, { signal }).then(
+        networkStatusResponseSchema.parse,
+      );
     },
-    {
-      errorRetryCount: 2,
-      revalidateOnFocus: false,
-      keepPreviousData: true,
-      refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
-      revalidateIfStale: false,
-    },
-  );
+    enabled,
+    retry: 2,
+    staleTime: THIRTY_SECONDS_IN_MILLISECONDS,
+  });
 }
 
 export function useNetworkStatus(networkSlug: string | null) {
-  return useSWR(
-    networkSlug ? `/api/health?networkSlugs=${networkSlug}` : null,
-    async (url) => {
-      return fetch(url)
-        .then((r) => r.json())
-        .then(networkStatusResponseSchema.parse);
+  return useQuery({
+    queryKey: CACHE_KEYS.networks.status(networkSlug ?? ""),
+    queryFn: ({ signal }) => {
+      return jsonFetch(`/api/health?networkSlugs=${networkSlug}`, {
+        signal,
+      }).then(networkStatusResponseSchema.parse);
     },
-    {
-      errorRetryCount: 2,
-      revalidateOnFocus: false,
-      keepPreviousData: true,
-      refreshInterval: THIRTY_SECONDS_IN_MILLISECONDS,
-      revalidateIfStale: false,
-    },
-  );
+    enabled: networkSlug !== null,
+    retry: 2,
+    staleTime: THIRTY_SECONDS_IN_MILLISECONDS,
+  });
 }

@@ -328,7 +328,9 @@ const BrandChains = React.memo(function BrandChains({
                 ) : healthStatus === null ? (
                   <>
                     <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
-                      <span className="sr-only">Fetching network status</span>
+                      <span className="sr-only">
+                        Fetching network status...
+                      </span>
                     </span>
                   </>
                 ) : healthStatus === true ? (
