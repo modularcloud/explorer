@@ -3,7 +3,7 @@ interface Props {
   description: String;
 }
 
-export function NotFound({ heading, description }: Props) {
+export function Empty({ heading, description }: Props) {
   return (
     <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-y-3 text-center">
       <svg
@@ -20,15 +20,15 @@ export function NotFound({ heading, description }: Props) {
         <path
           d="M24 40H36C38.2091 40 40 38.2091 40 36V24H8M24 40H12C9.79086 40 8 38.2091 8 36V24M24 40V8H12C9.79086 8 8 9.79086 8 12V24"
           stroke="#DFE1E7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M40 4H28V20H44V8C44 5.79086 42.2091 4 40 4Z"
           fill="#FAEDCC"
           stroke="#FFBE4C"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
 

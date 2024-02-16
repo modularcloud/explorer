@@ -20,18 +20,13 @@ interface Props {
 
 export default function EntityLayout({ children, params }: Props) {
   const pathParams = parseHeadlessRouteVercelFix(params);
-  const entityType = pathParams.path[0];
 
   return (
     <>
-      {entityType === "search" ? (
-        <HeaderTabsSkeleton />
-      ) : (
-        <React.Suspense fallback={<HeaderTabsSkeleton />}>
-          <HeaderTabs params={params} />
-          <HeaderTabsMobile params={params} />
-        </React.Suspense>
-      )}
+      <React.Suspense fallback={<HeaderTabsSkeleton />}>
+        <HeaderTabs params={pathParams} />
+        <HeaderTabsMobile params={pathParams} />
+      </React.Suspense>
       <section
         className={cn(
           "overflow-x-clip fixed left-0 bottom-0 lg:max-w-[calc(100%_-_27rem)] w-full",

@@ -19,10 +19,6 @@ import { GlobalHotkeyContext } from "~/ui/global-hotkey-provider";
 import { capitalize } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 import Image from "next/image";
-import {
-  useChainsFilteredByEcosystem,
-  useFilteredAndSortedNetworkChains,
-} from "./use-filtered-network-chains";
 
 // types
 import type {
@@ -30,6 +26,7 @@ import type {
   NetworkChain,
 } from "~/lib/grouped-network-chains";
 import { useNetworkStatus } from "./use-network-status";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 interface Props {
   defaultNetwork: {
     value: NetworkChain;
@@ -71,7 +68,7 @@ export function SearchModal({
     [setInputValue],
   );
 
-  const filteredOptionGroup = useFilteredAndSortedNetworkChains(
+  const filteredOptionGroup = filterAndSortNetworkChains(
     optionGroups,
     deferredInputValue,
     defaultNetwork.value,
@@ -92,11 +89,10 @@ export function SearchModal({
   });
 
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
-  // TODO : This is temporary because in the future we want to support other ecosystems as well, not only dymension
-  //        we need to change the way we filter chains passed for the ecosystem
-  const ecosystemChains = useChainsFilteredByEcosystem(
+
+  const ecosystemChains = filterChainsByEcosystem(
     optionGroups,
-    "dymension",
+    currentNetwork ? [currentNetwork.id, ...currentNetwork.ecosystems] : [],
     deferredInputValue,
   );
 
@@ -117,11 +113,10 @@ export function SearchModal({
     [onSelectOption],
   );
 
-  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   let currentNetworkToCheck: string | null = null;
   if (
     currentNetwork &&
-    !alwaysOnlineChainBrands.includes(currentNetwork.brandName)
+    !ALWAYS_ONLINE_NETWORKS.includes(currentNetwork.brandName)
   ) {
     currentNetworkToCheck = currentNetwork.id;
   }
@@ -252,19 +247,60 @@ export function SearchModal({
               onChangeChainClicked={onListItemActionChangeChainClicked}
               onNavigate={onListItemActionNavigate}
               onSelectEcosystemChain={onListItemActionSelectEcosystemChain}
-              ecosystemNetworks={
-                // TODO : This is temporary because in the future we want to support other ecosystems as well
-                //        we need to change the way we filter chains passed for the ecosystem
-                // only for dymension chains for now
-                currentNetwork.platform === "dymension" ||
-                currentNetwork.id === "dymension-froopyland"
-                  ? ecosystemChains
-                  : null
-              }
+              ecosystemNetworks={ecosystemChains}
             />
           )}
         </div>
       </DialogContent>
     </Dialog>
   );
+}
+
+function filterAndSortNetworkChains(
+  networkGrouped: GroupedNetworkChains,
+  filter: string,
+  networkToPrioritize?: NetworkChain,
+) {
+  const filteredChains: GroupedNetworkChains = [];
+
+  for (const networks of networkGrouped) {
+    const filtered =
+      // this is a little perf optimization, because we are sure that the filter will match all networks
+      filter.trim().length === 0
+        ? networks
+        : networks.filter(
+            (chain) =>
+              chain.displayName.toLowerCase().startsWith(filter) ||
+              chain.brandName.toLowerCase().startsWith(filter),
+          );
+
+    if (filtered.length > 0) {
+      if (filtered[0].accountId === networkToPrioritize?.accountId) {
+        filteredChains.unshift(filtered);
+      } else {
+        filteredChains.push(filtered);
+      }
+    }
+  }
+
+  return filteredChains;
+}
+
+function filterChainsByEcosystem(
+  optionGroups: GroupedNetworkChains,
+  ecosystems: string[],
+  filter: string,
+) {
+  const chains =
+    ecosystems.length === 0
+      ? []
+      : optionGroups.filter((group) =>
+          group.every((chain) =>
+            ecosystems.some((ecosystem) =>
+              chain.ecosystems.includes(ecosystem),
+            ),
+          ),
+        );
+
+  return filterAndSortNetworkChains(chains, filter);
 }

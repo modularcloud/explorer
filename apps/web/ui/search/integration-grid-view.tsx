@@ -15,6 +15,7 @@ import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { useNetworkStatuses } from "./use-network-status";
 import { useSearchOptionsContext } from "~/ui/search-options-context";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 interface Props {
   className?: string;
@@ -185,10 +186,9 @@ const BrandChains = React.memo(function BrandChains({
       .filter(Boolean);
   }, [allNetworkChains, options]);
 
-  const alwaysOnlineChainBrands = ["celestia", "eclipse"];
   const { data } = useNetworkStatuses(
     options.map((network) => network.id),
-    !alwaysOnlineChainBrands.includes(options[0].brandName),
+    !ALWAYS_ONLINE_NETWORKS.includes(options[0].brandName),
   );
 
   // arbitrary, but this is decent value
@@ -279,7 +279,7 @@ const BrandChains = React.memo(function BrandChains({
 
         {options.map((option) => {
           const healthStatus = data?.[option.id].healthy ?? null;
-          const isAlwaysOnline = alwaysOnlineChainBrands.includes(
+          const isAlwaysOnline = ALWAYS_ONLINE_NETWORKS.includes(
             option.brandName,
           );
           return (

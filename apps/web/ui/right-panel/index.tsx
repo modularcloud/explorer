@@ -87,7 +87,6 @@ export function RightPanel({ data, network }: Props) {
       <div
         className="w-full grid h-full max-h-full auto-rows-min"
         style={{
-          backgroundImage: "url(/images/grid-layout-vector.svg)",
           backgroundPosition: "bottom center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
@@ -152,7 +151,6 @@ export function RightPanelSkeleton() {
       <div
         className="w-full grid h-full max-h-full auto-rows-min"
         style={{
-          backgroundImage: "url(/images/grid-layout-vector.svg)",
           backgroundPosition: "bottom center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",

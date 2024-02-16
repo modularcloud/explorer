@@ -1,9 +1,14 @@
 import { getSingleNetworkCached } from "~/lib/network";
 import { RightPanel, RightPanelSkeleton } from "~/ui/right-panel";
-import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
+import {
+  loadPage,
+  HeadlessRoute,
+  search,
+  checkIfNetworkIsOnline,
+} from "~/lib/headless-utils";
 import * as React from "react";
 import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
-import { cn } from "~/ui/shadcn/utils";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 interface Props {
   params: HeadlessRoute;
@@ -21,13 +26,31 @@ async function RightPanelPageContent({ params: _params }: Props) {
   const params = parseHeadlessRouteVercelFix(_params);
   const entityType = params.path[0];
 
-  if (entityType === "search") {
-    return <RightPanelSkeleton />;
-  }
-
   const network = await getSingleNetworkCached(params.network);
   if (!network) {
     return null;
+  }
+
+  if (entityType === "search") {
+    const query = params.path[1];
+    const [searchResult, networkStatusResult] = await Promise.allSettled([
+      search(params.network, query),
+      checkIfNetworkIsOnline(params.network),
+    ]);
+
+    if (
+      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
+      (networkStatusResult.status === "rejected" ||
+        !networkStatusResult.value?.healthy)
+    ) {
+      return null;
+    }
+
+    if (searchResult.status !== "fulfilled" || !searchResult.value) {
+      return null;
+    }
+
+    params.path = searchResult.value;
   }
 
   try {

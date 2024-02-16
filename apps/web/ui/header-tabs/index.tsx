@@ -9,13 +9,17 @@ import { ArrowLeftRight, ArrowRight, Stars } from "~/ui/icons";
 // utils
 import { cn } from "~/ui/shadcn/utils";
 import { range } from "~/lib/shared-utils";
-import { loadPage, HeadlessRoute } from "~/lib/headless-utils";
-import { notFound } from "next/navigation";
+import {
+  loadPage,
+  HeadlessRoute,
+  search,
+  checkIfNetworkIsOnline,
+} from "~/lib/headless-utils";
 
-import type { Page } from "@modularcloud/headless";
 import { HeaderTabsFilterButton } from "./header-tabs-filter-button";
-import { SingleNetwork, getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetworkCached } from "~/lib/network";
 import { HeaderTabsMobileDropdown } from "./header-tabs-mobile-dropdown";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 interface Props {
   params: HeadlessRoute;
 }
@@ -31,22 +35,37 @@ type Tab = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  let page: Page | null = null;
-  let network: SingleNetwork | null = null;
-  try {
-    [page, network] = await Promise.all([
-      loadPage({
-        route: params,
-      }),
-      getSingleNetworkCached(params.network),
-    ]);
-  } catch (error) {
-    throw error;
+  const network = await getSingleNetworkCached(params.network);
+  if (!network) {
+    return null;
   }
 
-  if (!network) {
-    notFound();
+  const entityType = params.path[0];
+  if (entityType === "search") {
+    const query = params.path[1];
+    const [searchResult, networkStatusResult] = await Promise.allSettled([
+      search(params.network, query),
+      checkIfNetworkIsOnline(params.network),
+    ]);
+
+    if (
+      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
+      (networkStatusResult.status === "rejected" ||
+        !networkStatusResult.value?.healthy)
+    ) {
+      return null;
+    }
+
+    if (searchResult.status !== "fulfilled" || !searchResult.value) {
+      return null;
+    }
+
+    params.path = searchResult.value;
   }
+
+  const page = await loadPage({
+    route: params,
+  });
 
   const { tabs: resolvedTabs } = page;
 
@@ -140,23 +159,37 @@ export async function HeaderTabs({ params }: Props) {
 }
 
 export async function HeaderTabsMobile({ params }: Props) {
-  let page: Page | null = null;
-  let network: SingleNetwork | null = null;
-  try {
-    [page, network] = await Promise.all([
-      loadPage({
-        route: params,
-      }),
-      getSingleNetworkCached(params.network),
+  const network = await getSingleNetworkCached(params.network);
+  if (!network) {
+    return null;
+  }
+
+  const entityType = params.path[0];
+  if (entityType === "search") {
+    const query = params.path[1];
+    const [searchResult, networkStatusResult] = await Promise.allSettled([
+      search(params.network, query),
+      checkIfNetworkIsOnline(params.network),
     ]);
-  } catch (error) {
-    // pass
+
+    if (
+      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
+      (networkStatusResult.status === "rejected" ||
+        !networkStatusResult.value?.healthy)
+    ) {
+      return null;
+    }
+
+    if (searchResult.status !== "fulfilled" || !searchResult.value) {
+      return null;
+    }
+
+    params.path = searchResult.value;
   }
 
-  if (!page || !network) {
-    notFound();
-  }
-
+  const page = await loadPage({
+    route: params,
+  });
   const { tabs: resolvedTabs } = page;
 
   const tabs: Map<string, React.ReactNode> = new Map();

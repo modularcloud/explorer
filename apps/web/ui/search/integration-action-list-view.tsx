@@ -351,7 +351,7 @@ export const IntegrationActionListView = React.memo(
             >
               {virtualizer.getVirtualItems().map((virtualRow) => {
                 const rowIndex = virtualRow.index;
-                const rowGroups = groupedItems[rowIndex + actionItems.length]; // we space it by 2 because the first groups are `Pages` & `Actions`
+                const rowGroups = groupedItems[rowIndex + actionItems.length];
 
                 return (
                   <React.Fragment key={virtualRow.key}>
