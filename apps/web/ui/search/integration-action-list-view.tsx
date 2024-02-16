@@ -468,13 +468,15 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
                     className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
                   ></span>
                   <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
-                    <span className="sr-only">Network online</span>
+                    <span className="sr-only">(Network online)</span>
                   </span>
                 </>
               ) : healthStatus === null ? (
                 <>
                   <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
-                    <span className="sr-only">Fetching network status...</span>
+                    <span className="sr-only">
+                      (Fetching network status...)
+                    </span>
                   </span>
                 </>
               ) : healthStatus === true ? (
@@ -484,12 +486,12 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
                     className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
                   ></span>
                   <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
-                    <span className="sr-only">Network online</span>
+                    <span className="sr-only">(Network online)</span>
                   </span>
                 </>
               ) : (
                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
-                  <span className="sr-only">Network unavailable</span>
+                  <span className="sr-only">(Network unavailable)</span>
                 </span>
               )}
             </div>
