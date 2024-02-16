@@ -7,13 +7,9 @@ import Image from "next/image";
 import { Button } from "~/ui/button";
 
 // utils
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
-import {
-  capitalize,
-  parseHeadlessRouteVercelFix,
-  truncateHash,
-} from "~/lib/shared-utils";
+import { capitalize, truncateHash } from "~/lib/shared-utils";
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
@@ -24,8 +20,15 @@ interface Props {
 
 export function HeaderSearchButton({ optionGroups }: Props) {
   const routeParams = useParams() as HeadlessRoute;
+  const pathname = usePathname();
 
-  const params = parseHeadlessRouteVercelFix(routeParams);
+  const params: HeadlessRoute = {
+    ...routeParams,
+    path: pathname
+      .replace(`/${routeParams.network}`, "")
+      .split("/")
+      .filter(Boolean),
+  };
 
   const network = React.useMemo(() => {
     const values = Object.values(optionGroups).flat();

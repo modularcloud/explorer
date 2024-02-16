@@ -9,10 +9,11 @@ import {
 } from "~/lib/headless-utils";
 import { Table } from "~/ui/entity/table";
 import { capitalize, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getSingleNetworkCached } from "~/lib/network";
 import { displayFiltersSchema } from "~/lib/display-filters";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
+import { ShallowPush } from "~/ui/shallow-push";
 
 function shortenId(str: string) {
   if (str.length < 12) {
@@ -134,6 +135,8 @@ async function AyncPageContent({
 }) {
   const entityType = params.path[0];
 
+  let redirectTo: string | null = null;
+
   if (entityType === "search") {
     const query = params.path[1];
     const [networkResult, searchResult, networkStatusResult] =
@@ -160,16 +163,26 @@ async function AyncPageContent({
       notFound();
     }
 
-    const redirectPath = searchResult.value;
-    redirect(`/${params.network}/${redirectPath.join("/")}`);
+    params.path = searchResult.value;
+    redirectTo = `/${params.network}/${params.path.join("/")}`;
   }
 
   const displayFilters = displayFiltersSchema.parse(searchParams);
   const page = await loadPage({ route: params, context: displayFilters });
 
   if (page.body.type === "notebook") {
-    return <Overview properties={page.body.properties} isIBC={page.isIBC} />;
+    return (
+      <>
+        {redirectTo && <ShallowPush path={redirectTo} />}
+        <Overview properties={page.body.properties} isIBC={page.isIBC} />
+      </>
+    );
   }
 
-  return <Table initialData={page} route={params} />;
+  return (
+    <>
+      {redirectTo && <ShallowPush path={redirectTo} />}
+      <Table initialData={page} route={params} />
+    </>
+  );
 }
