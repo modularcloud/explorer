@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 
 import { getMetadata } from "~/lib/shared-utils";
@@ -26,7 +25,7 @@ export function SearchMetadata({ correctPath, network }: Props) {
 
   return (
     <>
-      <title>{title} - Modular Cloud</title>
+      <title>{`${title} - Modular Cloud`}</title>
       {description && <meta name="description" content={description} />}
     </>
   );
