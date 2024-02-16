@@ -76,7 +76,7 @@ export function IBCTransferEventCard({
   ] satisfies IBCMessageArray;
   const THIRTY_SECONDS = 30 * 1000;
   const { data: messages = initialMessages } = useSWR(
-    `/api/ibc/messages/${event.hash}/0`,
+    `/api/ibc/messages/${event.hash}/${event.msgIndex}`,
     (url) => jsonFetch(url).then(ibcMessageArraySchema.parse),
     {
       errorRetryCount: 2,
