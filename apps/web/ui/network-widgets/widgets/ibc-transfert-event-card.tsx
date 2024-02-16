@@ -233,14 +233,16 @@ export function IBCTransferEventCard({
         {/* Sender */}
         <div className="tab:col-span-2 flex items-center gap-2 min-w-0 w-full max-w-full">
           <span className="text-muted">From</span>
-          <Link
-            href={`${event.from.chainSlug}/addresses/${event.from.address}`}
-            className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
-          >
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.from.address}
-            </p>
-          </Link>
+          <Tooltip label={`${event.from.address}`}>
+            <Link
+              href={`${event.from.chainSlug}/addresses/${event.from.address}`}
+              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+            >
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.from.address}
+              </p>
+            </Link>
+          </Tooltip>
           <span className="text-muted">on</span>
           <Tooltip label={`${event.from.chainName}`}>
             <Link
@@ -321,14 +323,16 @@ export function IBCTransferEventCard({
         {/* Receiver */}
         <div className="tab:col-span-2 flex items-center gap-2 w-full min-w-0 max-w-full">
           <span className="text-muted hidden tab:inline">To</span>
-          <Link
-            href={`${event.to.chainSlug}/addresses/${event.to.address}`}
-            className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
-          >
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.to.address}
-            </p>
-          </Link>
+          <Tooltip label={`${event.to.address}`}>
+            <Link
+              href={`${event.to.chainSlug}/addresses/${event.to.address}`}
+              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+            >
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.to.address}
+              </p>
+            </Link>
+          </Tooltip>
           <span className="text-muted">on</span>
           <Tooltip label={`${event.to.chainName}`}>
             <Link
