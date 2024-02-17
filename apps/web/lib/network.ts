@@ -164,13 +164,17 @@ export async function getSingleNetwork(slug: string) {
   }
 }
 
-export async function getAllNetworksCached() {
-  const getAllIntegrationsFn = nextCache(getAllNetworks, {
-    tags: CACHE_KEYS.networks.summary(),
-  });
+export const getAllNetworksCached = nextCache(getAllNetworks, {
+  tags: CACHE_KEYS.networks.summary(),
+});
 
-  return await getAllIntegrationsFn();
-}
+// export async function getAllNetworksCached() {
+//   const getAllIntegrationsFn = nextCache(getAllNetworks, {
+//     tags: CACHE_KEYS.networks.summary(),
+//   });
+
+//   return await getAllIntegrationsFn();
+// }
 
 export async function getSingleNetworkCached(slug: string) {
   const getSingleIntegrationFn = nextCache(getSingleNetwork, {
