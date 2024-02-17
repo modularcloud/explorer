@@ -2,7 +2,7 @@ import { HomeBg } from "~/ui/home-bg";
 import { HomeBgMobile } from "~/ui/home-bg/mobile";
 
 import { notFound } from "next/navigation";
-import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetworkCached } from "~/lib/network";
 
 import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
@@ -38,9 +38,4 @@ export default async function NetworkLogo(props: Props) {
       </h1>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  const paidNetworks = await getAllPaidNetworks();
-  return paidNetworks.map((network) => ({ network: network.slug }));
 }
