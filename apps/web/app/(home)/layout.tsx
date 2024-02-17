@@ -9,7 +9,10 @@ export default async function HomeLayout({
   logo: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const date = new Date().getTime();
+  console.time(`[${date}] \`getGroupedNetworkChains()\` from HomeLayout`);
   const searchOptionGroups = await getGroupedNetworkChains();
+  console.timeEnd(`[${date}] \`getGroupedNetworkChains()\` from HomeLayout`);
 
   return (
     <main

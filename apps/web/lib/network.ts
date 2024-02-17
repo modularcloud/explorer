@@ -45,6 +45,8 @@ export const singleNetworkSchema = z.object({
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
 export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
+  const date = new Date().getTime();
+  console.time(`[${date}] FETCH [${CACHE_KEYS.networks.summary().join(", ")}]`);
   let allIntegrations: Array<SingleNetwork> = [];
 
   if (allIntegrations.length === 0) {
@@ -102,10 +104,17 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
     return 0;
   });
 
+  console.timeEnd(
+    `[${date}] FETCH [${CACHE_KEYS.networks.summary().join(", ")}]`,
+  );
   return allIntegrations;
 }
 
 export async function getSingleNetwork(slug: string) {
+  const date = new Date().getTime();
+  console.time(
+    `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+  );
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -148,6 +157,10 @@ export async function getSingleNetwork(slug: string) {
     return integration;
   } catch (error) {
     return null;
+  } finally {
+    console.timeEnd(
+      `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+    );
   }
 }
 
@@ -167,7 +180,6 @@ export async function getSingleNetworkCached(slug: string) {
 }
 
 export async function getAllPaidNetworks() {
-  // `getAllNetworksCached` doesn't work during `next build`, so we manually call `getAllNetworks()`
   const allNetworks = await getAllNetworksCached();
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
