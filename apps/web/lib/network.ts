@@ -3,6 +3,7 @@ import { preprocess, z } from "zod";
 import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
+import { cache } from "react";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -168,20 +169,11 @@ export const getAllNetworksCached = nextCache(getAllNetworks, {
   tags: CACHE_KEYS.networks.summary(),
 });
 
-// export async function getAllNetworksCached() {
-//   const getAllIntegrationsFn = nextCache(getAllNetworks, {
-//     tags: CACHE_KEYS.networks.summary(),
-//   });
-
-//   return await getAllIntegrationsFn();
-// }
-
-export async function getSingleNetworkCached(slug: string) {
-  const getSingleIntegrationFn = nextCache(getSingleNetwork, {
+export const getSingleNetworkCached = cache((slug: string) =>
+  nextCache(getSingleNetwork, {
     tags: CACHE_KEYS.networks.single(slug),
-  });
-  return await getSingleIntegrationFn(slug);
-}
+  })(slug),
+);
 
 export async function getAllPaidNetworks() {
   const allNetworks = await getAllNetworksCached();
