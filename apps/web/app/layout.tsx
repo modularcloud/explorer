@@ -1,5 +1,4 @@
 import "~/styles/globals.css";
-// components
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "~/ui/shadcn/components/ui/toaster";
 import { TailwindIndicator } from "~/ui/tailwind-indicator";
@@ -7,8 +6,6 @@ import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientProviders } from "~/ui/client-providers";
-
-// utils
 import { env } from "~/env.mjs";
 import localFont from "next/font/local";
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
