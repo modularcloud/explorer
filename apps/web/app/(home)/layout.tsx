@@ -1,6 +1,5 @@
 import { Footer } from "~/ui/footer";
 import { SearchForm } from "~/ui/search/search-form";
-import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 export default async function HomeLayout({
   children,
@@ -9,11 +8,6 @@ export default async function HomeLayout({
   logo: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const date = new Date().getTime();
-  console.time(`[${date}] \`getGroupedNetworkChains()\` from HomeLayout`);
-  const searchOptionGroups = await getGroupedNetworkChains();
-  console.timeEnd(`[${date}] \`getGroupedNetworkChains()\` from HomeLayout`);
-
   return (
     <main
       id="main-content"
@@ -23,7 +17,7 @@ export default async function HomeLayout({
       <div className="flex flex-col justify-center h-full w-full flex-1 gap-24">
         <section className="flex flex-col gap-8">
           {logo}
-          <SearchForm optionGroups={searchOptionGroups} />
+          <SearchForm />
         </section>
         <section>{children}</section>
       </div>

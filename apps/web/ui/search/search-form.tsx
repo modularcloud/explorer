@@ -1,29 +1,21 @@
 "use client";
 import * as React from "react";
-
-// components
 import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { SearchModal } from "./search-modal";
 import { Button } from "~/ui/button";
 import { LoadingIndicator } from "~/ui/loading-indicator";
-
-// utils
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+import { useSearchOptionsContext } from "~/ui/search-options-context";
 
-// types
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
-
-interface Props {
-  optionGroups: GroupedNetworkChains;
-}
-
-export function SearchForm({ optionGroups }: Props) {
+export function SearchForm() {
   const params = useParams();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
+
+  const optionGroups = useSearchOptionsContext();
 
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
