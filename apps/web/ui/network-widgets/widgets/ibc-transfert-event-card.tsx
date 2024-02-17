@@ -17,6 +17,8 @@ import useSWR from "swr";
 import { z } from "zod";
 import { jsonFetch } from "~/lib/shared-utils";
 import * as HoverCard from "@radix-ui/react-hover-card";
+import { Tooltip } from "~/ui/tooltip";
+import { useNetworkStatus } from "~/ui/search/use-network-status";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -76,7 +78,7 @@ export function IBCTransferEventCard({
   ] satisfies IBCMessageArray;
   const THIRTY_SECONDS = 30 * 1000;
   const { data: messages = initialMessages } = useSWR(
-    `/api/ibc/messages/${event.hash}/0`,
+    `/api/ibc/messages/${event.hash}/${event.msgIndex}`,
     (url) => jsonFetch(url).then(ibcMessageArraySchema.parse),
     {
       errorRetryCount: 2,
@@ -90,6 +92,15 @@ export function IBCTransferEventCard({
   const messagesWithLinks = messages.filter(
     (msg) => "link" in msg && !!msg.link,
   ) as IBCMessageArray;
+
+  const { data: sourceNetworkStatus } = useNetworkStatus(event.from.chainSlug);
+
+  const { data: targetNetworkStatus } = useNetworkStatus(event.to.chainSlug);
+
+  const sourceChainHealthStatus =
+    sourceNetworkStatus?.[event.from.chainSlug]?.healthy ?? null;
+  const targetChainHealthStatus =
+    targetNetworkStatus?.[event.to.chainSlug]?.healthy ?? null;
 
   return (
     <Card className="p-0 grid w-full shadow-none">
@@ -222,30 +233,65 @@ export function IBCTransferEventCard({
         {/* Sender */}
         <div className="tab:col-span-2 flex items-center gap-2 min-w-0 w-full max-w-full">
           <span className="text-muted">From</span>
-          <Link
-            href={`${event.from.chainSlug}/addresses/${event.from.address}`}
-            className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
-          >
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.from.address}
-            </p>
-          </Link>
+          <Tooltip label={`${event.from.address}`}>
+            <Link
+              href={`${event.from.chainSlug}/addresses/${event.from.address}`}
+              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+            >
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.from.address}
+              </p>
+            </Link>
+          </Tooltip>
           <span className="text-muted">on</span>
-          <Link
-            href={`/${event.from.chainSlug}`}
-            className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
-          >
-            <Image
-              className="h-4 w-4 flex-none rounded-full"
-              alt=""
-              width={20}
-              height={20}
-              src={event.from.chainLogo}
-            />
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.from.chainName}
-            </p>
-          </Link>
+          <Tooltip label={`${event.from.chainName}`}>
+            <Link
+              href={`/${event.from.chainSlug}`}
+              className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
+            >
+              <Image
+                className="h-4 w-4 flex-none rounded-full"
+                alt=""
+                width={20}
+                height={20}
+                src={event.from.chainLogo}
+              />
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.from.chainName}
+              </p>
+
+              <div
+                className={cn(
+                  "opacity-100 relative flex items-center justify-center",
+                  "rounded-lg font-medium pr-1.5",
+                )}
+              >
+                {sourceChainHealthStatus === null ? (
+                  <>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
+                      <span className="sr-only">
+                        (Fetching network status...)
+                      </span>
+                    </span>
+                  </>
+                ) : sourceChainHealthStatus === true ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                    ></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                      <span className="sr-only">(Network online)</span>
+                    </span>
+                  </>
+                ) : (
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                    <span className="sr-only">(Network unavailable)</span>
+                  </span>
+                )}
+              </div>
+            </Link>
+          </Tooltip>
         </div>
 
         {/* Amount */}
@@ -277,30 +323,65 @@ export function IBCTransferEventCard({
         {/* Receiver */}
         <div className="tab:col-span-2 flex items-center gap-2 w-full min-w-0 max-w-full">
           <span className="text-muted hidden tab:inline">To</span>
-          <Link
-            href={`${event.to.chainSlug}/addresses/${event.to.address}`}
-            className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
-          >
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.to.address}
-            </p>
-          </Link>
+          <Tooltip label={`${event.to.address}`}>
+            <Link
+              href={`${event.to.chainSlug}/addresses/${event.to.address}`}
+              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+            >
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.to.address}
+              </p>
+            </Link>
+          </Tooltip>
           <span className="text-muted">on</span>
-          <Link
-            href={`/${event.to.chainSlug}`}
-            className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
-          >
-            <Image
-              className="h-4 w-4 flex-none rounded-full"
-              alt=""
-              width={20}
-              height={20}
-              src={event.to.chainLogo}
-            />
-            <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
-              {event.to.chainName}
-            </p>
-          </Link>
+          <Tooltip label={`${event.to.chainName}`}>
+            <Link
+              href={`/${event.to.chainSlug}`}
+              className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
+            >
+              <Image
+                className="h-4 w-4 flex-none rounded-full"
+                alt=""
+                width={20}
+                height={20}
+                src={event.to.chainLogo}
+              />
+              <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
+                {event.to.chainName}
+              </p>
+
+              <div
+                className={cn(
+                  "opacity-100 relative flex items-center justify-center",
+                  "rounded-lg font-medium pr-1.5",
+                )}
+              >
+                {targetChainHealthStatus === null ? (
+                  <>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
+                      <span className="sr-only">
+                        (Fetching network status...)
+                      </span>
+                    </span>
+                  </>
+                ) : targetChainHealthStatus === true ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                    ></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                      <span className="sr-only">(Network online)</span>
+                    </span>
+                  </>
+                ) : (
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                    <span className="sr-only">(Network unavailable)</span>
+                  </span>
+                )}
+              </div>
+            </Link>
+          </Tooltip>
         </div>
       </div>
     </Card>

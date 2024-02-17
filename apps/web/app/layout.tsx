@@ -6,15 +6,15 @@ import { TailwindIndicator } from "~/ui/tailwind-indicator";
 import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { env } from "~/env.mjs";
+import { ClientProviders } from "~/ui/client-providers";
 
 // utils
+import { env } from "~/env.mjs";
 import localFont from "next/font/local";
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
 // types
 import type { Metadata } from "next";
-import { SearchOptionProvider } from "~/ui/search-options-context";
 
 const interDisplay = localFont({
   src: [
@@ -72,7 +72,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <SkipToMainContent />
-        <SearchOptionProvider value={searchOptionGroups}>
+        <ClientProviders searchOptions={searchOptionGroups}>
           <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
             {children}
             {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
@@ -80,7 +80,7 @@ export default async function RootLayout({
             <Analytics />
             <SpeedInsights />
           </GlobalHotkeyProvider>
-        </SearchOptionProvider>
+        </ClientProviders>
       </body>
     </html>
   );

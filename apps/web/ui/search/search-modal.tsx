@@ -169,6 +169,7 @@ export function SearchModal({
                 }
                 autoComplete="off"
                 value={inputValue}
+                className="focus-within:ring-0"
                 onChange={(e) => setInputValue(e.target.value)}
                 helpText="Search blocks, transactions, addresses, or namespaces"
                 renderTrailingIcon={(cls) =>

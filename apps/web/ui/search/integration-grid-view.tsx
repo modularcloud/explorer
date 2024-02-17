@@ -166,25 +166,23 @@ const BrandChains = React.memo(function BrandChains({
 
   const allNetworkChains = useSearchOptionsContext();
 
-  const ecosystemNetworks = React.useMemo(() => {
-    const values = allNetworkChains.flat();
-    const brandEcosystems = options[0].ecosystems ?? [];
-    const foundNetworks = values.filter((network) =>
-      brandEcosystems.includes(network.id),
-    );
-    // I AM NOT PROUD OF THIS as it is very inefficient 😑
-    // the good part is that it works 🤷‍♂️
-    // we map other the `brandEcosystems` instead of returning `foundNetworks`
-    // because we want to keep the same order
-    return brandEcosystems
-      .map(
-        (ecosystem) =>
-          foundNetworks.find(
-            (network) => network.id === ecosystem,
-          ) as NetworkChain,
-      )
-      .filter(Boolean);
-  }, [allNetworkChains, options]);
+  const values = allNetworkChains.flat();
+  const brandEcosystems = options[0].ecosystems ?? [];
+  const foundNetworks = values.filter((network) =>
+    brandEcosystems.includes(network.id),
+  );
+  // I AM NOT PROUD OF THIS as it is very inefficient 😑
+  // the good part is that it works 🤷‍♂️
+  // we map other the `brandEcosystems` instead of returning `foundNetworks`
+  // because we want to keep the same order
+  const ecosystemNetworks = brandEcosystems
+    .map(
+      (ecosystem) =>
+        foundNetworks.find(
+          (network) => network.id === ecosystem,
+        ) as NetworkChain,
+    )
+    .filter(Boolean);
 
   const { data } = useNetworkStatuses(
     options.map((network) => network.id),
@@ -319,25 +317,36 @@ const BrandChains = React.memo(function BrandChains({
               >
                 {isAlwaysOnline ? (
                   <>
-                    <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
+                    <span
+                      aria-hidden="true"
+                      className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                    ></span>
                     <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
-                      <span className="sr-only">Network online</span>
+                      <span className="sr-only">(Network online)</span>
+                    </span>
+                  </>
+                ) : healthStatus === null ? (
+                  <>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gray-400">
+                      <span className="sr-only">
+                        (Fetching network status...)
+                      </span>
+                    </span>
+                  </>
+                ) : healthStatus === true ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"
+                    ></span>
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
+                      <span className="sr-only">(Network online)</span>
                     </span>
                   </>
                 ) : (
-                  healthStatus !== null &&
-                  (healthStatus === true ? (
-                    <>
-                      <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-teal-500 opacity-75"></span>
-                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-teal-500">
-                        <span className="sr-only">Network online</span>
-                      </span>
-                    </>
-                  ) : (
-                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
-                      <span className="sr-only">Network unavailable</span>
-                    </span>
-                  ))
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-500">
+                    <span className="sr-only">(Network unavailable)</span>
+                  </span>
                 )}
               </div>
             </div>

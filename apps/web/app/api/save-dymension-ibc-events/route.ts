@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       events.map(
         (event) => sql`
       INSERT INTO "ibc_transfer_events" 
-      (type, hash, timestamp, amount, from_address, from_chainname, from_chainslug, from_chainlogo, to_address, to_chainname, to_chainslug, to_chainlogo) VALUES
+      (type, hash, timestamp, amount, from_address, from_chainname, from_chainslug, from_chainlogo, to_address, to_chainname, to_chainslug, to_chainlogo, msg_index) VALUES
       ('transfer',
         ${event.hash},
         ${event.timestamp},
@@ -49,7 +49,8 @@ export async function GET(request: NextRequest) {
         ${event.to.address},
         ${event.to.chainName},
         ${event.to.chainSlug},
-        ${event.to.chainLogo}
+        ${event.to.chainLogo},
+        ${event.msgIndex},
       )
     `,
       ),
