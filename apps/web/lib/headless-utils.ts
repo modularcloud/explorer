@@ -13,6 +13,7 @@ import { jsonFetch, parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
+import { ALWAYS_ONLINE_NETWORKS } from "./constants";
 
 /**
  * This is reused on the `api/load-page/route.ts` file
@@ -117,26 +118,54 @@ export async function loadIntegration(
           path: string[],
           additionalContext?: PaginationContext | undefined,
         ) {
-          const response = await integration.resolveRoute(
-            path,
-            additionalContext,
+          const date = new Date().getTime();
+          console.time(
+            `[${date}] FETCH [${CACHE_KEYS.resolvers
+              .route(
+                {
+                  network: networkSlug,
+                  path,
+                },
+                additionalContext,
+              )
+              .join(", ")}]`,
           );
+          try {
+            const response = await integration.resolveRoute(
+              path,
+              additionalContext,
+            );
 
-          if (response !== null && response.type === "pending") {
-            throw new PendingError(
-              "This resource doesn't exist yet or has already been pruned",
+            if (response !== null && response.type === "pending") {
+              throw new PendingError(
+                "This resource doesn't exist yet or has already been pruned",
+              );
+            }
+
+            if (response === null || response.type === "error") {
+              throw response?.error ?? new Error("unknown Error");
+            }
+
+            if (!includeTrace) {
+              const { trace, ...rest } = response;
+              return rest;
+            }
+            return response;
+          } catch (error) {
+            throw error;
+          } finally {
+            console.timeEnd(
+              `[${date}] FETCH [${CACHE_KEYS.resolvers
+                .route(
+                  {
+                    network: networkSlug,
+                    path,
+                  },
+                  additionalContext,
+                )
+                .join(", ")}]`,
             );
           }
-
-          if (response === null || response.type === "error") {
-            throw response?.error ?? new Error("unknown Error");
-          }
-
-          if (!includeTrace) {
-            const { trace, ...rest } = response;
-            return rest;
-          }
-          return response;
         },
         {
           tags: CACHE_KEYS.resolvers.route(
@@ -172,6 +201,9 @@ export async function loadPage({
   context,
   revalidateTimeInSeconds,
 }: LoadPageArgs): Promise<Page> {
+  const network = await getSingleNetworkCached(route.network);
+  if (!network) notFound();
+
   const integration = await loadIntegration(
     route.network,
     revalidateTimeInSeconds,
@@ -185,9 +217,11 @@ export async function loadPage({
     resolution = await integration.resolveRoute(fixedPath, context);
   } catch (error) {
     console.error(error);
-    const networkStatus = await checkIfNetworkIsOnline(route.network);
-    if (!networkStatus) {
-      throw new UnhealthyNetworkError(String(error));
+    if (!ALWAYS_ONLINE_NETWORKS.includes(network.brand)) {
+      const networkStatus = await checkIfNetworkIsOnline(route.network);
+      if (!networkStatus) {
+        throw new UnhealthyNetworkError(String(error));
+      }
     }
 
     if (error instanceof PendingError) {
