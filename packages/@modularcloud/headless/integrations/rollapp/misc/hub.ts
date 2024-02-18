@@ -108,6 +108,64 @@ export const RollAppEvents = createResolver(
             },
           };
         }
+        if (msg.typeUrl === "/ibc.core.channel.v1.MsgRecvPacket") {
+          const integration = integrations.result.integrations.find(
+            (i: any) =>
+              i.config?.platformData?.appData?.ibcHubChannel ===
+              msg.decodedValue.packet?.destinationChannel,
+          );
+          if (!integration) return;
+          try {
+            const details = JSON.parse(
+              Buffer.from(msg.decodedValue.packet?.data!).toString(),
+            );
+            let amount: string | undefined;
+            if (details.denom === "udym") {
+              const dymAmount = `${Number(details.amount) / 10 ** 18} DYM`;
+              const udymAmount = `${details.amount} uDYM`;
+
+              amount =
+                dymAmount.length <= udymAmount.length ? dymAmount : udymAmount;
+            } else {
+              const denomParts = details.denom.split("/");
+              // i.e. transfer/channel-1111/uexample
+              const channel = denomParts[denomParts.length - 2];
+              const denomIntegration = integrations.result.integrations.find(
+                (i: any) =>
+                  i.config?.platformData?.appData?.ibcHubChannel === channel,
+              );
+              if (denomIntegration) {
+                const chain = denomIntegration.config.token;
+                amount = `${
+                  Number(details.amount) / 10 ** chain.decimals
+                } ${chain.name.toUpperCase()}`;
+              }
+            }
+            return {
+              type: "transfer",
+              hash,
+              timestamp,
+              msgIndex,
+              amount,
+              from: {
+                address: details.sender,
+                chainName: `${integration.chainName} (${integration.chainBrand})`,
+                chainSlug: integration.slug,
+                chainLogo: `${integration.config?.logoUrl}`,
+              },
+              to: {
+                address: details.receiver,
+                chainName: "Froopyland",
+                chainSlug: "dymension-froopyland",
+                chainLogo:
+                  "https://mc-config.s3.us-west-2.amazonaws.com/dymension-froopyland.png",
+              },
+            };
+          } catch (e) {
+            console.error("Failed to parse packet data", e);
+            return null;
+          }
+        }
       }),
     );
   },
