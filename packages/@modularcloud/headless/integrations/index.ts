@@ -29,7 +29,6 @@ import { RollappLatestBlocksResolver } from "./rollapp/routes/blocks/page";
 import { RollappBlockTransctionsResolver } from "./rollapp/routes/blocks/[hashOrHeight]/transactions/page";
 import { RollappTransactionMessagesResolver } from "./rollapp/routes/transactions/[hash]/messages/page";
 import { RollappMessageResolver } from "./rollapp/routes/transactions/[hash]/messages/[index]/page";
-import { IBCResolver } from "./rollapp/misc/ibc";
 import { RollAppAddressPageResolver } from "./rollapp/routes/addresses/[address]/transactions/page";
 import { RollAppEvents } from "./rollapp/misc/hub";
 import { addressNativeTransferResolver } from "./svm/addresses/[address]/eth-transfers/page";
@@ -72,7 +71,6 @@ export function registerResolvers() {
   registerResolver(RollappBlockTransctionsResolver);
   registerResolver(RollappTransactionMessagesResolver);
   registerResolver(RollappMessageResolver);
-  registerResolver(IBCResolver);
   registerResolver(RollAppAddressPageResolver);
   registerResolver(RollAppAddressPageBalancesResolver);
   registerResolver(RollAppEvents);
