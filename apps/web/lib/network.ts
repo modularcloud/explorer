@@ -45,8 +45,10 @@ export const singleNetworkSchema = z.object({
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
+const allNetworkSchema = z.array(singleNetworkSchema);
+
 export const getAllNetworks = cache(function getAllNetworks() {
-  return integrationList.value;
+  return allNetworkSchema.parse(integrationList.value);
 });
 
 export const getSingleNetwork = cache(async function getSingleNetwork(
