@@ -17,9 +17,10 @@ import {
 } from "~/lib/headless-utils";
 
 import { HeaderTabsFilterButton } from "./header-tabs-filter-button";
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 import { HeaderTabsMobileDropdown } from "./header-tabs-mobile-dropdown";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
+import { Page } from "@modularcloud/headless";
 interface Props {
   params: HeadlessRoute;
 }
@@ -35,7 +36,7 @@ type Tab = {
 };
 
 export async function HeaderTabs({ params }: Props) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     return null;
   }
@@ -43,29 +44,24 @@ export async function HeaderTabs({ params }: Props) {
   const entityType = params.path[0];
   if (entityType === "search") {
     const query = params.path[1];
-    const [searchResult, networkStatusResult] = await Promise.allSettled([
-      search(params.network, query),
-      checkIfNetworkIsOnline(params.network),
-    ]);
+    const redirectPath = await search(params.network, query);
 
-    if (
-      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
-      (networkStatusResult.status === "rejected" ||
-        !networkStatusResult.value?.healthy)
-    ) {
+    if (!redirectPath) {
       return null;
     }
 
-    if (searchResult.status !== "fulfilled" || !searchResult.value) {
-      return null;
-    }
-
-    params.path = searchResult.value;
+    params.path = redirectPath;
   }
 
-  const page = await loadPage({
-    route: params,
-  });
+  let page: Page | null = null;
+
+  try {
+    page = await loadPage({
+      route: params,
+    });
+  } catch (error) {
+    return null;
+  }
 
   const { tabs: resolvedTabs } = page;
 
@@ -159,7 +155,7 @@ export async function HeaderTabs({ params }: Props) {
 }
 
 export async function HeaderTabsMobile({ params }: Props) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     return null;
   }

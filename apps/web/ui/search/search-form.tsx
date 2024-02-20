@@ -1,33 +1,27 @@
 "use client";
 import * as React from "react";
-
-// components
 import { ArrowRight, Recycle, FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { SearchModal } from "./search-modal";
 import { Button } from "~/ui/button";
 import { LoadingIndicator } from "~/ui/loading-indicator";
-
-// utils
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+import { useSearchOptionsContext } from "~/ui/search-options-context";
 
-// types
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
-
-interface Props {
-  optionGroups: GroupedNetworkChains;
-}
-
-export function SearchForm({ optionGroups }: Props) {
+export function SearchForm() {
   const params = useParams();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
+  const optionGroups = useSearchOptionsContext();
+
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
-    return values.find((network) => network.id === params.network) ?? values[0];
+    return (
+      values.find((network) => network.slug === params.network) ?? values[0]
+    );
   }, [optionGroups, params.network]);
 
   const primaryColor = !!params.network
@@ -92,7 +86,7 @@ export function SearchForm({ optionGroups }: Props) {
           "max-w-full flex-1 h-full justify-between gap-0",
           "text-sm tab:text-base",
         )}
-        action={`/${network.id}/search`}
+        action={`/${network.slug}/search`}
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
@@ -102,7 +96,7 @@ export function SearchForm({ optionGroups }: Props) {
           if (searchQuery) {
             startTransition(() =>
               router.push(
-                `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+                `/${network.slug}/search/${encodeURIComponent(searchQuery)}`,
               ),
             );
           }
@@ -117,7 +111,7 @@ export function SearchForm({ optionGroups }: Props) {
             if (e.target.value) {
               // prefetch on search to make the navigation faster
               router.prefetch(
-                `/${network.id}/search/${encodeURIComponent(e.target.value)}`,
+                `/${network.slug}/search/${encodeURIComponent(e.target.value)}`,
               );
             }
           }}

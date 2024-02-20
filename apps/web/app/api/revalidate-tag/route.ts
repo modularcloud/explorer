@@ -4,7 +4,7 @@ import { z } from "zod";
 import { env } from "~/env.mjs";
 
 const revalidateRequestSchema = z.object({
-  tag: z.string().min(1),
+  tags: z.array(z.string().min(1)),
 });
 
 export async function POST(request: Request) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { tag } = result.data;
+  const { tags } = result.data;
   const authorization = request.headers.get("Authorization");
 
   const revalidateToken = authorization?.split(" ")[1];
@@ -57,7 +57,9 @@ export async function POST(request: Request) {
     );
   }
 
-  revalidateTag(tag);
+  for (const tag of tags) {
+    revalidateTag(tag);
+  }
 
   return NextResponse.json({
     success: true,

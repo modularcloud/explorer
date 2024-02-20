@@ -10,10 +10,7 @@ import { toast } from "~/ui/shadcn/components/ui/use-toast";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkey } from "~/lib/hooks/use-hotkey";
-import {
-  OnSelectItemArgs,
-  useItemListNavigation,
-} from "~/lib/hooks/use-item-list-navigation";
+import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,13 +35,10 @@ export function OverviewEntryList({ entries }: Props) {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
   }, [entries]);
 
-  const getItemId = React.useCallback(
-    (item: (typeof items)[number]) => item.id,
-    [],
-  );
-
-  const onSelectItem = React.useCallback(
-    ({ item }: OnSelectItemArgs<Entry>) => {
+  const { registerItemProps, selectedItem } = useItemListNavigation({
+    items: items,
+    getItemId: (item) => item.id,
+    onSelectItem: ({ item }) => {
       const extraFields: Record<string, Value> = {};
 
       // some payloads like dates are rendered differently depending on certain context
@@ -87,13 +81,6 @@ export function OverviewEntryList({ entries }: Props) {
         });
       }
     },
-    [setSpotlight],
-  );
-
-  const { registerItemProps, selectedItem } = useItemListNavigation({
-    items: items,
-    getItemId,
-    onSelectItem,
   });
 
   useHotkey({

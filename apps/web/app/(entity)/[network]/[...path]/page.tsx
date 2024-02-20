@@ -10,7 +10,7 @@ import {
 import { Table } from "~/ui/entity/table";
 import { getMetadata, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound } from "next/navigation";
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 import { displayFiltersSchema } from "~/lib/display-filters";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 import { ShallowPush } from "~/ui/shallow-push";
@@ -23,7 +23,7 @@ export async function generateMetadata({
 }) {
   const params = parseHeadlessRouteVercelFix(_params);
 
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     return {};
   }
@@ -61,7 +61,7 @@ async function AyncPageContent({
   params: HeadlessRoute;
   searchParams?: Record<string, any>;
 }) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     notFound();
   }
@@ -72,24 +72,23 @@ async function AyncPageContent({
 
   if (entityType === "search") {
     const query = params.path[1];
-    const [searchResult, networkStatusResult] = await Promise.allSettled([
-      search(params.network, query),
-      checkIfNetworkIsOnline(params.network),
-    ]);
+    const redirectPath = await search(params.network, query);
 
-    if (
-      !ALWAYS_ONLINE_NETWORKS.includes(network.brand) &&
-      (networkStatusResult.status === "rejected" ||
-        !networkStatusResult.value?.healthy)
-    ) {
-      throw new UnhealthyNetworkError("Network is unhealthy");
-    }
-
-    if (searchResult.status !== "fulfilled" || !searchResult.value) {
+    if (!redirectPath) {
+      if (!ALWAYS_ONLINE_NETWORKS.includes(network.brand)) {
+        await checkIfNetworkIsOnline(params.network)
+          .then((status) => {
+            if (!status?.healthy)
+              throw new UnhealthyNetworkError("Unhealthy network");
+          })
+          .catch((e) => {
+            throw new UnhealthyNetworkError(e);
+          });
+      }
       notFound();
     }
 
-    params.path = searchResult.value;
+    params.path = redirectPath;
     redirectTo = `/${params.network}/${params.path.join("/")}`;
   }
 
@@ -101,7 +100,7 @@ async function AyncPageContent({
       <>
         {redirectTo && (
           <>
-            <ShallowPush path={redirectTo} />
+            <ShallowPush path={redirectTo} replace />
             <SearchMetadata
               correctPath={redirectTo}
               network={{
@@ -121,7 +120,7 @@ async function AyncPageContent({
     <>
       {redirectTo && (
         <>
-          <ShallowPush path={redirectTo} />
+          <ShallowPush path={redirectTo} replace />
           <SearchMetadata
             correctPath={redirectTo}
             network={{
