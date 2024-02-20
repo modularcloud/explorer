@@ -55,10 +55,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const date = new Date().getTime();
-  console.time(`[${date}] \`getGroupedNetworkChains()\` from RootLayout`);
   const searchOptionGroups = await getGroupedNetworkChains();
-  console.timeEnd(`[${date}] \`getGroupedNetworkChains()\` from RootLayout`);
 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
