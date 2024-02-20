@@ -103,7 +103,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
                 {rowGroups.map((chains, colIndex) => (
                   <BrandChains
                     chains={chains}
-                    key={chains[0].accountId}
+                    key={chains[0].id}
                     colIndex={colIndex}
                     noOfColumns={noOfColumns}
                     registerItemProps={registerItemProps}
@@ -169,7 +169,7 @@ const BrandChains = React.memo(function BrandChains({
   const values = allNetworkChains.flat();
   const brandEcosystems = options[0].ecosystems ?? [];
   const foundNetworks = values.filter((network) =>
-    brandEcosystems.includes(network.id),
+    brandEcosystems.includes(network.slug),
   );
   // I AM NOT PROUD OF THIS as it is very inefficient 😑
   // the good part is that it works 🤷‍♂️
@@ -179,13 +179,13 @@ const BrandChains = React.memo(function BrandChains({
     .map(
       (ecosystem) =>
         foundNetworks.find(
-          (network) => network.id === ecosystem,
+          (network) => network.slug === ecosystem,
         ) as NetworkChain,
     )
     .filter(Boolean);
 
   const { data } = useNetworkStatuses(
-    options.map((network) => network.id),
+    options.map((network) => network.slug),
     !ALWAYS_ONLINE_NETWORKS.includes(options[0].brandName),
   );
 
@@ -235,7 +235,7 @@ const BrandChains = React.memo(function BrandChains({
               <ul className="flex items-center gap-0">
                 {ecosystemNetworks.map((ecosystem, index) => (
                   <li
-                    key={ecosystem.id}
+                    key={ecosystem.slug}
                     className="relative rounded-full p-0.5 bg-white"
                     style={{
                       zIndex: MAX_Z_INDEX - index,
@@ -243,7 +243,7 @@ const BrandChains = React.memo(function BrandChains({
                     }}
                   >
                     <Tooltip
-                      label={`${formatEcosystemName(ecosystem.id)} Ecosystem`}
+                      label={`${formatEcosystemName(ecosystem.slug)} Ecosystem`}
                     >
                       <Image
                         src={ecosystem.logoURL}
@@ -276,13 +276,13 @@ const BrandChains = React.memo(function BrandChains({
         </div>
 
         {options.map((option) => {
-          const healthStatus = data?.[option.id].healthy ?? null;
+          const healthStatus = data?.[option.slug].healthy ?? null;
           const isAlwaysOnline = ALWAYS_ONLINE_NETWORKS.includes(
             option.brandName,
           );
           return (
             <div
-              key={option.id}
+              key={option.slug}
               {...registerItemProps(rowIndex, colIndex, option)}
               className={cn(
                 "pl-3 pr-1.5 py-1.5 flex justify-between items-center rounded-md",

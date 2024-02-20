@@ -19,7 +19,9 @@ export function SearchForm() {
 
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
-    return values.find((network) => network.id === params.network) ?? values[0];
+    return (
+      values.find((network) => network.slug === params.network) ?? values[0]
+    );
   }, [optionGroups, params.network]);
 
   const primaryColor = !!params.network
@@ -84,7 +86,7 @@ export function SearchForm() {
           "max-w-full flex-1 h-full justify-between gap-0",
           "text-sm tab:text-base",
         )}
-        action={`/${network.id}/search`}
+        action={`/${network.slug}/search`}
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
@@ -94,7 +96,7 @@ export function SearchForm() {
           if (searchQuery) {
             startTransition(() =>
               router.push(
-                `/${network.id}/search/${encodeURIComponent(searchQuery)}`,
+                `/${network.slug}/search/${encodeURIComponent(searchQuery)}`,
               ),
             );
           }
@@ -109,7 +111,7 @@ export function SearchForm() {
             if (e.target.value) {
               // prefetch on search to make the navigation faster
               router.prefetch(
-                `/${network.id}/search/${encodeURIComponent(e.target.value)}`,
+                `/${network.slug}/search/${encodeURIComponent(e.target.value)}`,
               );
             }
           }}

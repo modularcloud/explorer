@@ -17,15 +17,15 @@ export const getGroupedNetworkChains = cache(
       layout: currentNetwork.config.widgetLayout,
       verified: currentNetwork.paidVersion,
       displayName: currentNetwork.chainName,
-      id: currentNetwork.slug,
+      slug: currentNetwork.slug,
       brandName: currentNetwork.brand,
       logoURL: currentNetwork.config.logoUrl,
       platform: currentNetwork.config.platform,
-      accountId: currentNetwork.accountId,
+      id: currentNetwork.accountId,
       ecosystems: currentNetwork.config.ecosystems,
     }));
 
-    return arrayGroupByTo2DArray(options, "accountId");
+    return arrayGroupByTo2DArray(options, "id");
   },
 );
 
@@ -36,12 +36,12 @@ export type GroupedNetworkChains = Awaited<
 export type NetworkChain = {
   displayName: string;
   brandName: string;
-  accountId: string;
+  id: string;
   verified?: boolean;
   brandColor: string;
   platform?: string;
   layout?: SingleNetwork["config"]["widgetLayout"];
   logoURL: string;
-  id: string;
+  slug: string;
   ecosystems: string[];
 };

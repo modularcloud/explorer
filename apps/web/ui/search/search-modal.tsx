@@ -83,7 +83,7 @@ export function SearchModal({
   }
 
   const { data: searcheableTypes, isLoading } = useSearcheableEntities({
-    network: defaultNetwork.value.id,
+    network: defaultNetwork.value.slug,
     query: inputValue,
     enabled: inputValue.length > 0,
   });
@@ -92,7 +92,7 @@ export function SearchModal({
 
   const ecosystemChains = filterChainsByEcosystem(
     optionGroups,
-    currentNetwork ? [currentNetwork.id, ...currentNetwork.ecosystems] : [],
+    currentNetwork ? [currentNetwork.slug, ...currentNetwork.ecosystems] : [],
     deferredInputValue,
   );
 
@@ -118,12 +118,12 @@ export function SearchModal({
     currentNetwork &&
     !ALWAYS_ONLINE_NETWORKS.includes(currentNetwork.brandName)
   ) {
-    currentNetworkToCheck = currentNetwork.id;
+    currentNetworkToCheck = currentNetwork.slug;
   }
 
   const { data } = useNetworkStatus(currentNetworkToCheck);
   const currentNetworkHealthStatus = currentNetwork
-    ? data?.[currentNetwork.id]?.healthy ?? null
+    ? data?.[currentNetwork.slug]?.healthy ?? null
     : null;
 
   return (
@@ -276,7 +276,7 @@ function filterAndSortNetworkChains(
           );
 
     if (filtered.length > 0) {
-      if (filtered[0].accountId === networkToPrioritize?.accountId) {
+      if (filtered[0].id === networkToPrioritize?.id) {
         filteredChains.unshift(filtered);
       } else {
         filteredChains.push(filtered);
