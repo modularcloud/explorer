@@ -10,7 +10,7 @@ import {
 import { Table } from "~/ui/entity/table";
 import { getMetadata, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { notFound } from "next/navigation";
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 import { displayFiltersSchema } from "~/lib/display-filters";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 import { ShallowPush } from "~/ui/shallow-push";
@@ -23,7 +23,7 @@ export async function generateMetadata({
 }) {
   const params = parseHeadlessRouteVercelFix(_params);
 
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     return {};
   }
@@ -61,7 +61,7 @@ async function AyncPageContent({
   params: HeadlessRoute;
   searchParams?: Record<string, any>;
 }) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     notFound();
   }

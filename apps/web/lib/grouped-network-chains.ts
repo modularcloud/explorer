@@ -1,5 +1,5 @@
 import "server-only";
-import { type SingleNetwork, getAllNetworksCached } from "./network";
+import { type SingleNetwork, getAllNetworks } from "./network";
 import { arrayGroupByTo2DArray } from "./shared-utils";
 import { cache } from "react";
 
@@ -10,7 +10,7 @@ import { cache } from "react";
  */
 export const getGroupedNetworkChains = cache(
   async function getGroupedNetworkChains() {
-    const integrations = await getAllNetworksCached();
+    const integrations = await getAllNetworks();
 
     const options: NetworkChain[] = integrations.map((currentNetwork) => ({
       brandColor: currentNetwork.config.primaryColor,

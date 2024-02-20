@@ -3,7 +3,7 @@ import { Header } from "~/ui/header";
 import { HideBodyOverflow } from "~/ui/hide-body-overflow";
 
 // utils
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
@@ -18,7 +18,7 @@ export default async function BlockLayout({
   rightpanel: React.ReactNode;
   params: Pick<HeadlessRoute, "network">;
 }) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
 
   return (
     <main

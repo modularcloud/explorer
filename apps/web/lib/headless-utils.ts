@@ -8,7 +8,7 @@ import {
   createRollappIntegration,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
-import { getSingleNetworkCached } from "./network";
+import { getSingleNetwork } from "./network";
 import { jsonFetch, parseHeadlessRouteVercelFix } from "./shared-utils";
 import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
@@ -45,7 +45,7 @@ export async function loadIntegration(
   networkSlug: string,
   revalidateTimeInSeconds: number = 2,
 ) {
-  const network = await getSingleNetworkCached(networkSlug);
+  const network = await getSingleNetwork(networkSlug);
 
   if (!network) {
     notFound();
@@ -201,7 +201,7 @@ export async function loadPage({
   context,
   revalidateTimeInSeconds,
 }: LoadPageArgs): Promise<Page> {
-  const network = await getSingleNetworkCached(route.network);
+  const network = await getSingleNetwork(route.network);
   if (!network) notFound();
 
   const integration = await loadIntegration(
@@ -282,7 +282,7 @@ export async function checkIfNetworkIsOnline(
 
   const ONE_MINUTE = 1 * 60;
 
-  const chain = await getSingleNetworkCached(network);
+  const chain = await getSingleNetwork(network);
   const rpcUrl = chain?.config.rpcUrls.cosmos;
   if (!rpcUrl) {
     return null;

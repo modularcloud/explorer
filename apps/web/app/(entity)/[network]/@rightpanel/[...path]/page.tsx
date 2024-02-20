@@ -1,4 +1,4 @@
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 import { RightPanel, RightPanelSkeleton } from "~/ui/right-panel";
 import { loadPage, HeadlessRoute, search } from "~/lib/headless-utils";
 import * as React from "react";
@@ -20,7 +20,7 @@ async function RightPanelPageContent({ params: _params }: Props) {
   const params = parseHeadlessRouteVercelFix(_params);
   const entityType = params.path[0];
 
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
   if (!network) {
     return null;
   }

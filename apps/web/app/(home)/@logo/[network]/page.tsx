@@ -2,14 +2,14 @@ import { HomeBg } from "~/ui/home-bg";
 import { HomeBgMobile } from "~/ui/home-bg/mobile";
 
 import { notFound } from "next/navigation";
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 
 import type { HeadlessRoute } from "~/lib/headless-utils";
 interface Props {
   params: Pick<HeadlessRoute, "network">;
 }
 export default async function NetworkLogo(props: Props) {
-  const network = await getSingleNetworkCached(props.params.network);
+  const network = await getSingleNetwork(props.params.network);
   if (!network) notFound();
 
   return (
