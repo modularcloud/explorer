@@ -17,7 +17,7 @@
       "dependsOn": ["^build"]
     },
     "web#build": {
-      "dependsOn": ["^build", "web#prefetch:networks"],
+      "dependsOn": ["^build", "web#prefetch:networks-prod"],
       "env": [
         "ADD_NETWORK_PASS",
         "VERCEL_URL",
