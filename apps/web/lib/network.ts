@@ -1,8 +1,9 @@
 import "server-only";
-import { preprocess, z } from "zod";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
 import { cache } from "react";
+import { integrations, integrationList } from "~/lib/cache";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -44,95 +45,16 @@ export const singleNetworkSchema = z.object({
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
-// export const getAllNetworks = cache(async function getAllNetworks(): Promise<
-//   Array<SingleNetwork>
-// > {
-//   const date = new Date().getTime();
-//   let allIntegrations: Array<SingleNetwork> = [];
-
-//   let nextToken: string | null = null;
-
-//   do {
-//     console.time(
-//       `[${date}] FETCH [${CACHE_KEYS.networks.summary(nextToken).join(", ")}]`,
-//     );
-
-//     const sp = new URLSearchParams({
-//       returnAll: "true",
-//       maxResults: "1000",
-//       nextToken: nextToken ?? "",
-//     });
-//     const response = await fetch(
-//       `${
-//         env.INTERNAL_INTEGRATION_API_URL
-//       }/integrations-summary?${sp.toString()}`,
-//       {
-//         cache: "force-cache",
-//         next: {
-//           tags: CACHE_KEYS.networks.summary(nextToken),
-//         },
-//       },
-//     ).then(async (r) => {
-//       const text = await r.text();
-//       const status = r.status;
-//       if (status !== 200) {
-//         console.log({
-//           res: text,
-//           status: r.status,
-//           statusText: r.statusText,
-//         });
-//       }
-//       return JSON.parse(text);
-//     });
-//     console.timeEnd(
-//       `[${date}] FETCH [${CACHE_KEYS.networks.summary(nextToken).join(", ")}]`,
-//     );
-
-//     const integrationSummaryAPISchema = z.object({
-//       result: z
-//         .object({
-//           integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-//           nextToken: z.string().nullish(),
-//         })
-//         .nullish(),
-//     });
-//     const { result } = integrationSummaryAPISchema.parse(response);
-//     nextToken = result?.nextToken ?? null;
-
-//     if (result?.integrations) {
-//       for (const integration of result.integrations) {
-//         if (integration !== null) {
-//           allIntegrations.push(integration);
-//         }
-//       }
-//     }
-//   } while (nextToken);
-
-//   return allIntegrations.sort((a, b) => {
-//     // prioritize celestia before every other chain
-//     if (a.brand === "celestia") return -1;
-//     if (b.brand === "celestia") return 1;
-
-//     // put non paid chains at the end
-//     if (!a.paidVersion) return 1;
-//     if (!b.paidVersion) return -1;
-//     return 0;
-//   });
-// });
-
-const allIntegrationSchema = z.array(singleNetworkSchema);
-export async function getAllNetworks() {
-  const imported = await import("~/lib/cache/");
-  return allIntegrationSchema.parse(imported.integrationList.value);
-}
+export const getAllNetworks = cache(function getAllNetworks() {
+  return integrationList.value;
+});
 
 export const getSingleNetwork = cache(async function getSingleNetwork(
   slug: string,
 ) {
-  const imported = await import(`~/lib/cache`);
   try {
     // @ts-expect-error
-    const found = imported.integrations[slug].value;
+    const found = integrations[slug].value;
     return singleNetworkSchema.parse(found);
   } catch (error) {
     return await getSingleNetworkFetch(slug);
@@ -199,6 +121,6 @@ async function getSingleNetworkFetch(slug: string) {
 }
 
 export const getAllPaidNetworks = cache(async function getAllPaidNetworks() {
-  const allNetworks = await getAllNetworks();
+  const allNetworks = getAllNetworks();
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 });
