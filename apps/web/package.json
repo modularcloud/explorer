@@ -10,7 +10,10 @@
     "start": "next start",
     "lint": "next lint",
     "ts-check": "tsc --noEmit",
-    "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
+    "predev": "npm run prefetch:networks",
+    "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs",
+    "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
+    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts"
   },
   "type": "module",
   "dependencies": {
@@ -58,6 +61,7 @@
     "stream": "^0.0.2",
     "swr": "^2.0.3",
     "tailwind-merge": "^1.13.2",
+    "tsx": "^4.7.1",
     "web3": "^1.8.2",
     "zod": "^3.20.6",
     "zustand": "^4.4.6"

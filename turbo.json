@@ -13,8 +13,11 @@
     "dev": {
       "cache": false
     },
+    "web#prefetch:networks-prod": {
+      "dependsOn": ["^build"]
+    },
     "web#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "web#prefetch:networks"],
       "env": [
         "ADD_NETWORK_PASS",
         "VERCEL_URL",
