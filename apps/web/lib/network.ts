@@ -44,70 +44,66 @@ export const singleNetworkSchema = z.object({
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
-export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
+export const getAllNetworks = cache(async function getAllNetworks(): Promise<
+  Array<SingleNetwork>
+> {
   const date = new Date().getTime();
   let allIntegrations: Array<SingleNetwork> = [];
 
   if (allIntegrations.length === 0) {
-    try {
-      let nextToken: string | null = null;
+    let nextToken: string | null = null;
 
-      do {
-        console.time(
-          `[${date}] FETCH [${CACHE_KEYS.networks
-            .summary(nextToken)
-            .join(", ")}]`,
-        );
-        const response = await fetch(
-          `${
-            env.INTERNAL_INTEGRATION_API_URL
-          }/integrations-summary?returnAll=true&nextToken=${nextToken ?? ""}`,
-          {
-            cache: "force-cache",
-            next: {
-              tags: CACHE_KEYS.networks.summary(nextToken),
-            },
+    do {
+      console.time(
+        `[${date}] FETCH [${CACHE_KEYS.networks
+          .summary(nextToken)
+          .join(", ")}]`,
+      );
+      const response = await fetch(
+        `${
+          env.INTERNAL_INTEGRATION_API_URL
+        }/integrations-summary?returnAll=true&nextToken=${nextToken ?? ""}`,
+        {
+          cache: "force-cache",
+          next: {
+            tags: CACHE_KEYS.networks.summary(nextToken),
           },
-        ).then(async (r) => {
-          const text = await r.text();
-          const status = r.status;
-          if (status !== 200) {
-            console.log({
-              res: text,
-              status: r.status,
-              statusText: r.statusText,
-            });
-          }
-          return JSON.parse(text);
-        });
-        console.timeEnd(
-          `[${date}] FETCH [${CACHE_KEYS.networks
-            .summary(nextToken)
-            .join(", ")}]`,
-        );
-
-        const integrationSummaryAPISchema = z.object({
-          result: z
-            .object({
-              integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-              nextToken: z.string().nullish(),
-            })
-            .nullish(),
-        });
-        const { result } = integrationSummaryAPISchema.parse(response);
-        nextToken = result?.nextToken ?? null;
-
-        if (result?.integrations) {
-          // @ts-expect-error non null integrations are filtered out
-          allIntegrations = [
-            ...allIntegrations,
-            ...result.integrations.filter(Boolean),
-          ];
+        },
+      ).then(async (r) => {
+        const text = await r.text();
+        const status = r.status;
+        if (status !== 200) {
+          console.log({
+            res: text,
+            status: r.status,
+            statusText: r.statusText,
+          });
         }
-      } while (nextToken);
-    } catch (error) {
-      console.dir({ "Error fetching networks : ": error }, { depth: null });
-    }
+        return JSON.parse(text);
+      });
+      console.timeEnd(
+        `[${date}] FETCH [${CACHE_KEYS.networks
+          .summary(nextToken)
+          .join(", ")}]`,
+      );
+
+      const integrationSummaryAPISchema = z.object({
+        result: z
+          .object({
+            integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+            nextToken: z.string().nullish(),
+          })
+          .nullish(),
+      });
+      const { result } = integrationSummaryAPISchema.parse(response);
+      nextToken = result?.nextToken ?? null;
+
+      if (result?.integrations) {
+        for (const integration of result.integrations.filter(Boolean)) {
+          allIntegrations.push(integration as SingleNetwork);
+        }
+      }
+    } while (nextToken);
   }
 
   allIntegrations = allIntegrations.sort((a, b) => {
@@ -122,9 +118,11 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   });
 
   return allIntegrations;
-}
+});
 
-export async function getSingleNetwork(slug: string) {
+export const getSingleNetwork = cache(async function getSingleNetwork(
+  slug: string,
+) {
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -181,13 +179,9 @@ export async function getSingleNetwork(slug: string) {
   } catch (error) {
     return null;
   }
-}
+});
 
-export const getAllNetworksCached = cache(getAllNetworks);
-
-export const getSingleNetworkCached = cache(getSingleNetwork);
-
-export async function getAllPaidNetworks() {
-  const allNetworks = await getAllNetworksCached();
+export const getAllPaidNetworks = cache(async function getAllPaidNetworks() {
+  const allNetworks = await getAllNetworks();
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
-}
+});
