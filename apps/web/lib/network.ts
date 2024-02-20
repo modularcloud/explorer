@@ -50,63 +50,65 @@ export const getAllNetworks = cache(async function getAllNetworks(): Promise<
   const date = new Date().getTime();
   let allIntegrations: Array<SingleNetwork> = [];
 
-  if (allIntegrations.length === 0) {
-    let nextToken: string | null = null;
+  let nextToken: string | null = null;
 
-    do {
-      console.time(
-        `[${date}] FETCH [${CACHE_KEYS.networks
-          .summary(nextToken)
-          .join(", ")}]`,
-      );
-      const response = await fetch(
-        `${
-          env.INTERNAL_INTEGRATION_API_URL
-        }/integrations-summary?returnAll=true&nextToken=${nextToken ?? ""}`,
-        {
-          cache: "force-cache",
-          next: {
-            tags: CACHE_KEYS.networks.summary(nextToken),
-          },
+  do {
+    console.time(
+      `[${date}] FETCH [${CACHE_KEYS.networks.summary(nextToken).join(", ")}]`,
+    );
+
+    const sp = new URLSearchParams({
+      returnAll: "true",
+      maxResults: "1000",
+      nextToken: nextToken ?? "",
+    });
+    const response = await fetch(
+      `${
+        env.INTERNAL_INTEGRATION_API_URL
+      }/integrations-summary?${sp.toString()}`,
+      {
+        cache: "force-cache",
+        next: {
+          tags: CACHE_KEYS.networks.summary(nextToken),
         },
-      ).then(async (r) => {
-        const text = await r.text();
-        const status = r.status;
-        if (status !== 200) {
-          console.log({
-            res: text,
-            status: r.status,
-            statusText: r.statusText,
-          });
-        }
-        return JSON.parse(text);
-      });
-      console.timeEnd(
-        `[${date}] FETCH [${CACHE_KEYS.networks
-          .summary(nextToken)
-          .join(", ")}]`,
-      );
+      },
+    ).then(async (r) => {
+      const text = await r.text();
+      const status = r.status;
+      if (status !== 200) {
+        console.log({
+          res: text,
+          status: r.status,
+          statusText: r.statusText,
+        });
+      }
+      return JSON.parse(text);
+    });
+    console.timeEnd(
+      `[${date}] FETCH [${CACHE_KEYS.networks.summary(nextToken).join(", ")}]`,
+    );
 
-      const integrationSummaryAPISchema = z.object({
-        result: z
-          .object({
-            integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-            nextToken: z.string().nullish(),
-          })
-          .nullish(),
-      });
-      const { result } = integrationSummaryAPISchema.parse(response);
-      nextToken = result?.nextToken ?? null;
+    const integrationSummaryAPISchema = z.object({
+      result: z
+        .object({
+          integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+          nextToken: z.string().nullish(),
+        })
+        .nullish(),
+    });
+    const { result } = integrationSummaryAPISchema.parse(response);
+    nextToken = result?.nextToken ?? null;
 
-      if (result?.integrations) {
-        for (const integration of result.integrations.filter(Boolean)) {
-          allIntegrations.push(integration as SingleNetwork);
+    if (result?.integrations) {
+      for (const integration of result.integrations) {
+        if (integration !== null) {
+          allIntegrations.push(integration);
         }
       }
-    } while (nextToken);
-  }
+    }
+  } while (nextToken);
 
-  allIntegrations = allIntegrations.sort((a, b) => {
+  return allIntegrations.sort((a, b) => {
     // prioritize celestia before every other chain
     if (a.brand === "celestia") return -1;
     if (b.brand === "celestia") return 1;
@@ -116,8 +118,6 @@ export const getAllNetworks = cache(async function getAllNetworks(): Promise<
     if (!b.paidVersion) return -1;
     return 0;
   });
-
-  return allIntegrations;
 });
 
 export const getSingleNetwork = cache(async function getSingleNetwork(
