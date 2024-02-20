@@ -107,15 +107,16 @@ export function IBCTransferEventCard({
   const allNetworkChains = useSearchOptionsContext();
 
   const values = allNetworkChains.flat();
-  const foundNetworks = values.filter((network) => [
-    event.from.chainSlug,
-    event.to.chainSlug,
-  ]);
+  const foundNetworks = values.filter(
+    (network) =>
+      network.slug === event.from.chainSlug ||
+      network.slug === event.to.chainSlug,
+  );
 
   const fromChain = foundNetworks.find(
-    (net) => net.id === event.from.chainSlug,
+    (net) => net.slug === event.from.chainSlug,
   );
-  const toChain = foundNetworks.find((net) => net.id === event.to.chainSlug);
+  const toChain = foundNetworks.find((net) => net.slug === event.to.chainSlug);
 
   return (
     <Card className="p-0 grid w-full shadow-none">
