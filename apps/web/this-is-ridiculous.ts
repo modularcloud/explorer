@@ -177,17 +177,14 @@ async function getAllPaidNetworks() {
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
 
-// @ts-expect-error
 await getAllNetworks();
 
-// @ts-expect-error
 const paidNetworks = await getAllPaidNetworks();
 
 let template = `export { default as integrationList } from "./integration-summary.json";`;
 let varMap: Record<string, string> = {};
 
 for (const network of paidNetworks) {
-  // @ts-expect-error
   await getSingleNetwork(network.slug);
   const varName = `integration${network.slug
     .split("-")
@@ -204,5 +201,4 @@ for (const [key, value] of Object.entries(varMap)) {
 }
 template += `\n};\n`;
 
-// @ts-expect-error
 await fs.writeFile("./lib/cache/index.ts", template, "utf-8");

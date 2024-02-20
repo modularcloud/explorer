@@ -2,6 +2,8 @@
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "resolveJsonModule": true,
     "noErrorTruncation": true,
     "plugins": [
