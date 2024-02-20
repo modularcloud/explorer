@@ -282,34 +282,29 @@ export async function checkIfNetworkIsOnline(
 
   const ONE_MINUTE = 1 * 60;
 
-  const fn = nextCache(
-    async (network: string) => {
-      const chain = await getSingleNetworkCached(network);
-      const rpcUrl = chain?.config.rpcUrls.cosmos;
-      if (!rpcUrl) {
-        return null;
-      }
-      try {
-        const { result } = await jsonFetch(`${rpcUrl}/status`).then(
-          (response) => rpcStatusResponseSchema.parse(response),
-        );
+  const chain = await getSingleNetworkCached(network);
+  const rpcUrl = chain?.config.rpcUrls.cosmos;
+  if (!rpcUrl) {
+    return null;
+  }
+  try {
+    const { result } = await jsonFetch(`${rpcUrl}/status`, {
+      cache: "force-cache",
+      next: {
+        tags: CACHE_KEYS.networks.status(network),
+        revalidate: ONE_MINUTE,
+      },
+    }).then((response) => rpcStatusResponseSchema.parse(response));
 
-        return {
-          healthy: true,
-          catchingUp: result.sync_info.catching_up,
-          latestBlockHeight: result.sync_info.latest_block_height,
-          earliestBlockHeight: result.sync_info.earliest_block_height,
-        } satisfies NetworkStatusResponse;
-      } catch (error) {
-        return null;
-      }
-    },
-    {
-      tags: CACHE_KEYS.networks.status(network),
-      revalidateTimeInSeconds: ONE_MINUTE,
-    },
-  );
-  return await fn(network);
+    return {
+      healthy: true,
+      catchingUp: result.sync_info.catching_up,
+      latestBlockHeight: result.sync_info.latest_block_height,
+      earliestBlockHeight: result.sync_info.earliest_block_height,
+    } satisfies NetworkStatusResponse;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function search(networkSlug: string, query: string) {

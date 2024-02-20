@@ -1,6 +1,5 @@
 import "server-only";
 import { preprocess, z } from "zod";
-import { nextCache } from "./server-utils";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
 import { cache } from "react";
@@ -47,16 +46,28 @@ export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
 export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
   const date = new Date().getTime();
-  console.time(`[${date}] FETCH [${CACHE_KEYS.networks.summary().join(", ")}]`);
   let allIntegrations: Array<SingleNetwork> = [];
 
   if (allIntegrations.length === 0) {
     try {
-      let nextToken: string | undefined = "";
+      let nextToken: string | null = null;
 
       do {
+        console.time(
+          `[${date}] FETCH [${CACHE_KEYS.networks
+            .summary(nextToken)
+            .join(", ")}]`,
+        );
         const response = await fetch(
-          `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
+          `${
+            env.INTERNAL_INTEGRATION_API_URL
+          }/integrations-summary?returnAll=true&nextToken=${nextToken ?? ""}`,
+          {
+            cache: "force-cache",
+            next: {
+              tags: CACHE_KEYS.networks.summary(nextToken),
+            },
+          },
         ).then(async (r) => {
           const text = await r.text();
           const status = r.status;
@@ -69,17 +80,22 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
           }
           return JSON.parse(text);
         });
+        console.timeEnd(
+          `[${date}] FETCH [${CACHE_KEYS.networks
+            .summary(nextToken)
+            .join(", ")}]`,
+        );
 
         const integrationSummaryAPISchema = z.object({
           result: z
             .object({
               integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-              nextToken: z.string(),
+              nextToken: z.string().nullish(),
             })
             .nullish(),
         });
         const { result } = integrationSummaryAPISchema.parse(response);
-        nextToken = result?.nextToken;
+        nextToken = result?.nextToken ?? null;
 
         if (result?.integrations) {
           // @ts-expect-error non null integrations are filtered out
@@ -105,17 +121,10 @@ export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
     return 0;
   });
 
-  console.timeEnd(
-    `[${date}] FETCH [${CACHE_KEYS.networks.summary().join(", ")}]`,
-  );
   return allIntegrations;
 }
 
 export async function getSingleNetwork(slug: string) {
-  const date = new Date().getTime();
-  console.time(
-    `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
-  );
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -126,13 +135,26 @@ export async function getSingleNetwork(slug: string) {
     let integration: SingleNetwork | null = null;
 
     if (!integration) {
+      const date = new Date().getTime();
+      console.time(
+        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+      );
       let { result } = await fetch(
         `${
           env.INTERNAL_INTEGRATION_API_URL
         }/integrations/slug/${encodeURIComponent(slug)}`,
+        {
+          cache: "force-cache",
+          next: {
+            tags: CACHE_KEYS.networks.single(slug),
+          },
+        },
       )
         .then((r) => r.json())
         .then((data) => describeIntegrationBySlugAPISchema.parse(data));
+      console.timeEnd(
+        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+      );
       integration = result.integration;
     }
 
@@ -158,22 +180,12 @@ export async function getSingleNetwork(slug: string) {
     return integration;
   } catch (error) {
     return null;
-  } finally {
-    console.timeEnd(
-      `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
-    );
   }
 }
 
-export const getAllNetworksCached = nextCache(getAllNetworks, {
-  tags: CACHE_KEYS.networks.summary(),
-});
+export const getAllNetworksCached = cache(getAllNetworks);
 
-export const getSingleNetworkCached = cache((slug: string) =>
-  nextCache(getSingleNetwork, {
-    tags: CACHE_KEYS.networks.single(slug),
-  })(slug),
-);
+export const getSingleNetworkCached = cache(getSingleNetwork);
 
 export async function getAllPaidNetworks() {
   const allNetworks = await getAllNetworksCached();
