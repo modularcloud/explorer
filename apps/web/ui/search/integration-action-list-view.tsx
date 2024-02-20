@@ -55,27 +55,27 @@ export const IntegrationActionListView = React.memo(
 
     // prefetch these routes for faster navigation
     React.useEffect(() => {
-      router.prefetch(`/${selectedNetwork.id}`);
-      router.prefetch(`/${selectedNetwork.id}/blocks`);
-      router.prefetch(`/${selectedNetwork.id}/transactions`);
-    }, [router, selectedNetwork.id]);
+      router.prefetch(`/${selectedNetwork.slug}`);
+      router.prefetch(`/${selectedNetwork.slug}/blocks`);
+      router.prefetch(`/${selectedNetwork.slug}/transactions`);
+    }, [router, selectedNetwork.slug]);
 
     React.useEffect(() => {
       if (query) {
         router.prefetch(
-          `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
+          `/${selectedNetwork.slug}/search/${encodeURIComponent(query)}`,
         );
       }
-    }, [router, query, selectedNetwork.id]);
+    }, [router, query, selectedNetwork.slug]);
 
     // prefetch the searcheableTypes routes as they appear
     React.useEffect(() => {
       for (const [type, query] of searcheableTypes) {
         router.prefetch(
-          `/${selectedNetwork.id}/${type}/${encodeURIComponent(query)}`,
+          `/${selectedNetwork.slug}/${type}/${encodeURIComponent(query)}`,
         );
       }
-    }, [router, searcheableTypes, selectedNetwork.id]);
+    }, [router, searcheableTypes, selectedNetwork.slug]);
 
     const actionItems = React.useMemo(() => {
       let items: Array<ListItemType[]> = [];
@@ -95,7 +95,9 @@ export const IntegrationActionListView = React.memo(
               onSelect: () => {
                 onNavigate();
                 router.push(
-                  `/${selectedNetwork.id}/search/${encodeURIComponent(query)}`,
+                  `/${selectedNetwork.slug}/search/${encodeURIComponent(
+                    query,
+                  )}`,
                 );
               },
             },
@@ -120,7 +122,7 @@ export const IntegrationActionListView = React.memo(
                 onSelect: () => {
                   onNavigate();
                   router.push(
-                    `/${selectedNetwork.id}/${type}/${encodeURIComponent(
+                    `/${selectedNetwork.slug}/${type}/${encodeURIComponent(
                       query,
                     )}`,
                   );
@@ -141,7 +143,7 @@ export const IntegrationActionListView = React.memo(
           label: "Go to latest blocks",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/blocks`);
+            router.push(`/${selectedNetwork.slug}/blocks`);
           },
         },
         {
@@ -153,7 +155,7 @@ export const IntegrationActionListView = React.memo(
           label: "Go to latest transactions",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}/transactions`);
+            router.push(`/${selectedNetwork.slug}/transactions`);
           },
         },
       ] satisfies (typeof items)[number];
@@ -168,7 +170,7 @@ export const IntegrationActionListView = React.memo(
           label: "Go to chain homepage",
           onSelect: () => {
             onNavigate();
-            router.push(`/${selectedNetwork.id}`);
+            router.push(`/${selectedNetwork.slug}`);
           },
         },
         ...(selectedNetwork.brandName === "celestia" ||
@@ -210,6 +212,12 @@ export const IntegrationActionListView = React.memo(
     } = useItemGrid<ListItemType | NetworkChain>({
       noOfColumns: 1,
       optionGroups: gridItems,
+      getItemId: (item) => {
+        if ("slug" in item) {
+          return item.slug;
+        }
+        return item.id;
+      },
       onClickOption: (option) => {
         if ("onSelect" in option) {
           option.onSelect();
@@ -412,7 +420,7 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
   const firstItem = networks[0] as NetworkChain;
 
   const { data: networkStatuses } = useNetworkStatuses(
-    networks.map((network) => network.id),
+    networks.map((network) => (network as NetworkChain).slug),
     !ALWAYS_ONLINE_NETWORKS.includes(firstItem.brandName),
   );
 
@@ -440,11 +448,11 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
 
       {items.map((item) => {
         item = item as NetworkChain;
-        const healthStatus = networkStatuses?.[item.id].healthy ?? null;
+        const healthStatus = networkStatuses?.[item.slug].healthy ?? null;
         const isAlwaysOnline = ALWAYS_ONLINE_NETWORKS.includes(item.brandName);
         return (
           <div
-            key={item.id}
+            key={item.slug}
             {...registerItemProps(rowIndex + offSet, item)}
             className={cn(
               "py-2 px-3 rounded-md cursor-pointer text-start",

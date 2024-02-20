@@ -39,21 +39,25 @@ type UseItemGridArgs<T> = {
    * when a new option is selected
    */
   scrollOnSelection?: boolean;
+  /**
+   * function to compute the item's ID, this is used by this hook to
+   * distinguish selected items, it should return a unique value.
+   */
+  getItemId: (item: T) => string;
 };
 
 /**
  * Hook to make navigable menus with grid/list (a list is just a grid with one column) in groups
  * @returns
  */
-export function useItemGrid<
-  T extends { id: string; scrollOnSelection?: boolean },
->({
+export function useItemGrid<T>({
   noOfColumns,
   optionGroups,
   onClickOption: onClickOptionArg,
   onSelectOption: onSelectionOptionArg,
   scopeRef,
   scrollOnSelection = true,
+  getItemId: getItemIdArg,
 }: UseItemGridArgs<T>) {
   const itemRootId = React.useId();
   const groupedByLines = React.useMemo(
@@ -63,6 +67,7 @@ export function useItemGrid<
 
   const onSelectOption = React.useRef(onSelectionOptionArg);
   const onClickOption = React.useRef(onClickOptionArg);
+  const getItemId = React.useRef(getItemIdArg);
 
   React.useLayoutEffect(() => {
     // BEWARE : BIG HACK !!!
@@ -71,6 +76,7 @@ export function useItemGrid<
     // with this, we don't need to memoize these callbacks
     onSelectOption.current = onSelectionOptionArg;
     onClickOption.current = onClickOptionArg;
+    getItemId.current = getItemIdArg;
   });
 
   const [selectedRowIndex, setSelectedRowIndex] = React.useState(-1);
@@ -88,7 +94,7 @@ export function useItemGrid<
 
   const getOptionId = React.useCallback(
     (option: T) => {
-      return `${itemRootId}-option-${option.id}`;
+      return `${itemRootId}-option-${getItemId.current(option)}`;
     },
     [itemRootId],
   );
@@ -166,7 +172,8 @@ export function useItemGrid<
     if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
-      (item) => item.id === option?.id,
+      (item) =>
+        getItemId.current(item) === (option ? getItemId.current(option) : null),
     );
 
     if (selectedOptionIndex === -1) {
@@ -215,7 +222,8 @@ export function useItemGrid<
     const currentCell = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentCell.findIndex(
-      (item) => item.id === option?.id,
+      (item) =>
+        getItemId.current(item) === (option ? getItemId.current(option) : null),
     );
 
     // we don't do anything here
@@ -271,7 +279,8 @@ export function useItemGrid<
     if (!currentCell) return;
 
     let selectedOptionIndex = currentCell.findIndex(
-      (item) => item.id === option?.id,
+      (item) =>
+        getItemId.current(item) === (option ? getItemId.current(option) : null),
     );
 
     if (selectedOptionIndex === -1) {
@@ -321,7 +330,8 @@ export function useItemGrid<
     const currentCell = groupedByLines[rowIndex][colIndex];
 
     let selectedOptionIndex = currentCell.findIndex(
-      (item) => item.id === option?.id,
+      (item) =>
+        getItemId.current(item) === (option ? getItemId.current(option) : null),
     );
 
     if (selectedOptionIndex === -1) return;
@@ -467,8 +477,10 @@ export function useItemGrid<
 
   const isOptionSelected = React.useCallback(
     (rowIndex: number, colIndex: number, option: T) => {
+      // getItemId.current(item) === option ? getItemId.current(option) : null,
       return (
-        selectedOption?.id === option.id &&
+        (selectedOption ? getItemId.current(selectedOption) : null) ===
+          getItemId.current(option) &&
         selectedColIndex === colIndex &&
         selectedRowIndex == rowIndex
       );
@@ -497,8 +509,10 @@ export function useItemGrid<
 
           const { option: selectedOption } = selectedItemPositionRef.current;
 
-          const currentItemId = option.id;
-          const selectedItemId = selectedOption?.id;
+          const currentItemId = getItemId.current(option);
+          const selectedItemId = selectedOption
+            ? getItemId.current(selectedOption)
+            : null;
 
           if (currentItemId !== selectedItemId) {
             selectOption({ option, rowIndex, colIndex });

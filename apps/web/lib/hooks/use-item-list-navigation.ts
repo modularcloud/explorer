@@ -14,12 +14,11 @@ type UseItemListNavigationArgs<T> = {
   scopeRef?: React.RefObject<HTMLElement | null>;
   /**
    * Callback for when the item is clicked, either with the mouse
-   * or with Enter key, This function should also be memoized
+   * or with Enter key.
    */
   onClickItem?: (item: T, index: number) => void;
   /**
    * Callback for when the item is hovered or navigated to with the up/down arrows
-   * This function should be memoized, because it is passed to our `useEffect`
    */
   onSelectItem?: (arg: OnSelectItemArgs<T>) => void;
   /**
@@ -30,8 +29,6 @@ type UseItemListNavigationArgs<T> = {
   /**
    * function to compute the item's ID, this is used by this hook to
    * distinguish selected items, it should return a unique value.
-   * This function should be memoized with `useCallback` because it could break
-   * the memoization in this hook
    */
   getItemId: (item: T) => string;
 };
@@ -43,9 +40,9 @@ type UseItemListNavigationArgs<T> = {
  */
 export function useItemListNavigation<T>({
   items,
-  onSelectItem,
-  onClickItem,
-  getItemId,
+  onSelectItem: onSelectItemArg,
+  onClickItem: onClickItemArg,
+  getItemId: getItemIdArg,
   scopeRef,
 }: UseItemListNavigationArgs<T>) {
   const itemRootId = React.useId();
@@ -57,11 +54,25 @@ export function useItemListNavigation<T>({
     item: selectedItem,
   });
 
+  const onSelectItem = React.useRef(onSelectItemArg);
+  const onClickItem = React.useRef(onClickItemArg);
+  const getItemId = React.useRef(getItemIdArg);
+
+  React.useLayoutEffect(() => {
+    // BEWARE : BIG HACK !!!
+    // This is so that we can pass `onSelectOption` & `onClickOption` as closures
+    // without causing unnecessary useEffect reruns
+    // with this, we don't need to memoize these callbacks
+    onSelectItem.current = onSelectItemArg;
+    onClickItem.current = onClickItemArg;
+    getItemId.current = getItemIdArg;
+  });
+
   const getOptionId = React.useCallback(
     (index: number, item: T) => {
-      return `${itemRootId}-${index}-item-${getItemId(item)}`;
+      return `${itemRootId}-${index}-item-${getItemId.current(item)}`;
     },
-    [itemRootId, getItemId],
+    [itemRootId],
   );
 
   const selectItem = React.useCallback(
@@ -133,7 +144,7 @@ export function useItemListNavigation<T>({
         item: items[index + 1],
         index: index + 1,
       });
-      onSelectItem?.({
+      onSelectItem.current?.({
         item: items[index + 1],
         index: index + 1,
         inputMethod: "keyboard",
@@ -150,13 +161,13 @@ export function useItemListNavigation<T>({
         item: items[index - 1],
         index: index - 1,
       });
-      onSelectItem?.({
+      onSelectItem.current?.({
         item: items[index - 1],
         index: index - 1,
         inputMethod: "keyboard",
       });
     }
-  }, [selectItem, onSelectItem, items]);
+  }, [selectItem, items]);
 
   // Scroll the item into the view if it isn't visible
   // In the case where the element is visible, it will do nothing.
@@ -193,7 +204,7 @@ export function useItemListNavigation<T>({
       const { item: currentItem, index: currentIndex } =
         selectedItemPositionRef.current;
       if (event.key === "Enter" && !event.repeat && currentItem) {
-        onClickItem?.(currentItem, currentIndex);
+        onClickItem.current?.(currentItem, currentIndex);
         // we don't want this event to be propagated to the whole page
         // so that element that listen globally (for hotkey for ex.) don't react accordingly
         event.stopPropagation();
@@ -238,7 +249,6 @@ export function useItemListNavigation<T>({
   }, [
     moveSelectionDown,
     moveSelectionUp,
-    onClickItem,
     getOptionId,
     scopeRef,
     scrollItemIntoView,
@@ -246,8 +256,10 @@ export function useItemListNavigation<T>({
 
   const isOptionSelected = React.useCallback(
     (index: number, item: T) => {
-      const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
-      const currentItemId = getItemId(item);
+      const selectedItemId = selectedItem
+        ? getItemId.current(selectedItem)
+        : null;
+      const currentItemId = getItemId.current(item);
       return selectedItemId === currentItemId && selectedItemIndex === index;
     },
     [selectedItemIndex, selectedItem, getItemId],
@@ -261,7 +273,7 @@ export function useItemListNavigation<T>({
 
       return {
         id: itemId,
-        onClick: () => onClickItem?.(item, index),
+        onClick: () => onClickItem.current?.(item, index),
         onMouseMove: (event: React.MouseEvent) => {
           // This is to fix a bug in SAFARI,
           // In safari the `MouseMove` Event is triggered even on scroll
@@ -279,14 +291,16 @@ export function useItemListNavigation<T>({
 
           const { item: selectedItem } = selectedItemPositionRef.current;
 
-          const currentItemId = getItemId(item);
-          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+          const currentItemId = getItemId.current(item);
+          const selectedItemId = selectedItem
+            ? getItemId.current(selectedItem)
+            : null;
 
           // prevent triggering the select event every time the mouse move
           if (selectedItemId !== currentItemId) {
             selectItem({ item, index });
 
-            onSelectItem?.({
+            onSelectItem.current?.({
               item: item,
               index: index,
               inputMethod: "mouse",
@@ -296,8 +310,10 @@ export function useItemListNavigation<T>({
         onFocus: () => {
           const { item: selectedItem } = selectedItemPositionRef.current;
 
-          const currentItemId = getItemId(item);
-          const selectedItemId = selectedItem ? getItemId(selectedItem) : null;
+          const currentItemId = getItemId.current(item);
+          const selectedItemId = selectedItem
+            ? getItemId.current(selectedItem)
+            : null;
 
           if (selectedItemId !== currentItemId) {
             selectItem({ item, index });
@@ -312,7 +328,7 @@ export function useItemListNavigation<T>({
         role: "option",
       };
     },
-    [onClickItem, getItemId, getOptionId, onSelectItem, selectItem],
+    [getOptionId, selectItem],
   );
 
   return {

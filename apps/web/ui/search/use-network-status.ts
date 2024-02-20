@@ -10,7 +10,7 @@ const networkStatusResponseSchema = z.record(
   }),
 );
 
-const THIRTY_SECONDS_IN_MILLISECONDS = 30 * 1000;
+const ONE_MINUTE = 60 * 1000;
 
 export function useNetworkStatuses(
   networkSlugs: string[],
@@ -29,7 +29,7 @@ export function useNetworkStatuses(
     },
     enabled,
     retry: 2,
-    staleTime: THIRTY_SECONDS_IN_MILLISECONDS,
+    staleTime: ONE_MINUTE,
   });
 }
 
@@ -43,6 +43,6 @@ export function useNetworkStatus(networkSlug: string | null) {
     },
     enabled: networkSlug !== null,
     retry: 2,
-    staleTime: THIRTY_SECONDS_IN_MILLISECONDS,
+    staleTime: ONE_MINUTE,
   });
 }

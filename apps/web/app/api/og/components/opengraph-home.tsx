@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { OG_SIZE } from "~/lib/constants";
-import { getSingleNetworkCached } from "~/lib/network";
+import { getSingleNetwork } from "~/lib/network";
 
 export type OpenGraphHomeProps = {
   networkSlug: string;
 };
 
 export async function OpenGraphHome({ networkSlug }: OpenGraphHomeProps) {
-  const network = await getSingleNetworkCached(networkSlug);
+  const network = await getSingleNetwork(networkSlug);
 
   if (!network) return null;
 
