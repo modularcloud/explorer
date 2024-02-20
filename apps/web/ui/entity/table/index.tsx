@@ -8,10 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import type { HeadlessRoute, LoadPageArgs } from "~/lib/headless-utils";
-import {
-  OnSelectItemArgs,
-  useItemListNavigation,
-} from "~/lib/hooks/use-item-list-navigation";
+import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 import { Empty } from "~/ui/empty";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { displayFiltersSchema } from "~/lib/display-filters";
@@ -134,38 +131,23 @@ export function Table({ initialData, route }: Props) {
   //   scrollPaddingStart: ITEM_SIZE, // always show one item when scrolling on top
   // });
 
-  const getItemId = React.useCallback((entry: TableEntry) => entry?.key, []);
-
   const router = useRouter();
   const setSpotlight = useSpotlightStore((state) => state.setSpotlight);
 
-  const onSelectItem = React.useCallback(
-    ({ item: entry, index, inputMethod }: OnSelectItemArgs<TableEntry>) => {
+  const { registerItemProps, resetSelection } = useItemListNavigation({
+    getItemId: (entry) => entry.key,
+    onSelectItem: ({ item: entry, inputMethod }) => {
       if (entry.link && inputMethod === "keyboard") {
         // virtualizer.scrollToIndex(index);
       }
       setSpotlight?.(entry.sidebar);
     },
-    [
-      // virtualizer,
-      setSpotlight,
-    ],
-  );
-
-  const onClickItem = React.useCallback(
-    (entry: TableEntry) => {
+    items: flatData,
+    onClickItem: (entry) => {
       if (entry.link) {
         router.push(entry.link);
       }
     },
-    [router],
-  );
-
-  const { registerItemProps, resetSelection } = useItemListNavigation({
-    getItemId,
-    onSelectItem,
-    items: flatData,
-    onClickItem,
   });
 
   const firstVisibleColumnName = columns.filter(
