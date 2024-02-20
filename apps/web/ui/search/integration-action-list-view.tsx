@@ -212,6 +212,12 @@ export const IntegrationActionListView = React.memo(
     } = useItemGrid<ListItemType | NetworkChain>({
       noOfColumns: 1,
       optionGroups: gridItems,
+      getItemId: (item) => {
+        if ("slug" in item) {
+          return item.slug;
+        }
+        return item.id;
+      },
       onClickOption: (option) => {
         if ("onSelect" in option) {
           option.onSelect();
@@ -371,7 +377,7 @@ export const IntegrationActionListView = React.memo(
                       {rowGroups.map((chains) => (
                         <EcosystemNetworkChains
                           networks={chains}
-                          key={(chains[0] as NetworkChain).id}
+                          key={(chains[0] as NetworkChain).accountId}
                           rowIndex={rowIndex}
                           rowOffSet={actionItems.length}
                           registerItemProps={registerItemProps}

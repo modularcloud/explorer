@@ -276,7 +276,7 @@ function filterAndSortNetworkChains(
           );
 
     if (filtered.length > 0) {
-      if (filtered[0].id === networkToPrioritize?.id) {
+      if (filtered[0].accountId === networkToPrioritize?.accountId) {
         filteredChains.unshift(filtered);
       } else {
         filteredChains.push(filtered);

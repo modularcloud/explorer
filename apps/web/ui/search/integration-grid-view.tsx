@@ -44,6 +44,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
     optionGroups,
     scopeRef: parentDialogRef,
     onClickOption,
+    getItemId: (item) => item.slug,
     onSelectOption: ({ rowIndex, inputMethod }) => {
       if (inputMethod === "keyboard") {
         virtualizer.scrollToIndex(rowIndex);
@@ -103,7 +104,7 @@ export const IntegrationGridView = React.memo(function IntegrationGridView({
                 {rowGroups.map((chains, colIndex) => (
                   <BrandChains
                     chains={chains}
-                    key={chains[0].id}
+                    key={chains[0].accountId}
                     colIndex={colIndex}
                     noOfColumns={noOfColumns}
                     registerItemProps={registerItemProps}
