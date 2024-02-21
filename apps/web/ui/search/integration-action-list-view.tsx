@@ -12,7 +12,6 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 import { useNetworkStatuses } from "./use-network-status";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
-import { LoadingIndicator } from "../loading-indicator";
 
 interface Props {
   query: string;
