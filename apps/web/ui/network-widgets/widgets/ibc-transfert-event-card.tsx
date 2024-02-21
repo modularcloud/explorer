@@ -11,7 +11,7 @@ import {
 import { ClientTime } from "~/ui/client-time";
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
-import type { IBCTransferEvent } from "~/lib/dymension-utils";
+import type { IBCTransferEvent } from "~/ui/network-widgets/layouts/dymension/dymension-utils";
 import { Skeleton } from "~/ui/skeleton";
 import useSWR from "swr";
 import { z } from "zod";

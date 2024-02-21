@@ -1,12 +1,13 @@
 import { registerResolvers, resolve } from "@modularcloud/headless";
 import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 import {
   DYMENSION_ROLLAPP_IBC_RESOLVER_ID,
   DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT,
 } from "~/lib/constants";
-import { IBCTransferEvent } from "~/lib/dymension-utils";
+import { IBCTransferEventSchema } from "~/ui/network-widgets/layouts/dymension/ibc-event-schema";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -28,9 +29,10 @@ export async function GET(request: NextRequest) {
   );
 
   if (result.type === "success") {
-    const events = result.result.filter(
-      (event: IBCTransferEvent | null | undefined) => Boolean(event),
-    ) as Array<IBCTransferEvent>;
+    const headlessResultSchema = z.array(IBCTransferEventSchema);
+    const events = headlessResultSchema.parse(
+      result.result.filter((event: any | null | undefined) => Boolean(event)),
+    );
 
     // Insert all rows
     const queryResults = await Promise.allSettled(
@@ -61,6 +63,10 @@ export async function GET(request: NextRequest) {
     ).length;
     const errorQueries = queryResults.filter((r) => r.status === "rejected");
 
+    console.log({
+      result: `Inserted ${totalSucceededQueries} events`,
+      errors: errorQueries,
+    });
     return NextResponse.json({
       result: `Inserted ${totalSucceededQueries} events`,
       errors: errorQueries,
