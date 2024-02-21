@@ -12,6 +12,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import Image from "next/image";
 import { useNetworkStatuses } from "./use-network-status";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
+import { LoadingIndicator } from "../loading-indicator";
 
 interface Props {
   query: string;
@@ -27,6 +28,7 @@ interface Props {
 
 type ListItemType = {
   id: string;
+  isNavigating?: boolean;
   icon: React.ComponentType<{ className?: string }>;
   label: React.ReactNode;
   onSelect: () => void;
@@ -53,6 +55,11 @@ export const IntegrationActionListView = React.memo(
   }: Props) {
     const router = useRouter();
 
+    const [currentNavigatingAction, setCurrentNavigatingAction] =
+      React.useState<string | null>(null);
+
+    const [isNavigating, startTransition] = React.useTransition();
+
     // prefetch these routes for faster navigation
     React.useEffect(() => {
       router.prefetch(`/${selectedNetwork.slug}`);
@@ -78,84 +85,128 @@ export const IntegrationActionListView = React.memo(
     }, [router, searcheableTypes, selectedNetwork.slug]);
 
     const actionItems = React.useMemo(() => {
-      let items: Array<ListItemType[]> = [];
-
+      let items: Array<ListItemType[] | NetworkChain[]> = [];
       if (query.length > 0) {
-        items = [
-          [
-            {
-              id: "search",
-              groupName: "Types",
-              icon: () => null,
-              label: (
-                <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-                  Search for&nbsp;<span className="break-all">{query}</span>
-                </p>
-              ),
-              onSelect: () => {
-                onNavigate();
+        const searchId = `search-${encodeURIComponent(query)}`;
+        items.push([
+          {
+            id: searchId,
+            groupName: "Types",
+            isNavigating: currentNavigatingAction === searchId,
+            icon: () => null,
+            label: (
+              <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+                Search for&nbsp;<span className="break-all">{query}</span>&nbsp;
+                {isNavigating && currentNavigatingAction === searchId && (
+                  <small className="animate-in fade-in duration-150">
+                    navigating...
+                  </small>
+                )}
+              </p>
+            ),
+            onSelect: () => {
+              setCurrentNavigatingAction(searchId);
+              startTransition(() => {
                 router.push(
                   `/${selectedNetwork.slug}/search/${encodeURIComponent(
                     query,
                   )}`,
                 );
-              },
+                onNavigate();
+              });
             },
-            ...searcheableTypes.map(([type, query]) => {
-              const typeName = type.endsWith("s")
-                ? type.substring(0, type.length - 1)
-                : type;
-              return {
-                id: type,
-                icon: () => null,
-                groupName: "Types",
-                label: (
-                  <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-                    Go to&nbsp;
-                    <strong className="font-medium text-foreground">
-                      {capitalize(typeName)}
-                    </strong>
-                    &nbsp;
-                    <span className="break-all">{query}</span>
-                  </p>
-                ),
-                onSelect: () => {
-                  onNavigate();
+          },
+          ...searcheableTypes.map(([type, query]) => {
+            const typeName = type.endsWith("s")
+              ? type.substring(0, type.length - 1)
+              : type;
+            const id = [type, query].join("-");
+            return {
+              id,
+              icon: () => null,
+              groupName: "Types",
+              isNavigating: currentNavigatingAction === id,
+              label: (
+                <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+                  Go to&nbsp;
+                  <strong className="font-medium text-foreground">
+                    {capitalize(typeName)}
+                  </strong>
+                  &nbsp;
+                  <span className="break-all">{query}</span>&nbsp;
+                  {isNavigating && currentNavigatingAction === id && (
+                    <small className="animate-in fade-in duration-150">
+                      navigating...
+                    </small>
+                  )}
+                </p>
+              ),
+              onSelect: () => {
+                setCurrentNavigatingAction(id);
+                startTransition(() => {
                   router.push(
                     `/${selectedNetwork.slug}/${type}/${encodeURIComponent(
                       query,
                     )}`,
                   );
-                },
-              };
-            }),
-          ],
-        ];
+                  onNavigate();
+                });
+              },
+            };
+          }),
+        ]);
       }
 
       const latestBlocksAndTransactions = [
         {
           id: "latest-blocks",
           groupName: "Pages",
+          isNavigating: currentNavigatingAction === "latest-blocks",
           icon: ({ className }) => (
             <MenuHorizontal className={cn("h-4 w-4", className)} />
           ),
-          label: "Go to latest blocks",
+          label: (
+            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+              Go to latest blocks&nbsp;
+              {isNavigating && currentNavigatingAction === "latest-blocks" && (
+                <small className="animate-in fade-in duration-150">
+                  navigating...
+                </small>
+              )}
+            </p>
+          ),
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}/blocks`);
+            setCurrentNavigatingAction("latest-blocks");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}/blocks`);
+              onNavigate();
+            });
           },
         },
         {
           id: "latest-transactions",
           groupName: "Pages",
+          isNavigating: currentNavigatingAction === "latest-transactions",
           icon: ({ className }) => (
             <MenuHorizontal className={cn("h-4 w-4", className)} />
           ),
-          label: "Go to latest transactions",
+          label: (
+            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+              Go to latest transactions&nbsp;
+              {isNavigating &&
+                currentNavigatingAction === "latest-transactions" && (
+                  <small className="animate-in fade-in duration-150">
+                    navigating...
+                  </small>
+                )}
+            </p>
+          ),
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}/transactions`);
+            setCurrentNavigatingAction("latest-transactions");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}/transactions`);
+              onNavigate();
+            });
           },
         },
       ] satisfies (typeof items)[number];
@@ -164,13 +215,26 @@ export const IntegrationActionListView = React.memo(
         {
           id: "chain-homepage",
           groupName: "Pages",
+          isNavigating: currentNavigatingAction === "chain-homepage",
           icon: ({ className }) => (
             <Home className={cn("h-4 w-4", className)} />
           ),
-          label: "Go to chain homepage",
+          label: (
+            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+              Go to chain homepage&nbsp;
+              {isNavigating && currentNavigatingAction === "chain-homepage" && (
+                <small className="animate-in fade-in duration-150">
+                  navigating...
+                </small>
+              )}
+            </p>
+          ),
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}`);
+            setCurrentNavigatingAction("chain-homepage");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}`);
+              onNavigate();
+            });
           },
         },
         ...(selectedNetwork.brandName === "celestia" ||
@@ -187,22 +251,21 @@ export const IntegrationActionListView = React.memo(
           onSelect: onChangeChainClicked,
         },
       ]);
-
       return items;
     }, [
-      onNavigate,
+      isNavigating,
+      currentNavigatingAction,
       onChangeChainClicked,
-      router,
-      selectedNetwork,
+      onNavigate,
       query,
+      router,
       searcheableTypes,
+      selectedNetwork.brandName,
+      selectedNetwork.slug,
     ]);
 
     const gridItems = React.useMemo(() => {
-      const newItems: Array<ListItemType[] | NetworkChain[]> = actionItems;
-      return ecosystemNetworks !== null
-        ? newItems.concat(ecosystemNetworks)
-        : actionItems;
+      return actionItems.concat(ecosystemNetworks ?? []);
     }, [actionItems, ecosystemNetworks]);
 
     const {
@@ -335,7 +398,7 @@ export const IntegrationActionListView = React.memo(
                       aria-hidden="true"
                       className="h-3 w-3 flex-none"
                     />
-                    <span className="w-[97%]">{item.label}</span>
+                    <div className="w-[97%]">{item.label}</div>
                   </div>
                 );
               })}
@@ -509,3 +572,26 @@ const EcosystemNetworkChains = React.memo(function EcosystemNetworkChains({
     </div>
   );
 });
+
+function RemixCDSpinner({ className }: { className?: string }) {
+  return (
+    <>
+      <div
+        className={cn("remix", className)}
+        role="img"
+        aria-label="Spinning CD made with CSS"
+      ></div>
+
+      <svg width="0" height="0">
+        <defs>
+          <clipPath id="cd-clip-path" clipPathUnits="objectBoundingBox">
+            <path
+              clip-rule="evenodd"
+              d="M0.5 1C0.776154 1 1 0.776146 1 0.5C1 0.223854 0.776154 0 0.5 0C0.223846 0 0 0.223854 0 0.5C0 0.776146 0.223846 1 0.5 1ZM0.5 0.589996C0.549713 0.589996 0.589996 0.549706 0.589996 0.5C0.589996 0.450294 0.549713 0.410004 0.5 0.410004C0.450287 0.410004 0.410004 0.450294 0.410004 0.5C0.410004 0.549706 0.450287 0.589996 0.5 0.589996Z"
+            />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+}
