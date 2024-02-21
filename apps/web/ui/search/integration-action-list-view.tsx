@@ -94,9 +94,9 @@ export const IntegrationActionListView = React.memo(
 
             icon: () => null,
             label: (
-              <span>
-                Search for&nbsp;<span className="break-all">{query}</span>&nbsp;
-              </span>
+              <div className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis max-w-full flex-shrink min-w-0">
+                Search for&nbsp;{query}
+              </div>
             ),
             onSelect: () => {
               setCurrentNavigatingAction(searchId);
@@ -120,14 +120,14 @@ export const IntegrationActionListView = React.memo(
               icon: () => null,
               groupName: "Types",
               label: (
-                <span>
+                <p className="text-muted min-w-0 overflow-x-hidden whitespace-nowrap text-ellipsis max-w-full flex-shrink">
                   Go to&nbsp;
                   <strong className="font-medium text-foreground">
                     {capitalize(typeName)}
                   </strong>
                   &nbsp;
-                  <span className="break-all">{query}</span>&nbsp;
-                </span>
+                  <span>{query}</span>
+                </p>
               ),
               onSelect: () => {
                 setCurrentNavigatingAction(id);
@@ -353,11 +353,11 @@ export const IntegrationActionListView = React.memo(
                       aria-hidden="true"
                       className="h-3 w-3 flex-none"
                     />
-                    <div className="w-[97%] flex items-center flex-grow flex-wrap">
+                    <div className="w-[97%] flex items-center flex-grow whitespace-nowrap">
                       {item.label}&nbsp;
                       {isNavigating && currentNavigatingAction === item.id && (
-                        <small className="animate-in fade-in duration-150">
-                          navigating...
+                        <small className="inline-block whitespace-nowrap min-w-max flex-none animate-in fade-in duration-150">
+                          navigating...&nbsp;&nbsp;&nbsp;
                         </small>
                       )}
                     </div>
