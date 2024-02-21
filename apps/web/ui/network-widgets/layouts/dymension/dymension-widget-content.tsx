@@ -4,7 +4,7 @@ import {
   IBCTransferEventCard,
   IBCTransferEventCardSkeleton,
 } from "~/ui/network-widgets/widgets/ibc-transfert-event-card";
-import type { IBCTransferEvent } from "~/lib/dymension-utils";
+import type { IBCTransferEvent } from "~/ui/network-widgets/layouts/dymension/ibc-event-schema";
 import { useDymensionWidgetData } from "./use-widget-data";
 import { useParams } from "next/navigation";
 import { range } from "~/lib/shared-utils";
@@ -21,9 +21,8 @@ export function DymensionWidgetContent({
   initialUpdatedAt,
 }: DymensionWidgetContentProps) {
   const params = useParams() as { network: string };
-  const { error, data } = useDymensionWidgetData({
+  const { error, data = initialEvents } = useDymensionWidgetData({
     networkSlug: params.network,
-    initialTransfertEvents: initialEvents,
   });
 
   const lastUpdatedTime = useClientOnlyTime(initialUpdatedAt, [data]);
@@ -71,7 +70,7 @@ export function DymensionWidgetContent({
   }, [data]);
 
   if (!data) {
-    return <DymensionWidgetSkeleton error={error.toString()} />;
+    return <DymensionWidgetSkeleton error={error?.message} />;
   }
 
   return (

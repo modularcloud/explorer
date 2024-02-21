@@ -1,31 +1,24 @@
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import useSWR from "swr";
-import type { IBCTransferEvent } from "~/lib/dymension-utils";
-
-type UseSvmWidgetDataArgs = {
-  networkSlug: string;
-  initialTransfertEvents: IBCTransferEvent[];
-};
+import { IBCTransferEventSchema } from "~/ui/network-widgets/layouts/dymension/ibc-event-schema";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 
 export function useDymensionWidgetData({
   networkSlug,
-  initialTransfertEvents,
-}: UseSvmWidgetDataArgs) {
+}: {
+  networkSlug: string;
+}) {
   const THIRTY_SECONDS = 30 * 1000;
-  return useSWR<IBCTransferEvent[]>(
-    CACHE_KEYS.widgets.data(networkSlug),
-    () => {
-      return jsonFetch<IBCTransferEvent[]>("/api/get-dymension-ibc-events", {
+  const apiResultSchema = z.array(IBCTransferEventSchema);
+  return useQuery({
+    queryKey: CACHE_KEYS.widgets.data(networkSlug),
+    queryFn: () =>
+      jsonFetch("/api/get-dymension-ibc-events", {
         method: "POST",
-      });
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      fallbackData: initialTransfertEvents,
-    },
-  );
+      }).then((data) => apiResultSchema.parse(data)),
+    staleTime: THIRTY_SECONDS,
+    refetchInterval: THIRTY_SECONDS,
+    placeholderData: keepPreviousData,
+  });
 }
