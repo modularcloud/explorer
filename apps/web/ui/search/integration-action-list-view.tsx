@@ -28,7 +28,6 @@ interface Props {
 
 type ListItemType = {
   id: string;
-  isNavigating?: boolean;
   icon: React.ComponentType<{ className?: string }>;
   label: React.ReactNode;
   onSelect: () => void;
@@ -92,17 +91,12 @@ export const IntegrationActionListView = React.memo(
           {
             id: searchId,
             groupName: "Types",
-            isNavigating: currentNavigatingAction === searchId,
+
             icon: () => null,
             label: (
-              <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+              <span>
                 Search for&nbsp;<span className="break-all">{query}</span>&nbsp;
-                {isNavigating && currentNavigatingAction === searchId && (
-                  <small className="animate-in fade-in duration-150">
-                    navigating...
-                  </small>
-                )}
-              </p>
+              </span>
             ),
             onSelect: () => {
               setCurrentNavigatingAction(searchId);
@@ -125,21 +119,15 @@ export const IntegrationActionListView = React.memo(
               id,
               icon: () => null,
               groupName: "Types",
-              isNavigating: currentNavigatingAction === id,
               label: (
-                <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
+                <span>
                   Go to&nbsp;
                   <strong className="font-medium text-foreground">
                     {capitalize(typeName)}
                   </strong>
                   &nbsp;
                   <span className="break-all">{query}</span>&nbsp;
-                  {isNavigating && currentNavigatingAction === id && (
-                    <small className="animate-in fade-in duration-150">
-                      navigating...
-                    </small>
-                  )}
-                </p>
+                </span>
               ),
               onSelect: () => {
                 setCurrentNavigatingAction(id);
@@ -161,20 +149,10 @@ export const IntegrationActionListView = React.memo(
         {
           id: "latest-blocks",
           groupName: "Pages",
-          isNavigating: currentNavigatingAction === "latest-blocks",
           icon: ({ className }) => (
             <MenuHorizontal className={cn("h-4 w-4", className)} />
           ),
-          label: (
-            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-              Go to latest blocks&nbsp;
-              {isNavigating && currentNavigatingAction === "latest-blocks" && (
-                <small className="animate-in fade-in duration-150">
-                  navigating...
-                </small>
-              )}
-            </p>
-          ),
+          label: "Go to latest blocks",
           onSelect: () => {
             setCurrentNavigatingAction("latest-blocks");
             startTransition(() => {
@@ -186,21 +164,10 @@ export const IntegrationActionListView = React.memo(
         {
           id: "latest-transactions",
           groupName: "Pages",
-          isNavigating: currentNavigatingAction === "latest-transactions",
           icon: ({ className }) => (
             <MenuHorizontal className={cn("h-4 w-4", className)} />
           ),
-          label: (
-            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-              Go to latest transactions&nbsp;
-              {isNavigating &&
-                currentNavigatingAction === "latest-transactions" && (
-                  <small className="animate-in fade-in duration-150">
-                    navigating...
-                  </small>
-                )}
-            </p>
-          ),
+          label: "Go to latest transactions",
           onSelect: () => {
             setCurrentNavigatingAction("latest-transactions");
             startTransition(() => {
@@ -215,20 +182,10 @@ export const IntegrationActionListView = React.memo(
         {
           id: "chain-homepage",
           groupName: "Pages",
-          isNavigating: currentNavigatingAction === "chain-homepage",
           icon: ({ className }) => (
             <Home className={cn("h-4 w-4", className)} />
           ),
-          label: (
-            <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-              Go to chain homepage&nbsp;
-              {isNavigating && currentNavigatingAction === "chain-homepage" && (
-                <small className="animate-in fade-in duration-150">
-                  navigating...
-                </small>
-              )}
-            </p>
-          ),
+          label: "Go to chain homepage",
           onSelect: () => {
             setCurrentNavigatingAction("chain-homepage");
             startTransition(() => {
@@ -253,8 +210,6 @@ export const IntegrationActionListView = React.memo(
       ]);
       return items;
     }, [
-      isNavigating,
-      currentNavigatingAction,
       onChangeChainClicked,
       onNavigate,
       query,
@@ -398,7 +353,14 @@ export const IntegrationActionListView = React.memo(
                       aria-hidden="true"
                       className="h-3 w-3 flex-none"
                     />
-                    <div className="w-[97%]">{item.label}</div>
+                    <div className="w-[97%] flex items-center flex-grow flex-wrap">
+                      {item.label}&nbsp;
+                      {isNavigating && currentNavigatingAction === item.id && (
+                        <small className="animate-in fade-in duration-150">
+                          navigating...
+                        </small>
+                      )}
+                    </div>
                   </div>
                 );
               })}
