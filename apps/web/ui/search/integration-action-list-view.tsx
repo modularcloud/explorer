@@ -53,6 +53,11 @@ export const IntegrationActionListView = React.memo(
   }: Props) {
     const router = useRouter();
 
+    const [currentNavigatingAction, setCurrentNavigatingAction] =
+      React.useState<string | null>(null);
+
+    const [isNavigating, startTransition] = React.useTransition();
+
     // prefetch these routes for faster navigation
     React.useEffect(() => {
       router.prefetch(`/${selectedNetwork.slug}`);
@@ -78,59 +83,65 @@ export const IntegrationActionListView = React.memo(
     }, [router, searcheableTypes, selectedNetwork.slug]);
 
     const actionItems = React.useMemo(() => {
-      let items: Array<ListItemType[]> = [];
-
+      let items: Array<ListItemType[] | NetworkChain[]> = [];
       if (query.length > 0) {
-        items = [
-          [
-            {
-              id: "search",
-              groupName: "Types",
-              icon: () => null,
-              label: (
-                <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-                  Search for&nbsp;<span className="break-all">{query}</span>
-                </p>
-              ),
-              onSelect: () => {
-                onNavigate();
+        const searchId = `search-${encodeURIComponent(query)}`;
+        items.push([
+          {
+            id: searchId,
+            groupName: "Types",
+
+            icon: () => null,
+            label: (
+              <div className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis max-w-full flex-shrink min-w-0">
+                Search for&nbsp;{query}
+              </div>
+            ),
+            onSelect: () => {
+              setCurrentNavigatingAction(searchId);
+              startTransition(() => {
                 router.push(
                   `/${selectedNetwork.slug}/search/${encodeURIComponent(
                     query,
                   )}`,
                 );
-              },
+                onNavigate();
+              });
             },
-            ...searcheableTypes.map(([type, query]) => {
-              const typeName = type.endsWith("s")
-                ? type.substring(0, type.length - 1)
-                : type;
-              return {
-                id: type,
-                icon: () => null,
-                groupName: "Types",
-                label: (
-                  <p className="text-muted overflow-x-hidden whitespace-nowrap text-ellipsis w-full">
-                    Go to&nbsp;
-                    <strong className="font-medium text-foreground">
-                      {capitalize(typeName)}
-                    </strong>
-                    &nbsp;
-                    <span className="break-all">{query}</span>
-                  </p>
-                ),
-                onSelect: () => {
-                  onNavigate();
+          },
+          ...searcheableTypes.map(([type, query]) => {
+            const typeName = type.endsWith("s")
+              ? type.substring(0, type.length - 1)
+              : type;
+            const id = [type, query].join("-");
+            return {
+              id,
+              icon: () => null,
+              groupName: "Types",
+              label: (
+                <p className="text-muted min-w-0 overflow-x-hidden whitespace-nowrap text-ellipsis max-w-full flex-shrink">
+                  Go to&nbsp;
+                  <strong className="font-medium text-foreground">
+                    {capitalize(typeName)}
+                  </strong>
+                  &nbsp;
+                  <span>{query}</span>
+                </p>
+              ),
+              onSelect: () => {
+                setCurrentNavigatingAction(id);
+                startTransition(() => {
                   router.push(
                     `/${selectedNetwork.slug}/${type}/${encodeURIComponent(
                       query,
                     )}`,
                   );
-                },
-              };
-            }),
-          ],
-        ];
+                  onNavigate();
+                });
+              },
+            };
+          }),
+        ]);
       }
 
       const latestBlocksAndTransactions = [
@@ -142,8 +153,11 @@ export const IntegrationActionListView = React.memo(
           ),
           label: "Go to latest blocks",
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}/blocks`);
+            setCurrentNavigatingAction("latest-blocks");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}/blocks`);
+              onNavigate();
+            });
           },
         },
         {
@@ -154,8 +168,11 @@ export const IntegrationActionListView = React.memo(
           ),
           label: "Go to latest transactions",
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}/transactions`);
+            setCurrentNavigatingAction("latest-transactions");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}/transactions`);
+              onNavigate();
+            });
           },
         },
       ] satisfies (typeof items)[number];
@@ -169,8 +186,11 @@ export const IntegrationActionListView = React.memo(
           ),
           label: "Go to chain homepage",
           onSelect: () => {
-            onNavigate();
-            router.push(`/${selectedNetwork.slug}`);
+            setCurrentNavigatingAction("chain-homepage");
+            startTransition(() => {
+              router.push(`/${selectedNetwork.slug}`);
+              onNavigate();
+            });
           },
         },
         ...(selectedNetwork.brandName === "celestia" ||
@@ -187,22 +207,19 @@ export const IntegrationActionListView = React.memo(
           onSelect: onChangeChainClicked,
         },
       ]);
-
       return items;
     }, [
-      onNavigate,
       onChangeChainClicked,
-      router,
-      selectedNetwork,
+      onNavigate,
       query,
+      router,
       searcheableTypes,
+      selectedNetwork.brandName,
+      selectedNetwork.slug,
     ]);
 
     const gridItems = React.useMemo(() => {
-      const newItems: Array<ListItemType[] | NetworkChain[]> = actionItems;
-      return ecosystemNetworks !== null
-        ? newItems.concat(ecosystemNetworks)
-        : actionItems;
+      return actionItems.concat(ecosystemNetworks ?? []);
     }, [actionItems, ecosystemNetworks]);
 
     const {
@@ -335,7 +352,14 @@ export const IntegrationActionListView = React.memo(
                       aria-hidden="true"
                       className="h-3 w-3 flex-none"
                     />
-                    <span className="w-[97%]">{item.label}</span>
+                    <div className="w-[97%] flex items-center flex-grow whitespace-nowrap">
+                      {item.label}&nbsp;
+                      {isNavigating && currentNavigatingAction === item.id && (
+                        <small className="inline-block whitespace-nowrap min-w-max flex-none animate-in fade-in duration-150">
+                          navigating...&nbsp;&nbsp;&nbsp;
+                        </small>
+                      )}
+                    </div>
                   </div>
                 );
               })}
