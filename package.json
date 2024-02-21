@@ -16,6 +16,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "commitlint": "^18.6.1",
+    "commitlint-config-gitmoji": "^2.3.1",
     "eslint-config-custom": "*",
     "prettier": "latest",
     "turbo": "latest",
