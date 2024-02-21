@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDymensionIBCTransfertEvents } from "~/ui/network-widgets/layouts/dymension/dymension-utils";
+import { getDymensionIBCTransfertEvents } from "~/lib/dymension-utils";
 
 export async function POST() {
   const events = await getDymensionIBCTransfertEvents();
