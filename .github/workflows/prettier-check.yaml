@@ -17,11 +17,12 @@ jobs:
         id: check_format
         run: |
           npm run format -- --check || STATUS=$? || true
-          echo "FORMAT_STATUS=$STATUS" >> $GITHUB_OUTPUT
+          echo "format_status=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Evaluate formatting
         if: always() # Ensures this step always runs, regardless of the previous step's status.
         run: |
+          echo "FORMAT_STATUS='$FORMAT_STATUS'"
           if [ $FORMAT_STATUS -ne 0 ]; then
             echo '❌ Changes not properly formatted, did you forget to run `npm run format` ?' >> $GITHUB_STEP_SUMMARY
             exit 1
@@ -29,4 +30,4 @@ jobs:
             echo '✅ Changes are properly formatted.' >> $GITHUB_STEP_SUMMARY
           fi
         env:
-          FORMAT_STATUS: ${{ steps.check_format.outputs.FORMAT_STATUS }}
+          FORMAT_STATUS: ${{ steps.check_format.outputs.format_status }}
