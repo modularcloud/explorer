@@ -14,10 +14,15 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write .",
-    "check": "prettier --check ."
+    "check": "prettier --check .",
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
   },
   "devDependencies": {
+    "commitlint": "^18.6.1",
+    "commitlint-config-gitmoji": "^2.3.1",
     "eslint-config-custom": "*",
+    "husky": "^9.0.11",
     "prettier": "^3.2.5",
     "turbo": "^1.12.4",
     "typescript": "^5.3.3"
