@@ -1,15 +1,13 @@
 {
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
-	"features": {
-		"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
-			"packages": "protobuf-compiler"
-		}
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"unifiedjs.vscode-mdx"
-			]
-		}
-	}
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+      "packages": "protobuf-compiler"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["unifiedjs.vscode-mdx"]
+    }
+  }
 }
