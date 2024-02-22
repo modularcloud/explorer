@@ -24,10 +24,11 @@ jobs:
         run: |
           echo "FORMAT_STATUS='$FORMAT_STATUS'"
           if [ $FORMAT_STATUS -ne 0 ]; then
+            echo '❌ Changes not properly formatted, did you forget to run `npm run format` ?'
             echo '❌ Changes not properly formatted, did you forget to run `npm run format` ?' >> $GITHUB_STEP_SUMMARY
             exit 1
           else
-            echo '✅ Changes are properly formatted.' >> $GITHUB_STEP_SUMMARY
+            echo '✅ Changes are properly formatted.'
           fi
         env:
           FORMAT_STATUS: ${{ steps.check_format.outputs.format_status }}
