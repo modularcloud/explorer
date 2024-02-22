@@ -6,7 +6,7 @@ import { CopyableValue } from "~/ui/copyable-value";
 
 import { cn } from "~/ui/shadcn/utils";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
-import { toast } from "~/ui/shadcn/components/ui/use-toast";
+import { toast } from "sonner";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkey } from "~/lib/hooks/use-hotkey";
@@ -108,14 +108,17 @@ export function OverviewEntryList({ entries }: Props) {
         }
         copyValueToClipboard(value).then((copied) => {
           if (copied) {
-            toast({
-              title: "Copied",
+            toast("Copied", {
               description: `"${truncateHash(value)}" copied to clipboard`,
+              cancel: {
+                label: "ok",
+              },
             });
           } else {
-            toast({
-              title: "Failed to copy",
-              description: `An`,
+            toast("Failed to copy", {
+              cancel: {
+                label: "ok",
+              },
             });
           }
         });

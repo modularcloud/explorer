@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import * as React from "react";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
-import { toast } from "~/ui/shadcn/components/ui/use-toast";
+import { toast } from "sonner";
 import useSWRImmutable from "swr/immutable";
 import Script from "next/script";
 import { ButtonBody } from "./button-body";
@@ -18,9 +18,11 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
     const copied = await copyValueToClipboard(text);
 
     if (copied) {
-      toast({
-        title: "Copied",
+      toast("Copied", {
         description: `"${truncateHash(text)}" copied to clipboard`,
+        cancel: {
+          label: "ok",
+        },
       });
     }
   }
