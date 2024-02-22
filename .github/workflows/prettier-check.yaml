@@ -28,3 +28,5 @@ jobs:
           else
             echo '✅ Changes are properly formatted.' >> $GITHUB_STEP_SUMMARY
           fi
+        env:
+          FORMAT_STATUS: ${{ steps.check_format.outputs.FORMAT_STATUS }}
