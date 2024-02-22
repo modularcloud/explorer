@@ -1,0 +1,23 @@
+name: Format
+on:
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+      - run: npm ci
+      - name: Check
+        run: |
+          npm run check
+          if [ $? -ne 0 ]; then
+            echo '❌ Changes not properly formatted, did you forget to run `npm run format` ?' >> $GITHUB_STEP_SUMMARY
+          else
+            echo '✅ Changes are properly formatted.' >> $GITHUB_STEP_SUMMARY
+          fi

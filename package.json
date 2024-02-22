@@ -13,7 +13,8 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,mjs,cjs,js,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,mjs,cjs,js,md}\"",
+    "check": "prettier --check \"**/*.{ts,tsx,mjs,cjs,js,md}\""
   },
   "devDependencies": {
     "eslint-config-custom": "*",
