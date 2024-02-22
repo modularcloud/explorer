@@ -16,7 +16,7 @@ jobs:
       - name: Check formatting
         id: check_format
         run: |
-          npm run format -- --check || STATUS=$? || true
+          npm run check || STATUS=$? || true
           echo "format_status=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Evaluate formatting
