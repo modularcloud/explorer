@@ -17,7 +17,7 @@ jobs:
         id: check_format
         run: |
           npm run format -- --check || STATUS=$? || true
-          echo "FORMAT_STATUS=$STATUS" >> $GITHUB_ENV
+          echo "FORMAT_STATUS=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Evaluate formatting
         if: always() # Ensures this step always runs, regardless of the previous step's status.
