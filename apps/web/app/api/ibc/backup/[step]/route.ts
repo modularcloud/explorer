@@ -94,7 +94,9 @@ export async function GET(
     }
   }
   const rpc = integrationResponse.result.integration.config.rpcUrls.cosmos;
-  const isHubBaseRpc = rpc === "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4";
+  const isHubBaseRpc =
+    rpc ===
+    "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4";
 
   const slug = integrationResponse.result.integration.slug;
   const logo = integrationResponse.result.integration.config.logoUrl;

@@ -59,12 +59,14 @@ export const toolkitStepSchema = z.object({
 });
 
 export const layerStepSchema = z.object({
-  layer: z.array(z.string().trim().nonempty(), {
-    invalid_type_error: "Please choose one or more options",
-    required_error: "Please choose one or more options",
-  }).nonempty({
-    message: "Please choose one or more options",
-  }),
+  layer: z
+    .array(z.string().trim().nonempty(), {
+      invalid_type_error: "Please choose one or more options",
+      required_error: "Please choose one or more options",
+    })
+    .nonempty({
+      message: "Please choose one or more options",
+    }),
 });
 
 export const registerFormValuesSchema = detailStepSchema

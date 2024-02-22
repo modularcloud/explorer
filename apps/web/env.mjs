@@ -30,7 +30,11 @@ export const env = createEnv({
     }, z.string().url().optional()),
   },
   client: {
-    NEXT_PUBLIC_PRODUCTION_URL: z.string().url().optional().default("https://explorer.modular.cloud"),
+    NEXT_PUBLIC_PRODUCTION_URL: z
+      .string()
+      .url()
+      .optional()
+      .default("https://explorer.modular.cloud"),
     NEXT_PUBLIC_ADOBE_EMBED_API_KEY: z.string(),
     NEXT_PUBLIC_SVM_METRICS: z.string().url(),
     // add scheme to VERCEL_URL
@@ -63,7 +67,8 @@ export const env = createEnv({
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
     CRON_SECRET: process.env.CRON_SECRET,
     CELESTIA_MAINNET_BACKUP_NODE: process.env.CELESTIA_MAINNET_BACKUP_NODE,
-    NEXT_PUBLIC_ADOBE_EMBED_API_KEY: process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
+    NEXT_PUBLIC_ADOBE_EMBED_API_KEY:
+      process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
   },
 });
