@@ -1,7 +1,7 @@
 /**
  * This file prefetches all the networks before build
  * and store them in a JSON file, then write a ts file
- * that will import and export those files
+ * that will import and export those files.
  */
 import fs from "node:fs/promises";
 import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
