@@ -4,11 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
+    "clean-dev": "rm -rf .next/cache/fs-cache && next dev --turbo",
     "build": "next build",
+    "clean-build": "rm -rf .next/cache/fetch-cache && next build",
     "start": "next start",
     "lint": "next lint",
     "ts-check": "tsc --noEmit",
-    "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs"
+    "predev": "npm run prefetch:networks",
+    "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs",
+    "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
+    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts"
   },
   "type": "module",
   "dependencies": {
@@ -25,7 +30,6 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
-    "@radix-ui/react-toast": "^1.1.4",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.6",
     "@solana/web3.js": "^1.78.4",
@@ -44,7 +48,7 @@
     "dayjs": "^1.11.7",
     "decimal.js": "^10.4.3",
     "lucide-react": "^0.259.0",
-    "next": "^14.1.0",
+    "next": "^14.1.1-canary.53",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
@@ -53,9 +57,11 @@
     "resend": "^2.0.0",
     "service-manager": "*",
     "slugify": "^1.6.6",
+    "sonner": "^1.4.0",
     "stream": "^0.0.2",
     "swr": "^2.0.3",
     "tailwind-merge": "^1.13.2",
+    "tsx": "^4.7.1",
     "web3": "^1.8.2",
     "zod": "^3.20.6",
     "zustand": "^4.4.6"

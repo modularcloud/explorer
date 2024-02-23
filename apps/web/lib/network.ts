@@ -1,8 +1,9 @@
 import "server-only";
-import { preprocess, z } from "zod";
-import { nextCache } from "./server-utils";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 import { CACHE_KEYS } from "./cache-keys";
+import { cache } from "react";
+import { integrations, integrationList } from "~/lib/cache";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -39,73 +40,30 @@ export const singleNetworkSchema = z.object({
   accountId: z.string(),
   internalId: z.string(),
   integrationId: z.string().uuid(),
-  createdTime: preprocess((arg) => new Date(arg as any), z.date()),
+  createdTime: z.coerce.date(),
 });
 
 export type SingleNetwork = z.infer<typeof singleNetworkSchema>;
 
-export async function getAllNetworks(): Promise<Array<SingleNetwork>> {
-  let allIntegrations: Array<SingleNetwork> = [];
+const allNetworkSchema = z.array(singleNetworkSchema);
 
-  if (allIntegrations.length === 0) {
-    try {
-      let nextToken: string | undefined = "";
+export const getAllNetworks = cache(function getAllNetworks() {
+  return allNetworkSchema.parse(integrationList.value);
+});
 
-      do {
-        const response = await fetch(
-          `${env.INTERNAL_INTEGRATION_API_URL}/integrations-summary?returnAll=true&nextToken=${nextToken}`,
-        ).then(async (r) => {
-          const text = await r.text();
-          const status = r.status;
-          if (status !== 200) {
-            console.log({
-              res: text,
-              status: r.status,
-              statusText: r.statusText,
-            });
-          }
-          return JSON.parse(text);
-        });
-
-        const integrationSummaryAPISchema = z.object({
-          result: z
-            .object({
-              integrations: z.array(singleNetworkSchema.nullable().catch(null)),
-              nextToken: z.string(),
-            })
-            .nullish(),
-        });
-        const { result } = integrationSummaryAPISchema.parse(response);
-        nextToken = result?.nextToken;
-
-        if (result?.integrations) {
-          // @ts-expect-error non null integrations are filtered out
-          allIntegrations = [
-            ...allIntegrations,
-            ...result.integrations.filter(Boolean),
-          ];
-        }
-      } while (nextToken);
-    } catch (error) {
-      console.dir({ "Error fetching networks : ": error }, { depth: null });
-    }
+export const getSingleNetwork = cache(async function getSingleNetwork(
+  slug: string,
+) {
+  try {
+    // @ts-expect-error
+    const found = integrations[slug].value;
+    return singleNetworkSchema.parse(found);
+  } catch (error) {
+    return await getSingleNetworkFetch(slug);
   }
+});
 
-  allIntegrations = allIntegrations.sort((a, b) => {
-    // prioritize celestia before every other chain
-    if (a.brand === "celestia") return -1;
-    if (b.brand === "celestia") return 1;
-
-    // put non paid chains at the end
-    if (!a.paidVersion) return 1;
-    if (!b.paidVersion) return -1;
-    return 0;
-  });
-
-  return allIntegrations;
-}
-
-export async function getSingleNetwork(slug: string) {
+async function getSingleNetworkFetch(slug: string) {
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -116,13 +74,26 @@ export async function getSingleNetwork(slug: string) {
     let integration: SingleNetwork | null = null;
 
     if (!integration) {
+      const date = new Date().getTime();
+      console.time(
+        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+      );
       let { result } = await fetch(
         `${
           env.INTERNAL_INTEGRATION_API_URL
         }/integrations/slug/${encodeURIComponent(slug)}`,
+        {
+          cache: "force-cache",
+          next: {
+            tags: CACHE_KEYS.networks.single(slug),
+          },
+        },
       )
         .then((r) => r.json())
         .then((data) => describeIntegrationBySlugAPISchema.parse(data));
+      console.timeEnd(
+        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
+      );
       integration = result.integration;
     }
 
@@ -151,23 +122,7 @@ export async function getSingleNetwork(slug: string) {
   }
 }
 
-export async function getAllNetworksCached() {
-  const getAllIntegrationsFn = nextCache(getAllNetworks, {
-    tags: CACHE_KEYS.networks.summary(),
-  });
-
-  return await getAllIntegrationsFn();
-}
-
-export async function getSingleNetworkCached(slug: string) {
-  const getSingleIntegrationFn = nextCache(getSingleNetwork, {
-    tags: CACHE_KEYS.networks.single(slug),
-  });
-  return await getSingleIntegrationFn(slug);
-}
-
-export async function getAllPaidNetworks() {
-  // `getAllNetworksCached` doesn't work during `next build`, so we manually call `getAllNetworks()`
-  const allNetworks = await getAllNetworksCached();
+export const getAllPaidNetworks = cache(async function getAllPaidNetworks() {
+  const allNetworks = getAllNetworks();
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
-}
+});

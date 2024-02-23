@@ -7,14 +7,26 @@ import type { HeadlessRoute } from "./headless-utils";
 export const CACHE_KEYS = {
   networks: {
     all: () => ["INTEGRATION"],
-    summary: () => [...CACHE_KEYS.networks.all(), "INTEGRATION_SUMMARY"],
-    single: (slug: string) => [...CACHE_KEYS.networks.all(), slug],
+    summary: (nexToken: string | null = null) => [
+      ...CACHE_KEYS.networks.all(),
+      "INTEGRATION_SUMMARY",
+      "INTEGRATION_SUMMARY_NEXT_TOKEN",
+      nexToken?.slice(0, 20) ?? "null",
+    ],
+    single: (slug: string) => [
+      ...CACHE_KEYS.networks.all(),
+      "INTEGRATION_SINGLE",
+      slug,
+    ],
     platform: (platform: string) => [
       ...CACHE_KEYS.networks.all(),
       "platform",
       platform,
     ],
-    status: (slug: string) => [...CACHE_KEYS.networks.single(slug), "STATUS"],
+    status: (slug: string) => [
+      ...CACHE_KEYS.networks.single(slug),
+      "INTEGRATION_STATUS",
+    ],
   },
   widgets: {
     evmWithPrice: (networkSlug: string) => ["EVM_WITH_PRICE", networkSlug],
@@ -29,15 +41,15 @@ export const CACHE_KEYS = {
       route.network,
       ...route.path,
       "AFTER",
-      context?.after?.slice(0, 25) ?? "",
+      context?.after?.slice(0, 25) ?? "undefined",
       "LIMIT",
       context?.limit?.toString() ?? "-1",
       "ORDER_BY",
-      context?.orderBy?.toString() ?? "",
+      context?.orderBy?.toString() ?? "undefined",
       "START_TIME",
-      context?.startTime?.toString() ?? "",
+      context?.startTime?.toString() ?? "undefined",
       "END_TIME",
-      context?.endTime?.toString() ?? "",
+      context?.endTime?.toString() ?? "undefined",
     ],
   },
 } as const;

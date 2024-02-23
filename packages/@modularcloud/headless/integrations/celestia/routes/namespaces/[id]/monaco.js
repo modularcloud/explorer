@@ -1,46 +1,46 @@
 const hoverContribution = {
-    getId: function() {
-        return 'myHoverProvider';
-    },
-    provideHover: function (model, position) {
-        // Get the word at the position
-		console.log("test")
-        var wordAtPosition = model.getWordAtPosition(position);
-        if (wordAtPosition) {
-            var lineContent = model.getLineContent(position.lineNumber);
-            var colonIndex = lineContent.indexOf(':', wordAtPosition.endColumn - 1);
+  getId: function () {
+    return "myHoverProvider";
+  },
+  provideHover: function (model, position) {
+    // Get the word at the position
+    console.log("test");
+    var wordAtPosition = model.getWordAtPosition(position);
+    if (wordAtPosition) {
+      var lineContent = model.getLineContent(position.lineNumber);
+      var colonIndex = lineContent.indexOf(":", wordAtPosition.endColumn - 1);
 
-            // Check if the colon exists and is located after the word
-            if (colonIndex > -1) {
-                // It's a key, so don't provide hover information
-                return null;
-            } else {
-                // It's a value, so provide hover information
-                var range = new monaco.Range(
-                    position.lineNumber,
-                    wordAtPosition.startColumn,
-                    position.lineNumber,
-                    wordAtPosition.endColumn
-                );
-                return {
-                range: range,
-                contents: [
-                    { value: '**TOKEN**' },
-                    { value: '```json\n' + wordAtPosition.word + '\n```' },
-                ]
-            };
-            }
-        }
-        return null;  // return null if no word at position
-    },
-    hover: function(e) {
-        // Triggered whenever a hover occurs
-        console.log('Hover event triggered', e);
+      // Check if the colon exists and is located after the word
+      if (colonIndex > -1) {
+        // It's a key, so don't provide hover information
+        return null;
+      } else {
+        // It's a value, so provide hover information
+        var range = new monaco.Range(
+          position.lineNumber,
+          wordAtPosition.startColumn,
+          position.lineNumber,
+          wordAtPosition.endColumn,
+        );
+        return {
+          range: range,
+          contents: [
+            { value: "**TOKEN**" },
+            { value: "```json\n" + wordAtPosition.word + "\n```" },
+          ],
+        };
+      }
     }
+    return null; // return null if no word at position
+  },
+  hover: function (e) {
+    // Triggered whenever a hover occurs
+    console.log("Hover event triggered", e);
+  },
 };
 
 // Register the hover provider with the IEditorContribution
-monaco.languages.registerHoverProvider('json', hoverContribution);
+monaco.languages.registerHoverProvider("json", hoverContribution);
 
 var json = {
   jsonrpc: "2.0",
@@ -212,72 +212,74 @@ var json = {
     tx: "CqEBCp4BCiAvY2VsZXN0aWEuYmxvYi52MS5Nc2dQYXlGb3JCbG9icxJ6Ci9jZWxlc3RpYTFhcTJ0NWwyeHljdzk0emd4ZzMyNzYwaDlrZjR1aGFzeTQyOTB3bhIdAAAAAAAAAAAAAAAAAAAAAAAAAAeNI9eoh/7wVHsaA5zDByIgAaDgnjW8EJOqlXxa8A66/N65yagHVpJO8GTouMhI87hCAQASmQEKUApGCh8vY29zbW9zLmNyeXB0by5zZWNwMjU2azEuUHViS2V5EiMKIQN+q8D/MuURVcsPAZ8Viw57bu1R3WBcOzl4BwKjWljdSxIECgIIARgCEkUKDgoEdXRpYRIGMTEzNjI4EJStRSIvY2VsZXN0aWExdGx1NDU1dnluOWRrYTI5djJ1bTQ3dWd5eHE5bHllZjJlMmpxZDkaQCQQ0LDZwnQCdOOqriw892NF8QOAmO4+YrDUyD8uQXqOc2ZJoVEfLSDU19Vviz3FsdaEG11Pd83eH6P2f4Xj6qc=",
   },
 };
-var jsonCode = JSON.stringify(json,null,2)
+var jsonCode = JSON.stringify(json, null, 2);
 
 // Create the editor instance
-var editor = monaco.editor.create(document.getElementById('container'), {
-    value: jsonCode,
-    language: 'json',
-	readOnly: true
+var editor = monaco.editor.create(document.getElementById("container"), {
+  value: jsonCode,
+  language: "json",
+  readOnly: true,
 });
 
 // Add a custom action for the Tab key
 editor.addAction({
-    id: 'tab-through-values',
-    label: 'Tab through values',
-    keybindings: [monaco.KeyCode.Tab],
-    precondition: null,
-    keybindingContext: null,
-    contextMenuGroupId: 'navigation',
-    contextMenuOrder: 1.5,
-    run: function(ed) {
+  id: "tab-through-values",
+  label: "Tab through values",
+  keybindings: [monaco.KeyCode.Tab],
+  precondition: null,
+  keybindingContext: null,
+  contextMenuGroupId: "navigation",
+  contextMenuOrder: 1.5,
+  run: function (ed) {
     var model = ed.getModel();
     var position = ed.getPosition();
     var lineNumber = position.lineNumber;
     var column = position.column;
     var found = false;
 
-// Function to find the next value on a line
-function findNextValue(lineContent, startColumn) {
-    var regex = /:\s*([^,}\n]+)/g;
-    var match;
-    regex.lastIndex = startColumn;  // Start searching from startColumn
-    
-    if ((match = regex.exec(lineContent)) !== null) {
-        var value = match[1].trim();  // Trim whitespace
-        var matchStart = match.index + match[0].indexOf(value) + 1;  // +1 to correct offset
-        var matchEnd = matchStart + value.length - 1;  // -1 to correct offset
-        
+    // Function to find the next value on a line
+    function findNextValue(lineContent, startColumn) {
+      var regex = /:\s*([^,}\n]+)/g;
+      var match;
+      regex.lastIndex = startColumn; // Start searching from startColumn
+
+      if ((match = regex.exec(lineContent)) !== null) {
+        var value = match[1].trim(); // Trim whitespace
+        var matchStart = match.index + match[0].indexOf(value) + 1; // +1 to correct offset
+        var matchEnd = matchStart + value.length - 1; // -1 to correct offset
+
         // Adjust matchStart and matchEnd for strings
         if (value.startsWith('"') && value.endsWith('"')) {
-            // It's a string, exclude the quotation marks
-            matchStart += 1;
-            matchEnd -= 1;
-            matchStart -= 1;  // Correct off-by-one error
+          // It's a string, exclude the quotation marks
+          matchStart += 1;
+          matchEnd -= 1;
+          matchStart -= 1; // Correct off-by-one error
         } else {
-            // Correct the offset for numbers and booleans
-            matchStart -= 1;
+          // Correct the offset for numbers and booleans
+          matchStart -= 1;
         }
-        
+
         ed.setSelection(
-            new monaco.Range(lineNumber, matchStart + 1, lineNumber, matchEnd + 1)  // +1 to convert to 1-based index
+          new monaco.Range(
+            lineNumber,
+            matchStart + 1,
+            lineNumber,
+            matchEnd + 1,
+          ), // +1 to convert to 1-based index
         );
         found = true;
+      }
     }
-}
-
-
 
     // Check the current line for a next value
     findNextValue(model.getLineContent(lineNumber), column - 1);
 
     // If no next value is found on the current line, check the following lines
     while (!found && lineNumber < model.getLineCount()) {
-        lineNumber++;
-        findNextValue(model.getLineContent(lineNumber), 0);
+      lineNumber++;
+      findNextValue(model.getLineContent(lineNumber), 0);
     }
 
     return null;
-}
-	
+  },
 });

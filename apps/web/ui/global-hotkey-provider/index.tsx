@@ -35,7 +35,9 @@ export function GlobalHotkeyProvider({
 
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
-    return values.find((network) => network.id === params.network) ?? values[0];
+    return (
+      values.find((network) => network.slug === params.network) ?? values[0]
+    );
   }, [optionGroups, params.network]);
 
   React.useEffect(() => {
@@ -70,9 +72,9 @@ export function GlobalHotkeyProvider({
         if (sequenceKeyPressedRef.current) {
           sequenceKeyPressedRef.current = false;
           if (key === "b") {
-            router.push(`/${network.id}/blocks`);
+            router.push(`/${network.slug}/blocks`);
           } else {
-            router.push(`/${network.id}/transactions`);
+            router.push(`/${network.slug}/transactions`);
           }
         }
       } else {
@@ -87,7 +89,7 @@ export function GlobalHotkeyProvider({
       window.removeEventListener("paste", pasteEventListener);
       window.removeEventListener("keydown", keyDownListener);
     };
-  }, [isSearchModalOpen, router, network.id]);
+  }, [isSearchModalOpen, router, network.slug]);
 
   return (
     <GlobalHotkeyContext.Provider

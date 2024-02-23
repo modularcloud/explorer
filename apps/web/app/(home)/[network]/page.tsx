@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { notFound } from "next/navigation";
-import { getAllPaidNetworks, getSingleNetworkCached } from "~/lib/network";
+import { getAllPaidNetworks, getSingleNetwork } from "~/lib/network";
 import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
@@ -18,14 +18,12 @@ interface Props {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const network = await getSingleNetworkCached(props.params.network);
+  const network = await getSingleNetwork(props.params.network);
   if (!network) notFound();
 
   return {
     title: `${capitalize(network.brand)}`,
-    description: `A block explorer for the ${capitalize(
-      network.brand,
-    )} ecosystem.`,
+    description: `A block explorer for the ${capitalize(network.brand)} ecosystem.`,
     openGraph: {
       url: `/${network.slug}`,
       type: "website",
@@ -40,7 +38,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
-  const network = await getSingleNetworkCached(params.network);
+  const network = await getSingleNetwork(params.network);
 
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)

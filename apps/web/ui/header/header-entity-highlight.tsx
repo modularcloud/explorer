@@ -26,7 +26,9 @@ export function HeaderEntityHighlight({
 
   const network = React.useMemo(() => {
     const values = Object.values(groupedNetworks).flat();
-    return values.find((network) => network.id === params.network) ?? values[0];
+    return (
+      values.find((network) => network.slug === params.network) ?? values[0]
+    );
   }, [groupedNetworks, params.network]);
 
   let entityType = capitalize(params.path[0]);

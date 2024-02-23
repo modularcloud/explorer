@@ -6,14 +6,11 @@ import { CopyableValue } from "~/ui/copyable-value";
 
 import { cn } from "~/ui/shadcn/utils";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
-import { toast } from "~/ui/shadcn/components/ui/use-toast";
+import { toast } from "sonner";
 
 import type { Value } from "@modularcloud/headless";
 import { useHotkey } from "~/lib/hooks/use-hotkey";
-import {
-  OnSelectItemArgs,
-  useItemListNavigation,
-} from "~/lib/hooks/use-item-list-navigation";
+import { useItemListNavigation } from "~/lib/hooks/use-item-list-navigation";
 import { DateTime, formatDateTime } from "~/ui/date";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,13 +35,10 @@ export function OverviewEntryList({ entries }: Props) {
     return entries.flatMap(([key, value]) => ({ value, id: key }));
   }, [entries]);
 
-  const getItemId = React.useCallback(
-    (item: (typeof items)[number]) => item.id,
-    [],
-  );
-
-  const onSelectItem = React.useCallback(
-    ({ item }: OnSelectItemArgs<Entry>) => {
+  const { registerItemProps, selectedItem } = useItemListNavigation({
+    items: items,
+    getItemId: (item) => item.id,
+    onSelectItem: ({ item }) => {
       const extraFields: Record<string, Value> = {};
 
       // some payloads like dates are rendered differently depending on certain context
@@ -87,13 +81,6 @@ export function OverviewEntryList({ entries }: Props) {
         });
       }
     },
-    [setSpotlight],
-  );
-
-  const { registerItemProps, selectedItem } = useItemListNavigation({
-    items: items,
-    getItemId,
-    onSelectItem,
   });
 
   useHotkey({
@@ -121,15 +108,11 @@ export function OverviewEntryList({ entries }: Props) {
         }
         copyValueToClipboard(value).then((copied) => {
           if (copied) {
-            toast({
-              title: "Copied",
+            toast("Copied", {
               description: `"${truncateHash(value)}" copied to clipboard`,
             });
           } else {
-            toast({
-              title: "Failed to copy",
-              description: `An`,
-            });
+            toast("Failed to copy");
           }
         });
         return true;

@@ -7,7 +7,7 @@ import { Button } from "~/ui/button";
 
 // utils
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
-import { useToast } from "~/ui/shadcn/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
@@ -29,7 +29,6 @@ export function CopyableValue({
   copyIconAppearOnlyIfSelected = false,
   children,
 }: Props) {
-  const { toast } = useToast();
   return (
     <span
       className={cn(
@@ -58,8 +57,7 @@ export function CopyableValue({
                 const copied = await copyValueToClipboard(value);
 
                 if (copied) {
-                  toast({
-                    title: "Copied",
+                  toast("Copied", {
                     description: `"${truncateHash(value)}" copied to clipboard`,
                   });
                 }
@@ -78,8 +76,7 @@ export function CopyableValue({
               const copied = await copyValueToClipboard(value);
 
               if (copied) {
-                toast({
-                  title: "Copied",
+                toast("Copied", {
                   description: `"${truncateHash(value)}" copied to clipboard`,
                 });
               }

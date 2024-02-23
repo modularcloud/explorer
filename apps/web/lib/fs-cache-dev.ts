@@ -5,9 +5,7 @@ type CacheId = string | number | (string | number)[];
 type CacheEntry<T> = { value: T; expiry: number | null };
 
 export class FileSystemCacheDEV {
-  private cacheDir: string = `.next/cache/fs-cache`;
-
-  constructor() {
+  constructor(private cacheDir = `.next/cache/fs-cache`) {
     this.initCacheDir();
   }
 
