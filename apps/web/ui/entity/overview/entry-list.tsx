@@ -110,16 +110,9 @@ export function OverviewEntryList({ entries }: Props) {
           if (copied) {
             toast("Copied", {
               description: `"${truncateHash(value)}" copied to clipboard`,
-              cancel: {
-                label: "ok",
-              },
             });
           } else {
-            toast("Failed to copy", {
-              cancel: {
-                label: "ok",
-              },
-            });
+            toast("Failed to copy");
           }
         });
         return true;

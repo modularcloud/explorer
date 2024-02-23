@@ -20,9 +20,6 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
     if (copied) {
       toast("Copied", {
         description: `"${truncateHash(text)}" copied to clipboard`,
-        cancel: {
-          label: "ok",
-        },
       });
     }
   }

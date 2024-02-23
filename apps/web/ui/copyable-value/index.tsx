@@ -59,9 +59,6 @@ export function CopyableValue({
                 if (copied) {
                   toast("Copied", {
                     description: `"${truncateHash(value)}" copied to clipboard`,
-                    cancel: {
-                      label: "ok",
-                    },
                   });
                 }
               }}
@@ -81,9 +78,6 @@ export function CopyableValue({
               if (copied) {
                 toast("Copied", {
                   description: `"${truncateHash(value)}" copied to clipboard`,
-                  cancel: {
-                    label: "ok",
-                  },
                 });
               }
             }}
