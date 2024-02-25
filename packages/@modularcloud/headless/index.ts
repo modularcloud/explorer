@@ -6,3 +6,4 @@ export * from "./integrations/svm";
 export * from "./integrations/celestia";
 export * from "./integrations/rollapp";
 export * from "./integrations";
+export * from "./integrations/evm";

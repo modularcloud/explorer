@@ -23,6 +23,7 @@
   "dependencies": {
     "@modularcloud-resolver/celestia": "*",
     "@modularcloud-resolver/core": "*",
+    "@modularcloud-resolver/evm": "*",
     "@modularcloud-resolver/rollapp": "*",
     "@modularcloud-resolver/sealevel": "*",
     "@modularcloud/sdk": "*",

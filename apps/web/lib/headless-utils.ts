@@ -6,6 +6,7 @@ import {
   SearchBuilders,
   createCelestiaIntegration,
   createRollappIntegration,
+  createEVMIntegration,
 } from "@modularcloud/headless";
 import { notFound } from "next/navigation";
 import { getSingleNetwork } from "./network";
@@ -80,6 +81,15 @@ export async function loadIntegration(
       chainName: network.chainName,
       chainLogo: network.config.logoUrl,
       rpcEndpoint: network.config.rpcUrls["celestia"] as string,
+      nativeToken: network.config.token.name,
+      slug: networkSlug,
+    });
+  } else if (network.config.rpcUrls["evm"]) {
+    integration = createEVMIntegration({
+      chainBrand: network.brand,
+      chainName: network.chainName,
+      chainLogo: network.config.logoUrl,
+      rpcEndpoint: network.config.rpcUrls["evm"] as string,
       nativeToken: network.config.token.name,
       slug: networkSlug,
     });

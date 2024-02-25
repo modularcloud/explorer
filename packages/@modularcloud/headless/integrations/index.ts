@@ -34,6 +34,8 @@ import { RollAppEvents } from "./rollapp/misc/hub";
 import { addressNativeTransferResolver } from "./svm/addresses/[address]/eth-transfers/page";
 import { addressSPLTransferResolver } from "./svm/addresses/[address]/spl-transfers/page";
 import { RollAppAddressPageBalancesResolver } from "./rollapp/routes/addresses/[address]/page";
+import { EvmBlockPage } from "./evm/blocks/[hashOrHeight]/page";
+import { EvmTransactionPage } from "./evm/transactions/[hash]/page";
 // import { resolvers } from "@modularcloud-resolver/rollapp";
 
 export function registerResolvers() {
@@ -79,4 +81,7 @@ export function registerResolvers() {
   // registerResolver(CelestiaAddressTransactionsResolver);
   // registerResolver(CelestiaLatestTransactionsResolver);
   // registerResolver(CelestiaAddressBalancesResolver);
+
+  registerResolver(EvmBlockPage);
+  registerResolver(EvmTransactionPage);
 }
