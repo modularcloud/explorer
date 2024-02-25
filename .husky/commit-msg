@@ -1,1 +1,3 @@
-npm run commitlint ${1}
+if ! npm run commitlint ${1}; then
+  nix-shell --run "npm run commitlint ${1}"
+fi
