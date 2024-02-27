@@ -32,8 +32,6 @@ async function getAllPaidNetworks() {
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
 
-await getAllNetworks();
-
 const paidNetworks = await getAllPaidNetworks();
 
 let template = `export { default as integrationList } from "./integration-summary.json";`;

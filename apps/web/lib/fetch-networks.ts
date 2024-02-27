@@ -212,7 +212,9 @@ export async function fetchAllNetworks() {
           res: text,
           status: r.status,
           statusText: r.statusText,
+          url: r.url,
         });
+        throw new Error(text);
       }
       return JSON.parse(text);
     });
