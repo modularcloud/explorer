@@ -1,4 +1,4 @@
-import { env } from "process";
+import { env } from "~/env.mjs";
 import { z } from "zod";
 
 export const singleNetworkSchema = z.object({
