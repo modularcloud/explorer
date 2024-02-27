@@ -8,15 +8,10 @@ import { getSingleNetwork } from "~/lib/network";
 import { Favicon } from "./components/favicon";
 import { notFound } from "next/navigation";
 
-const ogSearchParamsSchema = z.union([
-  z.object({
-    model: z.enum(["network-home", "favicon"]),
-    networkSlug: z.string(),
-  }),
-  z.object({
-    model: z.enum(["other"]),
-  }),
-]);
+const ogSearchParamsSchema = z.object({
+  model: z.enum(["network-home", "favicon"]),
+  networkSlug: z.string(),
+});
 
 export const runtime = "edge";
 
@@ -31,18 +26,16 @@ export async function GET(req: NextRequest) {
   const searchParams = Object.fromEntries(req.nextUrl.searchParams.entries());
   const paramsResult = ogSearchParamsSchema.safeParse(searchParams);
   if (!paramsResult.success) {
-    return new Response(null, {
-      status: 404,
-    });
+    notFound();
   }
 
   const params = paramsResult.data;
 
-  if (params.model === "other") {
-    notFound();
-  }
-
   const network = await getSingleNetwork(params.networkSlug);
+  console.log({
+    network,
+    params,
+  });
   if (!network) {
     notFound();
   }
