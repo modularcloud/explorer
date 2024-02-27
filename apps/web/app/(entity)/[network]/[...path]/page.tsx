@@ -32,10 +32,24 @@ export async function generateMetadata({
     const query = params.path[1];
     return {
       title: `Searching for ${query}`,
+      icons: [
+        {
+          rel: "icon",
+          url: `/api/og?model=favicon&networkSlug=${network.slug}`,
+        },
+      ],
     };
   }
 
-  return getMetadata(params, network);
+  return {
+    ...getMetadata(params, network),
+    icons: [
+      {
+        rel: "icon",
+        url: `/api/og?model=favicon&networkSlug=${network.slug}`,
+      },
+    ],
+  };
 }
 
 export default function EntityPage({
