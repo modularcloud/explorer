@@ -6,7 +6,7 @@
 import fs from "node:fs/promises";
 import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
 import { capitalize } from "./lib/shared-utils";
-import { fetchSingleNetwork, fetchAllNetworks } from "./lib/network";
+import { fetchSingleNetwork, fetchAllNetworks } from "./lib/fetch-networks";
 
 const getAllNetworks = cache(fetchAllNetworks, "integration-summary");
 
