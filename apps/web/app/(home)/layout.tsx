@@ -9,6 +9,13 @@ export default async function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
+    // <main
+    //   id="main-content"
+    //   tabIndex={0}
+    //   className="min-h-screen flex flex-col justify-between container mx-auto h-full gap-14 px-5 tab:px-8"
+    // >
+    //   <section>{children}</section>
+    // </main>
     <main
       id="main-content"
       tabIndex={0}

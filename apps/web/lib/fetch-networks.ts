@@ -84,6 +84,8 @@ export async function fetchSingleNetwork(slug: string) {
       integration = result.integration;
     }
 
+    const baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
+
     // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
@@ -92,7 +94,7 @@ export async function fetchSingleNetwork(slug: string) {
       integration.config = {
         ...integration.config,
         widgetLayout: "Celestia",
-        logoUrl: "/images/celestia-logo-white.svg",
+        logoUrl: `${baseUrl}/images/celestia-logo-white.svg`,
         primaryColor: "256.07 100% 67.06%",
         cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%);`,
         description:
@@ -121,7 +123,7 @@ export async function fetchSingleNetwork(slug: string) {
       integration.config = {
         ...integration.config,
         widgetLayout: "SVM",
-        logoUrl: "/images/eclipse-logo-white.svg",
+        logoUrl: `${baseUrl}/images/eclipse-logo-white.svg`,
         primaryColor: "119.25 33.33% 52.94%",
         cssGradient: `linear-gradient(180deg, #65BB64 0%, #569B55 99.99%, #000 100%);`,
         description:
@@ -140,12 +142,12 @@ export async function fetchSingleNetwork(slug: string) {
           {
             relation: "Settlement",
             target: "Sepolia",
-            logoURL: "/images/ethereum.png",
+            logoURL: `${baseUrl}/images/ethereum.png`,
           },
           {
             relation: "DA",
             target: "Mocha",
-            logoURL: "/images/celestia-logo-small.png",
+            logoURL: `${baseUrl}/images/celestia-logo-small.png`,
             href: "/celestia-mocha",
           },
         ],
@@ -155,7 +157,7 @@ export async function fetchSingleNetwork(slug: string) {
       integration.config = {
         ...integration.config,
         widgetLayout: "Dymension",
-        logoUrl: "/images/dymension-logo-white.svg",
+        logoUrl: `${baseUrl}/images/dymension-logo-white.svg`,
         cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%);`,
         primaryColor: "12 7.46% 13.14%",
         description:

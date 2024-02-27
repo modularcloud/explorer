@@ -34,6 +34,12 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
         },
       ],
     },
+    icons: [
+      {
+        rel: "icon",
+        url: `/api/og?model=favicon&networkSlug=${network.slug}`,
+      },
+    ],
   };
 }
 
