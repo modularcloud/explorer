@@ -16,7 +16,7 @@ import { cn } from "~/ui/shadcn/utils";
 
 // types
 import type { ShortcutKeyProps } from "~/ui/shortcut-key";
-import type { SingleNetwork } from "~/lib/network";
+import type { SingleNetwork } from "~/lib/fetch-networks";
 import type { Page } from "@modularcloud/headless";
 
 interface HotkeyEntryProps {

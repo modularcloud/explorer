@@ -1,7 +1,8 @@
 import "server-only";
-import { type SingleNetwork, getAllNetworks } from "./network";
+import { getAllNetworks } from "./network";
 import { arrayGroupByTo2DArray } from "./shared-utils";
 import { cache } from "react";
+import type { SingleNetwork } from "./fetch-networks";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
