@@ -77,6 +77,9 @@ export async function fetchSingleNetwork(slug: string) {
         `${
           env.INTERNAL_INTEGRATION_API_URL
         }/integrations/slug/${encodeURIComponent(slug)}`,
+        {
+          cache: "force-cache",
+        },
       )
         .then((r) => r.json())
         .then((data) => describeIntegrationBySlugAPISchema.parse(data));
@@ -200,6 +203,7 @@ export async function fetchAllNetworks() {
       `${
         env.INTERNAL_INTEGRATION_API_URL
       }/integrations-summary?${sp.toString()}`,
+      { cache: "force-cache" },
     ).then(async (r) => {
       const text = await r.text();
       const status = r.status;

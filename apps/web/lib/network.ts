@@ -16,6 +16,10 @@ export const getSingleNetwork = cache(async function getSingleNetwork(
   try {
     // @ts-expect-error
     const found = integrations[slug].value;
+    console.log({
+      found,
+      integrations,
+    });
     return singleNetworkSchema.parse(found);
   } catch (error) {
     return await fetchSingleNetwork(slug);
