@@ -1,7 +1,6 @@
 import "server-only";
 import { z } from "zod";
 import { env } from "~/env.mjs";
-import { CACHE_KEYS } from "./cache-keys";
 import { cache } from "react";
 import { integrations, integrationList } from "~/lib/cache";
 
@@ -32,6 +31,27 @@ export const singleNetworkSchema = z.object({
         `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`,
       ),
     ecosystems: z.array(z.string()).optional().default([]),
+    description: z.string().optional(),
+    type: z.string().optional().default("Execution Layer"),
+    links: z
+      .array(
+        z.object({
+          type: z.enum(["website", "github", "x", "discord"]),
+          href: z.string().url(),
+        }),
+      )
+      .optional()
+      .default([]),
+    badges: z
+      .array(
+        z.object({
+          relation: z.string().nonempty(),
+          target: z.string().nonempty(),
+          logoURL: z.string().url().optional(),
+          href: z.string().optional(),
+        }),
+      )
+      .default([]),
   }),
   paidVersion: z.boolean(),
   slug: z.string(),
@@ -59,11 +79,11 @@ export const getSingleNetwork = cache(async function getSingleNetwork(
     const found = integrations[slug].value;
     return singleNetworkSchema.parse(found);
   } catch (error) {
-    return await getSingleNetworkFetch(slug);
+    return await fetchSingleNetwork(slug);
   }
 });
 
-async function getSingleNetworkFetch(slug: string) {
+export async function fetchSingleNetwork(slug: string) {
   const describeIntegrationBySlugAPISchema = z.object({
     result: z.object({
       integration: singleNetworkSchema,
@@ -74,26 +94,14 @@ async function getSingleNetworkFetch(slug: string) {
     let integration: SingleNetwork | null = null;
 
     if (!integration) {
-      const date = new Date().getTime();
-      console.time(
-        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
-      );
       let { result } = await fetch(
         `${
           env.INTERNAL_INTEGRATION_API_URL
         }/integrations/slug/${encodeURIComponent(slug)}`,
-        {
-          cache: "force-cache",
-          next: {
-            tags: CACHE_KEYS.networks.single(slug),
-          },
-        },
       )
         .then((r) => r.json())
         .then((data) => describeIntegrationBySlugAPISchema.parse(data));
-      console.timeEnd(
-        `[${date}] FETCH [${CACHE_KEYS.networks.single(slug).join(", ")}]`,
-      );
+
       integration = result.integration;
     }
 
@@ -101,25 +109,120 @@ async function getSingleNetworkFetch(slug: string) {
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
     }
-    if (integration.slug === "eclipse-devnet") {
-      integration.config.widgetLayout = "SVM";
-      integration.config.primaryColor = "236 15% 18%";
-      integration.config.cssGradient = `linear-gradient(97deg, #000 -5.89%, #1E1E1E 83.12%, #000 103.23%)`;
-    }
     if (integration.brand === "celestia") {
-      integration.config.widgetLayout = "Celestia";
-      integration.config.primaryColor = "256 100% 67%";
-      integration.config.cssGradient = `linear-gradient(94deg, #6833FF 19.54%, #336CFF 75.56%, #33B6FF 93.7%)`;
+      integration.config = {
+        ...integration.config,
+        widgetLayout: "Celestia",
+        logoUrl: "/images/celestia-logo-white.svg",
+        primaryColor: "256.07 100% 67.06%",
+        cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%);`,
+        description:
+          "Celestia is a modular data availability network that securely scales with the number of users, making it easy for anyone to launch their own blockchain.",
+        links: [],
+      };
+    }
+    if (integration.brand === "eclipse") {
+      integration.config = {
+        ...integration.config,
+        widgetLayout: "SVM",
+        logoUrl: "/images/eclipse-logo-white.svg",
+        primaryColor: "119.25 33.33% 52.94%",
+        cssGradient: `linear-gradient(180deg, #65BB64 0%, #569B55 99.99%, #000 100%);`,
+        description:
+          "Eclipse is Ethereum's fastest L2, powered by the Solana Virtual Machine.",
+        links: [],
+        badges: [
+          {
+            relation: "Settlement",
+            target: "Sepolia",
+            logoURL: "/images/ethereum.png",
+          },
+          {
+            relation: "DA",
+            target: "Mocha",
+            logoURL: "/images/celestia-logo-small.png",
+            href: "/celestia-mocha",
+          },
+        ],
+      };
     }
     if (integration.brand === "dymension") {
-      integration.config.widgetLayout = "Dymension";
-      integration.config.primaryColor = "29 13% 45%";
+      integration.config = {
+        ...integration.config,
+        widgetLayout: "Dymension",
+        logoUrl: "/images/dymension-logo-white.svg",
+        cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%);`,
+        primaryColor: "12 7.46% 13.14%",
+        description:
+          "Dymension is a home for easily deployable and lightning fast app-chains, called RollApps.",
+        links: [],
+      };
     }
 
     return integration;
   } catch (error) {
     return null;
   }
+}
+
+export async function fetchAllNetworks() {
+  let allIntegrations: Array<SingleNetwork> = [];
+
+  let nextToken: string | null = null;
+
+  do {
+    const sp = new URLSearchParams({
+      returnAll: "true",
+      maxResults: "1000",
+      nextToken: nextToken ?? "",
+    });
+    const response = await fetch(
+      `${
+        env.INTERNAL_INTEGRATION_API_URL
+      }/integrations-summary?${sp.toString()}`,
+    ).then(async (r) => {
+      const text = await r.text();
+      const status = r.status;
+      if (status !== 200) {
+        console.log({
+          res: text,
+          status: r.status,
+          statusText: r.statusText,
+        });
+      }
+      return JSON.parse(text);
+    });
+
+    const integrationSummaryAPISchema = z.object({
+      result: z
+        .object({
+          integrations: z.array(singleNetworkSchema.nullable().catch(null)),
+          nextToken: z.string().nullish(),
+        })
+        .nullish(),
+    });
+    const { result } = integrationSummaryAPISchema.parse(response);
+    nextToken = result?.nextToken ?? null;
+
+    if (result?.integrations) {
+      for (const integration of result.integrations) {
+        if (integration !== null) {
+          allIntegrations.push(integration);
+        }
+      }
+    }
+  } while (nextToken);
+
+  return allIntegrations.sort((a, b) => {
+    // prioritize celestia before every other chain
+    if (a.brand === "celestia") return -1;
+    if (b.brand === "celestia") return 1;
+
+    // put non paid chains at the end
+    if (!a.paidVersion) return 1;
+    if (!b.paidVersion) return -1;
+    return 0;
+  });
 }
 
 export const getAllPaidNetworks = cache(async function getAllPaidNetworks() {
