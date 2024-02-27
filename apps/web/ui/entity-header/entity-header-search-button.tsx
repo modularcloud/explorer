@@ -18,7 +18,7 @@ interface Props {
   optionGroups: GroupedNetworkChains;
 }
 
-export function HeaderSearchButton({ optionGroups }: Props) {
+export function EntityHeaderSearchButton({ optionGroups }: Props) {
   const routeParams = useParams() as HeadlessRoute;
   const pathname = usePathname();
 

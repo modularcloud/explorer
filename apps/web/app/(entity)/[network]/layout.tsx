@@ -1,5 +1,5 @@
 // components
-import { Header } from "~/ui/header";
+import { EntityHeader } from "~/ui/entity-header";
 import { HideBodyOverflow } from "~/ui/hide-body-overflow";
 
 // utils
@@ -30,7 +30,7 @@ export default async function BlockLayout({
     >
       <HideBodyOverflow />
 
-      <Header networkSlug={params.network} />
+      <EntityHeader networkSlug={params.network} />
 
       <div className="grid lg:grid-cols-6">
         <div

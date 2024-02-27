@@ -5,11 +5,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import {
-  parseHeadlessRouteVercelFix,
-  capitalize,
-  truncateHash,
-} from "~/lib/shared-utils";
+import { parseHeadlessRouteVercelFix, capitalize } from "~/lib/shared-utils";
 import { cn } from "../shadcn/utils";
 import { CopyableValue } from "../copyable-value";
 
@@ -17,7 +13,7 @@ export type HeaderEntityHighlightProps = {
   groupedNetworks: GroupedNetworkChains;
 };
 
-export function HeaderEntityHighlight({
+export function EntityHeaderSummary({
   groupedNetworks,
 }: HeaderEntityHighlightProps) {
   const routeParams = useParams() as HeadlessRoute;

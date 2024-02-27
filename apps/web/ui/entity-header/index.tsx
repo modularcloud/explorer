@@ -2,19 +2,19 @@ import "server-only";
 import * as React from "react";
 // components
 import Link from "next/link";
-import { HeaderSearchButton } from "./header-search-button";
+import { EntityHeaderSearchButton } from "./entity-header-search-button";
 
 // utils
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 import { cn } from "~/ui/shadcn/utils";
-import { HeaderEntityHighlight } from "./header-entity-highlight";
+import { EntityHeaderSummary } from "./entity-header-summary";
 
 // types
 type Props = {
   networkSlug: string;
 };
 
-export async function Header({ networkSlug }: Props) {
+export async function EntityHeader({ networkSlug }: Props) {
   const groupedNetworks = await getGroupedNetworkChains();
 
   return (
@@ -38,12 +38,12 @@ export async function Header({ networkSlug }: Props) {
           <h1 className="font-medium tab:text-lg">Modular Cloud</h1>
         </Link>
 
-        <HeaderSearchButton optionGroups={groupedNetworks} />
+        <EntityHeaderSearchButton optionGroups={groupedNetworks} />
 
         {/* Bigger screens */}
         <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0" />
       </div>
-      <HeaderEntityHighlight groupedNetworks={groupedNetworks} />
+      <EntityHeaderSummary groupedNetworks={groupedNetworks} />
     </header>
   );
 }
