@@ -87,7 +87,10 @@ export async function fetchSingleNetwork(slug: string) {
       integration = result.integration;
     }
 
-    const baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
+    let baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
+    if (process.env.VERCEL_ENV === "production") {
+      baseUrl = env.NEXT_PUBLIC_PRODUCTION_URL;
+    }
 
     // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
