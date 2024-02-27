@@ -97,7 +97,24 @@ export async function fetchSingleNetwork(slug: string) {
         cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%);`,
         description:
           "Celestia is a modular data availability network that securely scales with the number of users, making it easy for anyone to launch their own blockchain.",
-        links: [],
+        links: [
+          {
+            type: "website",
+            href: "https://celestia.org/",
+          },
+          {
+            type: "github",
+            href: "https://github.com/celestiaorg",
+          },
+          {
+            type: "discord",
+            href: "https://discord.com/invite/YsnTPcSfWQ",
+          },
+          {
+            type: "x",
+            href: "https://twitter.com/CelestiaOrg/",
+          },
+        ],
       };
     }
     if (integration.brand === "eclipse") {
@@ -109,7 +126,16 @@ export async function fetchSingleNetwork(slug: string) {
         cssGradient: `linear-gradient(180deg, #65BB64 0%, #569B55 99.99%, #000 100%);`,
         description:
           "Eclipse is Ethereum's fastest L2, powered by the Solana Virtual Machine.",
-        links: [],
+        links: [
+          {
+            type: "website",
+            href: "https://www.eclipse.builders/",
+          },
+          {
+            type: "x",
+            href: "https://twitter.com/EclipseFND",
+          },
+        ],
         badges: [
           {
             relation: "Settlement",
@@ -134,7 +160,20 @@ export async function fetchSingleNetwork(slug: string) {
         primaryColor: "12 7.46% 13.14%",
         description:
           "Dymension is a home for easily deployable and lightning fast app-chains, called RollApps.",
-        links: [],
+        links: [
+          {
+            type: "website",
+            href: "https://portal.dymension.xyz",
+          },
+          {
+            type: "github",
+            href: "https://github.com/dymensionxyz",
+          },
+          {
+            type: "x",
+            href: "https://twitter.com/dymension",
+          },
+        ],
       };
     }
 
