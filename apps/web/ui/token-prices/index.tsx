@@ -46,7 +46,7 @@ export function TokenPrices() {
     enabled: isNetworkSupported,
   });
 
-  if (isNetworkSupported) {
+  if (!isNetworkSupported) {
     return (
       <div className="flex items-center gap-1 px-2 py-1 border border-mid-dark-100 bg-muted-100 text-muted rounded-md flex-none">
         <Warning className="h-3.5 w-3.5" aria-hidden="true" />
