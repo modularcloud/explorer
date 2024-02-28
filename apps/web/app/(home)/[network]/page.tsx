@@ -16,6 +16,7 @@ import { OG_SIZE } from "~/lib/constants";
 import { ShortcutKey } from "~/ui/shortcut-key";
 import { ScrollToSection } from "./scroll-to-section";
 import { cn } from "~/ui/shadcn/utils";
+import { FancyCheck } from "~/ui/icons";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -68,14 +69,40 @@ function HeroSection({ network }: { network: SingleNetwork }) {
     <section
       id="hero"
       className={cn(
-        "flex flex-col items-center text-center border gap-4 shadow-sm bg-white rounded-xl tab:py-4 py-3.5 px-3.5 w-full",
+        "flex flex-col items-center text-center border shadow-sm bg-white rounded-xl w-full",
         "relative mb-10",
+        "tab:px-32 tab:py-14",
       )}
     >
-      <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white tracking-[0.105rem]">
+      <small className="mb-4 uppercase text-xs border rounded-full px-3 py-1.5 bg-white tracking-[0.105rem]">
         {network.config.type}
       </small>
-      {/*  */}
+      <h1 className="mb-4 font-logo flex items-baseline gap-3 text-5xl font-medium md:text-6xl capitalize">
+        <span
+          className="text-transparent bg-clip-text"
+          style={{
+            backgroundImage: network.config.cssGradient,
+          }}
+        >
+          {network.brand}
+        </span>
+        <span className="text-gray-900">{network.chainName}</span>
+      </h1>
+
+      <p className="text-sm text-muted mb-6">{network.config.description}</p>
+
+      {/* Links */}
+      <div></div>
+      {/* Badges */}
+      <div className="flex items-center justify-center w-full gap-3">
+        {network.paidVersion && (
+          <div className="flex items-center text-xs font-medium gap-1 border shadow-sm bg-white rounded-md px-3 py-1.5 text-muted">
+            <span>Verified on</span>
+            <FancyCheck className="h-4 w-4 text-blue-500" />
+            <span>Modular Cloud</span>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
