@@ -37,7 +37,7 @@ export function HeaderSearchButton({ children, className }: Props) {
       <Button
         className={cn(
           "inline-flex items-center justify-between gap-3 lg:gap-5",
-          "min-w-0 flex-shrink md:w-[280px] max-w-[280px]",
+          "min-w-0 flex-shrink tab:w-[280px] max-w-[280px]",
           "shadow-sm text-sm",
           "py-2 px-2.5 tab:px-3.5",
           className,
@@ -50,12 +50,12 @@ export function HeaderSearchButton({ children, className }: Props) {
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-muted flex-none" aria-hidden="true" />
 
-          <div className="flex-none hidden md:flex gap-2 items-center">
+          <div className="flex-none hidden tab:flex gap-2 items-center">
             {children}
           </div>
         </div>
 
-        <div className="flex-none hidden md:block">
+        <div className="flex-none hidden tab:block">
           <ArrowRight
             className="text-muted flex-none h-3 w-3"
             aria-hidden="true"

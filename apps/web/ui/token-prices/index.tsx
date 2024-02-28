@@ -19,7 +19,11 @@ const tokenAPIResponse = z.object({
   }),
 });
 
-export function TokenPrices() {
+type Props = {
+  className?: string;
+};
+
+export function TokenPrices({ className }: Props) {
   const params = useParams() as Pick<HeadlessRoute, "network">;
   const allNetworks = useGroupedNetworksContext();
 
@@ -48,7 +52,12 @@ export function TokenPrices() {
 
   if (!isNetworkSupported) {
     return (
-      <div className="flex items-center gap-1 px-2 py-1 border border-mid-dark-100 bg-muted-100 text-muted rounded-md flex-none">
+      <div
+        className={cn(
+          "flex items-center gap-1 px-2 py-1 border border-mid-dark-100 bg-muted-100 text-muted rounded-md flex-none",
+          className,
+        )}
+      >
         <Warning className="h-3.5 w-3.5" aria-hidden="true" />
         <p className="text-xs">Testnet</p>
       </div>
@@ -56,7 +65,7 @@ export function TokenPrices() {
   }
 
   return (
-    <dl className="flex text-xs items-center gap-3">
+    <dl className={cn("flex text-xs items-center gap-3", className)}>
       <div className="flex items-center gap-1 px-2 py-1 border border-mid-dark-100 bg-muted-100 text-muted rounded-md flex-none">
         <dt>{capitalize(network.token.name)}:</dt>
         <dd className="text-xs">
