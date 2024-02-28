@@ -11,6 +11,7 @@ export async function Header() {
       className={cn(
         "flex justify-between items-center border gap-4 shadow-sm bg-white rounded-xl tab:py-4 py-3.5 px-3.5 w-full",
         "relative",
+        "sticky top-4 z-50",
       )}
     >
       <BrandedLogo />

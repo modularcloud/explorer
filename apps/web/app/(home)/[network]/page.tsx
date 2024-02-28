@@ -15,6 +15,7 @@ import { env } from "~/env.mjs";
 import { OG_SIZE } from "~/lib/constants";
 import { ShortcutKey } from "~/ui/shortcut-key";
 import { ScrollToSection } from "./scroll-to-section";
+import { cn } from "~/ui/shadcn/utils";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -56,13 +57,27 @@ export default async function NetworkPage({ params }: Props) {
   return (
     <>
       <ScrollToSection />
+      <HeroSection network={network} />
       <NetworkStatisticsSection network={network} />
     </>
   );
 }
 
 function HeroSection({ network }: { network: SingleNetwork }) {
-  return <section id="hero">{/*  */}</section>;
+  return (
+    <section
+      id="hero"
+      className={cn(
+        "flex flex-col items-center text-center border gap-4 shadow-sm bg-white rounded-xl tab:py-4 py-3.5 px-3.5 w-full",
+        "relative mb-10",
+      )}
+    >
+      <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white tracking-[0.105rem]">
+        {network.config.type}
+      </small>
+      {/*  */}
+    </section>
+  );
 }
 
 function NetworkStatisticsSection({ network }: { network: SingleNetwork }) {
@@ -94,7 +109,7 @@ function NetworkStatisticsSection({ network }: { network: SingleNetwork }) {
 
   if (!sectionContent) return null;
   return (
-    <section id="statistics">
+    <section id="statistics" className="scroll-mt-10">
       <h2 className="flex items-center gap-3">
         <span className="text-xl">Statistics</span>
         <ShortcutKey command="S" className="text-sm px-2" />
