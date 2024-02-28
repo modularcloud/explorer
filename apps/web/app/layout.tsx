@@ -55,7 +55,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const searchOptionGroups = await getGroupedNetworkChains();
+  const allNetworkChains = await getGroupedNetworkChains();
 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
@@ -70,8 +70,8 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <SkipToMainContent />
-        <ClientProviders searchOptions={searchOptionGroups}>
-          <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
+        <ClientProviders searchOptions={allNetworkChains}>
+          <GlobalHotkeyProvider optionGroups={allNetworkChains}>
             {children}
             {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
             <Toaster />

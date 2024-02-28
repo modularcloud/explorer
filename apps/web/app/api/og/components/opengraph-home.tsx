@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { OG_SIZE } from "~/lib/constants";
 import type { SingleNetwork } from "~/lib/fetch-networks";
-import { MCLogo } from "./mc-logo";
+import { MCLogo } from "~/ui/mc-logo";
 
 export type OpenGraphHomeProps = {
   network: SingleNetwork;

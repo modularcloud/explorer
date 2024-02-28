@@ -1,17 +1,13 @@
-import { MCLogo } from "./mc-logo";
+import { MCLogo } from "~/ui/mc-logo";
 
 export type FaviconProps = {
   networkBrandGradient: string;
 };
 
 export function Favicon({ networkBrandGradient }: FaviconProps) {
-  console.log({
-    bgImage: networkBrandGradient,
-  });
   return (
     <div
-      tw="rounded-lg p-2 flex items-center justify-center"
-      className="rounded-lg p-2 flex items-center justify-center"
+      tw="rounded-md p-2 flex items-center justify-center"
       style={{
         backgroundImage: networkBrandGradient.replaceAll(";", ""),
       }}

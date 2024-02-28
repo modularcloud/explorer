@@ -8,14 +8,14 @@ import { LoadingIndicator } from "~/ui/loading-indicator";
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "~/ui/shadcn/utils";
 import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
-import { useSearchOptionsContext } from "~/ui/search-options-context";
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 
 export function SearchForm() {
   const params = useParams();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
-  const optionGroups = useSearchOptionsContext();
+  const optionGroups = useGroupedNetworksContext();
 
   const network = React.useMemo(() => {
     const values = optionGroups.flat();

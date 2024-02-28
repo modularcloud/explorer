@@ -5,7 +5,6 @@ import Link from "next/link";
 import { EntityHeaderSearchButton } from "./entity-header-search-button";
 
 // utils
-import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 import { cn } from "~/ui/shadcn/utils";
 import { EntityHeaderSummary } from "./entity-header-summary";
 
@@ -15,8 +14,6 @@ type Props = {
 };
 
 export async function EntityHeader({ networkSlug }: Props) {
-  const groupedNetworks = await getGroupedNetworkChains();
-
   return (
     <header className="fixed left-0 right-0 top-0 z-[60] bg-muted-100">
       <div
@@ -38,12 +35,12 @@ export async function EntityHeader({ networkSlug }: Props) {
           <h1 className="font-medium tab:text-lg">Modular Cloud</h1>
         </Link>
 
-        <EntityHeaderSearchButton optionGroups={groupedNetworks} />
+        <EntityHeaderSearchButton />
 
         {/* Bigger screens */}
         <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0" />
       </div>
-      <EntityHeaderSummary groupedNetworks={groupedNetworks} />
+      <EntityHeaderSummary />
     </header>
   );
 }

@@ -11,7 +11,7 @@ import type { SingleNetwork } from "./fetch-networks";
  */
 export const getGroupedNetworkChains = cache(
   async function getGroupedNetworkChains() {
-    const integrations = await getAllNetworks();
+    const integrations = getAllNetworks();
 
     const options: NetworkChain[] = integrations.map((currentNetwork) => ({
       brandColor: currentNetwork.config.primaryColor,
@@ -20,10 +20,14 @@ export const getGroupedNetworkChains = cache(
       displayName: currentNetwork.chainName,
       slug: currentNetwork.slug,
       brandName: currentNetwork.brand,
-      logoURL: currentNetwork.config.logoUrl,
+      logoURL: currentNetwork.config.logoUrl.replaceAll(
+        "http://127.0.0.1:3000",
+        "",
+      ),
       platform: currentNetwork.config.platform,
       accountId: currentNetwork.accountId,
       ecosystems: currentNetwork.config.ecosystems,
+      brandCSSGradient: currentNetwork.config.cssGradient,
     }));
 
     return arrayGroupByTo2DArray(options, "accountId");
@@ -45,4 +49,5 @@ export type NetworkChain = {
   logoURL: string;
   slug: string;
   ecosystems: string[];
+  brandCSSGradient: string;
 };

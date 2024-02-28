@@ -3,20 +3,15 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import React from "react";
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
 import type { HeadlessRoute } from "~/lib/headless-utils";
 import { parseHeadlessRouteVercelFix, capitalize } from "~/lib/shared-utils";
-import { cn } from "../shadcn/utils";
-import { CopyableValue } from "../copyable-value";
+import { cn } from "~/ui/shadcn/utils";
+import { CopyableValue } from "~/ui/copyable-value";
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 
-export type HeaderEntityHighlightProps = {
-  groupedNetworks: GroupedNetworkChains;
-};
-
-export function EntityHeaderSummary({
-  groupedNetworks,
-}: HeaderEntityHighlightProps) {
+export function EntityHeaderSummary() {
   const routeParams = useParams() as HeadlessRoute;
+  const groupedNetworks = useGroupedNetworksContext();
 
   const params = parseHeadlessRouteVercelFix(routeParams);
 

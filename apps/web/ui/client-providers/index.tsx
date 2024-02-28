@@ -2,7 +2,7 @@
 import * as React from "react";
 
 import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
-import { SearchOptionProvider } from "~/ui/search-options-context";
+import { GroupedNetworksProvider } from "~/ui/grouped-networks-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -25,9 +25,9 @@ export function ClientProviders({ searchOptions, children }: Props) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SearchOptionProvider value={searchOptions}>
+      <GroupedNetworksProvider value={searchOptions}>
         {children}
-      </SearchOptionProvider>
+      </GroupedNetworksProvider>
       <ReactQueryDevtools initialIsOpen={false} position="bottom" />
     </QueryClientProvider>
   );

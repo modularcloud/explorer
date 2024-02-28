@@ -6,11 +6,11 @@ import { ErrorBox } from "~/ui/error/box";
 import { Footer } from "~/ui/footer";
 import { HomeBg } from "~/ui/home-bg";
 import { HomeBgMobile } from "~/ui/home-bg/mobile";
-import { useSearchOptionsContext } from "~/ui/search-options-context";
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 
 export default function Error() {
   const params = useParams();
-  const optionGroups = useSearchOptionsContext();
+  const optionGroups = useGroupedNetworksContext();
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
     return (

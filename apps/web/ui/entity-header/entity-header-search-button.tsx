@@ -13,15 +13,13 @@ import { capitalize, truncateHash } from "~/lib/shared-utils";
 
 // types
 import type { HeadlessRoute } from "~/lib/headless-utils";
-import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
-interface Props {
-  optionGroups: GroupedNetworkChains;
-}
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 
-export function EntityHeaderSearchButton({ optionGroups }: Props) {
+export function EntityHeaderSearchButton() {
   const routeParams = useParams() as HeadlessRoute;
   const pathname = usePathname();
 
+  const optionGroups = useGroupedNetworksContext();
   const params: HeadlessRoute = {
     ...routeParams,
     path: pathname

@@ -96,99 +96,108 @@ export async function fetchSingleNetwork(slug: string) {
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
     }
-    if (integration.brand === "celestia") {
-      integration.config = {
-        ...integration.config,
-        widgetLayout: "Celestia",
-        logoUrl: `${baseUrl}/images/celestia-logo-white.svg`,
-        primaryColor: "256.07 100% 67.06%",
-        cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%);`,
-        description:
-          "Celestia is a modular data availability network that securely scales with the number of users, making it easy for anyone to launch their own blockchain.",
-        links: [
-          {
-            type: "website",
-            href: "https://celestia.org/",
-          },
-          {
-            type: "github",
-            href: "https://github.com/celestiaorg",
-          },
-          {
-            type: "discord",
-            href: "https://discord.com/invite/YsnTPcSfWQ",
-          },
-          {
-            type: "x",
-            href: "https://twitter.com/CelestiaOrg/",
-          },
-        ],
-      };
-    }
-    if (integration.brand === "eclipse") {
-      integration.config = {
-        ...integration.config,
-        widgetLayout: "SVM",
-        logoUrl: `${baseUrl}/images/eclipse-logo-white.svg`,
-        primaryColor: "119.25 33.33% 52.94%",
-        cssGradient: `linear-gradient(180deg, #65BB64 0%, #569B55 99.99%, #000 100%);`,
-        description:
-          "Eclipse is Ethereum's fastest L2, powered by the Solana Virtual Machine.",
-        links: [
-          {
-            type: "website",
-            href: "https://www.eclipse.builders/",
-          },
-          {
-            type: "x",
-            href: "https://twitter.com/EclipseFND",
-          },
-        ],
-        badges: [
-          {
-            relation: "Settlement",
-            target: "Sepolia",
-            logoURL: `${baseUrl}/images/ethereum.png`,
-          },
-          {
-            relation: "DA",
-            target: "Mocha",
-            logoURL: `${baseUrl}/images/celestia-logo-small.png`,
-            href: "/celestia-mocha",
-          },
-        ],
-      };
-    }
-    if (integration.brand === "dymension") {
-      integration.config = {
-        ...integration.config,
-        widgetLayout: "Dymension",
-        logoUrl: `${baseUrl}/images/dymension-logo-white.svg`,
-        cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%);`,
-        primaryColor: "12 7.46% 13.14%",
-        description:
-          "Dymension is a home for easily deployable and lightning fast app-chains, called RollApps.",
-        links: [
-          {
-            type: "website",
-            href: "https://portal.dymension.xyz",
-          },
-          {
-            type: "github",
-            href: "https://github.com/dymensionxyz",
-          },
-          {
-            type: "x",
-            href: "https://twitter.com/dymension",
-          },
-        ],
-      };
-    }
+    integration.config = {
+      ...integration.config,
+      ...getDefaultIntegrationConfigValues(integration.brand),
+    };
 
     return integration;
   } catch (error) {
     return null;
   }
+}
+
+function getDefaultIntegrationConfigValues(
+  brand: string,
+): Partial<SingleNetwork["config"]> {
+  let baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
+  if (process.env.VERCEL_ENV === "production") {
+    baseUrl = env.NEXT_PUBLIC_PRODUCTION_URL;
+  }
+  if (brand === "celestia") {
+    return {
+      widgetLayout: "Celestia",
+      primaryColor: "256.07 100% 67.06%",
+      cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%)`,
+      description:
+        "Celestia is a modular data availability network that securely scales with the number of users, making it easy for anyone to launch their own blockchain.",
+      links: [
+        {
+          type: "website",
+          href: "https://celestia.org/",
+        },
+        {
+          type: "github",
+          href: "https://github.com/celestiaorg",
+        },
+        {
+          type: "discord",
+          href: "https://discord.com/invite/YsnTPcSfWQ",
+        },
+        {
+          type: "x",
+          href: "https://twitter.com/CelestiaOrg/",
+        },
+      ],
+    };
+  }
+  if (brand === "eclipse") {
+    return {
+      widgetLayout: "SVM",
+      primaryColor: "119.25 33.33% 52.94%",
+      cssGradient: `linear-gradient(180deg, #65BB64 0%, #569B55 99.99%, #000 100%)`,
+      description:
+        "Eclipse is Ethereum's fastest L2, powered by the Solana Virtual Machine.",
+      links: [
+        {
+          type: "website",
+          href: "https://www.eclipse.builders/",
+        },
+        {
+          type: "x",
+          href: "https://twitter.com/EclipseFND",
+        },
+      ],
+      badges: [
+        {
+          relation: "Settlement",
+          target: "Sepolia",
+          logoURL: `${baseUrl}/images/ethereum.png`,
+        },
+        {
+          relation: "DA",
+          target: "Mocha",
+          logoURL: `${baseUrl}/images/celestia-logo-small.png`,
+          href: "/celestia-mocha",
+        },
+      ],
+    };
+  }
+  if (brand === "dymension") {
+    return {
+      widgetLayout: "Dymension",
+      cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%)`,
+      primaryColor: "12 7.46% 13.14%",
+      description:
+        "Dymension is a home for easily deployable and lightning fast app-chains, called RollApps.",
+      links: [
+        {
+          type: "website",
+          href: "https://portal.dymension.xyz",
+        },
+        {
+          type: "github",
+          href: "https://github.com/dymensionxyz",
+        },
+        {
+          type: "x",
+          href: "https://twitter.com/dymension",
+        },
+      ],
+    };
+  }
+
+  return {};
 }
 
 export async function fetchAllNetworks() {
@@ -236,6 +245,10 @@ export async function fetchAllNetworks() {
     if (result?.integrations) {
       for (const integration of result.integrations) {
         if (integration !== null) {
+          integration.config = {
+            ...integration.config,
+            ...getDefaultIntegrationConfigValues(integration.brand),
+          };
           allIntegrations.push(integration);
         }
       }
