@@ -5,7 +5,6 @@ import * as React from "react";
 import Image from "next/image";
 import { Tooltip } from "~/ui/tooltip";
 import { FancyCheck } from "~/ui/icons";
-import { ShortcutKey } from "~/ui/shortcut-key";
 import { AssociatedComponentList } from "./associated";
 import { SpotlightComponentList } from "./spotlight";
 import { Skeleton } from "~/ui/skeleton";
@@ -24,44 +23,6 @@ interface HotkeyEntryProps {
   keys: Array<{ cmd: ShortcutKeyProps["command"]; label?: string }>;
   isLast?: boolean;
   isFirst?: boolean;
-}
-
-function HotkeyEntry({ label, keys, isLast, isFirst }: HotkeyEntryProps) {
-  return (
-    <div
-      className={cn(
-        "grid gap-4 w-full grid-cols-5 pl-7 items-center relative py-2",
-      )}
-    >
-      {/* Left indentation marker */}
-      <div
-        className="grid items-start h-full absolute left-1 top-0 bottom-0"
-        aria-hidden="true"
-      >
-        <div
-          className={cn("w-[1px] bg-muted/25 absolute top-0", {
-            "bottom-0 rounded-md": !isLast,
-            "bottom-1/2 rounded-t-md": isLast,
-          })}
-        />
-        <div className="w-3 h-[1px] bg-muted/25 rounded-r-md absolute top-1/2 left-[1px]" />
-      </div>
-
-      <dt className="text-foreground font-medium col-span-2">{label}</dt>
-      <dd
-        className={cn(
-          "font-normal col-span-3 flex gap-2 justify-end items-center",
-          {
-            "pt-4": isFirst,
-          },
-        )}
-      >
-        {keys.map(({ cmd, label }, index) => (
-          <ShortcutKey command={cmd} label={label} key={index} />
-        ))}
-      </dd>
-    </div>
-  );
 }
 
 interface Props {

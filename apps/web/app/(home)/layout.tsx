@@ -19,7 +19,7 @@ export default async function HomeLayout({
 
       <Header />
 
-      <section>{children}</section>
+      <div>{children}</div>
 
       <Footer />
     </main>

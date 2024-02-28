@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "~/ui/shadcn/utils";
 
 export type ShortcutKeyProps = {
-  command: Exclude<React.ReactNode, null | undefined>; // nonnullable type
+  command: string;
   label?: string;
   className?: string;
 };
@@ -10,12 +10,11 @@ export type ShortcutKeyProps = {
 export function ShortcutKey({ command, label, className }: ShortcutKeyProps) {
   return (
     <kbd
-      aria-label={label ?? command.toString()}
+      aria-label={label ?? command}
       className={cn(
-        "px-2.5 py-1 border border-mid-dark-100 bg-white rounded-md inline-block flex-shrink-0",
+        "px-1 border border-mid-dark-100 bg-muted-100 rounded-md inline-block flex-none text-muted",
         className,
       )}
-      suppressHydrationWarning
     >
       {command}
     </kbd>

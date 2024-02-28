@@ -6,12 +6,15 @@ import { capitalize } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
 import type { HeadlessRoute } from "~/lib/headless-utils";
+import type { SingleNetwork } from "~/lib/fetch-networks";
 
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 import { env } from "~/env.mjs";
 import { OG_SIZE } from "~/lib/constants";
+import { ShortcutKey } from "~/ui/shortcut-key";
+import { ScrollToSection } from "./scroll-to-section";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -43,33 +46,62 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function NetworkWidgetPage({ params }: Props) {
+export default async function NetworkPage({ params }: Props) {
   const network = await getSingleNetwork(params.network);
 
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
 
+  return (
+    <>
+      <ScrollToSection />
+      <NetworkStatisticsSection network={network} />
+    </>
+  );
+}
+
+function HeroSection({ network }: { network: SingleNetwork }) {
+  return <section id="hero">{/*  */}</section>;
+}
+
+function NetworkStatisticsSection({ network }: { network: SingleNetwork }) {
+  let sectionContent: React.ReactNode;
   switch (network.config.widgetLayout) {
     case "SVM":
-      return (
+      sectionContent = (
         <SVMWidgetLayout
           networkSlug={network.slug}
           networkBrandColor={network.config.primaryColor}
         />
       );
+      break;
     case "Celestia":
-      return (
+      sectionContent = (
         <CelestiaWidgetLayout
           networkSlug={network.slug}
           networkBrandColor={network.config.primaryColor}
         />
       );
+      break;
     case "Dymension":
-      return <DymensionWidgetLayout />;
+      sectionContent = <DymensionWidgetLayout />;
+      break;
     default:
-      return null;
+      sectionContent = null;
+      break;
   }
+
+  if (!sectionContent) return null;
+  return (
+    <section id="statistics">
+      <h2 className="flex items-center gap-3">
+        <span className="text-xl">Statistics</span>
+        <ShortcutKey command="S" className="text-sm px-2" />
+      </h2>
+      <div>{sectionContent}</div>
+    </section>
+  );
 }
 
 export async function generateStaticParams() {

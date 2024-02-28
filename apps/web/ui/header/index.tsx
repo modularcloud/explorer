@@ -3,6 +3,7 @@ import { BrandedLogo } from "./branded-logo";
 import { HeaderSearchButton } from "./header-search-button";
 import { TokenPrices } from "~/ui/token-prices";
 import { cn } from "~/ui/shadcn/utils";
+import { ShortcutKey } from "~/ui/shortcut-key";
 
 export async function Header() {
   return (
@@ -15,9 +16,7 @@ export async function Header() {
       <BrandedLogo />
       <HeaderSearchButton className="md:absolute left-1/2 top-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
         <span className="text-muted text-xs">Explore</span>
-        <kbd className="px-1 border border-mid-dark-100 bg-muted-100 rounded-md inline-block flex-none">
-          /
-        </kbd>
+        <ShortcutKey command="/" />
       </HeaderSearchButton>
       <div className="hidden tab:block">
         <TokenPrices />
