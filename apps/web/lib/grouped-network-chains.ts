@@ -28,6 +28,7 @@ export const getGroupedNetworkChains = cache(
       accountId: currentNetwork.accountId,
       ecosystems: currentNetwork.config.ecosystems,
       brandCSSGradient: currentNetwork.config.cssGradient,
+      token: currentNetwork.config.token,
     }));
 
     return arrayGroupByTo2DArray(options, "accountId");
@@ -50,4 +51,5 @@ export type NetworkChain = {
   slug: string;
   ecosystems: string[];
   brandCSSGradient: string;
+  token: SingleNetwork["config"]["token"];
 };

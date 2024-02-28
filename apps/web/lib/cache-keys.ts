@@ -52,4 +52,5 @@ export const CACHE_KEYS = {
       context?.endTime?.toString() ?? "undefined",
     ],
   },
+  token: (name: string) => ["TOKEN", name],
 } as const;
