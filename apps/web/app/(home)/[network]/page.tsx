@@ -59,7 +59,7 @@ export default async function NetworkPage({ params }: Props) {
     <>
       <ScrollToSection />
       <HeroSection network={network} />
-      <NetworkStatisticsSection network={network} />
+      <NetworkSections network={network} />
     </>
   );
 }
@@ -107,43 +107,53 @@ function HeroSection({ network }: { network: SingleNetwork }) {
   );
 }
 
-function NetworkStatisticsSection({ network }: { network: SingleNetwork }) {
-  let sectionContent: React.ReactNode;
+function NetworkSections({ network }: { network: SingleNetwork }) {
   switch (network.config.widgetLayout) {
     case "SVM":
-      sectionContent = (
-        <SVMWidgetLayout
-          networkSlug={network.slug}
-          networkBrandColor={network.config.primaryColor}
-        />
+      return (
+        <section id="statistics" className="scroll-mt-20">
+          <h2 className="flex items-center gap-3">
+            <span className="text-xl">Statistics</span>
+            <ShortcutKey command="S" className="text-sm px-2" />
+          </h2>
+          <div>
+            <SVMWidgetLayout
+              networkSlug={network.slug}
+              networkBrandColor={network.config.primaryColor}
+            />
+          </div>
+        </section>
       );
-      break;
     case "Celestia":
-      sectionContent = (
-        <CelestiaWidgetLayout
-          networkSlug={network.slug}
-          networkBrandColor={network.config.primaryColor}
-        />
+      return (
+        <section id="statistics" className="scroll-mt-20">
+          <h2 className="flex items-center gap-3">
+            <span className="text-xl">Statistics</span>
+            <ShortcutKey command="S" className="text-sm px-2" />
+          </h2>
+          <div>
+            <CelestiaWidgetLayout
+              networkSlug={network.slug}
+              networkBrandColor={network.config.primaryColor}
+            />
+          </div>
+        </section>
       );
-      break;
     case "Dymension":
-      sectionContent = <DymensionWidgetLayout />;
-      break;
+      return (
+        <section id="activity" className="scroll-mt-20">
+          <h2 className="flex items-center gap-3">
+            <span className="text-xl">Activity</span>
+            <ShortcutKey command="A" className="text-sm px-2" />
+          </h2>
+          <div>
+            <DymensionWidgetLayout />
+          </div>
+        </section>
+      );
     default:
-      sectionContent = null;
-      break;
+      return null;
   }
-
-  if (!sectionContent) return null;
-  return (
-    <section id="statistics" className="scroll-mt-10">
-      <h2 className="flex items-center gap-3">
-        <span className="text-xl">Statistics</span>
-        <ShortcutKey command="S" className="text-sm px-2" />
-      </h2>
-      <div>{sectionContent}</div>
-    </section>
-  );
 }
 
 export async function generateStaticParams() {
