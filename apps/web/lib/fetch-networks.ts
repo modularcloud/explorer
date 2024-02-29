@@ -44,7 +44,7 @@ export const singleNetworkSchema = z.object({
         z.object({
           relation: z.string().nonempty(),
           target: z.string().nonempty(),
-          logoURL: z.string().url().optional(),
+          logoURL: z.string().optional(),
           href: z.string().optional(),
         }),
       )
@@ -110,10 +110,6 @@ export async function fetchSingleNetwork(slug: string) {
 function getDefaultIntegrationConfigValues(
   brand: string,
 ): Partial<SingleNetwork["config"]> {
-  let baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
-  if (process.env.VERCEL_ENV === "production") {
-    baseUrl = env.NEXT_PUBLIC_PRODUCTION_URL;
-  }
   if (brand === "celestia") {
     return {
       type: "Data Availability Layer",
@@ -167,12 +163,12 @@ function getDefaultIntegrationConfigValues(
         {
           relation: "Settlement",
           target: "Sepolia",
-          logoURL: `${baseUrl}/images/ethereum.png`,
+          logoURL: `/images/ethereum.png`,
         },
         {
           relation: "DA",
           target: "Mocha",
-          logoURL: `${baseUrl}/images/celestia-logo-small.png`,
+          logoURL: `/images/celestia-logo-small.png`,
           href: "/celestia-mocha",
         },
       ],
