@@ -262,33 +262,27 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
       return (
         <section id="statistics" className="scroll-mt-20">
           <SectionHeading title="Statistics" shortcut="S" />
-          <div>
-            <SVMWidgetLayout
-              networkSlug={network.slug}
-              networkBrandColor={network.config.primaryColor}
-            />
-          </div>
+          <SVMWidgetLayout
+            networkSlug={network.slug}
+            networkBrandColor={network.config.primaryColor}
+          />
         </section>
       );
     case "Celestia":
       return (
         <section id="statistics" className="scroll-mt-20">
           <SectionHeading title="Statistics" shortcut="S" />
-          <div>
-            <CelestiaWidgetLayout
-              networkSlug={network.slug}
-              networkBrandColor={network.config.primaryColor}
-            />
-          </div>
+          <CelestiaWidgetLayout
+            networkSlug={network.slug}
+            networkBrandColor={network.config.primaryColor}
+          />
         </section>
       );
     case "Dymension":
       return (
         <section id="activity" className="scroll-mt-20">
           <SectionHeading title="Activity" shortcut="A" />
-          <div>
-            <DymensionWidgetLayout />
-          </div>
+          <DymensionWidgetLayout />
         </section>
       );
     default:
@@ -298,9 +292,42 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
 
 function SectionHeading(props: { title: string; shortcut: string }) {
   return (
-    <h2 className="flex items-center gap-3">
-      <span className="text-xl">{props.title}</span>
-      <ShortcutKey command={props.shortcut} className="text-sm px-2" />
+    <h2 className="flex items-center gap-3 mb-4 tab:mb-2">
+      <div className="flex tab:hidden w-full items-center flex-grow flex-shrink">
+        <div
+          className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+          aria-hidden="true"
+        />
+        <div
+          className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+          aria-hidden="true"
+        />
+        <div
+          className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+          aria-hidden="true"
+        />
+      </div>
+
+      <span className="text-lg tab:text-xl">{props.title}</span>
+      <ShortcutKey
+        command={props.shortcut}
+        className="text-sm px-2 hidden tab:block"
+      />
+
+      <div className="flex tab:hidden w-full items-center flex-grow flex-shrink">
+        <div
+          className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+          aria-hidden="true"
+        />
+        <div
+          className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+          aria-hidden="true"
+        />
+        <div
+          className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+          aria-hidden="true"
+        />
+      </div>
     </h2>
   );
 }
