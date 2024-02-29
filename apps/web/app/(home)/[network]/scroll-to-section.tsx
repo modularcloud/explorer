@@ -4,7 +4,7 @@ import { useHotkey } from "~/lib/hooks/use-hotkey";
 
 export function ScrollToSection() {
   useHotkey({
-    keys: ["a"],
+    keys: ["a", "A"],
     listener: () => {
       const section = document.getElementById("activity");
       if (section) {
@@ -17,7 +17,7 @@ export function ScrollToSection() {
     },
   });
   useHotkey({
-    keys: ["s"],
+    keys: ["s", "S"],
     listener: () => {
       const section = document.getElementById("statistics");
 
