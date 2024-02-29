@@ -25,7 +25,7 @@ import {
 } from "~/ui/icons";
 import { TokenPrices } from "~/ui/token-prices";
 import Image from "next/image";
-import Link from "next/link";
+import { Badge } from "~/ui/badge";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -174,11 +174,11 @@ function HeroSection({ network }: { network: SingleNetwork }) {
 
           <div className="flex items-center gap-3">
             {links.map((link) => (
-              <a
+              <Badge
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-1.5 rounded-md text-muted bg-white border shadow-sm"
+                isSquare
                 key={link.href}
               >
                 {link.type === "website" && (
@@ -202,7 +202,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
                     aria-hidden="true"
                   />
                 )}
-              </a>
+              </Badge>
             ))}
           </div>
 
@@ -224,14 +224,33 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       )}
 
       {/* Badges */}
-      <div className="flex items-center justify-center w-full gap-3">
+      <div className="flex items-center flex-wrap justify-center w-full gap-3">
         {network.paidVersion && (
-          <div className="flex items-center text-xs font-medium gap-1 border shadow-sm bg-white rounded-md px-3 py-1.5 text-muted">
+          <Badge>
             <span>Verified on</span>
             <FancyCheck className="h-4 w-4 text-blue-500" />
             <span>Modular Cloud</span>
-          </div>
+          </Badge>
         )}
+
+        {network.config.badges.map((badge) => (
+          <Badge
+            key={`badge-${badge.relation}-${badge.target}`}
+            href={badge.href}
+          >
+            <span>{capitalize(badge.relation)} on</span>
+            {badge.logoURL && (
+              <Image
+                src={badge.logoURL?.replace("http://127.0.0.1:3000", "")}
+                alt={`Logo ${badge.target}`}
+                width={14}
+                height={14}
+                className="h-3.5 w-3.5 flex-none object-contain object-center"
+              />
+            )}
+            <span>{capitalize(badge.target)}</span>
+          </Badge>
+        ))}
       </div>
     </section>
   );
@@ -242,10 +261,7 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
     case "SVM":
       return (
         <section id="statistics" className="scroll-mt-20">
-          <h2 className="flex items-center gap-3">
-            <span className="text-xl">Statistics</span>
-            <ShortcutKey command="S" className="text-sm px-2" />
-          </h2>
+          <SectionHeading title="Statistics" shortcut="S" />
           <div>
             <SVMWidgetLayout
               networkSlug={network.slug}
@@ -257,10 +273,7 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
     case "Celestia":
       return (
         <section id="statistics" className="scroll-mt-20">
-          <h2 className="flex items-center gap-3">
-            <span className="text-xl">Statistics</span>
-            <ShortcutKey command="S" className="text-sm px-2" />
-          </h2>
+          <SectionHeading title="Statistics" shortcut="S" />
           <div>
             <CelestiaWidgetLayout
               networkSlug={network.slug}
@@ -272,10 +285,7 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
     case "Dymension":
       return (
         <section id="activity" className="scroll-mt-20">
-          <h2 className="flex items-center gap-3">
-            <span className="text-xl">Activity</span>
-            <ShortcutKey command="A" className="text-sm px-2" />
-          </h2>
+          <SectionHeading title="Activity" shortcut="A" />
           <div>
             <DymensionWidgetLayout />
           </div>
@@ -284,6 +294,15 @@ function NetworkSections({ network }: { network: SingleNetwork }) {
     default:
       return null;
   }
+}
+
+function SectionHeading(props: { title: string; shortcut: string }) {
+  return (
+    <h2 className="flex items-center gap-3">
+      <span className="text-xl">{props.title}</span>
+      <ShortcutKey command={props.shortcut} className="text-sm px-2" />
+    </h2>
+  );
 }
 
 export async function generateStaticParams() {
