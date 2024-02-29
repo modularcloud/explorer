@@ -16,7 +16,13 @@ import { OG_SIZE } from "~/lib/constants";
 import { ShortcutKey } from "~/ui/shortcut-key";
 import { ScrollToSection } from "./scroll-to-section";
 import { cn } from "~/ui/shadcn/utils";
-import { FancyCheck } from "~/ui/icons";
+import {
+  DiscordLogo,
+  FancyCheck,
+  GithubLogo,
+  TiltedGlobe,
+  XLogo,
+} from "~/ui/icons";
 import { TokenPrices } from "~/ui/token-prices";
 import Image from "next/image";
 import Link from "next/link";
@@ -95,7 +101,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
         "gap-4",
       )}
     >
-      <TokenPrices className="mb-2 tab:hidden" />
+      <TokenPrices className="mb-7 tab:hidden" />
 
       {/* Logo */}
       <div className="w-40 md:w-56 relative flex items-center mb-5">
@@ -168,13 +174,35 @@ function HeroSection({ network }: { network: SingleNetwork }) {
 
           <div className="flex items-center gap-3">
             {links.map((link) => (
-              <Link
+              <a
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-1.5 rounded-md text-muted bg-white border shadow-sm"
                 key={link.href}
               >
-                {/* ... */}
-              </Link>
+                {link.type === "website" && (
+                  <TiltedGlobe
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+                {link.type === "x" && (
+                  <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
+                )}
+                {link.type === "discord" && (
+                  <DiscordLogo
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+                {link.type === "github" && (
+                  <GithubLogo
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+              </a>
             ))}
           </div>
 

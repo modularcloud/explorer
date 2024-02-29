@@ -155,6 +155,10 @@ function getDefaultIntegrationConfigValues(
           href: "https://www.eclipse.builders/",
         },
         {
+          type: "github",
+          href: "https://github.com/Eclipse-Laboratories-Inc",
+        },
+        {
           type: "x",
           href: "https://twitter.com/EclipseFND",
         },
