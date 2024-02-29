@@ -103,7 +103,7 @@ export function IBCTransferEventCard({
     targetNetworkStatus?.[event.to.chainSlug]?.healthy ?? null;
 
   return (
-    <Card className="p-0 grid w-full shadow-none">
+    <Card className="p-0 grid w-full shadow-card">
       <div className="p-5 rounded-t-lg flex items-start justify-between">
         <div className="flex items-center gap-3">
           <Link
@@ -236,7 +236,7 @@ export function IBCTransferEventCard({
           <Tooltip label={`${event.from.address}`}>
             <Link
               href={`${event.from.chainSlug}/addresses/${event.from.address}`}
-              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+              className="px-2 py-1 border shadow-sm border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
             >
               <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
                 {event.from.address}
@@ -247,7 +247,7 @@ export function IBCTransferEventCard({
           <Tooltip label={`${event.from.chainName}`}>
             <Link
               href={`/${event.from.chainSlug}`}
-              className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
+              className="inline-flex shadow-sm items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
             >
               <Image
                 className="h-4 w-4 flex-none rounded-full"
@@ -326,7 +326,7 @@ export function IBCTransferEventCard({
           <Tooltip label={`${event.to.address}`}>
             <Link
               href={`${event.to.chainSlug}/addresses/${event.to.address}`}
-              className="px-2 py-1 border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
+              className="px-2 py-1 shadow-sm border border-mid-dark-100 rounded-md flex-1 inline-flex min-w-0"
             >
               <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
                 {event.to.address}
@@ -337,7 +337,7 @@ export function IBCTransferEventCard({
           <Tooltip label={`${event.to.chainName}`}>
             <Link
               href={`/${event.to.chainSlug}`}
-              className="inline-flex items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
+              className="inline-flex shadow-sm items-center gap-1 px-2 py-1 border border-mid-dark-100 rounded-md flex-1 min-w-0"
             >
               <Image
                 className="h-4 w-4 flex-none rounded-full"

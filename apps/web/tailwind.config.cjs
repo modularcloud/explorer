@@ -119,6 +119,9 @@ module.exports = {
         logo: ["var(--font-inter-display)", ...fontFamily.sans],
         sans: ["var(--font-inter)", ...fontFamily.sans],
       },
+      boxShadow: {
+        card: `0px 0px 0px 1px rgba(18, 43, 105, 0.08), 0px 1px 2px 0px rgba(18, 43, 105, 0.08), 0px 2px 6px 0px rgba(18, 43, 105, 0.04)`,
+      },
     },
   },
   plugins: [
