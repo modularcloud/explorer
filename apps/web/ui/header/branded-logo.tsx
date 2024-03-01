@@ -19,7 +19,7 @@ export function BrandedLogo() {
   }, [optionGroups, params.network]);
 
   return (
-    <Link href="/">
+    <Link href="/" className="rounded-md">
       <div
         className="rounded-md p-1.5 flex flex-none items-center justify-center border border-primary"
         style={{
