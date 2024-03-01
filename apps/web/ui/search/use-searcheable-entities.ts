@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { CACHE_KEYS } from "~/lib/cache-keys";
 import { jsonFetch } from "~/lib/shared-utils";
@@ -17,9 +17,9 @@ export function useSearcheableEntities({
   query,
   enabled,
 }: UseSearcheableEntitiesArgs) {
-  return useSWR(
-    enabled ? CACHE_KEYS.search.query(network, query) : null,
-    async () => {
+  return useQuery({
+    queryKey: CACHE_KEYS.search.query(network, query),
+    queryFn: async () => {
       const sp = new URLSearchParams({
         networkSlug: network,
         query,
@@ -28,10 +28,8 @@ export function useSearcheableEntities({
         .then(searhableEntitiesResponseSchema.parse)
         .then((res) => res.data);
     },
-    {
-      errorRetryCount: 2,
-      revalidateOnFocus: false,
-      fallbackData: [],
-    },
-  );
+    retry: 2,
+    refetchOnWindowFocus: false,
+    enabled: enabled,
+  });
 }
