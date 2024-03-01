@@ -32,10 +32,6 @@ export async function GET(req: NextRequest) {
   const params = paramsResult.data;
 
   const network = await getSingleNetwork(params.networkSlug);
-  console.log({
-    network,
-    params,
-  });
   if (!network) {
     notFound();
   }

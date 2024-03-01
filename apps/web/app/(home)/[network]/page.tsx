@@ -26,6 +26,7 @@ import {
 import { TokenPrices } from "~/ui/token-prices";
 import Image from "next/image";
 import { Badge } from "~/ui/badge";
+import { Tooltip } from "~/ui/tooltip";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -89,8 +90,106 @@ function getLogoSVGSrc(network: SingleNetwork) {
   }
 }
 
+type FeaturedChains = Exclude<
+  SingleNetwork["config"]["featuredChains"],
+  undefined
+>;
+function FeaturedChains({
+  chainsLeft,
+  chainsRight,
+}: {
+  chainsLeft: FeaturedChains;
+  chainsRight: FeaturedChains;
+}) {
+  return (
+    <>
+      <div
+        className={cn(
+          "absolute hidden lg:flex left-0 top-1/2 -translate-y-1/2",
+          "flex-col gap-9 pl-5 w-32",
+        )}
+      >
+        <div
+          className="absolute w-px bg-mid-dark-100 top-4 left-16 bottom-[calc(50%-1.125rem)] -rotate-[135deg]"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute w-px bg-mid-dark-100 bottom-4 left-16 top-[calc(50%-1.125rem)] rotate-[135deg]"
+          aria-hidden="true"
+        />
+
+        {chainsLeft.slice(0, 3).map((chain, index) => (
+          <Tooltip key={chain.name} hideArrow label={chain.name}>
+            <div
+              className={cn(
+                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+                {
+                  "self-end": index % 2 === 0,
+                  "self-start": index % 2 !== 0,
+                },
+              )}
+            >
+              <Image
+                src={chain.logoUrl}
+                alt={`logo ${chain.name}`}
+                width={24}
+                height={24}
+                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0"
+              />
+            </div>
+          </Tooltip>
+        ))}
+      </div>
+
+      <div
+        className={cn(
+          "absolute hidden lg:flex right-0 top-1/2 -translate-y-1/2",
+          "flex-col gap-9 pr-5 w-32",
+        )}
+      >
+        <div
+          className="absolute w-px bg-mid-dark-100 top-4 left-16 bottom-[calc(50%-1.125rem)] rotate-[135deg]"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute w-px bg-mid-dark-100 bottom-4 left-16 top-[calc(50%-1.125rem)] -rotate-[135deg]"
+          aria-hidden="true"
+        />
+
+        {chainsRight.slice(0, 3).map((chain, index) => (
+          <Tooltip key={chain.name} hideArrow label={chain.name}>
+            <div
+              className={cn(
+                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+                {
+                  "self-end": index % 2 !== 0,
+                  "self-start": index % 2 === 0,
+                },
+              )}
+            >
+              <Image
+                src={chain.logoUrl}
+                alt={`logo ${chain.name}`}
+                width={24}
+                height={24}
+                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0"
+              />
+            </div>
+          </Tooltip>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function HeroSection({ network }: { network: SingleNetwork }) {
   const links = network.config.links;
+  const featuredChains = network.config.featuredChains ?? [];
+  const indexOfSplit = Math.ceil(featuredChains.length / 2);
+  const [chainsLeft, chainsRight] = [
+    featuredChains.slice(0, indexOfSplit),
+    featuredChains.slice(indexOfSplit),
+  ];
   return (
     <section
       id="hero"
@@ -141,6 +240,10 @@ function HeroSection({ network }: { network: SingleNetwork }) {
           />
         </>
       )}
+      {network.brand === "celestia" && (
+        <FeaturedChains chainsLeft={chainsLeft} chainsRight={chainsRight} />
+      )}
+
       <TokenPrices className="mb-7 tab:hidden" />
 
       {/* Logo */}

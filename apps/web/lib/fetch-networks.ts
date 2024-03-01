@@ -49,6 +49,15 @@ export const singleNetworkSchema = z.object({
         }),
       )
       .default([]),
+    featuredChains: z
+      .array(
+        z.object({
+          logoUrl: z.string(),
+          name: z.string(),
+          link: z.string().url().optional(),
+        }),
+      )
+      .optional(),
   }),
   paidVersion: z.boolean(),
   slug: z.string(),
@@ -134,6 +143,32 @@ function getDefaultIntegrationConfigValues(
         {
           type: "x",
           href: "https://twitter.com/CelestiaOrg/",
+        },
+      ],
+      featuredChains: [
+        {
+          name: "Manta Network",
+          logoUrl: `/images/logo-mantra-network.svg`,
+        },
+        {
+          name: "Lyra",
+          logoUrl: `/images/logo-lyra.svg`,
+        },
+        {
+          name: "Aevo",
+          logoUrl: `/images/logo-aevo.svg`,
+        },
+        {
+          name: "Hypr",
+          logoUrl: `/images/logo-hypr.svg`,
+        },
+        {
+          name: "Orderly",
+          logoUrl: `/images/logo-orderly.svg`,
+        },
+        {
+          name: "Public Goods Network",
+          logoUrl: `/images/logo-public-goods-network.svg`,
         },
       ],
     };
