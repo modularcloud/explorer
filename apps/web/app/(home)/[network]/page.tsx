@@ -108,7 +108,7 @@ function FeaturedChains({
     <>
       <div
         className={cn(
-          "absolute hidden lg:flex left-0 top-1/2 -translate-y-1/2",
+          "absolute hidden lg:flex left-4 top-1/2 -translate-y-1/2",
           "flex-col gap-9 pl-5 w-32",
         )}
       >
@@ -163,7 +163,7 @@ function FeaturedChains({
 
       <div
         className={cn(
-          "absolute hidden lg:flex right-0 top-1/2 -translate-y-1/2",
+          "absolute hidden lg:flex right-4 top-1/2 -translate-y-1/2",
           "flex-col gap-9 pr-5 w-32",
         )}
       >
@@ -234,7 +234,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       className={cn(
         "flex flex-col items-center text-center border shadow-sm bg-white rounded-xl w-full",
         "relative mb-10",
-        "tab:px-32 tab:py-14 py-10 px-8",
+        "tab:px-32 lg:px-40 tab:py-14 py-10 px-8",
         "gap-4 overflow-hidden tab:min-h-[432px]",
       )}
       style={{
