@@ -327,7 +327,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       </small>
 
       {/* Big text (network name) */}
-      <h1 className="relative z-10 font-logo flex items-baseline gap-3 text-4xl sm:text-5xl font-medium md:text-6xl capitalize">
+      <h1 className="relative z-10 font-logo flex flex-wrap text-center justify-center items-baseline gap-3 text-4xl sm:text-5xl font-medium md:text-6xl capitalize">
         <span
           className="text-transparent bg-clip-text"
           style={{
