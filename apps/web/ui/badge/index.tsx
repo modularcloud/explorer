@@ -20,6 +20,7 @@ export function Badge({
       className={cn(
         "flex flex-none items-center text-xs font-medium gap-1 border shadow-sm bg-white rounded-md text-muted",
         "hover:bg-muted-100 transition-colors duration-150",
+        "focus:outline-none ring-primary/40 focus:ring-2 focus:border-primary",
         {
           "px-3 py-1.5": !isSquare,
           "p-1.5": isSquare,

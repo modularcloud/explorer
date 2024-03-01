@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { notFound } from "next/navigation";
 import { getAllPaidNetworks, getSingleNetwork } from "~/lib/network";
-import { capitalize } from "~/lib/shared-utils";
+import { capitalize, range } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
 import type { HeadlessRoute } from "~/lib/headless-utils";
@@ -27,6 +27,7 @@ import { TokenPrices } from "~/ui/token-prices";
 import Image from "next/image";
 import { Badge } from "~/ui/badge";
 import { Tooltip } from "~/ui/tooltip";
+import Link from "next/link";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -101,6 +102,8 @@ function FeaturedChains({
   chainsLeft: FeaturedChains;
   chainsRight: FeaturedChains;
 }) {
+  const noOfMissingChainsLeft = 3 - chainsLeft.length;
+  const noOfMissingChainsRight = 3 - chainsRight.length;
   return (
     <>
       <div
@@ -120,9 +123,11 @@ function FeaturedChains({
 
         {chainsLeft.slice(0, 3).map((chain, index) => (
           <Tooltip key={chain.name} hideArrow label={chain.name}>
-            <div
+            <Link
+              href={chain.link ?? "#"}
               className={cn(
-                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 focus:scale-110 group",
+                "focus:outline-none ring-primary/40 focus:ring-2 focus:border-primary",
                 {
                   "self-end": index % 2 === 0,
                   "self-start": index % 2 !== 0,
@@ -134,10 +139,25 @@ function FeaturedChains({
                 alt={`logo ${chain.name}`}
                 width={24}
                 height={24}
-                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0"
+                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0 group-focus:opacity-100 group-focus:grayscale-0"
               />
-            </div>
+            </Link>
           </Tooltip>
+        ))}
+        {range(1, noOfMissingChainsLeft).map((index) => (
+          <div
+            key={index}
+            aria-hidden="true"
+            className={cn(
+              "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+              {
+                "self-end": (index + 1) % 2 === 0,
+                "self-start": (index + 1) % 2 !== 0,
+              },
+            )}
+          >
+            <div className="h-6 w-6 rounded-full border"></div>
+          </div>
         ))}
       </div>
 
@@ -158,9 +178,11 @@ function FeaturedChains({
 
         {chainsRight.slice(0, 3).map((chain, index) => (
           <Tooltip key={chain.name} hideArrow label={chain.name}>
-            <div
+            <Link
+              href={chain.link ?? "#"}
               className={cn(
-                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+                "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 focus:scale-110 group",
+                "focus:outline-none ring-primary/40 focus:ring-2 focus:border-primary",
                 {
                   "self-end": index % 2 !== 0,
                   "self-start": index % 2 === 0,
@@ -172,10 +194,26 @@ function FeaturedChains({
                 alt={`logo ${chain.name}`}
                 width={24}
                 height={24}
-                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0"
+                className="opacity-30 filter grayscale group-hover:opacity-100 group-hover:grayscale-0 group-focus:opacity-100 group-focus:grayscale-0"
               />
-            </div>
+            </Link>
           </Tooltip>
+        ))}
+
+        {range(1, noOfMissingChainsRight).map((index) => (
+          <div
+            key={index}
+            aria-hidden="true"
+            className={cn(
+              "relative bg-white z-10 rounded-full border p-1.5 shadow-sm transition duration-150 hover:scale-110 group",
+              {
+                "self-end": (index + 1) % 2 !== 0,
+                "self-start": (index + 1) % 2 === 0,
+              },
+            )}
+          >
+            <div className="h-6 w-6 rounded-full border"></div>
+          </div>
         ))}
       </div>
     </>
@@ -197,8 +235,11 @@ function HeroSection({ network }: { network: SingleNetwork }) {
         "flex flex-col items-center text-center border shadow-sm bg-white rounded-xl w-full",
         "relative mb-10",
         "tab:px-32 tab:py-14 py-10 px-8",
-        "gap-4 overflow-hidden",
+        "gap-4 overflow-hidden tab:min-h-[432px]",
       )}
+      style={{
+        "--color-primary": network.config.primaryColor,
+      }}
     >
       {network.brand === "eclipse" && (
         <>
@@ -228,7 +269,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
             height={514}
             aria-hidden="true"
             src="/images/logo-dymension-hollow.png"
-            className="object-center object-contain hidden tab:block absolute left-0 top-1/2 -translate-x-2/3 -translate-y-1/2"
+            className="object-center object-contain hidden tab:block absolute left-0 top-1/2 -translate-x-[55%] -translate-y-1/2"
           />
           <Image
             alt=""
@@ -236,11 +277,14 @@ function HeroSection({ network }: { network: SingleNetwork }) {
             height={514}
             aria-hidden="true"
             src="/images/logo-dymension-hollow.png"
-            className="object-center object-contain hidden tab:block absolute right-0 top-1/2 translate-x-2/3 -translate-y-1/2"
+            className="object-center object-contain hidden tab:block absolute right-0 top-1/2 translate-x-[55%] -translate-y-1/2"
           />
         </>
       )}
-      {network.brand === "celestia" && (
+      {network.brand === "celestia" && featuredChains.length > 0 && (
+        <FeaturedChains chainsLeft={chainsLeft} chainsRight={chainsRight} />
+      )}
+      {network.brand === "dymension" && featuredChains.length > 0 && (
         <FeaturedChains chainsLeft={chainsLeft} chainsRight={chainsRight} />
       )}
 
@@ -319,35 +363,40 @@ function HeroSection({ network }: { network: SingleNetwork }) {
 
           <div className="flex items-center gap-3">
             {links.map((link) => (
-              <Badge
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                isSquare
+              <Tooltip
+                label={link.type === "x" ? "Twitter/X" : capitalize(link.type)}
                 key={link.href}
+                hideArrow
               >
-                {link.type === "website" && (
-                  <TiltedGlobe
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.type === "x" && (
-                  <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
-                )}
-                {link.type === "discord" && (
-                  <DiscordLogo
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.type === "github" && (
-                  <GithubLogo
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-              </Badge>
+                <Badge
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  isSquare
+                >
+                  {link.type === "website" && (
+                    <TiltedGlobe
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.type === "x" && (
+                    <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
+                  )}
+                  {link.type === "discord" && (
+                    <DiscordLogo
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.type === "github" && (
+                    <GithubLogo
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                </Badge>
+              </Tooltip>
             ))}
           </div>
 
