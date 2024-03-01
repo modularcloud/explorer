@@ -14,7 +14,6 @@ export const singleNetworkSchema = z.object({
       decimals: z.number(),
     }),
     platform: z.string().max(64).optional(),
-    // TODO : These are defaulted for now, but it should be returned by the API
     widgetLayout: z
       .enum(["EvmWithPrice", "EvmWithoutPrice", "SVM", "Celestia", "Dymension"])
       .optional()

@@ -65,9 +65,7 @@ export async function HeaderTabs({ params }: Props) {
 
   const { tabs: resolvedTabs } = page;
 
-  // TODO: we should use this schema directly without modification
   const tabs: Tab[] = resolvedTabs.map((tab) => {
-    // TODO: We should have a map of icons for each type of tab
     let Icon =
       tab.text.toLowerCase() === "transactions" ||
       tab.text.toLowerCase() === "latest transactions"

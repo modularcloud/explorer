@@ -43,7 +43,6 @@ export function useHotkey({ keys, modifier, listener }: UseHotkeyArgs) {
         keysPressedRef.current[event.key] = true;
       }
 
-      // TODO : one more bug -> we also need to check that the keys don't include unwanted shortcuts
       if (
         keys.includes(event.key) &&
         (!modifier || keysPressedRef.current[modifier])

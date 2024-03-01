@@ -277,7 +277,6 @@ export const OverviewEntry = React.memo(function OverviewEntry({
           <Blob url={payload.url} mimeType={payload.mimeType} />
         </dd>
       )}
-      {/* TODO : handle "image" type */}
     </div>
   );
 });
