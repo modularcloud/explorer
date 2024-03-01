@@ -1,5 +1,6 @@
 import { env } from "~/env.mjs";
 import { z } from "zod";
+import { capitalize } from "./shared-utils";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -54,7 +55,7 @@ export const singleNetworkSchema = z.object({
         z.object({
           logoUrl: z.string(),
           name: z.string(),
-          link: z.string().url().optional(),
+          link: z.string().optional(),
         }),
       )
       .optional(),
@@ -107,7 +108,7 @@ export async function fetchSingleNetwork(slug: string) {
     }
     integration.config = {
       ...integration.config,
-      ...getDefaultIntegrationConfigValues(integration.brand),
+      ...getDefaultIntegrationConfigValues(integration),
     };
 
     return integration;
@@ -117,9 +118,9 @@ export async function fetchSingleNetwork(slug: string) {
 }
 
 function getDefaultIntegrationConfigValues(
-  brand: string,
+  network: SingleNetwork,
 ): Partial<SingleNetwork["config"]> {
-  if (brand === "celestia") {
+  if (network.brand === "celestia") {
     return {
       type: "Data Availability Layer",
       widgetLayout: "Celestia",
@@ -173,7 +174,7 @@ function getDefaultIntegrationConfigValues(
       ],
     };
   }
-  if (brand === "eclipse") {
+  if (network.brand === "eclipse") {
     return {
       widgetLayout: "SVM",
       primaryColor: "119.25 33.33% 52.94%",
@@ -209,7 +210,7 @@ function getDefaultIntegrationConfigValues(
       ],
     };
   }
-  if (brand === "dymension") {
+  if (network.brand === "dymension") {
     return {
       type: "settlement layer",
       widgetLayout: "Dymension",
@@ -231,10 +232,43 @@ function getDefaultIntegrationConfigValues(
           href: "https://twitter.com/dymension",
         },
       ],
+      featuredChains: [
+        {
+          name: "EpicWar Zone",
+          logoUrl: `/images/logo-epicwar-zone.svg`,
+          link: "/epicwarzone_3603467-1",
+        },
+        {
+          name: "Owlstake Testnet",
+          logoUrl: `/images/logo-owlstake-testnet.svg`,
+          link: "/ngocdoan_5367226-1",
+        },
+        {
+          name: "Mushi GameCenter",
+          logoUrl: `/images/logo-mushi-gamecenter.svg`,
+          link: "/mushi_4443145-1",
+        },
+        {
+          name: "Equinox",
+          logoUrl: `/images/logo-equinox.svg`,
+          link: "/equinox_4582305-1",
+        },
+      ],
+    };
+  }
+
+  if (network.config.platform === "dymension") {
+    return {
+      description: `${capitalize(network.brand)} is a RollApp deployed to Dymension's Froopyland Testnet.`,
     };
   }
 
   return {};
+}
+
+function formatEcosystemName(ecosystem: string) {
+  const nameParts = ecosystem.split("-").filter(Boolean);
+  return nameParts.map((str) => capitalize(str)).join(" ");
 }
 
 export async function fetchAllNetworks() {
@@ -284,7 +318,7 @@ export async function fetchAllNetworks() {
         if (integration !== null) {
           integration.config = {
             ...integration.config,
-            ...getDefaultIntegrationConfigValues(integration.brand),
+            ...getDefaultIntegrationConfigValues(integration),
           };
           allIntegrations.push(integration);
         }
