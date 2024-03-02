@@ -52,4 +52,5 @@ export const CACHE_KEYS = {
       context?.endTime?.toString() ?? "undefined",
     ],
   },
+  ibcFlow: (txHash: string, msgIndex: number) => ["IBC_FLOW", txHash, msgIndex],
 } as const;
