@@ -64,4 +64,5 @@ export const CACHE_KEYS = {
     resolverId,
     input,
   ],
+  blob: (url: string) => ["BLOB", url],
 } as const;
