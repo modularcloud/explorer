@@ -2,7 +2,7 @@ import { DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS } from "~/lib/constants";
 import { getSvmWidgetMetrics } from "./get-metrics";
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import useSWR from "swr";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import type { SvmMetrics } from "./get-metrics";
 import type { LoadPageArgs } from "~/lib/headless-utils";
@@ -31,31 +31,29 @@ export function useSvmWidgetData({
     context: { limit: 5 },
     revalidateTimeInSeconds: 0,
   };
-  return useSWR<[SvmMetrics, Page, Page]>(
-    CACHE_KEYS.widgets.data(networkSlug),
-    () =>
+  return useQuery<[SvmMetrics, Page, Page]>({
+    queryKey: CACHE_KEYS.widgets.data(networkSlug),
+    queryFn: ({ signal }) =>
       Promise.all([
         getSvmWidgetMetrics(networkSlug),
         jsonFetch<Page>("/api/load-page", {
           method: "POST",
           body: loadLatestBlocksArgs,
+          signal,
         }),
         jsonFetch<Page>("/api/load-page", {
           method: "POST",
           body: loadLatestTransactionArgs,
+          signal,
         }),
       ]),
-    {
-      refreshInterval: DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS * 1000,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      fallbackData: [
-        initialMetrics,
-        initialLatestBlocks,
-        initialLatestTransactions,
-      ],
-    },
-  );
+    refetchInterval: DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS * 1000,
+    retry: 2,
+    placeholderData: keepPreviousData,
+    initialData: [
+      initialMetrics,
+      initialLatestBlocks,
+      initialLatestTransactions,
+    ],
+  });
 }

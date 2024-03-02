@@ -19,17 +19,15 @@ export function useSearcheableEntities({
 }: UseSearcheableEntitiesArgs) {
   return useQuery({
     queryKey: CACHE_KEYS.search.query(network, query),
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       const sp = new URLSearchParams({
         networkSlug: network,
         query,
       });
-      return jsonFetch("/api/search?" + sp.toString())
+      return jsonFetch("/api/search?" + sp.toString(), { signal })
         .then(searhableEntitiesResponseSchema.parse)
         .then((res) => res.data);
     },
-    retry: 2,
-    refetchOnWindowFocus: false,
     enabled: enabled,
   });
 }
