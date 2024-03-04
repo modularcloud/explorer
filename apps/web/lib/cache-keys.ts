@@ -52,4 +52,17 @@ export const CACHE_KEYS = {
       context?.endTime?.toString() ?? "undefined",
     ],
   },
+  ibcFlow: (txHash: string, msgIndex: number) => ["IBC_FLOW", txHash, msgIndex],
+  ibcCardFlow: (slug: string, txHash: string, msgIndex: number) => [
+    "IBC_FLOW",
+    slug,
+    txHash,
+    msgIndex,
+  ],
+  ibcResolve: (resolverId: string, input: any) => [
+    "IBC_RESOLVE",
+    resolverId,
+    input,
+  ],
+  blob: (url: string) => ["BLOB", url],
 } as const;

@@ -92,13 +92,11 @@ export function CelestiaWidgetLayoutContent({
           className="[grid-area:LT]"
           data={
             latestTransactions.body.type === "collection"
-              ? latestTransactions.body.entries.map((entry: any) => {
-                  return {
-                    hash: entry.row.Transactions.payload.value,
-                    success: entry.row.Status.payload,
-                    type: entry.row.Type.payload,
-                  };
-                })
+              ? latestTransactions.body.entries.map((entry: any) => ({
+                  hash: entry.row.Transactions.payload.value,
+                  success: entry.row.Status.payload,
+                  type: entry.row.Type.payload,
+                }))
               : []
           }
         />
@@ -138,19 +136,17 @@ export function CelestiaWidgetLayoutContent({
           className="[grid-area:LB]"
           data={
             latestBlocks.body.type === "collection"
-              ? latestBlocks.body.entries.map((block) => {
-                  return {
-                    number: Number(block.row.Height.payload),
-                    noOfTransactions: Number(block.row.Txs.payload),
-                    timestamp:
-                      typeof block.sidebar.properties.Timestamp.payload ===
-                      "string"
-                        ? new Date(
-                            block.sidebar.properties.Timestamp.payload,
-                          ).getTime()
-                        : new Date().getTime(),
-                  };
-                })
+              ? latestBlocks.body.entries.map((block) => ({
+                  number: Number(block.row.Height.payload),
+                  noOfTransactions: Number(block.row.Txs.payload),
+                  timestamp:
+                    typeof block.sidebar.properties.Timestamp.payload ===
+                    "string"
+                      ? new Date(
+                          block.sidebar.properties.Timestamp.payload,
+                        ).getTime()
+                      : new Date().getTime(),
+                }))
               : []
           }
         />
@@ -158,7 +154,8 @@ export function CelestiaWidgetLayoutContent({
     </div>
   );
 }
-function CelestiaWidgetSkeleton(props: { error?: { message: string } }) {
+
+function CelestiaWidgetSkeleton(props: { error?: Error | null }) {
   return (
     <div
       className={cn(
