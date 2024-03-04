@@ -82,12 +82,13 @@ export function SearchModal({
     currentNetwork = defaultNetwork.value;
   }
 
-  const { data: searcheableTypes, isLoading } = useSearcheableEntities({
+  const { data, isLoading } = useSearcheableEntities({
     network: defaultNetwork.value.slug,
     query: inputValue,
     enabled: inputValue.length > 0,
   });
 
+  const searcheableTypes = React.useMemo(() => data ?? [], [data]);
   const dialogRef = React.useRef<React.ElementRef<"div">>(null);
 
   const ecosystemChains = filterChainsByEcosystem(
@@ -121,9 +122,9 @@ export function SearchModal({
     currentNetworkToCheck = currentNetwork.slug;
   }
 
-  const { data } = useNetworkStatus(currentNetworkToCheck);
+  const { data: networkStatus } = useNetworkStatus(currentNetworkToCheck);
   const currentNetworkHealthStatus = currentNetwork
-    ? data?.[currentNetwork.slug]?.healthy ?? null
+    ? networkStatus?.[currentNetwork.slug]?.healthy ?? null
     : null;
 
   return (

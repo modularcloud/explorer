@@ -34,50 +34,32 @@ export async function GET(
 
   switch (action) {
     case "/ibc.applications.transfer.v1.MsgTransfer":
-      return new Response(
-        JSON.stringify({
-          ...parseTransfer(message.events),
-          txHash: params.hash,
-          messageIndex: params.index,
-          slug,
-          logo,
-          timestamp,
-        }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return Response.json({
+        ...parseTransfer(message.events),
+        txHash: params.hash,
+        messageIndex: params.index,
+        slug,
+        logo,
+        timestamp,
+      });
     case "/ibc.core.channel.v1.MsgRecvPacket":
-      return new Response(
-        JSON.stringify({
-          ...parseRecv(message.events),
-          txHash: params.hash,
-          messageIndex: params.index,
-          slug,
-          logo,
-          timestamp,
-        }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return Response.json({
+        ...parseRecv(message.events),
+        txHash: params.hash,
+        messageIndex: params.index,
+        slug,
+        logo,
+        timestamp,
+      });
     case "/ibc.core.channel.v1.MsgAcknowledgement":
       console.log("message.events", message.events);
-      return new Response(
-        JSON.stringify({
-          ...parseAcknowledgement(message.events),
-          txHash: params.hash,
-          messageIndex: params.index,
-          slug,
-          logo,
-          timestamp,
-        }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return Response.json({
+        ...parseAcknowledgement(message.events),
+        txHash: params.hash,
+        messageIndex: params.index,
+        slug,
+        logo,
+        timestamp,
+      });
   }
 }

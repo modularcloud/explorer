@@ -13,12 +13,13 @@ import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
 import type { IBCTransferEvent } from "~/lib/dymension-utils";
 import { Skeleton } from "~/ui/skeleton";
-import useSWR from "swr";
 import { z } from "zod";
 import { jsonFetch } from "~/lib/shared-utils";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { Tooltip } from "~/ui/tooltip";
 import { useNetworkStatus } from "~/ui/search/use-network-status";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { CACHE_KEYS } from "~/lib/cache-keys";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -77,17 +78,16 @@ export function IBCTransferEventCard({
     },
   ] satisfies IBCMessageArray;
   const THIRTY_SECONDS = 30 * 1000;
-  const { data: messages = initialMessages } = useSWR(
-    `/api/ibc/messages/${event.hash}/${event.msgIndex}`,
-    (url) => jsonFetch(url).then(ibcMessageArraySchema.parse),
-    {
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateIfStale: true,
-      refreshInterval: THIRTY_SECONDS,
-    },
-  );
+  const { data: messages = initialMessages } = useQuery<IBCMessageArray>({
+    queryKey: CACHE_KEYS.ibcFlow(event.hash, event.msgIndex),
+    queryFn: ({ signal }) =>
+      jsonFetch(`/api/ibc/messages/${event.hash}/${event.msgIndex}`, {
+        signal,
+      }).then(ibcMessageArraySchema.parse),
+    retry: 2,
+    placeholderData: keepPreviousData,
+    refetchInterval: THIRTY_SECONDS,
+  });
 
   const messagesWithLinks = messages.filter(
     (msg) => "link" in msg && !!msg.link,
