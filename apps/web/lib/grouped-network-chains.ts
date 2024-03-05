@@ -20,15 +20,13 @@ export const getGroupedNetworkChains = cache(
       displayName: currentNetwork.chainName,
       slug: currentNetwork.slug,
       brandName: currentNetwork.brand,
-      logoURL: currentNetwork.config.logoUrl.replaceAll(
-        "http://127.0.0.1:3000",
-        "",
-      ),
+      logoURL: currentNetwork.config.logoUrl,
       platform: currentNetwork.config.platform,
       accountId: currentNetwork.accountId,
       ecosystems: currentNetwork.config.ecosystems,
       brandCSSGradient: currentNetwork.config.cssGradient,
       token: currentNetwork.config.token,
+      description: currentNetwork.config.description,
     }));
 
     return arrayGroupByTo2DArray(options, "accountId");
@@ -51,5 +49,6 @@ export type NetworkChain = {
   slug: string;
   ecosystems: string[];
   brandCSSGradient: string;
+  description?: string;
   token: SingleNetwork["config"]["token"];
 };

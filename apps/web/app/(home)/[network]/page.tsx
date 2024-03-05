@@ -21,6 +21,7 @@ import {
   FancyCheck,
   GithubLogo,
   TiltedGlobe,
+  XIcon,
   XLogo,
 } from "~/ui/icons";
 import { TokenPrices } from "~/ui/token-prices";
@@ -28,6 +29,7 @@ import Image from "next/image";
 import { Badge } from "~/ui/badge";
 import { Tooltip } from "~/ui/tooltip";
 import Link from "next/link";
+import { EcosystemCard } from "~/ui/ecoystem-card";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -327,7 +329,14 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       </small>
 
       {/* Big text (network name) */}
-      <h1 className="relative z-10 font-logo flex flex-wrap text-center justify-center items-baseline gap-3 text-4xl sm:text-5xl font-medium md:text-6xl capitalize">
+      <h1
+        className={cn(
+          "flex flex-wrap text-center justify-center items-center gap-3",
+          "relative z-10 font-logo text-4xl sm:text-5xl font-medium md:text-6xl capitalize",
+          network.config.platform === "dymension" &&
+            "flex-nowrap flex-col lg:flex-row",
+        )}
+      >
         <span
           className="text-transparent bg-clip-text"
           style={{
@@ -336,7 +345,14 @@ function HeroSection({ network }: { network: SingleNetwork }) {
         >
           {network.brand}
         </span>
-        <span className="text-gray-900">{network.chainName}</span>
+        {network.config.platform === "dymension" ? (
+          <>
+            <XIcon className="text-gray-900 h-8 w-8" aria-hidden="true" />
+            <span className="text-gray-900">{network.config.platform}</span>
+          </>
+        ) : (
+          <span className="text-gray-900">{network.chainName}</span>
+        )}
       </h1>
 
       <p className="relative z-10 text-sm text-muted mb-2">
@@ -344,78 +360,80 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       </p>
 
       {/* Links */}
-      {links.length > 0 && (
-        <div className="relative z-10 flex items-center gap-6 flex-grow w-full justify-center">
-          <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
-            <div
-              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-              aria-hidden="true"
-            />
-            <div
-              className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
-              aria-hidden="true"
-            />
-            <div
-              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-              aria-hidden="true"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            {links.map((link) => (
-              <Tooltip
-                label={link.type === "x" ? "Twitter/X" : capitalize(link.type)}
-                key={link.href}
-                hideArrow
-              >
-                <Badge
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  isSquare
-                >
-                  {link.type === "website" && (
-                    <TiltedGlobe
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {link.type === "x" && (
-                    <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
-                  )}
-                  {link.type === "discord" && (
-                    <DiscordLogo
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {link.type === "github" && (
-                    <GithubLogo
-                      className="h-4 w-4 flex-none"
-                      aria-hidden="true"
-                    />
-                  )}
-                </Badge>
-              </Tooltip>
-            ))}
-          </div>
-
-          <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
-            <div
-              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-              aria-hidden="true"
-            />
-            <div
-              className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
-              aria-hidden="true"
-            />
-            <div
-              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-              aria-hidden="true"
-            />
-          </div>
+      <div
+        className={cn(
+          "relative z-10 flex items-center gap-6 flex-grow w-full justify-center",
+        )}
+      >
+        <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
+          <div
+            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+            aria-hidden="true"
+          />
+          <div
+            className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+            aria-hidden="true"
+          />
+          <div
+            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+            aria-hidden="true"
+          />
         </div>
-      )}
+
+        <div className="flex items-center gap-3">
+          {links.map((link) => (
+            <Tooltip
+              label={link.type === "x" ? "Twitter/X" : capitalize(link.type)}
+              key={link.href}
+              hideArrow
+            >
+              <Badge
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                isSquare
+              >
+                {link.type === "website" && (
+                  <TiltedGlobe
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+                {link.type === "x" && (
+                  <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
+                )}
+                {link.type === "discord" && (
+                  <DiscordLogo
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+                {link.type === "github" && (
+                  <GithubLogo
+                    className="h-4 w-4 flex-none"
+                    aria-hidden="true"
+                  />
+                )}
+              </Badge>
+            </Tooltip>
+          ))}
+        </div>
+
+        <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
+          <div
+            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+            aria-hidden="true"
+          />
+          <div
+            className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+            aria-hidden="true"
+          />
+          <div
+            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
 
       {/* Badges */}
       <div className="relative z-10 flex items-center flex-wrap justify-center w-full gap-3">
@@ -432,14 +450,14 @@ function HeroSection({ network }: { network: SingleNetwork }) {
             key={`badge-${badge.relation}-${badge.target}`}
             href={badge.href}
           >
-            <span>{capitalize(badge.relation)} on</span>
+            <span>{badge.relation} on</span>
             {badge.logoURL && (
               <Image
                 src={badge.logoURL}
                 alt={`Logo ${badge.target}`}
                 width={14}
                 height={14}
-                className="h-3.5 w-3.5 flex-none object-contain object-center"
+                className="h-3.5 w-3.5 flex-none object-contain object-center rounded-sm"
               />
             )}
             <span>{capitalize(badge.target)}</span>
@@ -451,6 +469,22 @@ function HeroSection({ network }: { network: SingleNetwork }) {
 }
 
 function NetworkSections({ network }: { network: SingleNetwork }) {
+  if (network.config.platform === "dymension") {
+    return (
+      <section
+        id="ecosystems"
+        style={{
+          "--color-primary": network.config.primaryColor,
+        }}
+      >
+        <ul className="flex flex-col tab:flex-row items-stretch gap-10">
+          {network.config.ecosystems.map((ecosystem) => (
+            <EcosystemCard ecosystem={ecosystem} />
+          ))}
+        </ul>
+      </section>
+    );
+  }
   switch (network.config.widgetLayout) {
     case "SVM":
       return (

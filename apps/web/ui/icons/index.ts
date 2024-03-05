@@ -96,4 +96,5 @@ export { default as UserOff } from "./UserOff";
 export { default as UserOn } from "./UserOn";
 export { default as Warning } from "./Warning";
 export { default as XCircle } from "./XCircle";
+export { default as XIcon } from "./XIcon";
 export { default as XLogo } from "./XLogo";

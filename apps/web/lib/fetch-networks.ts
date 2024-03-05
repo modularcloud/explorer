@@ -95,12 +95,6 @@ export async function fetchSingleNetwork(slug: string) {
 
       integration = result.integration;
     }
-
-    let baseUrl = env.NEXT_PUBLIC_VERCEL_URL ?? "http://127.0.0.1:3000";
-    if (process.env.VERCEL_ENV === "production") {
-      baseUrl = env.NEXT_PUBLIC_PRODUCTION_URL;
-    }
-
     // FIXME : this is hardcoded because widgets are not supported yet on other networks other than these
     if (integration.slug === "nautilus-mainnet") {
       integration.config.widgetLayout = "EvmWithPrice";
@@ -258,7 +252,35 @@ function getDefaultIntegrationConfigValues(
 
   if (network.config.platform === "dymension") {
     return {
-      description: `${capitalize(network.brand)} is a RollApp deployed to Dymension's Froopyland Testnet.`,
+      description:
+        network.config.description ??
+        `${capitalize(network.brand)} is a RollApp deployed to Dymension's Froopyland Testnet.`,
+      cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%)`,
+      primaryColor: "12 7.46% 13.14%",
+      badges: network.config.ecosystems
+        .map((ecosystem) => {
+          const ecosystemNameSplitted = ecosystem.split("-");
+          const ecosystemChainName =
+            ecosystemNameSplitted[ecosystemNameSplitted.length - 1];
+          if (ecosystem.startsWith("dymension")) {
+            return {
+              relation: "Settlement",
+              target: ecosystemChainName,
+              href: `/${ecosystem}`,
+              logoURL: `/images/logo-dymension-dark.png`,
+            };
+          } else if (ecosystem.startsWith("celestia")) {
+            return {
+              relation: "DA",
+              target: ecosystemChainName,
+              href: `/${ecosystem}`,
+              logoURL: `/images/celestia-logo-small.png`,
+            };
+          } else {
+            return null;
+          }
+        })
+        .filter(Boolean) as SingleNetwork["config"]["badges"],
     };
   }
 
