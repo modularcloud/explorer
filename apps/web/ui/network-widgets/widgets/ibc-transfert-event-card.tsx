@@ -6,6 +6,7 @@ import {
   ChevronDoubleDown,
   Clock,
   CornerUpRight,
+  FancyCheck,
   LinkOut,
 } from "~/ui/icons";
 import { ClientTime } from "~/ui/client-time";
@@ -20,6 +21,7 @@ import { Tooltip } from "~/ui/tooltip";
 import { useNetworkStatus } from "~/ui/search/use-network-status";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { CACHE_KEYS } from "~/lib/cache-keys";
+import { useSearchOptionsContext } from "~/ui/search-options-context";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -101,6 +103,20 @@ export function IBCTransferEventCard({
     sourceNetworkStatus?.[event.from.chainSlug]?.healthy ?? null;
   const targetChainHealthStatus =
     targetNetworkStatus?.[event.to.chainSlug]?.healthy ?? null;
+
+  const allNetworkChains = useSearchOptionsContext();
+
+  const values = allNetworkChains.flat();
+  const foundNetworks = values.filter(
+    (network) =>
+      network.slug === event.from.chainSlug ||
+      network.slug === event.to.chainSlug,
+  );
+
+  const fromChain = foundNetworks.find(
+    (net) => net.slug === event.from.chainSlug,
+  );
+  const toChain = foundNetworks.find((net) => net.slug === event.to.chainSlug);
 
   return (
     <Card className="p-0 grid w-full shadow-card">
@@ -260,6 +276,19 @@ export function IBCTransferEventCard({
                 {event.from.chainName}
               </p>
 
+              {fromChain?.verified && (
+                <span
+                  style={{
+                    "--color-primary": fromChain.brandColor,
+                  }}
+                >
+                  <FancyCheck
+                    className="text-primary h-5 w-5 flex-none"
+                    aria-hidden="true"
+                  />
+                </span>
+              )}
+
               <div
                 className={cn(
                   "opacity-100 relative flex items-center justify-center",
@@ -349,6 +378,19 @@ export function IBCTransferEventCard({
               <p className="overflow-x-hidden whitespace-nowrap text-ellipsis flex-shrink flex-grow-0 max-w-full">
                 {event.to.chainName}
               </p>
+
+              {toChain?.verified && (
+                <span
+                  style={{
+                    "--color-primary": toChain.brandColor,
+                  }}
+                >
+                  <FancyCheck
+                    className="text-primary h-5 w-5 flex-none"
+                    aria-hidden="true"
+                  />
+                </span>
+              )}
 
               <div
                 className={cn(
