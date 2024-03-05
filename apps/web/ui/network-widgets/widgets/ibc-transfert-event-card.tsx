@@ -21,7 +21,7 @@ import { Tooltip } from "~/ui/tooltip";
 import { useNetworkStatus } from "~/ui/search/use-network-status";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import { useSearchOptionsContext } from "~/ui/search-options-context";
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 
 export type IBCTransferEventCardProps = {
   event: IBCTransferEvent;
@@ -104,7 +104,7 @@ export function IBCTransferEventCard({
   const targetChainHealthStatus =
     targetNetworkStatus?.[event.to.chainSlug]?.healthy ?? null;
 
-  const allNetworkChains = useSearchOptionsContext();
+  const allNetworkChains = useGroupedNetworksContext();
 
   const values = allNetworkChains.flat();
   const foundNetworks = values.filter(
