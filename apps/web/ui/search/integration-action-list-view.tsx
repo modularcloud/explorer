@@ -191,6 +191,8 @@ export const IntegrationActionListView = React.memo(
               router.push(`/${selectedNetwork.slug}`);
               onNavigate();
             });
+            // this fixes a weird issue with safari scrolling to a section instead of the top of the page
+            window.scrollTo(0, 0);
           },
         },
         ...(selectedNetwork.brandName === "celestia" ||
