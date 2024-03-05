@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import * as React from "react";
 import { copyValueToClipboard, truncateHash } from "~/lib/shared-utils";
-import { toast } from "~/ui/shadcn/components/ui/use-toast";
-import useSWRImmutable from "swr/immutable";
+import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import Script from "next/script";
 import { ButtonBody } from "./button-body";
 import Link from "next/link";
 
 import { env } from "~/env.mjs";
+import { CACHE_KEYS } from "~/lib/cache-keys";
 
 export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
   const { data, isLoading } = useBlobData(url);
@@ -18,8 +19,7 @@ export function Blob({ url, mimeType }: { url: string; mimeType: string }) {
     const copied = await copyValueToClipboard(text);
 
     if (copied) {
-      toast({
-        title: "Copied",
+      toast("Copied", {
         description: `"${truncateHash(text)}" copied to clipboard`,
       });
     }
@@ -101,11 +101,15 @@ function BlobPDFViewer({ url }: BlobPDFViewerProps) {
 }
 
 function useBlobData(url: string) {
-  return useSWRImmutable(url, async (url) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
-    const arrayBuffer = await blob.arrayBuffer();
-    return { text, arrayBuffer };
+  return useQuery({
+    queryKey: CACHE_KEYS.blob(url),
+    queryFn: async ({ signal }) => {
+      const response = await fetch(url, { signal });
+      const blob = await response.blob();
+      const text = Buffer.from(await blob.arrayBuffer()).toString("base64");
+      const arrayBuffer = await blob.arrayBuffer();
+      return { text, arrayBuffer };
+    },
+    staleTime: Infinity,
   });
 }

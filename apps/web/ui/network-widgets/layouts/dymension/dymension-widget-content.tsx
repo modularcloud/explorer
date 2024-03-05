@@ -71,7 +71,7 @@ export function DymensionWidgetContent({
   }, [data]);
 
   if (!data) {
-    return <DymensionWidgetSkeleton error={error.toString()} />;
+    return <DymensionWidgetSkeleton error={error} />;
   }
 
   return (
@@ -126,14 +126,14 @@ export function DymensionWidgetContent({
   );
 }
 
-function DymensionWidgetSkeleton(props: { error?: string }) {
+function DymensionWidgetSkeleton(props: { error?: Error | null }) {
   return (
     <ul className="relative max-w-[52.5rem]  mx-auto">
       {props.error && (
         <div className="z-10 absolute inset-0 backdrop-blur-md rounded-lg text-center p-24 border border-red-400">
           <p className="text-red-400 text-lg">
             ⚠️ An Error Occured while loading the widgets :&nbsp;
-            <strong className="font-medium">{props.error}</strong>
+            <strong className="font-medium">{props.error?.message}</strong>
           </p>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import useSWR from "swr";
 import type { IBCTransferEvent } from "~/lib/dymension-utils";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 type UseSvmWidgetDataArgs = {
   networkSlug: string;
@@ -13,19 +13,14 @@ export function useDymensionWidgetData({
   initialTransfertEvents,
 }: UseSvmWidgetDataArgs) {
   const THIRTY_SECONDS = 30 * 1000;
-  return useSWR<IBCTransferEvent[]>(
-    CACHE_KEYS.widgets.data(networkSlug),
-    () => {
-      return jsonFetch<IBCTransferEvent[]>("/api/get-dymension-ibc-events", {
+  return useQuery({
+    queryKey: CACHE_KEYS.widgets.data(networkSlug),
+    queryFn: () =>
+      jsonFetch<IBCTransferEvent[]>("/api/get-dymension-ibc-events", {
         method: "POST",
-      });
-    },
-    {
-      refreshInterval: THIRTY_SECONDS,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      fallbackData: initialTransfertEvents,
-    },
-  );
+      }),
+    refetchInterval: THIRTY_SECONDS,
+    placeholderData: keepPreviousData,
+    initialData: initialTransfertEvents,
+  });
 }

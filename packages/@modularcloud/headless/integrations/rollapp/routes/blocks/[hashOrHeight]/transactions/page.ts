@@ -1,4 +1,9 @@
-import { getBlock, getBlockByHash, getTx, helpers } from "@modularcloud-resolver/rollapp";
+import {
+  getBlock,
+  getBlockByHash,
+  getTx,
+  helpers,
+} from "@modularcloud-resolver/rollapp";
 import { createResolver, PendingException } from "@modularcloud-resolver/core";
 import {
   getTransactionProperties,

@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from "react";
 
 export type Prettify<T> = {
   [K in keyof T]: T[K];
@@ -19,7 +19,7 @@ type GetEventHandlers<T extends keyof React.JSX.IntrinsicElements> = Extract<
  */
 export type EventFor<
   TElement extends keyof React.JSX.IntrinsicElements,
-  THandler extends GetEventHandlers<TElement>
+  THandler extends GetEventHandlers<TElement>,
 > = React.JSX.IntrinsicElements[TElement][THandler] extends
   | ((e: infer TEvent) => any)
   | undefined

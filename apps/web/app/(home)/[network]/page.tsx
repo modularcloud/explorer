@@ -23,9 +23,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: `${capitalize(network.brand)}`,
-    description: `A block explorer for the ${capitalize(
-      network.brand,
-    )} ecosystem.`,
+    description: `A block explorer for the ${capitalize(network.brand)} ecosystem.`,
     openGraph: {
       url: `/${network.slug}`,
       type: "website",

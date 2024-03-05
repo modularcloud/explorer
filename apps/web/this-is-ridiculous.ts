@@ -1,12 +1,13 @@
 /**
  * This file prefetches all the networks before build
  * and store them in a JSON file, then write a ts file
- * that will import and export those files
+ * that will import and export those files.
  */
 import fs from "node:fs/promises";
 import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
 import { preprocess, z } from "zod";
 import { capitalize } from "./lib/shared-utils";
+import { env } from "~/env.mjs";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -63,7 +64,7 @@ const getAllNetworks = cache(async function getAllNetworks(): Promise<
     });
     const response = await fetch(
       `${
-        process.env.INTERNAL_INTEGRATION_API_URL
+        env.INTERNAL_INTEGRATION_API_URL
       }/integrations-summary?${sp.toString()}`,
     ).then(async (r) => {
       const text = await r.text();
@@ -124,7 +125,7 @@ const getSingleNetwork = (slug: string) =>
       if (!integration) {
         let { result } = await fetch(
           `${
-            process.env.INTERNAL_INTEGRATION_API_URL
+            env.INTERNAL_INTEGRATION_API_URL
           }/integrations/slug/${encodeURIComponent(slug)}`,
         )
           .then((r) => r.json())

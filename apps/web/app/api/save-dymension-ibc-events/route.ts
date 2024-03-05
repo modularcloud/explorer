@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         ${event.to.chainName},
         ${event.to.chainSlug},
         ${event.to.chainLogo},
-        ${event.msgIndex},
+        ${event.msgIndex}
       )
     `,
       ),
@@ -59,9 +59,11 @@ export async function GET(request: NextRequest) {
     const totalSucceededQueries = queryResults.filter(
       (r) => r.status === "fulfilled",
     ).length;
+    const errorQueries = queryResults.filter((r) => r.status === "rejected");
 
     return NextResponse.json({
       result: `Inserted ${totalSucceededQueries} events`,
+      errors: errorQueries,
     });
   }
 

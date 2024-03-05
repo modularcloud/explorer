@@ -26,6 +26,4 @@ export async function printRollappTokenAmountDenom(
   }`;
 }
 
-export async function isOneHopIBC(txstr: string) {
-
-}
+export async function isOneHopIBC(txstr: string) {}

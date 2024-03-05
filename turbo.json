@@ -14,7 +14,8 @@
       "cache": false
     },
     "web#prefetch:networks-prod": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": false
     },
     "web#build": {
       "dependsOn": ["^build", "web#prefetch:networks-prod"],

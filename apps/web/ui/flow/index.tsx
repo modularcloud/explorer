@@ -2,14 +2,16 @@
 
 import Image from "next/image";
 import { cn } from "~/ui/shadcn/utils";
-import useSWR from "swr";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { useSpotlightStore } from "~/ui/right-panel/spotlight-store";
 import { useParams } from "next/navigation";
-import { parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
+import { jsonFetch, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { CACHE_KEYS } from "~/lib/cache-keys";
+import type { ResolutionResponse } from "@modularcloud-resolver/core";
 
 type MsgRef = {
   slug: string;
@@ -229,29 +231,26 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     },
   };
 
-  const nodeResponse = useSWR(
-    ["/api/resolve/ibc", body],
-    async () => {
-      const response = await fetch("/api/resolve", {
+  const nodeResponse = useQuery({
+    queryKey: CACHE_KEYS.ibcResolve(body.resolverId, body.input),
+    queryFn: async () => {
+      return await jsonFetch<ResolutionResponse>("/api/resolve", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body,
       });
-      const data = await response.json();
-      return data;
     },
-    {
-      //refreshInterval: THIRTY_SECONDS,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false, // don't revalidate on window focus as it can cause rate limit errors
-    },
-  );
+    retry: 2,
+    placeholderData: keepPreviousData,
+  });
 
   const amount = React.useMemo(() => {
-    const node = nodeResponse.data?.result;
+    const node =
+      nodeResponse.data &&
+      nodeResponse.data.type === "success" &&
+      nodeResponse.data.result;
     if (node && node.type === "completed" && node.sidebar?.Token?.payload) {
       const [value, denom] = node.sidebar.Token.payload.split(" ");
       const formattedDenom = denom.slice(1).toUpperCase();
@@ -264,7 +263,10 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
     return null;
   }, [nodeResponse.data]);
 
-  const node = nodeResponse.data?.result;
+  const node =
+    nodeResponse.data &&
+    nodeResponse.data.type === "success" &&
+    nodeResponse.data.result;
   if (!node || !node.sidebar) return null;
 
   return (
@@ -310,128 +312,6 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
   );
 }
 
-type FlowChartContextType = {
-  transfer: {
-    from: {
-      address?: string;
-      chain?: string;
-      penultimate?: string;
-    };
-    to: {
-      address?: string;
-      chain?: string;
-    };
-    amount?: string;
-    denom?: string;
-  };
-  sequence: {
-    forward?: string;
-    backward?: string;
-    regular?: string;
-    hops?: 1 | 2;
-  };
-  setContext?: (value: any) => void;
-};
-
-const FlowChartContext = React.createContext<FlowChartContextType | null>(null);
-
-export function FlowChartProvider({ children }: { children: React.ReactNode }) {
-  const params = useParams<{ network: string; path: string[] }>();
-  const { network: slug, path } = parseHeadlessRouteVercelFix(params);
-  const txHash = path[1];
-  const msgIndex = path[3];
-  const url = `/api/ibc/integration/${slug}/tx/${txHash}/message/${msgIndex}`;
-
-  const [contextValue, setContextValue] = React.useState<{
-    transfer: {
-      from: {
-        address?: string;
-        chain?: string;
-        penultimate?: string;
-      };
-      to: {
-        address?: string;
-        chain?: string;
-      };
-      amount?: string;
-      denom?: string;
-    };
-    sequence: {
-      forward?: string;
-      backward?: string;
-      regular?: string;
-      hops?: 1 | 2;
-    };
-  }>({
-    transfer: {
-      from: {},
-      to: {},
-    },
-    sequence: {},
-  });
-  useSWR(
-    url,
-    async () => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    },
-    {
-      onSuccess: (data) => {
-        const newDetails = contextValue;
-        if (!newDetails.transfer.from.address) {
-          newDetails.transfer.from.address = data.from.address;
-        }
-
-        if (!newDetails.transfer.from.chain) {
-          newDetails.transfer.from.chain = data.from.chain;
-        }
-
-        if (!newDetails.transfer.to.address) {
-          newDetails.transfer.to.address = data.to.address;
-        }
-
-        if (!newDetails.transfer.to.chain) {
-          newDetails.transfer.to.chain = data.to.chain;
-        }
-
-        if (!newDetails.sequence.forward) {
-          newDetails.sequence.forward = data.forwardSequence;
-        }
-
-        if (!newDetails.sequence.backward) {
-          newDetails.sequence.backward = data.backwardSequence;
-        }
-
-        if (!newDetails.sequence.hops) {
-          newDetails.sequence.hops = data.hops;
-        }
-
-        if (!newDetails.sequence.regular) {
-          newDetails.sequence.regular = data.sequence;
-        }
-
-        if (!newDetails.transfer.from.penultimate) {
-          newDetails.transfer.from.penultimate = data.penultimateChannel;
-        }
-
-        setContextValue(newDetails);
-      },
-    },
-  );
-
-  const providerValue = React.useMemo(
-    () => ({ ...contextValue, setContext: setContextValue }),
-    [contextValue, setContextValue],
-  );
-
-  return (
-    <FlowChartContext.Provider value={providerValue}>
-      {children}
-    </FlowChartContext.Provider>
-  );
-}
-
 export function FlowChart({ index }: { index: number }) {
   const params = useParams<{ network: string; path: string[] }>();
   const { network: slug, path } = parseHeadlessRouteVercelFix(params);
@@ -448,11 +328,11 @@ type FlowChartContentProps = {
 };
 
 function FlowChartContent({ slug, txHash, index }: FlowChartContentProps) {
-  const { data } = useSWR<IBCFlow>(
-    `/api/ibc/${slug}/${txHash}/${index}`,
-    (url) => fetch(url).then((res) => res.json()),
-    { fallbackData: {} },
-  );
+  const { data = {} } = useQuery({
+    queryKey: CACHE_KEYS.ibcCardFlow(slug, txHash, index),
+    queryFn: ({ signal }) =>
+      jsonFetch<IBCFlow>(`/api/ibc/${slug}/${txHash}/${index}`, { signal }),
+  });
 
   return (
     <div className="border-b-[color:var(--gray-50,#ECEFF3)] bg-white flex flex-col items-stretch pl-4 pr-6 max-md:pr-5">
