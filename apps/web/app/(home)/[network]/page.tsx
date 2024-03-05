@@ -325,7 +325,7 @@ function HeroSection({ network }: { network: SingleNetwork }) {
 
       {/* network type pill */}
       <small className="uppercase text-xs border rounded-full px-3 py-1.5 bg-white tracking-[0.105rem]">
-        {network.config.type}
+        {network.config.layer}
       </small>
 
       {/* Big text (network name) */}

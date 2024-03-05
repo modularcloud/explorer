@@ -29,7 +29,7 @@ export const singleNetworkSchema = z.object({
       ),
     ecosystems: z.array(z.string()).optional().default([]),
     description: z.string().optional(),
-    type: z.string().optional().default("Execution Layer"),
+    layer: z.string().optional().default("Execution Layer"),
     links: z
       .array(
         z.object({
@@ -115,7 +115,7 @@ function getDefaultIntegrationConfigValues(
 ): Partial<SingleNetwork["config"]> {
   if (network.brand === "celestia") {
     return {
-      type: "Data Availability Layer",
+      layer: "Data Availability Layer",
       widgetLayout: "Celestia",
       primaryColor: "256.07 100% 67.06%",
       cssGradient: `linear-gradient(89deg, #8457FF -17.52%, #501FD7 89.78%)`,
@@ -205,7 +205,7 @@ function getDefaultIntegrationConfigValues(
   }
   if (network.brand === "dymension") {
     return {
-      type: "settlement layer",
+      layer: "settlement layer",
       widgetLayout: "Dymension",
       cssGradient: `linear-gradient(89deg, #24201F -17.52%, #24201F 89.78%)`,
       primaryColor: "12 7.46% 13.14%",
