@@ -188,7 +188,7 @@ export const IntegrationActionListView = React.memo(
           onSelect: () => {
             setCurrentNavigatingAction("chain-homepage");
             startTransition(() => {
-              router.push(`/${selectedNetwork.slug}`);
+              router.push(`/${selectedNetwork.slug}`, { scroll: false });
               onNavigate();
             });
           },

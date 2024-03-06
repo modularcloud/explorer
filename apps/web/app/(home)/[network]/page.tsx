@@ -41,7 +41,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default function Page({ params }: Props) {
   return (
     <>
-      <ScrollTopOnRouteChange />
+      {/* <ScrollTopOnRouteChange /> */}
       <NetworkWidgetPage params={params} />
     </>
   );
