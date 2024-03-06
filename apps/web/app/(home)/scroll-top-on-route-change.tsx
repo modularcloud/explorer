@@ -15,9 +15,13 @@ export function ScrollTopOnRouteChange({}: ScrollTopOnRouteChangeProps) {
   // }, []);
   React.useEffect(() => {
     const listener = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
       console.log({
+        trusted: e.isTrusted,
         newScrollPosition: window.scrollY,
       });
+      console.trace("Scroll event triggered");
     };
     window.addEventListener("scroll", listener);
     return () => {
