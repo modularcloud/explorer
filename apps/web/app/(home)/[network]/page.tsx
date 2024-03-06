@@ -12,7 +12,6 @@ import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 import { env } from "~/env.mjs";
 import { OG_SIZE } from "~/lib/constants";
-import { ScrollTopOnRouteChange } from "../scroll-top-on-route-change";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
