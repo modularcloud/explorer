@@ -12,6 +12,7 @@ import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
 import { env } from "~/env.mjs";
 import { OG_SIZE } from "~/lib/constants";
+import { ScrollTopOnRouteChange } from "../scroll-top-on-route-change";
 
 interface Props {
   params: Pick<HeadlessRoute, "network">;
@@ -37,7 +38,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function NetworkWidgetPage({ params }: Props) {
+export default function Page({ params }: Props) {
+  return (
+    <>
+      <ScrollTopOnRouteChange />
+      <NetworkWidgetPage params={params} />
+    </>
+  );
+}
+
+async function NetworkWidgetPage({ params }: Props) {
   const network = await getSingleNetwork(params.network);
 
   // this fixes a bug on vercel with build where it would throw if the network doesn't
