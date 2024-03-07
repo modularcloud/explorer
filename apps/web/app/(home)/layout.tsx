@@ -22,6 +22,14 @@ export default async function HomeLayout({
       <div>{children}</div>
 
       <Footer />
+      {/*
+        this fixes a weird issue with safari scrolling to a section instead of the top of the page, 
+        this workaround has been copied from here : https://github.com/algolia/docsearch/issues/1260#issuecomment-1011939736
+        idk exactly why this happens or why it works, but hey it works so... 🤷‍♂️
+       */}
+      <div className="!fixed">
+        <input type="text" className="sr-only" aria-hidden="true" />
+      </div>
     </main>
   );
 }
