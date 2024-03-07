@@ -360,80 +360,82 @@ function HeroSection({ network }: { network: SingleNetwork }) {
       </p>
 
       {/* Links */}
-      <div
-        className={cn(
-          "relative z-10 flex items-center gap-6 flex-grow w-full justify-center",
-        )}
-      >
-        <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
-          <div
-            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-            aria-hidden="true"
-          />
-          <div
-            className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
-            aria-hidden="true"
-          />
-          <div
-            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-            aria-hidden="true"
-          />
-        </div>
+      {links.length > 0 && (
+        <div
+          className={cn(
+            "relative z-10 flex items-center gap-6 flex-grow w-full justify-center",
+          )}
+        >
+          <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
+            <div
+              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+              aria-hidden="true"
+            />
+            <div
+              className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+              aria-hidden="true"
+            />
+            <div
+              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+              aria-hidden="true"
+            />
+          </div>
 
-        <div className="flex items-center gap-3">
-          {links.map((link) => (
-            <Tooltip
-              label={link.type === "x" ? "Twitter/X" : capitalize(link.type)}
-              key={link.href}
-              hideArrow
-            >
-              <Badge
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                isSquare
+          <div className="flex items-center gap-3">
+            {links.map((link) => (
+              <Tooltip
+                label={link.type === "x" ? "Twitter/X" : capitalize(link.type)}
+                key={link.href}
+                hideArrow
               >
-                {link.type === "website" && (
-                  <TiltedGlobe
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.type === "x" && (
-                  <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
-                )}
-                {link.type === "discord" && (
-                  <DiscordLogo
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.type === "github" && (
-                  <GithubLogo
-                    className="h-4 w-4 flex-none"
-                    aria-hidden="true"
-                  />
-                )}
-              </Badge>
-            </Tooltip>
-          ))}
-        </div>
+                <Badge
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  isSquare
+                >
+                  {link.type === "website" && (
+                    <TiltedGlobe
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.type === "x" && (
+                    <XLogo className="h-4 w-4 flex-none" aria-hidden="true" />
+                  )}
+                  {link.type === "discord" && (
+                    <DiscordLogo
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.type === "github" && (
+                    <GithubLogo
+                      className="h-4 w-4 flex-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                </Badge>
+              </Tooltip>
+            ))}
+          </div>
 
-        <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
-          <div
-            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-            aria-hidden="true"
-          />
-          <div
-            className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
-            aria-hidden="true"
-          />
-          <div
-            className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
-            aria-hidden="true"
-          />
+          <div className="flex w-full items-center max-w-[225px] flex-grow flex-shrink">
+            <div
+              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+              aria-hidden="true"
+            />
+            <div
+              className="w-full flex-grow flex-shrink h-[2px] bg-mid-dark-100"
+              aria-hidden="true"
+            />
+            <div
+              className="w-1 h-1 flex-none rounded-full bg-mid-dark-100"
+              aria-hidden="true"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Badges */}
       <div className="relative z-10 flex items-center flex-wrap justify-center w-full gap-3">
