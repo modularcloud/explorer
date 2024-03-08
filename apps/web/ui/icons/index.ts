@@ -58,6 +58,7 @@ export { default as GlobeCyber } from "./GlobeCyber";
 export { default as GlobeWeb } from "./GlobeWeb";
 export { default as GreenTick } from "./GreenTick";
 export { default as Grid } from "./Grid";
+export { default as Heart } from "./Heart";
 export { default as Home } from "./Home";
 export { default as Home2 } from "./Home2";
 export { default as KeyboardArrowDown } from "./KeyboardArrowDown";
