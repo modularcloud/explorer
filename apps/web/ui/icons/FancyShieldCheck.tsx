@@ -1,26 +1,29 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgFancyShield = (props: SVGProps<SVGSVGElement>) => (
+const SvgFancyShieldCheck = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 14 14"
     {...props}
   >
-    <g clipPath="url(#FancyShield_svg__a)" filter="url(#FancyShield_svg__b)">
+    <g
+      clipPath="url(#FancyShieldCheck_svg__a)"
+      filter="url(#FancyShieldCheck_svg__b)"
+    >
       <path
         fill="currentColor"
         fillRule="evenodd"
-        d="M6.601 1.006a1.02 1.02 0 0 1 .798 0l4.229 1.795c.377.16.622.53.622.94v3.842a5.25 5.25 0 1 1-10.5 0V3.74c0-.41.245-.78.622-.94zM9.2 5.372c.174.168.18.445.012.619L6.683 8.616a.44.44 0 0 1-.63 0L4.789 7.303a.438.438 0 1 1 .63-.606l.95.985L8.58 5.384a.44.44 0 0 1 .618-.012"
+        d="M6.601 1.006a1.02 1.02 0 0 1 .798 0l4.229 1.795c.377.16.622.53.622.94v3.842a5.25 5.25 0 1 1-10.5 0V3.74c0-.41.245-.78.622-.94l4.23-1.794ZM9.2 5.372c.174.168.18.445.012.619L6.683 8.616a.438.438 0 0 1-.63 0L4.789 7.303a.438.438 0 1 1 .63-.606l.95.985L8.58 5.384a.438.438 0 0 1 .618-.012Z"
         clipRule="evenodd"
       />
     </g>
     <defs>
-      <clipPath id="FancyShield_svg__a">
+      <clipPath id="FancyShieldCheck_svg__a">
         <path fill="#fff" d="M0 0h14v14H0z" />
       </clipPath>
       <filter
-        id="FancyShield_svg__b"
+        id="FancyShieldCheck_svg__b"
         width={12.5}
         height={13.908}
         x={0.75}
@@ -51,4 +54,4 @@ const SvgFancyShield = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 );
-export default SvgFancyShield;
+export default SvgFancyShieldCheck;
