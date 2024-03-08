@@ -2,7 +2,7 @@ import { DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS } from "~/lib/constants";
 import { CelestiaMetrics, getCelestiaWidgetMetrics } from "./get-metrics";
 import { jsonFetch } from "~/lib/shared-utils";
 import { CACHE_KEYS } from "~/lib/cache-keys";
-import useSWR from "swr";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import type { LoadPageArgs } from "~/lib/headless-utils";
 import type { Page } from "@modularcloud/headless";
@@ -20,41 +20,42 @@ export function useCelestiaWidgetData({
   initialLatestBlocks,
   initialLatestTransactions,
 }: UseCelestiaWidgetDataArgs) {
-  const loadLatestTransactionArgs: LoadPageArgs = {
+  const loadLatestTransactionArgs = {
     route: { network: networkSlug, path: ["transactions"] },
     context: { limit: 5 },
     revalidateTimeInSeconds: 0,
-  };
-  const loadLatestBlocksArgs: LoadPageArgs = {
+  } satisfies LoadPageArgs;
+
+  const loadLatestBlocksArgs = {
     route: { network: networkSlug, path: ["blocks"] },
     context: { limit: 6 },
     revalidateTimeInSeconds: 0,
-  };
-  return useSWR<[CelestiaMetrics, Page, Page]>(
-    CACHE_KEYS.widgets.data(networkSlug),
-    () =>
+  } satisfies LoadPageArgs;
+
+  return useQuery<[CelestiaMetrics, Page, Page]>({
+    queryKey: CACHE_KEYS.widgets.data(networkSlug),
+    queryFn: ({ signal }) =>
       Promise.all([
         getCelestiaWidgetMetrics(networkSlug),
         jsonFetch<Page>("/api/load-page", {
           method: "POST",
           body: loadLatestBlocksArgs,
+          signal,
         }),
         jsonFetch<Page>("/api/load-page", {
           method: "POST",
           body: loadLatestTransactionArgs,
+          signal,
         }),
       ]),
-    {
-      refreshInterval: DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS * 1000,
-      errorRetryCount: 2,
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      fallbackData: [
-        initialMetrics,
-        initialLatestBlocks,
-        initialLatestTransactions,
-      ],
-    },
-  );
+    refetchInterval: DEFAULT_WIDGET_REFETCH_TIME_IN_SECONDS * 1000,
+    retry: 2,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: true,
+    initialData: [
+      initialMetrics,
+      initialLatestBlocks,
+      initialLatestTransactions,
+    ],
+  });
 }

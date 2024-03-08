@@ -203,9 +203,11 @@ export function Table({ initialData, route }: Props) {
     return <TableSkeleton />;
   }
 
+  const totalDataLength = flatData.length;
+
   return (
     <div>
-      {containsData && flatData.length > 0 ? (
+      {containsData && totalDataLength > 0 ? (
         <div ref={parentRef} className="overflow-y-auto h-screen">
           <div
             className="[&_+_*]:mb-20"
@@ -300,7 +302,10 @@ export function Table({ initialData, route }: Props) {
           ) : (
             <div className="py-5 w-full px-8 flex justify-center items-baseline gap-4 pb-[6.5rem]">
               <hr className="h-2 w-full max-w-[10rem] flex-1" />
-              <span className="text-sm text-muted">End of the table</span>
+              <span className="text-sm text-muted">
+                {totalDataLength} of {totalDataLength} Result
+                {totalDataLength > 1 && "s"}
+              </span>
               <hr className="h-2 w-full max-w-[10rem] flex-1" />
             </div>
           )}

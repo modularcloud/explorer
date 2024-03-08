@@ -64,7 +64,10 @@ export const addressTransactionsResolver = createResolver(
         body: {
           type: "collection",
           refreshIntervalMS: 10000,
-          nextToken: signatures[signatures.length - 1].signature,
+          nextToken:
+            signatures.length > 0
+              ? signatures[signatures.length - 1].signature
+              : undefined,
           tableColumns: Transaction.Columns(true),
           entries: transactionResponses.map((transactionResponse) => {
             if (transactionResponse.type !== "success") {

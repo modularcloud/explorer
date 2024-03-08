@@ -102,13 +102,11 @@ export function SVMWidgetLayoutContent({
           className="[grid-area:LT]"
           data={
             latestTransactions.body.type === "collection"
-              ? latestTransactions.body.entries.map((transaction: any) => {
-                  return {
-                    hash: transaction.row.Transactions.payload.value,
-                    success: transaction.row.Status.payload,
-                    type: transaction.row.Type.payload,
-                  };
-                })
+              ? latestTransactions.body.entries.map((transaction: any) => ({
+                  hash: transaction.row.Transactions.payload.value,
+                  success: transaction.row.Status.payload,
+                  type: transaction.row.Type.payload,
+                }))
               : []
           }
         />
@@ -163,19 +161,17 @@ export function SVMWidgetLayoutContent({
           className="[grid-area:LB]"
           data={
             latestBlocks.body.type === "collection"
-              ? latestBlocks.body.entries.map((block: any) => {
-                  return {
-                    number: Number(block.row.Blocks.payload),
-                    noOfTransactions: Number(block.row.Txs.payload),
-                    timestamp:
-                      typeof block.sidebar.properties.Timestamp.payload ===
-                      "string"
-                        ? new Date(
-                            block.sidebar.properties.Timestamp.payload,
-                          ).getTime()
-                        : new Date().getTime(),
-                  };
-                })
+              ? latestBlocks.body.entries.map((block: any) => ({
+                  number: Number(block.row.Blocks.payload),
+                  noOfTransactions: Number(block.row.Txs.payload),
+                  timestamp:
+                    typeof block.sidebar.properties.Timestamp.payload ===
+                    "string"
+                      ? new Date(
+                          block.sidebar.properties.Timestamp.payload,
+                        ).getTime()
+                      : new Date().getTime(),
+                }))
               : []
           }
         />

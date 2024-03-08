@@ -18,6 +18,7 @@ export function ClientProviders({ searchOptions, children }: Props) {
         defaultOptions: {
           queries: {
             refetchOnWindowFocus: false,
+            retry: 2,
           },
         },
       }),
