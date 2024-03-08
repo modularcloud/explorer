@@ -2,7 +2,7 @@
 import { Card } from "~/ui/card";
 import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 import Image from "next/image";
-import { capitalize } from "~/lib/shared-utils";
+import { capitalize, getEcosystemSVGLogoSRC } from "~/lib/shared-utils";
 import { Button } from "~/ui/button";
 import { LinkOut } from "~/ui/icons";
 
@@ -45,7 +45,7 @@ export function EcosystemCard({ ecosystem }: Props) {
           }}
         >
           <Image
-            src={getLogoSVGSrc(ecosystemChain.brandName)!}
+            src={getEcosystemSVGLogoSRC(ecosystemChain.brandName)!}
             className="w-4 h-4 object-contain object-center rounded-full"
             width={16}
             height={16}
@@ -92,19 +92,6 @@ function getBigLogoSrc(ecosystemBrand: string) {
       return "/images/logo-dymension-hollow.png";
     case "celestia":
       return "/images/logo-celestia-hollow.png";
-    default:
-      return null;
-  }
-}
-
-function getLogoSVGSrc(ecosystemBrand: string) {
-  switch (ecosystemBrand) {
-    case "celestia":
-      return "/images/celestia-logo-white.svg";
-    case "dymension":
-      return "/images/dymension-logo-white.svg";
-    case "eclipse":
-      return "/images/eclipse-logo-white.svg";
     default:
       return null;
   }

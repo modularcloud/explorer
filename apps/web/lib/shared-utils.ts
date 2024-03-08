@@ -288,3 +288,16 @@ export function getMetadata(
     )} ${capitalize(network.chainName)}, brought to you by Modular Cloud.`,
   };
 }
+
+export function getEcosystemSVGLogoSRC(ecosystemBrand: string) {
+  switch (ecosystemBrand) {
+    case "celestia":
+      return "/images/celestia-logo-white.svg";
+    case "dymension":
+      return "/images/dymension-logo-white.svg";
+    case "eclipse":
+      return "/images/eclipse-logo-white.svg";
+    default:
+      return null;
+  }
+}

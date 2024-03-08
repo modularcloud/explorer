@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { notFound } from "next/navigation";
 import { getAllPaidNetworks, getSingleNetwork } from "~/lib/network";
-import { capitalize, range } from "~/lib/shared-utils";
+import { capitalize, getEcosystemSVGLogoSRC, range } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
 import type { HeadlessRoute } from "~/lib/headless-utils";
@@ -75,22 +75,6 @@ export default async function NetworkPage({ params }: Props) {
       <NetworkSections network={network} />
     </>
   );
-}
-
-function getLogoSVGSrc(network: SingleNetwork) {
-  switch (network.brand) {
-    case "celestia":
-      return "/images/celestia-logo-white.svg";
-    case "dymension":
-      return "/images/dymension-logo-white.svg";
-    case "eclipse":
-      return "/images/eclipse-logo-white.svg";
-    default:
-      if (network.config.platform === "dymension") {
-        return "/images/dymension-logo-white.svg";
-      }
-      return network.config.logoUrl;
-  }
 }
 
 type FeaturedChains = Exclude<
@@ -313,7 +297,9 @@ function HeroSection({ network }: { network: SingleNetwork }) {
             }}
           >
             <Image
-              src={getLogoSVGSrc(network)}
+              src={
+                getEcosystemSVGLogoSRC(network.brand) ?? network.config.logoUrl
+              }
               className="w-4 h-4 object-contain object-center rounded-full"
               width={16}
               height={16}
