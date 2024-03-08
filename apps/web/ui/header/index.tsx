@@ -1,9 +1,9 @@
 import "server-only";
 import { BrandedLogo } from "./branded-logo";
 import { HeaderSearchButton } from "./header-search-button";
-import { TokenPrices } from "~/ui/token-prices";
 import { cn } from "~/ui/shadcn/utils";
 import { ShortcutKey } from "~/ui/shortcut-key";
+import { NetworkStatusBadge } from "./network-status-badge";
 
 export async function Header() {
   return (
@@ -20,7 +20,7 @@ export async function Header() {
         <ShortcutKey command="/" />
       </HeaderSearchButton>
       <div className="hidden tab:block">
-        <TokenPrices />
+        <NetworkStatusBadge />
       </div>
     </header>
   );
