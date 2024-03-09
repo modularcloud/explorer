@@ -246,7 +246,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
           <ol className="flex flex-col items-start gap-1 w-full">
             {payload.map((value) => (
               <li key={value} className="w-full">
-                <CopyableValue value={value}>
+                <CopyableValue copyIconAppearOnlyIfSelected value={value}>
                   {getChildrenForStringPayload(payload.toString())}
                 </CopyableValue>
               </li>
@@ -257,7 +257,10 @@ export const OverviewEntry = React.memo(function OverviewEntry({
 
       {type === "timestamp" && (
         <dd className="md:col-span-3 min-w-0">
-          <CopyableValue value={formatDateTime(entry.value.payload.value)}>
+          <CopyableValue
+            copyIconAppearOnlyIfSelected
+            value={formatDateTime(entry.value.payload.value)}
+          >
             <DateTime value={payload.value!} />
           </CopyableValue>
         </dd>
@@ -265,7 +268,7 @@ export const OverviewEntry = React.memo(function OverviewEntry({
 
       {type === "link" && (
         <dd className="md:col-span-3 min-w-0">
-          <CopyableValue value={payload.text}>
+          <CopyableValue copyIconAppearOnlyIfSelected value={payload.text}>
             <Link className="underline" href={`/${payload.route.join("/")}`}>
               {payload.text}
             </Link>
