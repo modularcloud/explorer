@@ -16,8 +16,17 @@ type UseHotkeyArgs = {
  * Hook for listening to hotkeys
  */
 export function useHotkey({ keys, modifier, listener }: UseHotkeyArgs) {
-  const { isSearchModalOpen } = React.use(GlobalHotkeyContext);
+  const isSearchModalOpen = React.use(GlobalHotkeyContext).isSearchModalOpen;
   const keysPressedRef = React.useRef<Record<string, boolean>>({});
+
+  const listenerRef = React.useRef(listener);
+  const keysRef = React.useRef(keys);
+  const modifierRef = React.useRef(modifier);
+  React.useLayoutEffect(() => {
+    listenerRef.current = listener;
+    keysRef.current = keys;
+    modifierRef.current = modifier;
+  });
 
   React.useEffect(() => {
     function keyDownListener(event: KeyboardEvent) {
@@ -43,12 +52,14 @@ export function useHotkey({ keys, modifier, listener }: UseHotkeyArgs) {
         keysPressedRef.current[event.key] = true;
       }
 
-      // TODO : one more bug -> we also need to check that the keys don't include unwanted shortcuts
+      const keys = keysRef.current;
+      const modifier = modifierRef.current;
+      const currentListener = listenerRef;
       if (
         keys.includes(event.key) &&
         (!modifier || keysPressedRef.current[modifier])
       ) {
-        const consumed = listener(event.key);
+        const consumed = currentListener.current(event.key);
 
         if (consumed) {
           event.stopPropagation();
@@ -68,5 +79,5 @@ export function useHotkey({ keys, modifier, listener }: UseHotkeyArgs) {
       window.removeEventListener("keyup", keyUpListener);
       window.removeEventListener("keydown", keyDownListener);
     };
-  }, [isSearchModalOpen, listener, keys, modifier]);
+  }, [isSearchModalOpen]);
 }

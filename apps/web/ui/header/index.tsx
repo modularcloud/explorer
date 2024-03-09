@@ -1,49 +1,27 @@
 import "server-only";
-import * as React from "react";
-// components
-import Link from "next/link";
+import { BrandedLogo } from "./branded-logo";
 import { HeaderSearchButton } from "./header-search-button";
-
-// utils
-import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 import { cn } from "~/ui/shadcn/utils";
-import { HeaderEntityHighlight } from "./header-entity-highlight";
+import { ShortcutKey } from "~/ui/shortcut-key";
+import { NetworkStatusBadge } from "./network-status-badge";
 
-// types
-type Props = {
-  networkSlug: string;
-};
-
-export async function Header({ networkSlug }: Props) {
-  const groupedNetworks = await getGroupedNetworkChains();
-
+export async function Header() {
   return (
-    <header className="fixed left-0 right-0 top-0 z-[60] bg-muted-100">
-      <div
-        className={cn(
-          "bg-white tab:bg-muted-100 flex w-full px-6 justify-between items-center py-3 gap-4 h-header border-b",
-        )}
-      >
-        <Link
-          href={`/${networkSlug}`}
-          className="flex items-center gap-4 flex-shrink-0"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/mc-logo.svg"
-            alt="ModularCloud Logo"
-            className="h-[1.125rem] w-[1.125rem]"
-          />
-
-          <h1 className="font-medium tab:text-lg">Modular Cloud</h1>
-        </Link>
-
-        <HeaderSearchButton optionGroups={groupedNetworks} />
-
-        {/* Bigger screens */}
-        <div className="gap-2 items-stretch hidden tab:flex flex-shrink-0" />
+    <header
+      className={cn(
+        "flex justify-between items-center border gap-4 shadow-sm bg-white rounded-xl tab:py-4 py-3.5 px-3.5 w-full",
+        "relative",
+        "sticky top-4 z-50",
+      )}
+    >
+      <BrandedLogo />
+      <HeaderSearchButton className="tab:absolute left-1/2 top-1/2 tab:-translate-x-1/2 tab:-translate-y-1/2">
+        <span className="text-muted text-xs">Explore</span>
+        <ShortcutKey command="/" />
+      </HeaderSearchButton>
+      <div className="hidden tab:block">
+        <NetworkStatusBadge />
       </div>
-      <HeaderEntityHighlight groupedNetworks={groupedNetworks} />
     </header>
   );
 }

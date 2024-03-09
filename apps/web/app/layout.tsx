@@ -7,37 +7,11 @@ import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientProviders } from "~/ui/client-providers";
 import { env } from "~/env.mjs";
-import localFont from "next/font/local";
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
+import { GeistSans } from "geist/font/sans";
 
 // types
 import type { Metadata } from "next";
-
-const interDisplay = localFont({
-  src: [
-    {
-      path: "../fonts/InterDisplay/InterDisplay-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../fonts/InterDisplay/InterDisplay-Medium.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../fonts/InterDisplay/InterDisplay-SemiBold.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../fonts/InterDisplay/InterDisplay-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-inter-display",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -55,7 +29,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const searchOptionGroups = await getGroupedNetworkChains();
+  const allNetworkChains = await getGroupedNetworkChains();
 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
@@ -66,12 +40,12 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${interDisplay.variable} font-sans text-foreground`}
+        className={`${GeistSans.className} text-foreground`}
         suppressHydrationWarning
       >
         <SkipToMainContent />
-        <ClientProviders searchOptions={searchOptionGroups}>
-          <GlobalHotkeyProvider optionGroups={searchOptionGroups}>
+        <ClientProviders searchOptions={allNetworkChains}>
+          <GlobalHotkeyProvider optionGroups={allNetworkChains}>
             {children}
             {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
             <Toaster />

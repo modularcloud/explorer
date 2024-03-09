@@ -382,10 +382,6 @@ export function useItemGrid<T>({
 
   React.useEffect(() => {
     const navigationListener = (event: KeyboardEvent) => {
-      /**
-       * Prevent default scrolling in favor of manual scrolling
-       * TODO (fredk3): (re)figure out why i did this ?
-       */
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
       }

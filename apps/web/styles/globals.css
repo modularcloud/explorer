@@ -43,4 +43,47 @@
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE 10+ */
   }
+
+  @keyframes fadeModularCloud {
+    0%,
+    8.33% {
+      opacity: 1;
+    }
+    16.67%,
+    91.67% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeHeart {
+    0%,
+    25% {
+      opacity: 0;
+    }
+    33.33%,
+    88.33% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .group:hover .branded-logo-modular-cloud {
+    animation: fadeModularCloud 9s ease-in-out;
+    animation-delay: 2s;
+  }
+
+  .group:hover .branded-logo-heart {
+    animation: fadeHeart 4s ease-in-out;
+    animation-delay: 2.5s;
+  }
+
+  .group:hover .branded-logo {
+    animation: fadeHeart 4s ease-in-out;
+    animation-delay: 6s;
+  }
 }

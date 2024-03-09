@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  Page,
+  type Page,
   createSVMIntegration,
   PaginationContext,
   SearchBuilders,

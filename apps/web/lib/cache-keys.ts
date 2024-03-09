@@ -65,4 +65,5 @@ export const CACHE_KEYS = {
     input,
   ],
   blob: (url: string) => ["BLOB", url],
+  token: (name: string) => ["TOKEN", name],
 } as const;

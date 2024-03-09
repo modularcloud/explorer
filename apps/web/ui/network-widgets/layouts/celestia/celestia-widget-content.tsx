@@ -46,7 +46,7 @@ export function CelestiaWidgetLayoutContent({
   const [apiResult, latestBlocks, latestTransactions] = data;
 
   return (
-    <div className="max-w-[1060px] mx-auto grid gap-4 w-full">
+    <div className="mx-auto grid gap-4 w-full">
       <div className="hidden tab:inline-block h-4 mx-auto text-center">
         {lastUpdatedTime && (
           <time

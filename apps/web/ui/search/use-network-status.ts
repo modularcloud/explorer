@@ -2,6 +2,7 @@ import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { CACHE_KEYS } from "~/lib/cache-keys";
 import { jsonFetch } from "~/lib/shared-utils";
+import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 const networkStatusResponseSchema = z.record(
   z.string(),
@@ -37,6 +38,14 @@ export function useNetworkStatus(networkSlug: string | null) {
   return useQuery({
     queryKey: CACHE_KEYS.networks.status(networkSlug ?? ""),
     queryFn: ({ signal }) => {
+      if (
+        networkSlug &&
+        ALWAYS_ONLINE_NETWORKS.some((brand) => networkSlug.startsWith(brand))
+      ) {
+        return {
+          [networkSlug]: { healthy: true },
+        };
+      }
       return jsonFetch(`/api/health?networkSlugs=${networkSlug}`, {
         signal,
       }).then(networkStatusResponseSchema.parse);

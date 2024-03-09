@@ -1,7 +1,8 @@
 import "server-only";
-import { type SingleNetwork, getAllNetworks } from "./network";
+import { getAllNetworks } from "./network";
 import { arrayGroupByTo2DArray } from "./shared-utils";
 import { cache } from "react";
+import type { SingleNetwork } from "./fetch-networks";
 
 /**
  * Transform the list of integrations to a `searchOptions` object
@@ -10,7 +11,7 @@ import { cache } from "react";
  */
 export const getGroupedNetworkChains = cache(
   async function getGroupedNetworkChains() {
-    const integrations = await getAllNetworks();
+    const integrations = getAllNetworks();
 
     const options: NetworkChain[] = integrations.map((currentNetwork) => ({
       brandColor: currentNetwork.config.primaryColor,
@@ -23,6 +24,9 @@ export const getGroupedNetworkChains = cache(
       platform: currentNetwork.config.platform,
       accountId: currentNetwork.accountId,
       ecosystems: currentNetwork.config.ecosystems,
+      brandCSSGradient: currentNetwork.config.cssGradient,
+      token: currentNetwork.config.token,
+      description: currentNetwork.config.description,
     }));
 
     return arrayGroupByTo2DArray(options, "accountId");
@@ -44,4 +48,7 @@ export type NetworkChain = {
   logoURL: string;
   slug: string;
   ecosystems: string[];
+  brandCSSGradient: string;
+  description?: string;
+  token: SingleNetwork["config"]["token"];
 };

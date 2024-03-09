@@ -14,7 +14,7 @@ import type {
 import { FancyCheck } from "~/ui/icons";
 import { Tooltip } from "~/ui/tooltip";
 import { useNetworkStatuses } from "./use-network-status";
-import { useSearchOptionsContext } from "~/ui/search-options-context";
+import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 import { ALWAYS_ONLINE_NETWORKS } from "~/lib/constants";
 
 interface Props {
@@ -165,7 +165,7 @@ const BrandChains = React.memo(function BrandChains({
 }: BrandChainsProps) {
   const groupName = options[0].brandName;
 
-  const allNetworkChains = useSearchOptionsContext();
+  const allNetworkChains = useGroupedNetworksContext();
 
   const values = allNetworkChains.flat();
   const brandEcosystems = options[0].ecosystems ?? [];
