@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { notFound } from "next/navigation";
 import { getAllPaidNetworks, getSingleNetwork } from "~/lib/network";
-import { capitalize, getEcosystemSVGLogoSRC, range } from "~/lib/shared-utils";
+import { capitalize, getBrandSVGLogoSRC, range } from "~/lib/shared-utils";
 
 import type { Metadata } from "next";
 import type { HeadlessRoute } from "~/lib/headless-utils";
@@ -298,7 +298,9 @@ function HeroSection({ network }: { network: SingleNetwork }) {
           >
             <Image
               src={
-                getEcosystemSVGLogoSRC(network.brand) ?? network.config.logoUrl
+                network.config.platform === "dymension"
+                  ? "/images/dymension-logo-white.svg"
+                  : getBrandSVGLogoSRC(network.brand) ?? network.config.logoUrl
               }
               className="w-4 h-4 object-contain object-center rounded-full"
               width={16}

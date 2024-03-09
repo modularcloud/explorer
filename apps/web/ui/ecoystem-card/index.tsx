@@ -2,7 +2,7 @@
 import { Card } from "~/ui/card";
 import { useGroupedNetworksContext } from "~/ui/grouped-networks-context";
 import Image from "next/image";
-import { capitalize, getEcosystemSVGLogoSRC } from "~/lib/shared-utils";
+import { capitalize, getBrandSVGLogoSRC } from "~/lib/shared-utils";
 import { Button } from "~/ui/button";
 import { LinkOut } from "~/ui/icons";
 
@@ -45,7 +45,7 @@ export function EcosystemCard({ ecosystem }: Props) {
           }}
         >
           <Image
-            src={getEcosystemSVGLogoSRC(ecosystemChain.brandName)!}
+            src={getBrandSVGLogoSRC(ecosystemChain.brandName)!}
             className="w-4 h-4 object-contain object-center rounded-full"
             width={16}
             height={16}

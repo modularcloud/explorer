@@ -4,8 +4,8 @@ import * as React from "react";
 import { MCLogo } from "~/ui/mc-logo";
 import Link from "next/link";
 import Image from "next/image";
-import { getEcosystemSVGLogoSRC } from "~/lib/shared-utils";
-import { Heart } from "../icons";
+import { getBrandSVGLogoSRC } from "~/lib/shared-utils";
+import { Heart } from "~/ui/icons";
 import { useCurrentNetwork } from "~/lib/hooks/use-current-network";
 
 export function BrandedLogo() {
@@ -26,7 +26,11 @@ export function BrandedLogo() {
           aria-hidden="true"
         />
         <Image
-          src={getEcosystemSVGLogoSRC(network.brandName) ?? network.logoURL}
+          src={
+            network.ecosystems.includes("dymension-froopyland")
+              ? "/images/dymension-logo-white.svg"
+              : getBrandSVGLogoSRC(network.brandName) ?? network.logoURL
+          }
           alt="Logo network"
           width={32}
           height={32}

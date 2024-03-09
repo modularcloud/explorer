@@ -289,7 +289,7 @@ export function getMetadata(
   };
 }
 
-export function getEcosystemSVGLogoSRC(ecosystemBrand: string) {
+export function getBrandSVGLogoSRC(ecosystemBrand: string) {
   switch (ecosystemBrand) {
     case "celestia":
       return "/images/celestia-logo-white.svg";
