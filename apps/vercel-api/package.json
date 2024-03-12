@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nitro build",
-    "dev": "PORT=1234 nitro dev",
+    "dev": "PORT=1234 nitro dev --host",
     "prepare": "nitro prepare",
     "preview": "node .output/server/index.mjs"
   },
