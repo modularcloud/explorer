@@ -1,5 +1,8 @@
 import { env } from "~/env";
-import type { IBCTransferEvent } from "~/lib/dymension-utils";
+import {
+  createDymensionIBCTableIfNotExists,
+  type IBCTransferEvent,
+} from "~/lib/dymension-utils";
 import { registerResolvers, resolve } from "@modularcloud/headless";
 import { sql } from "@vercel/postgres";
 
@@ -21,6 +24,7 @@ export default eventHandler(async (event) => {
       "https://froopyland.blockpi.network/rpc/v1/0837569d56317f9a6af3c82170a7242ce8319ae4",
   } as const;
 
+  await createDymensionIBCTableIfNotExists();
   registerResolvers();
   const result = await resolve(
     DYMENSION_ROLLAPP_IBC_RESOLVER_ID,
