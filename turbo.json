@@ -17,6 +17,10 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "vercel-api#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".vercel/**"]
+    },
     "web#build": {
       "dependsOn": ["^build", "web#prefetch:networks-prod"],
       "env": [
