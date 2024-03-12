@@ -1,11 +1,17 @@
 {
   "name": "@modularcloud-resolver/celestia",
   "version": "0.0.0",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist"
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --dts --external react",
