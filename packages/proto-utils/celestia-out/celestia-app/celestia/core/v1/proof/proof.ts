@@ -1,7 +1,6 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Proof } from "../../../../tendermint/crypto/proof";
 
 export const protobufPackage = "celestia.core.v1.proof";
 
@@ -55,6 +54,14 @@ export interface NMTProof {
    * resulting 40 bytes total.
    */
   leafHash: Uint8Array;
+}
+
+/** Proof is taken from the merkle package */
+export interface Proof {
+  total: Long;
+  index: Long;
+  leafHash: Uint8Array;
+  aunts: Uint8Array[];
 }
 
 function createBaseShareProof(): ShareProof {
@@ -399,6 +406,110 @@ export const NMTProof = {
     message.end = object.end ?? 0;
     message.nodes = object.nodes?.map((e) => e) || [];
     message.leafHash = object.leafHash ?? new Uint8Array(0);
+    return message;
+  },
+};
+
+function createBaseProof(): Proof {
+  return { total: Long.ZERO, index: Long.ZERO, leafHash: new Uint8Array(0), aunts: [] };
+}
+
+export const Proof = {
+  encode(message: Proof, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.total.isZero()) {
+      writer.uint32(8).int64(message.total);
+    }
+    if (!message.index.isZero()) {
+      writer.uint32(16).int64(message.index);
+    }
+    if (message.leafHash.length !== 0) {
+      writer.uint32(26).bytes(message.leafHash);
+    }
+    for (const v of message.aunts) {
+      writer.uint32(34).bytes(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Proof {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseProof();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.total = reader.int64() as Long;
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.index = reader.int64() as Long;
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.leafHash = reader.bytes();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.aunts.push(reader.bytes());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Proof {
+    return {
+      total: isSet(object.total) ? Long.fromValue(object.total) : Long.ZERO,
+      index: isSet(object.index) ? Long.fromValue(object.index) : Long.ZERO,
+      leafHash: isSet(object.leafHash) ? bytesFromBase64(object.leafHash) : new Uint8Array(0),
+      aunts: globalThis.Array.isArray(object?.aunts) ? object.aunts.map((e: any) => bytesFromBase64(e)) : [],
+    };
+  },
+
+  toJSON(message: Proof): unknown {
+    const obj: any = {};
+    if (!message.total.isZero()) {
+      obj.total = (message.total || Long.ZERO).toString();
+    }
+    if (!message.index.isZero()) {
+      obj.index = (message.index || Long.ZERO).toString();
+    }
+    if (message.leafHash.length !== 0) {
+      obj.leafHash = base64FromBytes(message.leafHash);
+    }
+    if (message.aunts?.length) {
+      obj.aunts = message.aunts.map((e) => base64FromBytes(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Proof>, I>>(base?: I): Proof {
+    return Proof.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Proof>, I>>(object: I): Proof {
+    const message = createBaseProof();
+    message.total = (object.total !== undefined && object.total !== null) ? Long.fromValue(object.total) : Long.ZERO;
+    message.index = (object.index !== undefined && object.index !== null) ? Long.fromValue(object.index) : Long.ZERO;
+    message.leafHash = object.leafHash ?? new Uint8Array(0);
+    message.aunts = object.aunts?.map((e) => e) || [];
     return message;
   },
 };

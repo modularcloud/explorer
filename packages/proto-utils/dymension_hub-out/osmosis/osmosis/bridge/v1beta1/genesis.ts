@@ -1,31 +1,24 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Params } from "./params";
-import { Sequencer } from "./sequencer";
+import { Params } from "./bridge";
 
-export const protobufPackage = "dymensionxyz.dymension.sequencer";
+export const protobufPackage = "osmosis.bridge.v1beta1";
 
-/** GenesisState defines the sequencer module's genesis state. */
+/** GenesisState defines the mint module's genesis state. */
 export interface GenesisState {
-  params:
-    | Params
-    | undefined;
-  /** this line is used by starport scaffolding # genesis/proto/state */
-  sequencerList: Sequencer[];
+  /** Params defines params for x/bridge module. */
+  params: Params | undefined;
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, sequencerList: [] };
+  return { params: undefined };
 }
 
 export const GenesisState = {
   encode(message: GenesisState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
-    }
-    for (const v of message.sequencerList) {
-      Sequencer.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -44,13 +37,6 @@ export const GenesisState = {
 
           message.params = Params.decode(reader, reader.uint32());
           continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.sequencerList.push(Sequencer.decode(reader, reader.uint32()));
-          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -61,21 +47,13 @@ export const GenesisState = {
   },
 
   fromJSON(object: any): GenesisState {
-    return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-      sequencerList: globalThis.Array.isArray(object?.sequencerList)
-        ? object.sequencerList.map((e: any) => Sequencer.fromJSON(e))
-        : [],
-    };
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
     if (message.params !== undefined) {
       obj.params = Params.toJSON(message.params);
-    }
-    if (message.sequencerList?.length) {
-      obj.sequencerList = message.sequencerList.map((e) => Sequencer.toJSON(e));
     }
     return obj;
   },
@@ -88,7 +66,6 @@ export const GenesisState = {
     message.params = (object.params !== undefined && object.params !== null)
       ? Params.fromPartial(object.params)
       : undefined;
-    message.sequencerList = object.sequencerList?.map((e) => Sequencer.fromPartial(e)) || [];
     return message;
   },
 };

@@ -6,7 +6,7 @@ import { AccumulatorContent, Record } from "../../accum/v1beta1/accum";
 import { Params } from "../params";
 import { IncentiveRecord } from "./incentive_record";
 import { Position } from "./position";
-import { TickInfo } from "./tickInfo";
+import { TickInfo } from "./tick_info";
 
 export const protobufPackage = "osmosis.concentratedliquidity.v1beta1";
 
@@ -58,6 +58,7 @@ export interface GenesisState {
   positionData: PositionData[];
   nextPositionId: Long;
   nextIncentiveRecordId: Long;
+  incentivesAccumulatorPoolIdMigrationThreshold: Long;
 }
 
 /**
@@ -420,6 +421,7 @@ function createBaseGenesisState(): GenesisState {
     positionData: [],
     nextPositionId: Long.UZERO,
     nextIncentiveRecordId: Long.UZERO,
+    incentivesAccumulatorPoolIdMigrationThreshold: Long.UZERO,
   };
 }
 
@@ -439,6 +441,9 @@ export const GenesisState = {
     }
     if (!message.nextIncentiveRecordId.isZero()) {
       writer.uint32(40).uint64(message.nextIncentiveRecordId);
+    }
+    if (!message.incentivesAccumulatorPoolIdMigrationThreshold.isZero()) {
+      writer.uint32(48).uint64(message.incentivesAccumulatorPoolIdMigrationThreshold);
     }
     return writer;
   },
@@ -485,6 +490,13 @@ export const GenesisState = {
 
           message.nextIncentiveRecordId = reader.uint64() as Long;
           continue;
+        case 6:
+          if (tag !== 48) {
+            break;
+          }
+
+          message.incentivesAccumulatorPoolIdMigrationThreshold = reader.uint64() as Long;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -504,6 +516,9 @@ export const GenesisState = {
       nextPositionId: isSet(object.nextPositionId) ? Long.fromValue(object.nextPositionId) : Long.UZERO,
       nextIncentiveRecordId: isSet(object.nextIncentiveRecordId)
         ? Long.fromValue(object.nextIncentiveRecordId)
+        : Long.UZERO,
+      incentivesAccumulatorPoolIdMigrationThreshold: isSet(object.incentivesAccumulatorPoolIdMigrationThreshold)
+        ? Long.fromValue(object.incentivesAccumulatorPoolIdMigrationThreshold)
         : Long.UZERO,
     };
   },
@@ -525,6 +540,10 @@ export const GenesisState = {
     if (!message.nextIncentiveRecordId.isZero()) {
       obj.nextIncentiveRecordId = (message.nextIncentiveRecordId || Long.UZERO).toString();
     }
+    if (!message.incentivesAccumulatorPoolIdMigrationThreshold.isZero()) {
+      obj.incentivesAccumulatorPoolIdMigrationThreshold =
+        (message.incentivesAccumulatorPoolIdMigrationThreshold || Long.UZERO).toString();
+    }
     return obj;
   },
 
@@ -544,6 +563,11 @@ export const GenesisState = {
     message.nextIncentiveRecordId =
       (object.nextIncentiveRecordId !== undefined && object.nextIncentiveRecordId !== null)
         ? Long.fromValue(object.nextIncentiveRecordId)
+        : Long.UZERO;
+    message.incentivesAccumulatorPoolIdMigrationThreshold =
+      (object.incentivesAccumulatorPoolIdMigrationThreshold !== undefined &&
+          object.incentivesAccumulatorPoolIdMigrationThreshold !== null)
+        ? Long.fromValue(object.incentivesAccumulatorPoolIdMigrationThreshold)
         : Long.UZERO;
     return message;
   },

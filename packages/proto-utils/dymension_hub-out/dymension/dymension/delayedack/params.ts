@@ -1,31 +1,22 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../cosmos/base/v1beta1/coin";
-import { Duration } from "../../google/protobuf/duration";
 
-export const protobufPackage = "dymensionxyz.dymension.sequencer";
+export const protobufPackage = "dymensionxyz.dymension.delayedack";
 
 /** Params defines the parameters for the module. */
 export interface Params {
-  minBond:
-    | Coin
-    | undefined;
-  /** unbonding_time is the time duration of unbonding. */
-  unbondingTime: Duration | undefined;
+  epochIdentifier: string;
 }
 
 function createBaseParams(): Params {
-  return { minBond: undefined, unbondingTime: undefined };
+  return { epochIdentifier: "" };
 }
 
 export const Params = {
   encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.minBond !== undefined) {
-      Coin.encode(message.minBond, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.unbondingTime !== undefined) {
-      Duration.encode(message.unbondingTime, writer.uint32(18).fork()).ldelim();
+    if (message.epochIdentifier !== "") {
+      writer.uint32(10).string(message.epochIdentifier);
     }
     return writer;
   },
@@ -42,14 +33,7 @@ export const Params = {
             break;
           }
 
-          message.minBond = Coin.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.unbondingTime = Duration.decode(reader, reader.uint32());
+          message.epochIdentifier = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -61,19 +45,13 @@ export const Params = {
   },
 
   fromJSON(object: any): Params {
-    return {
-      minBond: isSet(object.minBond) ? Coin.fromJSON(object.minBond) : undefined,
-      unbondingTime: isSet(object.unbondingTime) ? Duration.fromJSON(object.unbondingTime) : undefined,
-    };
+    return { epochIdentifier: isSet(object.epochIdentifier) ? globalThis.String(object.epochIdentifier) : "" };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
-    if (message.minBond !== undefined) {
-      obj.minBond = Coin.toJSON(message.minBond);
-    }
-    if (message.unbondingTime !== undefined) {
-      obj.unbondingTime = Duration.toJSON(message.unbondingTime);
+    if (message.epochIdentifier !== "") {
+      obj.epochIdentifier = message.epochIdentifier;
     }
     return obj;
   },
@@ -83,12 +61,7 @@ export const Params = {
   },
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
-    message.minBond = (object.minBond !== undefined && object.minBond !== null)
-      ? Coin.fromPartial(object.minBond)
-      : undefined;
-    message.unbondingTime = (object.unbondingTime !== undefined && object.unbondingTime !== null)
-      ? Duration.fromPartial(object.unbondingTime)
-      : undefined;
+    message.epochIdentifier = object.epochIdentifier ?? "";
     return message;
   },
 };

@@ -4,20 +4,9 @@ import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
 import { OperatingStatus, operatingStatusFromJSON, operatingStatusToJSON } from "./operating_status";
 import { Params } from "./params";
-import { Scheduler } from "./scheduler";
 import { Sequencer } from "./sequencer";
 
 export const protobufPackage = "dymensionxyz.dymension.sequencer";
-
-/** SequencerInfo holds information for user query. */
-export interface SequencerInfo {
-  /** basic sequencer info */
-  sequencer:
-    | Sequencer
-    | undefined;
-  /** sequencers' operating status */
-  status: OperatingStatus;
-}
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
 export interface QueryParamsRequest {
@@ -34,15 +23,15 @@ export interface QueryGetSequencerRequest {
 }
 
 export interface QueryGetSequencerResponse {
-  sequencerInfo: SequencerInfo | undefined;
+  sequencer: Sequencer | undefined;
 }
 
-export interface QueryAllSequencerRequest {
+export interface QuerySequencersRequest {
   pagination: PageRequest | undefined;
 }
 
-export interface QueryAllSequencerResponse {
-  sequencerInfoList: SequencerInfo[];
+export interface QuerySequencersResponse {
+  sequencers: Sequencer[];
   pagination: PageResponse | undefined;
 }
 
@@ -51,111 +40,17 @@ export interface QueryGetSequencersByRollappRequest {
 }
 
 export interface QueryGetSequencersByRollappResponse {
+  sequencers: Sequencer[];
+}
+
+export interface QueryGetSequencersByRollappByStatusRequest {
   rollappId: string;
-  sequencerInfoList: SequencerInfo[];
+  status: OperatingStatus;
 }
 
-export interface QueryAllSequencersByRollappRequest {
-  pagination: PageRequest | undefined;
+export interface QueryGetSequencersByRollappByStatusResponse {
+  sequencers: Sequencer[];
 }
-
-export interface QueryAllSequencersByRollappResponse {
-  sequencersByRollapp: QueryGetSequencersByRollappResponse[];
-  pagination: PageResponse | undefined;
-}
-
-export interface QueryGetSchedulerRequest {
-  sequencerAddress: string;
-}
-
-export interface QueryGetSchedulerResponse {
-  scheduler: Scheduler | undefined;
-}
-
-export interface QueryAllSchedulerRequest {
-  pagination: PageRequest | undefined;
-}
-
-export interface QueryAllSchedulerResponse {
-  scheduler: Scheduler[];
-  pagination: PageResponse | undefined;
-}
-
-function createBaseSequencerInfo(): SequencerInfo {
-  return { sequencer: undefined, status: 0 };
-}
-
-export const SequencerInfo = {
-  encode(message: SequencerInfo, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sequencer !== undefined) {
-      Sequencer.encode(message.sequencer, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.status !== 0) {
-      writer.uint32(16).int32(message.status);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): SequencerInfo {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSequencerInfo();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.sequencer = Sequencer.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.status = reader.int32() as any;
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): SequencerInfo {
-    return {
-      sequencer: isSet(object.sequencer) ? Sequencer.fromJSON(object.sequencer) : undefined,
-      status: isSet(object.status) ? operatingStatusFromJSON(object.status) : 0,
-    };
-  },
-
-  toJSON(message: SequencerInfo): unknown {
-    const obj: any = {};
-    if (message.sequencer !== undefined) {
-      obj.sequencer = Sequencer.toJSON(message.sequencer);
-    }
-    if (message.status !== 0) {
-      obj.status = operatingStatusToJSON(message.status);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<SequencerInfo>, I>>(base?: I): SequencerInfo {
-    return SequencerInfo.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SequencerInfo>, I>>(object: I): SequencerInfo {
-    const message = createBaseSequencerInfo();
-    message.sequencer = (object.sequencer !== undefined && object.sequencer !== null)
-      ? Sequencer.fromPartial(object.sequencer)
-      : undefined;
-    message.status = object.status ?? 0;
-    return message;
-  },
-};
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
   return {};
@@ -317,13 +212,13 @@ export const QueryGetSequencerRequest = {
 };
 
 function createBaseQueryGetSequencerResponse(): QueryGetSequencerResponse {
-  return { sequencerInfo: undefined };
+  return { sequencer: undefined };
 }
 
 export const QueryGetSequencerResponse = {
   encode(message: QueryGetSequencerResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sequencerInfo !== undefined) {
-      SequencerInfo.encode(message.sequencerInfo, writer.uint32(10).fork()).ldelim();
+    if (message.sequencer !== undefined) {
+      Sequencer.encode(message.sequencer, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -340,7 +235,7 @@ export const QueryGetSequencerResponse = {
             break;
           }
 
-          message.sequencerInfo = SequencerInfo.decode(reader, reader.uint32());
+          message.sequencer = Sequencer.decode(reader, reader.uint32());
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -352,13 +247,13 @@ export const QueryGetSequencerResponse = {
   },
 
   fromJSON(object: any): QueryGetSequencerResponse {
-    return { sequencerInfo: isSet(object.sequencerInfo) ? SequencerInfo.fromJSON(object.sequencerInfo) : undefined };
+    return { sequencer: isSet(object.sequencer) ? Sequencer.fromJSON(object.sequencer) : undefined };
   },
 
   toJSON(message: QueryGetSequencerResponse): unknown {
     const obj: any = {};
-    if (message.sequencerInfo !== undefined) {
-      obj.sequencerInfo = SequencerInfo.toJSON(message.sequencerInfo);
+    if (message.sequencer !== undefined) {
+      obj.sequencer = Sequencer.toJSON(message.sequencer);
     }
     return obj;
   },
@@ -368,29 +263,29 @@ export const QueryGetSequencerResponse = {
   },
   fromPartial<I extends Exact<DeepPartial<QueryGetSequencerResponse>, I>>(object: I): QueryGetSequencerResponse {
     const message = createBaseQueryGetSequencerResponse();
-    message.sequencerInfo = (object.sequencerInfo !== undefined && object.sequencerInfo !== null)
-      ? SequencerInfo.fromPartial(object.sequencerInfo)
+    message.sequencer = (object.sequencer !== undefined && object.sequencer !== null)
+      ? Sequencer.fromPartial(object.sequencer)
       : undefined;
     return message;
   },
 };
 
-function createBaseQueryAllSequencerRequest(): QueryAllSequencerRequest {
+function createBaseQuerySequencersRequest(): QuerySequencersRequest {
   return { pagination: undefined };
 }
 
-export const QueryAllSequencerRequest = {
-  encode(message: QueryAllSequencerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const QuerySequencersRequest = {
+  encode(message: QuerySequencersRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSequencerRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QuerySequencersRequest {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSequencerRequest();
+    const message = createBaseQuerySequencersRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -410,11 +305,11 @@ export const QueryAllSequencerRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllSequencerRequest {
+  fromJSON(object: any): QuerySequencersRequest {
     return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
   },
 
-  toJSON(message: QueryAllSequencerRequest): unknown {
+  toJSON(message: QuerySequencersRequest): unknown {
     const obj: any = {};
     if (message.pagination !== undefined) {
       obj.pagination = PageRequest.toJSON(message.pagination);
@@ -422,11 +317,11 @@ export const QueryAllSequencerRequest = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<QueryAllSequencerRequest>, I>>(base?: I): QueryAllSequencerRequest {
-    return QueryAllSequencerRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<QuerySequencersRequest>, I>>(base?: I): QuerySequencersRequest {
+    return QuerySequencersRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSequencerRequest>, I>>(object: I): QueryAllSequencerRequest {
-    const message = createBaseQueryAllSequencerRequest();
+  fromPartial<I extends Exact<DeepPartial<QuerySequencersRequest>, I>>(object: I): QuerySequencersRequest {
+    const message = createBaseQuerySequencersRequest();
     message.pagination = (object.pagination !== undefined && object.pagination !== null)
       ? PageRequest.fromPartial(object.pagination)
       : undefined;
@@ -434,14 +329,14 @@ export const QueryAllSequencerRequest = {
   },
 };
 
-function createBaseQueryAllSequencerResponse(): QueryAllSequencerResponse {
-  return { sequencerInfoList: [], pagination: undefined };
+function createBaseQuerySequencersResponse(): QuerySequencersResponse {
+  return { sequencers: [], pagination: undefined };
 }
 
-export const QueryAllSequencerResponse = {
-  encode(message: QueryAllSequencerResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.sequencerInfoList) {
-      SequencerInfo.encode(v!, writer.uint32(10).fork()).ldelim();
+export const QuerySequencersResponse = {
+  encode(message: QuerySequencersResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.sequencers) {
+      Sequencer.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     if (message.pagination !== undefined) {
       PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -449,10 +344,10 @@ export const QueryAllSequencerResponse = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSequencerResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QuerySequencersResponse {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSequencerResponse();
+    const message = createBaseQuerySequencersResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -461,7 +356,7 @@ export const QueryAllSequencerResponse = {
             break;
           }
 
-          message.sequencerInfoList.push(SequencerInfo.decode(reader, reader.uint32()));
+          message.sequencers.push(Sequencer.decode(reader, reader.uint32()));
           continue;
         case 2:
           if (tag !== 18) {
@@ -479,19 +374,19 @@ export const QueryAllSequencerResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllSequencerResponse {
+  fromJSON(object: any): QuerySequencersResponse {
     return {
-      sequencerInfoList: globalThis.Array.isArray(object?.sequencerInfoList)
-        ? object.sequencerInfoList.map((e: any) => SequencerInfo.fromJSON(e))
+      sequencers: globalThis.Array.isArray(object?.sequencers)
+        ? object.sequencers.map((e: any) => Sequencer.fromJSON(e))
         : [],
       pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
     };
   },
 
-  toJSON(message: QueryAllSequencerResponse): unknown {
+  toJSON(message: QuerySequencersResponse): unknown {
     const obj: any = {};
-    if (message.sequencerInfoList?.length) {
-      obj.sequencerInfoList = message.sequencerInfoList.map((e) => SequencerInfo.toJSON(e));
+    if (message.sequencers?.length) {
+      obj.sequencers = message.sequencers.map((e) => Sequencer.toJSON(e));
     }
     if (message.pagination !== undefined) {
       obj.pagination = PageResponse.toJSON(message.pagination);
@@ -499,12 +394,12 @@ export const QueryAllSequencerResponse = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<QueryAllSequencerResponse>, I>>(base?: I): QueryAllSequencerResponse {
-    return QueryAllSequencerResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<QuerySequencersResponse>, I>>(base?: I): QuerySequencersResponse {
+    return QuerySequencersResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSequencerResponse>, I>>(object: I): QueryAllSequencerResponse {
-    const message = createBaseQueryAllSequencerResponse();
-    message.sequencerInfoList = object.sequencerInfoList?.map((e) => SequencerInfo.fromPartial(e)) || [];
+  fromPartial<I extends Exact<DeepPartial<QuerySequencersResponse>, I>>(object: I): QuerySequencersResponse {
+    const message = createBaseQuerySequencersResponse();
+    message.sequencers = object.sequencers?.map((e) => Sequencer.fromPartial(e)) || [];
     message.pagination = (object.pagination !== undefined && object.pagination !== null)
       ? PageResponse.fromPartial(object.pagination)
       : undefined;
@@ -574,16 +469,13 @@ export const QueryGetSequencersByRollappRequest = {
 };
 
 function createBaseQueryGetSequencersByRollappResponse(): QueryGetSequencersByRollappResponse {
-  return { rollappId: "", sequencerInfoList: [] };
+  return { sequencers: [] };
 }
 
 export const QueryGetSequencersByRollappResponse = {
   encode(message: QueryGetSequencersByRollappResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.rollappId !== "") {
-      writer.uint32(10).string(message.rollappId);
-    }
-    for (const v of message.sequencerInfoList) {
-      SequencerInfo.encode(v!, writer.uint32(18).fork()).ldelim();
+    for (const v of message.sequencers) {
+      Sequencer.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -600,14 +492,7 @@ export const QueryGetSequencersByRollappResponse = {
             break;
           }
 
-          message.rollappId = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.sequencerInfoList.push(SequencerInfo.decode(reader, reader.uint32()));
+          message.sequencers.push(Sequencer.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -620,20 +505,16 @@ export const QueryGetSequencersByRollappResponse = {
 
   fromJSON(object: any): QueryGetSequencersByRollappResponse {
     return {
-      rollappId: isSet(object.rollappId) ? globalThis.String(object.rollappId) : "",
-      sequencerInfoList: globalThis.Array.isArray(object?.sequencerInfoList)
-        ? object.sequencerInfoList.map((e: any) => SequencerInfo.fromJSON(e))
+      sequencers: globalThis.Array.isArray(object?.sequencers)
+        ? object.sequencers.map((e: any) => Sequencer.fromJSON(e))
         : [],
     };
   },
 
   toJSON(message: QueryGetSequencersByRollappResponse): unknown {
     const obj: any = {};
-    if (message.rollappId !== "") {
-      obj.rollappId = message.rollappId;
-    }
-    if (message.sequencerInfoList?.length) {
-      obj.sequencerInfoList = message.sequencerInfoList.map((e) => SequencerInfo.toJSON(e));
+    if (message.sequencers?.length) {
+      obj.sequencers = message.sequencers.map((e) => Sequencer.toJSON(e));
     }
     return obj;
   },
@@ -647,28 +528,105 @@ export const QueryGetSequencersByRollappResponse = {
     object: I,
   ): QueryGetSequencersByRollappResponse {
     const message = createBaseQueryGetSequencersByRollappResponse();
+    message.sequencers = object.sequencers?.map((e) => Sequencer.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseQueryGetSequencersByRollappByStatusRequest(): QueryGetSequencersByRollappByStatusRequest {
+  return { rollappId: "", status: 0 };
+}
+
+export const QueryGetSequencersByRollappByStatusRequest = {
+  encode(message: QueryGetSequencersByRollappByStatusRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.rollappId !== "") {
+      writer.uint32(10).string(message.rollappId);
+    }
+    if (message.status !== 0) {
+      writer.uint32(16).int32(message.status);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetSequencersByRollappByStatusRequest {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetSequencersByRollappByStatusRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.rollappId = reader.string();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.status = reader.int32() as any;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetSequencersByRollappByStatusRequest {
+    return {
+      rollappId: isSet(object.rollappId) ? globalThis.String(object.rollappId) : "",
+      status: isSet(object.status) ? operatingStatusFromJSON(object.status) : 0,
+    };
+  },
+
+  toJSON(message: QueryGetSequencersByRollappByStatusRequest): unknown {
+    const obj: any = {};
+    if (message.rollappId !== "") {
+      obj.rollappId = message.rollappId;
+    }
+    if (message.status !== 0) {
+      obj.status = operatingStatusToJSON(message.status);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<QueryGetSequencersByRollappByStatusRequest>, I>>(
+    base?: I,
+  ): QueryGetSequencersByRollappByStatusRequest {
+    return QueryGetSequencersByRollappByStatusRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryGetSequencersByRollappByStatusRequest>, I>>(
+    object: I,
+  ): QueryGetSequencersByRollappByStatusRequest {
+    const message = createBaseQueryGetSequencersByRollappByStatusRequest();
     message.rollappId = object.rollappId ?? "";
-    message.sequencerInfoList = object.sequencerInfoList?.map((e) => SequencerInfo.fromPartial(e)) || [];
+    message.status = object.status ?? 0;
     return message;
   },
 };
 
-function createBaseQueryAllSequencersByRollappRequest(): QueryAllSequencersByRollappRequest {
-  return { pagination: undefined };
+function createBaseQueryGetSequencersByRollappByStatusResponse(): QueryGetSequencersByRollappByStatusResponse {
+  return { sequencers: [] };
 }
 
-export const QueryAllSequencersByRollappRequest = {
-  encode(message: QueryAllSequencersByRollappRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+export const QueryGetSequencersByRollappByStatusResponse = {
+  encode(message: QueryGetSequencersByRollappByStatusResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.sequencers) {
+      Sequencer.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSequencersByRollappRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetSequencersByRollappByStatusResponse {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSequencersByRollappRequest();
+    const message = createBaseQueryGetSequencersByRollappByStatusResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -677,7 +635,7 @@ export const QueryAllSequencersByRollappRequest = {
             break;
           }
 
-          message.pagination = PageRequest.decode(reader, reader.uint32());
+          message.sequencers.push(Sequencer.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -688,366 +646,32 @@ export const QueryAllSequencersByRollappRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllSequencersByRollappRequest {
-    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
-  },
-
-  toJSON(message: QueryAllSequencersByRollappRequest): unknown {
-    const obj: any = {};
-    if (message.pagination !== undefined) {
-      obj.pagination = PageRequest.toJSON(message.pagination);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryAllSequencersByRollappRequest>, I>>(
-    base?: I,
-  ): QueryAllSequencersByRollappRequest {
-    return QueryAllSequencersByRollappRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSequencersByRollappRequest>, I>>(
-    object: I,
-  ): QueryAllSequencersByRollappRequest {
-    const message = createBaseQueryAllSequencersByRollappRequest();
-    message.pagination = (object.pagination !== undefined && object.pagination !== null)
-      ? PageRequest.fromPartial(object.pagination)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseQueryAllSequencersByRollappResponse(): QueryAllSequencersByRollappResponse {
-  return { sequencersByRollapp: [], pagination: undefined };
-}
-
-export const QueryAllSequencersByRollappResponse = {
-  encode(message: QueryAllSequencersByRollappResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.sequencersByRollapp) {
-      QueryGetSequencersByRollappResponse.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSequencersByRollappResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSequencersByRollappResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.sequencersByRollapp.push(QueryGetSequencersByRollappResponse.decode(reader, reader.uint32()));
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.pagination = PageResponse.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllSequencersByRollappResponse {
+  fromJSON(object: any): QueryGetSequencersByRollappByStatusResponse {
     return {
-      sequencersByRollapp: globalThis.Array.isArray(object?.sequencersByRollapp)
-        ? object.sequencersByRollapp.map((e: any) => QueryGetSequencersByRollappResponse.fromJSON(e))
+      sequencers: globalThis.Array.isArray(object?.sequencers)
+        ? object.sequencers.map((e: any) => Sequencer.fromJSON(e))
         : [],
-      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
     };
   },
 
-  toJSON(message: QueryAllSequencersByRollappResponse): unknown {
+  toJSON(message: QueryGetSequencersByRollappByStatusResponse): unknown {
     const obj: any = {};
-    if (message.sequencersByRollapp?.length) {
-      obj.sequencersByRollapp = message.sequencersByRollapp.map((e) => QueryGetSequencersByRollappResponse.toJSON(e));
-    }
-    if (message.pagination !== undefined) {
-      obj.pagination = PageResponse.toJSON(message.pagination);
+    if (message.sequencers?.length) {
+      obj.sequencers = message.sequencers.map((e) => Sequencer.toJSON(e));
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<QueryAllSequencersByRollappResponse>, I>>(
+  create<I extends Exact<DeepPartial<QueryGetSequencersByRollappByStatusResponse>, I>>(
     base?: I,
-  ): QueryAllSequencersByRollappResponse {
-    return QueryAllSequencersByRollappResponse.fromPartial(base ?? ({} as any));
+  ): QueryGetSequencersByRollappByStatusResponse {
+    return QueryGetSequencersByRollappByStatusResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSequencersByRollappResponse>, I>>(
+  fromPartial<I extends Exact<DeepPartial<QueryGetSequencersByRollappByStatusResponse>, I>>(
     object: I,
-  ): QueryAllSequencersByRollappResponse {
-    const message = createBaseQueryAllSequencersByRollappResponse();
-    message.sequencersByRollapp =
-      object.sequencersByRollapp?.map((e) => QueryGetSequencersByRollappResponse.fromPartial(e)) || [];
-    message.pagination = (object.pagination !== undefined && object.pagination !== null)
-      ? PageResponse.fromPartial(object.pagination)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseQueryGetSchedulerRequest(): QueryGetSchedulerRequest {
-  return { sequencerAddress: "" };
-}
-
-export const QueryGetSchedulerRequest = {
-  encode(message: QueryGetSchedulerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.sequencerAddress !== "") {
-      writer.uint32(10).string(message.sequencerAddress);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetSchedulerRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryGetSchedulerRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.sequencerAddress = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetSchedulerRequest {
-    return { sequencerAddress: isSet(object.sequencerAddress) ? globalThis.String(object.sequencerAddress) : "" };
-  },
-
-  toJSON(message: QueryGetSchedulerRequest): unknown {
-    const obj: any = {};
-    if (message.sequencerAddress !== "") {
-      obj.sequencerAddress = message.sequencerAddress;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryGetSchedulerRequest>, I>>(base?: I): QueryGetSchedulerRequest {
-    return QueryGetSchedulerRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryGetSchedulerRequest>, I>>(object: I): QueryGetSchedulerRequest {
-    const message = createBaseQueryGetSchedulerRequest();
-    message.sequencerAddress = object.sequencerAddress ?? "";
-    return message;
-  },
-};
-
-function createBaseQueryGetSchedulerResponse(): QueryGetSchedulerResponse {
-  return { scheduler: undefined };
-}
-
-export const QueryGetSchedulerResponse = {
-  encode(message: QueryGetSchedulerResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.scheduler !== undefined) {
-      Scheduler.encode(message.scheduler, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetSchedulerResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryGetSchedulerResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.scheduler = Scheduler.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetSchedulerResponse {
-    return { scheduler: isSet(object.scheduler) ? Scheduler.fromJSON(object.scheduler) : undefined };
-  },
-
-  toJSON(message: QueryGetSchedulerResponse): unknown {
-    const obj: any = {};
-    if (message.scheduler !== undefined) {
-      obj.scheduler = Scheduler.toJSON(message.scheduler);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryGetSchedulerResponse>, I>>(base?: I): QueryGetSchedulerResponse {
-    return QueryGetSchedulerResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryGetSchedulerResponse>, I>>(object: I): QueryGetSchedulerResponse {
-    const message = createBaseQueryGetSchedulerResponse();
-    message.scheduler = (object.scheduler !== undefined && object.scheduler !== null)
-      ? Scheduler.fromPartial(object.scheduler)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseQueryAllSchedulerRequest(): QueryAllSchedulerRequest {
-  return { pagination: undefined };
-}
-
-export const QueryAllSchedulerRequest = {
-  encode(message: QueryAllSchedulerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSchedulerRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSchedulerRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.pagination = PageRequest.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllSchedulerRequest {
-    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
-  },
-
-  toJSON(message: QueryAllSchedulerRequest): unknown {
-    const obj: any = {};
-    if (message.pagination !== undefined) {
-      obj.pagination = PageRequest.toJSON(message.pagination);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryAllSchedulerRequest>, I>>(base?: I): QueryAllSchedulerRequest {
-    return QueryAllSchedulerRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSchedulerRequest>, I>>(object: I): QueryAllSchedulerRequest {
-    const message = createBaseQueryAllSchedulerRequest();
-    message.pagination = (object.pagination !== undefined && object.pagination !== null)
-      ? PageRequest.fromPartial(object.pagination)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseQueryAllSchedulerResponse(): QueryAllSchedulerResponse {
-  return { scheduler: [], pagination: undefined };
-}
-
-export const QueryAllSchedulerResponse = {
-  encode(message: QueryAllSchedulerResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.scheduler) {
-      Scheduler.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllSchedulerResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllSchedulerResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.scheduler.push(Scheduler.decode(reader, reader.uint32()));
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.pagination = PageResponse.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllSchedulerResponse {
-    return {
-      scheduler: globalThis.Array.isArray(object?.scheduler)
-        ? object.scheduler.map((e: any) => Scheduler.fromJSON(e))
-        : [],
-      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
-    };
-  },
-
-  toJSON(message: QueryAllSchedulerResponse): unknown {
-    const obj: any = {};
-    if (message.scheduler?.length) {
-      obj.scheduler = message.scheduler.map((e) => Scheduler.toJSON(e));
-    }
-    if (message.pagination !== undefined) {
-      obj.pagination = PageResponse.toJSON(message.pagination);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryAllSchedulerResponse>, I>>(base?: I): QueryAllSchedulerResponse {
-    return QueryAllSchedulerResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryAllSchedulerResponse>, I>>(object: I): QueryAllSchedulerResponse {
-    const message = createBaseQueryAllSchedulerResponse();
-    message.scheduler = object.scheduler?.map((e) => Scheduler.fromPartial(e)) || [];
-    message.pagination = (object.pagination !== undefined && object.pagination !== null)
-      ? PageResponse.fromPartial(object.pagination)
-      : undefined;
+  ): QueryGetSequencersByRollappByStatusResponse {
+    const message = createBaseQueryGetSequencersByRollappByStatusResponse();
+    message.sequencers = object.sequencers?.map((e) => Sequencer.fromPartial(e)) || [];
     return message;
   },
 };
@@ -1056,18 +680,16 @@ export const QueryAllSchedulerResponse = {
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
-  /** Queries a Sequencer by index. */
+  /** Queries a Sequencer by address. */
   Sequencer(request: QueryGetSequencerRequest): Promise<QueryGetSequencerResponse>;
   /** Queries a list of Sequencer items. */
-  SequencerAll(request: QueryAllSequencerRequest): Promise<QueryAllSequencerResponse>;
-  /** Queries a SequencersByRollapp by index. */
+  Sequencers(request: QuerySequencersRequest): Promise<QuerySequencersResponse>;
+  /** Queries a SequencersByRollapp by rollappId. */
   SequencersByRollapp(request: QueryGetSequencersByRollappRequest): Promise<QueryGetSequencersByRollappResponse>;
-  /** Queries a list of SequencersByRollapp items. */
-  SequencersByRollappAll(request: QueryAllSequencersByRollappRequest): Promise<QueryAllSequencersByRollappResponse>;
-  /** Queries a Scheduler by index. */
-  Scheduler(request: QueryGetSchedulerRequest): Promise<QueryGetSchedulerResponse>;
-  /** Queries a list of Scheduler items. */
-  SchedulerAll(request: QueryAllSchedulerRequest): Promise<QueryAllSchedulerResponse>;
+  /** Queries a SequencersByRollappByStatus */
+  SequencersByRollappByStatus(
+    request: QueryGetSequencersByRollappByStatusRequest,
+  ): Promise<QueryGetSequencersByRollappByStatusResponse>;
 }
 
 export const QueryServiceName = "dymensionxyz.dymension.sequencer.Query";
@@ -1079,11 +701,9 @@ export class QueryClientImpl implements Query {
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
     this.Sequencer = this.Sequencer.bind(this);
-    this.SequencerAll = this.SequencerAll.bind(this);
+    this.Sequencers = this.Sequencers.bind(this);
     this.SequencersByRollapp = this.SequencersByRollapp.bind(this);
-    this.SequencersByRollappAll = this.SequencersByRollappAll.bind(this);
-    this.Scheduler = this.Scheduler.bind(this);
-    this.SchedulerAll = this.SchedulerAll.bind(this);
+    this.SequencersByRollappByStatus = this.SequencersByRollappByStatus.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -1097,10 +717,10 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryGetSequencerResponse.decode(_m0.Reader.create(data)));
   }
 
-  SequencerAll(request: QueryAllSequencerRequest): Promise<QueryAllSequencerResponse> {
-    const data = QueryAllSequencerRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SequencerAll", data);
-    return promise.then((data) => QueryAllSequencerResponse.decode(_m0.Reader.create(data)));
+  Sequencers(request: QuerySequencersRequest): Promise<QuerySequencersResponse> {
+    const data = QuerySequencersRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "Sequencers", data);
+    return promise.then((data) => QuerySequencersResponse.decode(_m0.Reader.create(data)));
   }
 
   SequencersByRollapp(request: QueryGetSequencersByRollappRequest): Promise<QueryGetSequencersByRollappResponse> {
@@ -1109,22 +729,12 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryGetSequencersByRollappResponse.decode(_m0.Reader.create(data)));
   }
 
-  SequencersByRollappAll(request: QueryAllSequencersByRollappRequest): Promise<QueryAllSequencersByRollappResponse> {
-    const data = QueryAllSequencersByRollappRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SequencersByRollappAll", data);
-    return promise.then((data) => QueryAllSequencersByRollappResponse.decode(_m0.Reader.create(data)));
-  }
-
-  Scheduler(request: QueryGetSchedulerRequest): Promise<QueryGetSchedulerResponse> {
-    const data = QueryGetSchedulerRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "Scheduler", data);
-    return promise.then((data) => QueryGetSchedulerResponse.decode(_m0.Reader.create(data)));
-  }
-
-  SchedulerAll(request: QueryAllSchedulerRequest): Promise<QueryAllSchedulerResponse> {
-    const data = QueryAllSchedulerRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SchedulerAll", data);
-    return promise.then((data) => QueryAllSchedulerResponse.decode(_m0.Reader.create(data)));
+  SequencersByRollappByStatus(
+    request: QueryGetSequencersByRollappByStatusRequest,
+  ): Promise<QueryGetSequencersByRollappByStatusResponse> {
+    const data = QueryGetSequencersByRollappByStatusRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SequencersByRollappByStatus", data);
+    return promise.then((data) => QueryGetSequencersByRollappByStatusResponse.decode(_m0.Reader.create(data)));
   }
 }
 

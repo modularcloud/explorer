@@ -1,22 +1,19 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { DemandOrder } from "./demand_order";
 import { Params } from "./params";
-import { Sequencer } from "./sequencer";
 
-export const protobufPackage = "dymensionxyz.dymension.sequencer";
+export const protobufPackage = "dymensionxyz.dymension.eibc";
 
-/** GenesisState defines the sequencer module's genesis state. */
+/** GenesisState defines the eibc module's genesis state. */
 export interface GenesisState {
-  params:
-    | Params
-    | undefined;
-  /** this line is used by starport scaffolding # genesis/proto/state */
-  sequencerList: Sequencer[];
+  params: Params | undefined;
+  demandOrders: DemandOrder[];
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, sequencerList: [] };
+  return { params: undefined, demandOrders: [] };
 }
 
 export const GenesisState = {
@@ -24,8 +21,8 @@ export const GenesisState = {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
-    for (const v of message.sequencerList) {
-      Sequencer.encode(v!, writer.uint32(18).fork()).ldelim();
+    for (const v of message.demandOrders) {
+      DemandOrder.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -49,7 +46,7 @@ export const GenesisState = {
             break;
           }
 
-          message.sequencerList.push(Sequencer.decode(reader, reader.uint32()));
+          message.demandOrders.push(DemandOrder.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -63,8 +60,8 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     return {
       params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-      sequencerList: globalThis.Array.isArray(object?.sequencerList)
-        ? object.sequencerList.map((e: any) => Sequencer.fromJSON(e))
+      demandOrders: globalThis.Array.isArray(object?.demandOrders)
+        ? object.demandOrders.map((e: any) => DemandOrder.fromJSON(e))
         : [],
     };
   },
@@ -74,8 +71,8 @@ export const GenesisState = {
     if (message.params !== undefined) {
       obj.params = Params.toJSON(message.params);
     }
-    if (message.sequencerList?.length) {
-      obj.sequencerList = message.sequencerList.map((e) => Sequencer.toJSON(e));
+    if (message.demandOrders?.length) {
+      obj.demandOrders = message.demandOrders.map((e) => DemandOrder.toJSON(e));
     }
     return obj;
   },
@@ -88,7 +85,7 @@ export const GenesisState = {
     message.params = (object.params !== undefined && object.params !== null)
       ? Params.fromPartial(object.params)
       : undefined;
-    message.sequencerList = object.sequencerList?.map((e) => Sequencer.fromPartial(e)) || [];
+    message.demandOrders = object.demandOrders?.map((e) => DemandOrder.fromPartial(e)) || [];
     return message;
   },
 };
