@@ -9,6 +9,17 @@ import {
 import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
+  if (!env.CRON_SECRET || !env.POSTGRES_URL) {
+    return NextResponse.json(
+      {
+        error: "Env variables are necessary to run this app",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
     return NextResponse.json(
