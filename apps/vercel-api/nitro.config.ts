@@ -4,7 +4,7 @@ import path from "node:path";
 //https://nitro.unjs.io/config
 export default defineNitroConfig({
   srcDir: "server",
-  preset: "vercel-edge",
+  preset: "vercel",
   alias: {
     "~": path.resolve(__dirname, "./"),
   },
