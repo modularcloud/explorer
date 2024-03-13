@@ -67,7 +67,7 @@ type ParsedMsg<T extends MsgType["typeUrl"]> = {
 // >;
 
 type DecodedAny = { typeUrl: string; decodedValue: any };
-export function getHubMessages(txRaw: string) {
+export function getHubMessages(txRaw: string): any {
   const txBuffer = Buffer.from(txRaw, "base64");
 
   const txBody = DymensionHub.Tx.decode(txBuffer).body;
