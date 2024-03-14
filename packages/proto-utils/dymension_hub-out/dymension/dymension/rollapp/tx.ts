@@ -3,10 +3,11 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { TokenMetadata } from "./bank";
 import { BlockDescriptors } from "./block_descriptor";
+import { GenesisAccount } from "./rollapp";
 
 export const protobufPackage = "dymensionxyz.dymension.rollapp";
 
-/** ===================== MsgCreateRollapp */
+/** MsgCreateRollapp creates a new rollapp chain on the hub. */
 export interface MsgCreateRollapp {
   /** creator is the bech32-encoded address of the rollapp creator */
   creator: string;
@@ -44,14 +45,15 @@ export interface MsgCreateRollapp {
   permissionedAddresses: string[];
   /** metadata provides the client information for all the registered tokens. */
   metadatas: TokenMetadata[];
+  /** genesis_accounts for the rollapp on the hub */
+  genesisAccounts: GenesisAccount[];
 }
 
 export interface MsgCreateRollappResponse {
 }
 
 /**
- * ===================== MsgUpdateState
- * Updating a rollapp state with a block batch
+ * MsgUpdateState updates a rollapp state with a block batch.
  * a block batch is a list of ordered blocks (by height)
  */
 export interface MsgUpdateState {
@@ -80,6 +82,22 @@ export interface MsgUpdateState {
 export interface MsgUpdateStateResponse {
 }
 
+/** MsgRollappGenesisEvent is the message type for triggering the genesis event of the rollapp */
+export interface MsgRollappGenesisEvent {
+  /** address is the bech32-encoded address of the sender */
+  address: string;
+  /** channel_id is the rollapp channel id on the hub */
+  channelId: string;
+  /**
+   * rollapp_id is the rollapp id we want to mint tokens on the hub.
+   * Used for validation against channel_id to reduce error surface.
+   */
+  rollappId: string;
+}
+
+export interface MsgRollappGenesisEventResponse {
+}
+
 function createBaseMsgCreateRollapp(): MsgCreateRollapp {
   return {
     creator: "",
@@ -90,6 +108,7 @@ function createBaseMsgCreateRollapp(): MsgCreateRollapp {
     maxSequencers: Long.UZERO,
     permissionedAddresses: [],
     metadatas: [],
+    genesisAccounts: [],
   };
 }
 
@@ -118,6 +137,9 @@ export const MsgCreateRollapp = {
     }
     for (const v of message.metadatas) {
       TokenMetadata.encode(v!, writer.uint32(66).fork()).ldelim();
+    }
+    for (const v of message.genesisAccounts) {
+      GenesisAccount.encode(v!, writer.uint32(82).fork()).ldelim();
     }
     return writer;
   },
@@ -185,6 +207,13 @@ export const MsgCreateRollapp = {
 
           message.metadatas.push(TokenMetadata.decode(reader, reader.uint32()));
           continue;
+        case 10:
+          if (tag !== 82) {
+            break;
+          }
+
+          message.genesisAccounts.push(GenesisAccount.decode(reader, reader.uint32()));
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -209,6 +238,9 @@ export const MsgCreateRollapp = {
         : [],
       metadatas: globalThis.Array.isArray(object?.metadatas)
         ? object.metadatas.map((e: any) => TokenMetadata.fromJSON(e))
+        : [],
+      genesisAccounts: globalThis.Array.isArray(object?.genesisAccounts)
+        ? object.genesisAccounts.map((e: any) => GenesisAccount.fromJSON(e))
         : [],
     };
   },
@@ -239,6 +271,9 @@ export const MsgCreateRollapp = {
     if (message.metadatas?.length) {
       obj.metadatas = message.metadatas.map((e) => TokenMetadata.toJSON(e));
     }
+    if (message.genesisAccounts?.length) {
+      obj.genesisAccounts = message.genesisAccounts.map((e) => GenesisAccount.toJSON(e));
+    }
     return obj;
   },
 
@@ -259,6 +294,7 @@ export const MsgCreateRollapp = {
       : Long.UZERO;
     message.permissionedAddresses = object.permissionedAddresses?.map((e) => e) || [];
     message.metadatas = object.metadatas?.map((e) => TokenMetadata.fromPartial(e)) || [];
+    message.genesisAccounts = object.genesisAccounts?.map((e) => GenesisAccount.fromPartial(e)) || [];
     return message;
   },
 };
@@ -514,10 +550,143 @@ export const MsgUpdateStateResponse = {
   },
 };
 
+function createBaseMsgRollappGenesisEvent(): MsgRollappGenesisEvent {
+  return { address: "", channelId: "", rollappId: "" };
+}
+
+export const MsgRollappGenesisEvent = {
+  encode(message: MsgRollappGenesisEvent, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    if (message.channelId !== "") {
+      writer.uint32(18).string(message.channelId);
+    }
+    if (message.rollappId !== "") {
+      writer.uint32(26).string(message.rollappId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRollappGenesisEvent {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRollappGenesisEvent();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.address = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.channelId = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.rollappId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRollappGenesisEvent {
+    return {
+      address: isSet(object.address) ? globalThis.String(object.address) : "",
+      channelId: isSet(object.channelId) ? globalThis.String(object.channelId) : "",
+      rollappId: isSet(object.rollappId) ? globalThis.String(object.rollappId) : "",
+    };
+  },
+
+  toJSON(message: MsgRollappGenesisEvent): unknown {
+    const obj: any = {};
+    if (message.address !== "") {
+      obj.address = message.address;
+    }
+    if (message.channelId !== "") {
+      obj.channelId = message.channelId;
+    }
+    if (message.rollappId !== "") {
+      obj.rollappId = message.rollappId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgRollappGenesisEvent>, I>>(base?: I): MsgRollappGenesisEvent {
+    return MsgRollappGenesisEvent.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgRollappGenesisEvent>, I>>(object: I): MsgRollappGenesisEvent {
+    const message = createBaseMsgRollappGenesisEvent();
+    message.address = object.address ?? "";
+    message.channelId = object.channelId ?? "";
+    message.rollappId = object.rollappId ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgRollappGenesisEventResponse(): MsgRollappGenesisEventResponse {
+  return {};
+}
+
+export const MsgRollappGenesisEventResponse = {
+  encode(_: MsgRollappGenesisEventResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgRollappGenesisEventResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRollappGenesisEventResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRollappGenesisEventResponse {
+    return {};
+  },
+
+  toJSON(_: MsgRollappGenesisEventResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MsgRollappGenesisEventResponse>, I>>(base?: I): MsgRollappGenesisEventResponse {
+    return MsgRollappGenesisEventResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MsgRollappGenesisEventResponse>, I>>(_: I): MsgRollappGenesisEventResponse {
+    const message = createBaseMsgRollappGenesisEventResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateRollapp(request: MsgCreateRollapp): Promise<MsgCreateRollappResponse>;
   UpdateState(request: MsgUpdateState): Promise<MsgUpdateStateResponse>;
+  TriggerGenesisEvent(request: MsgRollappGenesisEvent): Promise<MsgRollappGenesisEventResponse>;
 }
 
 export const MsgServiceName = "dymensionxyz.dymension.rollapp.Msg";
@@ -529,6 +698,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.CreateRollapp = this.CreateRollapp.bind(this);
     this.UpdateState = this.UpdateState.bind(this);
+    this.TriggerGenesisEvent = this.TriggerGenesisEvent.bind(this);
   }
   CreateRollapp(request: MsgCreateRollapp): Promise<MsgCreateRollappResponse> {
     const data = MsgCreateRollapp.encode(request).finish();
@@ -540,6 +710,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdateState.encode(request).finish();
     const promise = this.rpc.request(this.service, "UpdateState", data);
     return promise.then((data) => MsgUpdateStateResponse.decode(_m0.Reader.create(data)));
+  }
+
+  TriggerGenesisEvent(request: MsgRollappGenesisEvent): Promise<MsgRollappGenesisEventResponse> {
+    const data = MsgRollappGenesisEvent.encode(request).finish();
+    const promise = this.rpc.request(this.service, "TriggerGenesisEvent", data);
+    return promise.then((data) => MsgRollappGenesisEventResponse.decode(_m0.Reader.create(data)));
   }
 }
 

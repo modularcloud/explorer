@@ -2,6 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Coin } from "../../cosmos/base/v1beta1/coin";
+import { Duration } from "../../google/protobuf/duration";
 
 export const protobufPackage = "osmosis.incentives";
 
@@ -29,10 +30,24 @@ export interface Params {
    * other users.
    */
   unrestrictedCreatorWhitelist: string[];
+  /**
+   * internal_uptime is the uptime used for internal incentives on pools that
+   * use NoLock gauges (currently only Concentrated Liquidity pools).
+   *
+   * Since Group gauges route through internal gauges, this parameter affects
+   * the uptime of those incentives as well (i.e. distributions through volume
+   * splitting incentives will use this uptime).
+   */
+  internalUptime: Duration | undefined;
 }
 
 function createBaseParams(): Params {
-  return { distrEpochIdentifier: "", groupCreationFee: [], unrestrictedCreatorWhitelist: [] };
+  return {
+    distrEpochIdentifier: "",
+    groupCreationFee: [],
+    unrestrictedCreatorWhitelist: [],
+    internalUptime: undefined,
+  };
 }
 
 export const Params = {
@@ -45,6 +60,9 @@ export const Params = {
     }
     for (const v of message.unrestrictedCreatorWhitelist) {
       writer.uint32(26).string(v!);
+    }
+    if (message.internalUptime !== undefined) {
+      Duration.encode(message.internalUptime, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -77,6 +95,13 @@ export const Params = {
 
           message.unrestrictedCreatorWhitelist.push(reader.string());
           continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.internalUptime = Duration.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -95,6 +120,7 @@ export const Params = {
       unrestrictedCreatorWhitelist: globalThis.Array.isArray(object?.unrestrictedCreatorWhitelist)
         ? object.unrestrictedCreatorWhitelist.map((e: any) => globalThis.String(e))
         : [],
+      internalUptime: isSet(object.internalUptime) ? Duration.fromJSON(object.internalUptime) : undefined,
     };
   },
 
@@ -109,6 +135,9 @@ export const Params = {
     if (message.unrestrictedCreatorWhitelist?.length) {
       obj.unrestrictedCreatorWhitelist = message.unrestrictedCreatorWhitelist;
     }
+    if (message.internalUptime !== undefined) {
+      obj.internalUptime = Duration.toJSON(message.internalUptime);
+    }
     return obj;
   },
 
@@ -120,6 +149,9 @@ export const Params = {
     message.distrEpochIdentifier = object.distrEpochIdentifier ?? "";
     message.groupCreationFee = object.groupCreationFee?.map((e) => Coin.fromPartial(e)) || [];
     message.unrestrictedCreatorWhitelist = object.unrestrictedCreatorWhitelist?.map((e) => e) || [];
+    message.internalUptime = (object.internalUptime !== undefined && object.internalUptime !== null)
+      ? Duration.fromPartial(object.internalUptime)
+      : undefined;
     return message;
   },
 };

@@ -46,6 +46,40 @@ export interface TwapRecord {
   lastErrorTime: Date | undefined;
 }
 
+/**
+ * PruningState allows us to spread out the pruning of TWAP records over time,
+ * instead of pruning all at once at the end of the epoch.
+ */
+export interface PruningState {
+  /**
+   * is_pruning is true if the pruning process is ongoing.
+   * This tells the module to continue pruning the TWAP records
+   * at the EndBlock.
+   */
+  isPruning: boolean;
+  /**
+   * last_kept_time is the time of the last kept TWAP record.
+   * This is used to determine all TWAP records that are older than
+   * last_kept_time and should be pruned.
+   */
+  lastKeptTime:
+    | Date
+    | undefined;
+  /**
+   * Deprecated: This field is deprecated.
+   *
+   * @deprecated
+   */
+  lastKeySeen: Uint8Array;
+  /**
+   * last_seen_pool_id is the pool_id that we will begin pruning in the next
+   * block. This value starts at the highest pool_id at time of epoch, and
+   * decreases until it reaches 1. When it reaches 1, the pruning
+   * process is complete.
+   */
+  lastSeenPoolId: Long;
+}
+
 function createBaseTwapRecord(): TwapRecord {
   return {
     poolId: Long.UZERO,
@@ -276,6 +310,137 @@ export const TwapRecord = {
     return message;
   },
 };
+
+function createBasePruningState(): PruningState {
+  return { isPruning: false, lastKeptTime: undefined, lastKeySeen: new Uint8Array(0), lastSeenPoolId: Long.UZERO };
+}
+
+export const PruningState = {
+  encode(message: PruningState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.isPruning === true) {
+      writer.uint32(8).bool(message.isPruning);
+    }
+    if (message.lastKeptTime !== undefined) {
+      Timestamp.encode(toTimestamp(message.lastKeptTime), writer.uint32(18).fork()).ldelim();
+    }
+    if (message.lastKeySeen.length !== 0) {
+      writer.uint32(26).bytes(message.lastKeySeen);
+    }
+    if (!message.lastSeenPoolId.isZero()) {
+      writer.uint32(32).uint64(message.lastSeenPoolId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PruningState {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePruningState();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.isPruning = reader.bool();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.lastKeptTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.lastKeySeen = reader.bytes();
+          continue;
+        case 4:
+          if (tag !== 32) {
+            break;
+          }
+
+          message.lastSeenPoolId = reader.uint64() as Long;
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PruningState {
+    return {
+      isPruning: isSet(object.isPruning) ? globalThis.Boolean(object.isPruning) : false,
+      lastKeptTime: isSet(object.lastKeptTime) ? fromJsonTimestamp(object.lastKeptTime) : undefined,
+      lastKeySeen: isSet(object.lastKeySeen) ? bytesFromBase64(object.lastKeySeen) : new Uint8Array(0),
+      lastSeenPoolId: isSet(object.lastSeenPoolId) ? Long.fromValue(object.lastSeenPoolId) : Long.UZERO,
+    };
+  },
+
+  toJSON(message: PruningState): unknown {
+    const obj: any = {};
+    if (message.isPruning === true) {
+      obj.isPruning = message.isPruning;
+    }
+    if (message.lastKeptTime !== undefined) {
+      obj.lastKeptTime = message.lastKeptTime.toISOString();
+    }
+    if (message.lastKeySeen.length !== 0) {
+      obj.lastKeySeen = base64FromBytes(message.lastKeySeen);
+    }
+    if (!message.lastSeenPoolId.isZero()) {
+      obj.lastSeenPoolId = (message.lastSeenPoolId || Long.UZERO).toString();
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PruningState>, I>>(base?: I): PruningState {
+    return PruningState.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<PruningState>, I>>(object: I): PruningState {
+    const message = createBasePruningState();
+    message.isPruning = object.isPruning ?? false;
+    message.lastKeptTime = object.lastKeptTime ?? undefined;
+    message.lastKeySeen = object.lastKeySeen ?? new Uint8Array(0);
+    message.lastSeenPoolId = (object.lastSeenPoolId !== undefined && object.lastSeenPoolId !== null)
+      ? Long.fromValue(object.lastSeenPoolId)
+      : Long.UZERO;
+    return message;
+  },
+};
+
+function bytesFromBase64(b64: string): Uint8Array {
+  if (globalThis.Buffer) {
+    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
+  } else {
+    const bin = globalThis.atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
+  }
+}
+
+function base64FromBytes(arr: Uint8Array): string {
+  if (globalThis.Buffer) {
+    return globalThis.Buffer.from(arr).toString("base64");
+  } else {
+    const bin: string[] = [];
+    arr.forEach((byte) => {
+      bin.push(globalThis.String.fromCharCode(byte));
+    });
+    return globalThis.btoa(bin.join(""));
+  }
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 

@@ -1,10 +1,29 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { Coin } from "../../cosmos/base/v1beta1/coin";
 import { TokenMetadata } from "./bank";
 import { StateInfoIndex } from "./state_info";
 
 export const protobufPackage = "dymensionxyz.dymension.rollapp";
+
+/** GenesisAccount is a struct for the genesis account for the rollapp */
+export interface GenesisAccount {
+  /** amount of coins to be sent to the genesis address */
+  amount:
+    | Coin
+    | undefined;
+  /** address is a bech-32 address of the genesis account */
+  address: string;
+}
+
+/** RollappGenesisState is a partial repr of the state the hub can expect the rollapp to be in upon genesis */
+export interface RollappGenesisState {
+  /** genesis_accounts is a list of token allocations */
+  genesisAccounts: GenesisAccount[];
+  /** is_genesis_event is a boolean that indicates if the genesis event has occured */
+  isGenesisEvent: boolean;
+}
 
 /**
  * Rollapp defines a rollapp object. First the RollApp is created and then
@@ -51,6 +70,14 @@ export interface Rollapp {
   permissionedAddresses: string[];
   /** tokenMetadata is a list of TokenMetadata that are registered on this rollapp */
   tokenMetadata: TokenMetadata[];
+  /** genesis_state is a partial repr of the state the hub can expect the rollapp to be in upon genesis */
+  genesisState:
+    | RollappGenesisState
+    | undefined;
+  /** channel_id will be set to the canonical IBC channel of the rollapp. */
+  channelId: string;
+  /** frozen is a boolean that indicates if the rollapp is frozen. */
+  frozen: boolean;
 }
 
 /** Rollapp summary is a compact representation of Rollapp */
@@ -68,6 +95,158 @@ export interface RollappSummary {
   latestFinalizedStateIndex: StateInfoIndex | undefined;
 }
 
+function createBaseGenesisAccount(): GenesisAccount {
+  return { amount: undefined, address: "" };
+}
+
+export const GenesisAccount = {
+  encode(message: GenesisAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenesisAccount {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenesisAccount();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.amount = Coin.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.address = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenesisAccount {
+    return {
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      address: isSet(object.address) ? globalThis.String(object.address) : "",
+    };
+  },
+
+  toJSON(message: GenesisAccount): unknown {
+    const obj: any = {};
+    if (message.amount !== undefined) {
+      obj.amount = Coin.toJSON(message.amount);
+    }
+    if (message.address !== "") {
+      obj.address = message.address;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenesisAccount>, I>>(base?: I): GenesisAccount {
+    return GenesisAccount.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenesisAccount>, I>>(object: I): GenesisAccount {
+    const message = createBaseGenesisAccount();
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
+    message.address = object.address ?? "";
+    return message;
+  },
+};
+
+function createBaseRollappGenesisState(): RollappGenesisState {
+  return { genesisAccounts: [], isGenesisEvent: false };
+}
+
+export const RollappGenesisState = {
+  encode(message: RollappGenesisState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.genesisAccounts) {
+      GenesisAccount.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.isGenesisEvent === true) {
+      writer.uint32(16).bool(message.isGenesisEvent);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RollappGenesisState {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRollappGenesisState();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.genesisAccounts.push(GenesisAccount.decode(reader, reader.uint32()));
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.isGenesisEvent = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RollappGenesisState {
+    return {
+      genesisAccounts: globalThis.Array.isArray(object?.genesisAccounts)
+        ? object.genesisAccounts.map((e: any) => GenesisAccount.fromJSON(e))
+        : [],
+      isGenesisEvent: isSet(object.isGenesisEvent) ? globalThis.Boolean(object.isGenesisEvent) : false,
+    };
+  },
+
+  toJSON(message: RollappGenesisState): unknown {
+    const obj: any = {};
+    if (message.genesisAccounts?.length) {
+      obj.genesisAccounts = message.genesisAccounts.map((e) => GenesisAccount.toJSON(e));
+    }
+    if (message.isGenesisEvent === true) {
+      obj.isGenesisEvent = message.isGenesisEvent;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RollappGenesisState>, I>>(base?: I): RollappGenesisState {
+    return RollappGenesisState.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RollappGenesisState>, I>>(object: I): RollappGenesisState {
+    const message = createBaseRollappGenesisState();
+    message.genesisAccounts = object.genesisAccounts?.map((e) => GenesisAccount.fromPartial(e)) || [];
+    message.isGenesisEvent = object.isGenesisEvent ?? false;
+    return message;
+  },
+};
+
 function createBaseRollapp(): Rollapp {
   return {
     rollappId: "",
@@ -79,6 +258,9 @@ function createBaseRollapp(): Rollapp {
     maxSequencers: Long.UZERO,
     permissionedAddresses: [],
     tokenMetadata: [],
+    genesisState: undefined,
+    channelId: "",
+    frozen: false,
   };
 }
 
@@ -110,6 +292,15 @@ export const Rollapp = {
     }
     for (const v of message.tokenMetadata) {
       TokenMetadata.encode(v!, writer.uint32(74).fork()).ldelim();
+    }
+    if (message.genesisState !== undefined) {
+      RollappGenesisState.encode(message.genesisState, writer.uint32(82).fork()).ldelim();
+    }
+    if (message.channelId !== "") {
+      writer.uint32(90).string(message.channelId);
+    }
+    if (message.frozen === true) {
+      writer.uint32(96).bool(message.frozen);
     }
     return writer;
   },
@@ -184,6 +375,27 @@ export const Rollapp = {
 
           message.tokenMetadata.push(TokenMetadata.decode(reader, reader.uint32()));
           continue;
+        case 10:
+          if (tag !== 82) {
+            break;
+          }
+
+          message.genesisState = RollappGenesisState.decode(reader, reader.uint32());
+          continue;
+        case 11:
+          if (tag !== 90) {
+            break;
+          }
+
+          message.channelId = reader.string();
+          continue;
+        case 12:
+          if (tag !== 96) {
+            break;
+          }
+
+          message.frozen = reader.bool();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -210,6 +422,9 @@ export const Rollapp = {
       tokenMetadata: globalThis.Array.isArray(object?.tokenMetadata)
         ? object.tokenMetadata.map((e: any) => TokenMetadata.fromJSON(e))
         : [],
+      genesisState: isSet(object.genesisState) ? RollappGenesisState.fromJSON(object.genesisState) : undefined,
+      channelId: isSet(object.channelId) ? globalThis.String(object.channelId) : "",
+      frozen: isSet(object.frozen) ? globalThis.Boolean(object.frozen) : false,
     };
   },
 
@@ -242,6 +457,15 @@ export const Rollapp = {
     if (message.tokenMetadata?.length) {
       obj.tokenMetadata = message.tokenMetadata.map((e) => TokenMetadata.toJSON(e));
     }
+    if (message.genesisState !== undefined) {
+      obj.genesisState = RollappGenesisState.toJSON(message.genesisState);
+    }
+    if (message.channelId !== "") {
+      obj.channelId = message.channelId;
+    }
+    if (message.frozen === true) {
+      obj.frozen = message.frozen;
+    }
     return obj;
   },
 
@@ -265,6 +489,11 @@ export const Rollapp = {
       : Long.UZERO;
     message.permissionedAddresses = object.permissionedAddresses?.map((e) => e) || [];
     message.tokenMetadata = object.tokenMetadata?.map((e) => TokenMetadata.fromPartial(e)) || [];
+    message.genesisState = (object.genesisState !== undefined && object.genesisState !== null)
+      ? RollappGenesisState.fromPartial(object.genesisState)
+      : undefined;
+    message.channelId = object.channelId ?? "";
+    message.frozen = object.frozen ?? false;
     return message;
   },
 };
