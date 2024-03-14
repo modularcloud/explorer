@@ -156,14 +156,6 @@ export interface BaseDenom {
   stepSize: string;
 }
 
-/**
- * BaseDenoms represents all of the base denoms that the module uses for its
- * arbitrage trades.
- */
-export interface BaseDenoms {
-  baseDenoms: BaseDenom[];
-}
-
 export interface AllProtocolRevenue {
   takerFeesTracker: TakerFeesTracker | undefined;
   cyclicArbTracker: CyclicArbTracker | undefined;
@@ -1159,67 +1151,6 @@ export const BaseDenom = {
     const message = createBaseBaseDenom();
     message.denom = object.denom ?? "";
     message.stepSize = object.stepSize ?? "";
-    return message;
-  },
-};
-
-function createBaseBaseDenoms(): BaseDenoms {
-  return { baseDenoms: [] };
-}
-
-export const BaseDenoms = {
-  encode(message: BaseDenoms, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.baseDenoms) {
-      BaseDenom.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): BaseDenoms {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBaseDenoms();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.baseDenoms.push(BaseDenom.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): BaseDenoms {
-    return {
-      baseDenoms: globalThis.Array.isArray(object?.baseDenoms)
-        ? object.baseDenoms.map((e: any) => BaseDenom.fromJSON(e))
-        : [],
-    };
-  },
-
-  toJSON(message: BaseDenoms): unknown {
-    const obj: any = {};
-    if (message.baseDenoms?.length) {
-      obj.baseDenoms = message.baseDenoms.map((e) => BaseDenom.toJSON(e));
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<BaseDenoms>, I>>(base?: I): BaseDenoms {
-    return BaseDenoms.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BaseDenoms>, I>>(object: I): BaseDenoms {
-    const message = createBaseBaseDenoms();
-    message.baseDenoms = object.baseDenoms?.map((e) => BaseDenom.fromPartial(e)) || [];
     return message;
   },
 };

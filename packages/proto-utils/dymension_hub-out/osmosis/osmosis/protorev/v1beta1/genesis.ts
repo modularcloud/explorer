@@ -3,7 +3,7 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import { Params } from "./params";
-import { BaseDenom, CyclicArbTracker, InfoByPoolType, TokenPairArbRoutes } from "./protorev";
+import { BaseDenom, CyclicArbTracker, InfoByPoolType, PoolWeights, TokenPairArbRoutes } from "./protorev";
 
 export const protobufPackage = "osmosis.protorev.v1beta1";
 
@@ -20,6 +20,16 @@ export interface GenesisState {
    * highest liquidity method.
    */
   baseDenoms: BaseDenom[];
+  /**
+   * The pool weights that are being used to calculate the weight (compute cost)
+   * of each route.
+   *
+   * DEPRECATED: This field is deprecated and will be removed in the next
+   * release. It is replaced by the `info_by_pool_type` field.
+   */
+  poolWeights:
+    | PoolWeights
+    | undefined;
   /** The number of days since module genesis. */
   daysSinceModuleGenesis: Long;
   /** The fees the developer account has accumulated over time. */
@@ -55,6 +65,7 @@ function createBaseGenesisState(): GenesisState {
     params: undefined,
     tokenPairArbRoutes: [],
     baseDenoms: [],
+    poolWeights: undefined,
     daysSinceModuleGenesis: Long.UZERO,
     developerFees: [],
     latestBlockHeight: Long.UZERO,
@@ -78,6 +89,9 @@ export const GenesisState = {
     }
     for (const v of message.baseDenoms) {
       BaseDenom.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.poolWeights !== undefined) {
+      PoolWeights.encode(message.poolWeights, writer.uint32(34).fork()).ldelim();
     }
     if (!message.daysSinceModuleGenesis.isZero()) {
       writer.uint32(40).uint64(message.daysSinceModuleGenesis);
@@ -139,6 +153,13 @@ export const GenesisState = {
           }
 
           message.baseDenoms.push(BaseDenom.decode(reader, reader.uint32()));
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.poolWeights = PoolWeights.decode(reader, reader.uint32());
           continue;
         case 5:
           if (tag !== 40) {
@@ -228,6 +249,7 @@ export const GenesisState = {
       baseDenoms: globalThis.Array.isArray(object?.baseDenoms)
         ? object.baseDenoms.map((e: any) => BaseDenom.fromJSON(e))
         : [],
+      poolWeights: isSet(object.poolWeights) ? PoolWeights.fromJSON(object.poolWeights) : undefined,
       daysSinceModuleGenesis: isSet(object.daysSinceModuleGenesis)
         ? Long.fromValue(object.daysSinceModuleGenesis)
         : Long.UZERO,
@@ -257,6 +279,9 @@ export const GenesisState = {
     }
     if (message.baseDenoms?.length) {
       obj.baseDenoms = message.baseDenoms.map((e) => BaseDenom.toJSON(e));
+    }
+    if (message.poolWeights !== undefined) {
+      obj.poolWeights = PoolWeights.toJSON(message.poolWeights);
     }
     if (!message.daysSinceModuleGenesis.isZero()) {
       obj.daysSinceModuleGenesis = (message.daysSinceModuleGenesis || Long.UZERO).toString();
@@ -301,6 +326,9 @@ export const GenesisState = {
       : undefined;
     message.tokenPairArbRoutes = object.tokenPairArbRoutes?.map((e) => TokenPairArbRoutes.fromPartial(e)) || [];
     message.baseDenoms = object.baseDenoms?.map((e) => BaseDenom.fromPartial(e)) || [];
+    message.poolWeights = (object.poolWeights !== undefined && object.poolWeights !== null)
+      ? PoolWeights.fromPartial(object.poolWeights)
+      : undefined;
     message.daysSinceModuleGenesis =
       (object.daysSinceModuleGenesis !== undefined && object.daysSinceModuleGenesis !== null)
         ? Long.fromValue(object.daysSinceModuleGenesis)

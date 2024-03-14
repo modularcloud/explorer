@@ -1,8 +1,8 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Status, statusFromJSON, statusToJSON } from "../common/status";
 import { BlockDescriptors } from "./block_descriptor";
+import { StateStatus, stateStatusFromJSON, stateStatusToJSON } from "./state_status";
 
 export const protobufPackage = "dymensionxyz.dymension.rollapp";
 
@@ -49,7 +49,7 @@ export interface StateInfo {
   /** creationHeight is the height at which the UpdateState took place */
   creationHeight: Long;
   /** status is the status of the state update */
-  status: Status;
+  status: StateStatus;
   /**
    * BDs is a list of block description objects (one per block)
    * the list must be ordered by height, starting from startHeight to startHeight+numBlocks-1
@@ -67,18 +67,18 @@ export interface StateInfoSummary {
     | StateInfoIndex
     | undefined;
   /** status is the status of the state update */
-  status: Status;
+  status: StateStatus;
   /** creationHeight is the height at which the UpdateState took place */
   creationHeight: Long;
 }
 
 /** BlockHeightToFinalizationQueue defines a map from block height to list of states to finalized */
 export interface BlockHeightToFinalizationQueue {
-  /** creationHeight is the block height that the state should be finalized */
-  creationHeight: Long;
+  /** finalizationHeight is the block height that the state should be finalized */
+  finalizationHeight: Long;
   /**
    * finalizationQueue is a list of states that are waiting to be finalized
-   * when the block height becomes creationHeight
+   * when the block height becomes finalizationHeight
    */
   finalizationQueue: StateInfoIndex[];
 }
@@ -291,7 +291,7 @@ export const StateInfo = {
       DAPath: isSet(object.DAPath) ? globalThis.String(object.DAPath) : "",
       version: isSet(object.version) ? Long.fromValue(object.version) : Long.UZERO,
       creationHeight: isSet(object.creationHeight) ? Long.fromValue(object.creationHeight) : Long.UZERO,
-      status: isSet(object.status) ? statusFromJSON(object.status) : 0,
+      status: isSet(object.status) ? stateStatusFromJSON(object.status) : 0,
       BDs: isSet(object.BDs) ? BlockDescriptors.fromJSON(object.BDs) : undefined,
     };
   },
@@ -320,7 +320,7 @@ export const StateInfo = {
       obj.creationHeight = (message.creationHeight || Long.UZERO).toString();
     }
     if (message.status !== 0) {
-      obj.status = statusToJSON(message.status);
+      obj.status = stateStatusToJSON(message.status);
     }
     if (message.BDs !== undefined) {
       obj.BDs = BlockDescriptors.toJSON(message.BDs);
@@ -416,7 +416,7 @@ export const StateInfoSummary = {
   fromJSON(object: any): StateInfoSummary {
     return {
       stateInfoIndex: isSet(object.stateInfoIndex) ? StateInfoIndex.fromJSON(object.stateInfoIndex) : undefined,
-      status: isSet(object.status) ? statusFromJSON(object.status) : 0,
+      status: isSet(object.status) ? stateStatusFromJSON(object.status) : 0,
       creationHeight: isSet(object.creationHeight) ? Long.fromValue(object.creationHeight) : Long.UZERO,
     };
   },
@@ -427,7 +427,7 @@ export const StateInfoSummary = {
       obj.stateInfoIndex = StateInfoIndex.toJSON(message.stateInfoIndex);
     }
     if (message.status !== 0) {
-      obj.status = statusToJSON(message.status);
+      obj.status = stateStatusToJSON(message.status);
     }
     if (!message.creationHeight.isZero()) {
       obj.creationHeight = (message.creationHeight || Long.UZERO).toString();
@@ -452,13 +452,13 @@ export const StateInfoSummary = {
 };
 
 function createBaseBlockHeightToFinalizationQueue(): BlockHeightToFinalizationQueue {
-  return { creationHeight: Long.UZERO, finalizationQueue: [] };
+  return { finalizationHeight: Long.UZERO, finalizationQueue: [] };
 }
 
 export const BlockHeightToFinalizationQueue = {
   encode(message: BlockHeightToFinalizationQueue, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.creationHeight.isZero()) {
-      writer.uint32(8).uint64(message.creationHeight);
+    if (!message.finalizationHeight.isZero()) {
+      writer.uint32(8).uint64(message.finalizationHeight);
     }
     for (const v of message.finalizationQueue) {
       StateInfoIndex.encode(v!, writer.uint32(18).fork()).ldelim();
@@ -478,7 +478,7 @@ export const BlockHeightToFinalizationQueue = {
             break;
           }
 
-          message.creationHeight = reader.uint64() as Long;
+          message.finalizationHeight = reader.uint64() as Long;
           continue;
         case 2:
           if (tag !== 18) {
@@ -498,7 +498,7 @@ export const BlockHeightToFinalizationQueue = {
 
   fromJSON(object: any): BlockHeightToFinalizationQueue {
     return {
-      creationHeight: isSet(object.creationHeight) ? Long.fromValue(object.creationHeight) : Long.UZERO,
+      finalizationHeight: isSet(object.finalizationHeight) ? Long.fromValue(object.finalizationHeight) : Long.UZERO,
       finalizationQueue: globalThis.Array.isArray(object?.finalizationQueue)
         ? object.finalizationQueue.map((e: any) => StateInfoIndex.fromJSON(e))
         : [],
@@ -507,8 +507,8 @@ export const BlockHeightToFinalizationQueue = {
 
   toJSON(message: BlockHeightToFinalizationQueue): unknown {
     const obj: any = {};
-    if (!message.creationHeight.isZero()) {
-      obj.creationHeight = (message.creationHeight || Long.UZERO).toString();
+    if (!message.finalizationHeight.isZero()) {
+      obj.finalizationHeight = (message.finalizationHeight || Long.UZERO).toString();
     }
     if (message.finalizationQueue?.length) {
       obj.finalizationQueue = message.finalizationQueue.map((e) => StateInfoIndex.toJSON(e));
@@ -523,8 +523,8 @@ export const BlockHeightToFinalizationQueue = {
     object: I,
   ): BlockHeightToFinalizationQueue {
     const message = createBaseBlockHeightToFinalizationQueue();
-    message.creationHeight = (object.creationHeight !== undefined && object.creationHeight !== null)
-      ? Long.fromValue(object.creationHeight)
+    message.finalizationHeight = (object.finalizationHeight !== undefined && object.finalizationHeight !== null)
+      ? Long.fromValue(object.finalizationHeight)
       : Long.UZERO;
     message.finalizationQueue = object.finalizationQueue?.map((e) => StateInfoIndex.fromPartial(e)) || [];
     return message;

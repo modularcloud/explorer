@@ -10,6 +10,8 @@ export interface DeployerParams {
    * accounts that are allowed to create a rollapp.
    */
   address: string;
+  /** max_rollapps is the maximum number of rollapps that address allowed to deploy */
+  maxRollapps: Long;
 }
 
 /** Params defines the parameters for the module. */
@@ -30,13 +32,16 @@ export interface Params {
 }
 
 function createBaseDeployerParams(): DeployerParams {
-  return { address: "" };
+  return { address: "", maxRollapps: Long.UZERO };
 }
 
 export const DeployerParams = {
   encode(message: DeployerParams, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
+    }
+    if (!message.maxRollapps.isZero()) {
+      writer.uint32(16).uint64(message.maxRollapps);
     }
     return writer;
   },
@@ -55,6 +60,13 @@ export const DeployerParams = {
 
           message.address = reader.string();
           continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.maxRollapps = reader.uint64() as Long;
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -65,13 +77,19 @@ export const DeployerParams = {
   },
 
   fromJSON(object: any): DeployerParams {
-    return { address: isSet(object.address) ? globalThis.String(object.address) : "" };
+    return {
+      address: isSet(object.address) ? globalThis.String(object.address) : "",
+      maxRollapps: isSet(object.maxRollapps) ? Long.fromValue(object.maxRollapps) : Long.UZERO,
+    };
   },
 
   toJSON(message: DeployerParams): unknown {
     const obj: any = {};
     if (message.address !== "") {
       obj.address = message.address;
+    }
+    if (!message.maxRollapps.isZero()) {
+      obj.maxRollapps = (message.maxRollapps || Long.UZERO).toString();
     }
     return obj;
   },
@@ -82,6 +100,9 @@ export const DeployerParams = {
   fromPartial<I extends Exact<DeepPartial<DeployerParams>, I>>(object: I): DeployerParams {
     const message = createBaseDeployerParams();
     message.address = object.address ?? "";
+    message.maxRollapps = (object.maxRollapps !== undefined && object.maxRollapps !== null)
+      ? Long.fromValue(object.maxRollapps)
+      : Long.UZERO;
     return message;
   },
 };

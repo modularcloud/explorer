@@ -7,7 +7,7 @@ import { Any } from "../../../google/protobuf/any";
 import { Params } from "../params";
 import { IncentiveRecord } from "./incentive_record";
 import { FullPositionBreakdown, PositionWithPeriodLock } from "./position";
-import { UptimeTracker } from "./tick_info";
+import { UptimeTracker } from "./tickInfo";
 
 export const protobufPackage = "osmosis.concentratedliquidity.v1beta1";
 
@@ -30,14 +30,6 @@ export interface PositionByIdRequest {
 
 export interface PositionByIdResponse {
   position: FullPositionBreakdown | undefined;
-}
-
-export interface NumPoolPositionsRequest {
-  poolId: Long;
-}
-
-export interface NumPoolPositionsResponse {
-  positionCount: Long;
 }
 
 /** =============================== Pools */
@@ -474,124 +466,6 @@ export const PositionByIdResponse = {
     message.position = (object.position !== undefined && object.position !== null)
       ? FullPositionBreakdown.fromPartial(object.position)
       : undefined;
-    return message;
-  },
-};
-
-function createBaseNumPoolPositionsRequest(): NumPoolPositionsRequest {
-  return { poolId: Long.UZERO };
-}
-
-export const NumPoolPositionsRequest = {
-  encode(message: NumPoolPositionsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.poolId.isZero()) {
-      writer.uint32(8).uint64(message.poolId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): NumPoolPositionsRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNumPoolPositionsRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.poolId = reader.uint64() as Long;
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): NumPoolPositionsRequest {
-    return { poolId: isSet(object.poolId) ? Long.fromValue(object.poolId) : Long.UZERO };
-  },
-
-  toJSON(message: NumPoolPositionsRequest): unknown {
-    const obj: any = {};
-    if (!message.poolId.isZero()) {
-      obj.poolId = (message.poolId || Long.UZERO).toString();
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<NumPoolPositionsRequest>, I>>(base?: I): NumPoolPositionsRequest {
-    return NumPoolPositionsRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<NumPoolPositionsRequest>, I>>(object: I): NumPoolPositionsRequest {
-    const message = createBaseNumPoolPositionsRequest();
-    message.poolId = (object.poolId !== undefined && object.poolId !== null)
-      ? Long.fromValue(object.poolId)
-      : Long.UZERO;
-    return message;
-  },
-};
-
-function createBaseNumPoolPositionsResponse(): NumPoolPositionsResponse {
-  return { positionCount: Long.UZERO };
-}
-
-export const NumPoolPositionsResponse = {
-  encode(message: NumPoolPositionsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.positionCount.isZero()) {
-      writer.uint32(8).uint64(message.positionCount);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): NumPoolPositionsResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNumPoolPositionsResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.positionCount = reader.uint64() as Long;
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): NumPoolPositionsResponse {
-    return { positionCount: isSet(object.positionCount) ? Long.fromValue(object.positionCount) : Long.UZERO };
-  },
-
-  toJSON(message: NumPoolPositionsResponse): unknown {
-    const obj: any = {};
-    if (!message.positionCount.isZero()) {
-      obj.positionCount = (message.positionCount || Long.UZERO).toString();
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<NumPoolPositionsResponse>, I>>(base?: I): NumPoolPositionsResponse {
-    return NumPoolPositionsResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<NumPoolPositionsResponse>, I>>(object: I): NumPoolPositionsResponse {
-    const message = createBaseNumPoolPositionsResponse();
-    message.positionCount = (object.positionCount !== undefined && object.positionCount !== null)
-      ? Long.fromValue(object.positionCount)
-      : Long.UZERO;
     return message;
   },
 };
