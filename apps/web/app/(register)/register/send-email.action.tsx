@@ -6,7 +6,7 @@ import { Resend } from "resend";
 
 export async function sendEmail(values: RegisterFormValues) {
   // Don't send emails on DEV to avoid going over the plan
-  if (process.env.NODE_ENV !== "development" && env.RESEND_API_KEY) {
+  if (process.env.NODE_ENV !== "development" && env.TARGET !== "electron") {
     const resend = new Resend(env.RESEND_API_KEY);
 
     await resend.emails.send({
