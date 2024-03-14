@@ -1,8 +1,21 @@
 import { sql } from "@vercel/postgres";
+import { env } from "~/env.mjs";
+import { jsonFetch } from "./shared-utils";
 
 export async function getDymensionIBCTransfertEvents(): Promise<
   IBCTransferEvent[]
 > {
+  if (env.TARGET === "electron" && !env.POSTGRES_URL) {
+    // fallback to PROD url
+    return jsonFetch<IBCTransferEvent[]>(
+      `https://explorer.modular.cloud/api/get-dymension-ibc-events`,
+      {
+        method: "POST",
+        cache: "no-store",
+      },
+    );
+  }
+
   await sql`CREATE TABLE IF NOT EXISTS "ibc_transfer_events" (
     "id" SERIAL PRIMARY KEY,
     "type" VARCHAR(50) NOT NULL,
