@@ -10,7 +10,8 @@ const loadPageSchema = z.object({
       after: z.string().optional(),
       limit: z.number().optional(),
     })
-    .merge(displayFiltersSchema),
+    .merge(displayFiltersSchema)
+    .optional(),
 });
 
 export async function POST(req: NextRequest) {

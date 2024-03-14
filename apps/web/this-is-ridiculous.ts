@@ -59,7 +59,7 @@ const getAllNetworks = cache(async function getAllNetworks(): Promise<
   do {
     const sp = new URLSearchParams({
       returnAll: "true",
-      maxResults: "1000",
+      maxResults: "5000",
       nextToken: nextToken ?? "",
     });
     const response = await fetch(

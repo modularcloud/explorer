@@ -9,6 +9,17 @@ import {
 import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
+  if (env.TARGET === "electron") {
+    return NextResponse.json(
+      {
+        error: "Can't run CRONs with `electron` target",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
     return NextResponse.json(

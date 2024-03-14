@@ -20,7 +20,6 @@
     "web#build": {
       "dependsOn": ["^build", "web#prefetch:networks-prod"],
       "env": [
-        "ADD_NETWORK_PASS",
         "VERCEL_URL",
         "METRICS_API_URL",
         "NEXT_PUBLIC_VERCEL_URL",
@@ -35,7 +34,6 @@
         "RESEND_API_KEY",
         "RESEND_EMAIL_SENDER",
         "RESEND_EMAIL_RECEIVER",
-        "IBC_API",
         "NEXT_PUBLIC_SVM_METRICS",
         "SVM_DEVNET_RPC_ALTERNATIVE",
         "POSTGRES_URL",
@@ -54,7 +52,8 @@
         "CELESTIA_MAINNET_BACKUP_NODE",
         "NEXT_PUBLIC_ADOBE_EMBED_API_KEY",
         "BLOB_READ_WRITE_TOKEN",
-        "NEXT_PUBLIC_PRODUCTION_URL"
+        "NEXT_PUBLIC_PRODUCTION_URL",
+        "TARGET"
       ]
     },
     "verify#build": {

@@ -6,12 +6,12 @@ import { Resend } from "resend";
 
 export async function sendEmail(values: RegisterFormValues) {
   // Don't send emails on DEV to avoid going over the plan
-  if (process.env.NODE_ENV !== "development") {
+  if (process.env.NODE_ENV !== "development" && env.TARGET !== "electron") {
     const resend = new Resend(env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: env.RESEND_EMAIL_SENDER,
-      to: env.RESEND_EMAIL_RECEIVER,
+      from: env.RESEND_EMAIL_SENDER!,
+      to: env.RESEND_EMAIL_RECEIVER!,
       subject: "Newly registered chain",
       react: (
         <div>
