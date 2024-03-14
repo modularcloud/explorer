@@ -60,18 +60,6 @@ export interface QueryBeforeSendHookAddressResponse {
   cosmwasmAddress: string;
 }
 
-export interface QueryAllBeforeSendHooksAddressesRequest {
-}
-
-/**
- * QueryAllBeforeSendHooksAddressesResponse defines the response structure for
- * the AllBeforeSendHooksAddresses gRPC query.
- */
-export interface QueryAllBeforeSendHooksAddressesResponse {
-  denoms: string[];
-  beforeSendHookAddresses: string[];
-}
-
 function createBaseQueryParamsRequest(): QueryParamsRequest {
   return {};
 }
@@ -544,133 +532,6 @@ export const QueryBeforeSendHookAddressResponse = {
   },
 };
 
-function createBaseQueryAllBeforeSendHooksAddressesRequest(): QueryAllBeforeSendHooksAddressesRequest {
-  return {};
-}
-
-export const QueryAllBeforeSendHooksAddressesRequest = {
-  encode(_: QueryAllBeforeSendHooksAddressesRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllBeforeSendHooksAddressesRequest {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllBeforeSendHooksAddressesRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(_: any): QueryAllBeforeSendHooksAddressesRequest {
-    return {};
-  },
-
-  toJSON(_: QueryAllBeforeSendHooksAddressesRequest): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryAllBeforeSendHooksAddressesRequest>, I>>(
-    base?: I,
-  ): QueryAllBeforeSendHooksAddressesRequest {
-    return QueryAllBeforeSendHooksAddressesRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryAllBeforeSendHooksAddressesRequest>, I>>(
-    _: I,
-  ): QueryAllBeforeSendHooksAddressesRequest {
-    const message = createBaseQueryAllBeforeSendHooksAddressesRequest();
-    return message;
-  },
-};
-
-function createBaseQueryAllBeforeSendHooksAddressesResponse(): QueryAllBeforeSendHooksAddressesResponse {
-  return { denoms: [], beforeSendHookAddresses: [] };
-}
-
-export const QueryAllBeforeSendHooksAddressesResponse = {
-  encode(message: QueryAllBeforeSendHooksAddressesResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.denoms) {
-      writer.uint32(10).string(v!);
-    }
-    for (const v of message.beforeSendHookAddresses) {
-      writer.uint32(18).string(v!);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllBeforeSendHooksAddressesResponse {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryAllBeforeSendHooksAddressesResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.denoms.push(reader.string());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.beforeSendHookAddresses.push(reader.string());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllBeforeSendHooksAddressesResponse {
-    return {
-      denoms: globalThis.Array.isArray(object?.denoms) ? object.denoms.map((e: any) => globalThis.String(e)) : [],
-      beforeSendHookAddresses: globalThis.Array.isArray(object?.beforeSendHookAddresses)
-        ? object.beforeSendHookAddresses.map((e: any) => globalThis.String(e))
-        : [],
-    };
-  },
-
-  toJSON(message: QueryAllBeforeSendHooksAddressesResponse): unknown {
-    const obj: any = {};
-    if (message.denoms?.length) {
-      obj.denoms = message.denoms;
-    }
-    if (message.beforeSendHookAddresses?.length) {
-      obj.beforeSendHookAddresses = message.beforeSendHookAddresses;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<QueryAllBeforeSendHooksAddressesResponse>, I>>(
-    base?: I,
-  ): QueryAllBeforeSendHooksAddressesResponse {
-    return QueryAllBeforeSendHooksAddressesResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<QueryAllBeforeSendHooksAddressesResponse>, I>>(
-    object: I,
-  ): QueryAllBeforeSendHooksAddressesResponse {
-    const message = createBaseQueryAllBeforeSendHooksAddressesResponse();
-    message.denoms = object.denoms?.map((e) => e) || [];
-    message.beforeSendHookAddresses = object.beforeSendHookAddresses?.map((e) => e) || [];
-    return message;
-  },
-};
-
 /** Query defines the gRPC querier service. */
 export interface Query {
   /**
@@ -693,16 +554,6 @@ export interface Query {
    * getting the address registered for the before send hook.
    */
   BeforeSendHookAddress(request: QueryBeforeSendHookAddressRequest): Promise<QueryBeforeSendHookAddressResponse>;
-  /**
-   * AllBeforeSendHooksAddresses defines a gRPC query method for
-   * getting all addresses with before send hook registered.
-   * The response returns two arrays, an array with a list of denom and an array
-   * of before send hook addresses. The idx of denom corresponds to before send
-   * hook addresse's idx.
-   */
-  AllBeforeSendHooksAddresses(
-    request: QueryAllBeforeSendHooksAddressesRequest,
-  ): Promise<QueryAllBeforeSendHooksAddressesResponse>;
 }
 
 export const QueryServiceName = "osmosis.tokenfactory.v1beta1.Query";
@@ -716,7 +567,6 @@ export class QueryClientImpl implements Query {
     this.DenomAuthorityMetadata = this.DenomAuthorityMetadata.bind(this);
     this.DenomsFromCreator = this.DenomsFromCreator.bind(this);
     this.BeforeSendHookAddress = this.BeforeSendHookAddress.bind(this);
-    this.AllBeforeSendHooksAddresses = this.AllBeforeSendHooksAddresses.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -740,14 +590,6 @@ export class QueryClientImpl implements Query {
     const data = QueryBeforeSendHookAddressRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "BeforeSendHookAddress", data);
     return promise.then((data) => QueryBeforeSendHookAddressResponse.decode(_m0.Reader.create(data)));
-  }
-
-  AllBeforeSendHooksAddresses(
-    request: QueryAllBeforeSendHooksAddressesRequest,
-  ): Promise<QueryAllBeforeSendHooksAddressesResponse> {
-    const data = QueryAllBeforeSendHooksAddressesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "AllBeforeSendHooksAddresses", data);
-    return promise.then((data) => QueryAllBeforeSendHooksAddressesResponse.decode(_m0.Reader.create(data)));
   }
 }
 

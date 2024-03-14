@@ -4,26 +4,26 @@ export const protobufPackage = "dymensionxyz.dymension.sequencer";
 
 /** OperatingStatus defines the operating status of a sequencer */
 export enum OperatingStatus {
-  /** OPERATING_STATUS_UNBONDED - OPERATING_STATUS_UNBONDED defines a sequencer that is not active and won't be scheduled */
-  OPERATING_STATUS_UNBONDED = 0,
-  /** OPERATING_STATUS_UNBONDING - UNBONDING defines a sequencer that is currently unbonding. */
-  OPERATING_STATUS_UNBONDING = 1,
-  /** OPERATING_STATUS_BONDED - OPERATING_STATUS_BONDED defines a sequencer that is bonded and can be scheduled */
-  OPERATING_STATUS_BONDED = 2,
+  /** OPERATING_STATUS_UNSPECIFIED - OPERATING_STATUS_UNSPECIFIED defines zero-value for status ordering */
+  OPERATING_STATUS_UNSPECIFIED = 0,
+  /** OPERATING_STATUS_PROPOSER - OPERATING_STATUS_PROPOSER defines a sequencer that is active and can propose state updates */
+  OPERATING_STATUS_PROPOSER = 1,
+  /** OPERATING_STATUS_INACTIVE - OPERATING_STATUS_INACTIVE defines a sequencer that is not active and won't be scheduled */
+  OPERATING_STATUS_INACTIVE = 2,
   UNRECOGNIZED = -1,
 }
 
 export function operatingStatusFromJSON(object: any): OperatingStatus {
   switch (object) {
     case 0:
-    case "OPERATING_STATUS_UNBONDED":
-      return OperatingStatus.OPERATING_STATUS_UNBONDED;
+    case "OPERATING_STATUS_UNSPECIFIED":
+      return OperatingStatus.OPERATING_STATUS_UNSPECIFIED;
     case 1:
-    case "OPERATING_STATUS_UNBONDING":
-      return OperatingStatus.OPERATING_STATUS_UNBONDING;
+    case "OPERATING_STATUS_PROPOSER":
+      return OperatingStatus.OPERATING_STATUS_PROPOSER;
     case 2:
-    case "OPERATING_STATUS_BONDED":
-      return OperatingStatus.OPERATING_STATUS_BONDED;
+    case "OPERATING_STATUS_INACTIVE":
+      return OperatingStatus.OPERATING_STATUS_INACTIVE;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -33,12 +33,12 @@ export function operatingStatusFromJSON(object: any): OperatingStatus {
 
 export function operatingStatusToJSON(object: OperatingStatus): string {
   switch (object) {
-    case OperatingStatus.OPERATING_STATUS_UNBONDED:
-      return "OPERATING_STATUS_UNBONDED";
-    case OperatingStatus.OPERATING_STATUS_UNBONDING:
-      return "OPERATING_STATUS_UNBONDING";
-    case OperatingStatus.OPERATING_STATUS_BONDED:
-      return "OPERATING_STATUS_BONDED";
+    case OperatingStatus.OPERATING_STATUS_UNSPECIFIED:
+      return "OPERATING_STATUS_UNSPECIFIED";
+    case OperatingStatus.OPERATING_STATUS_PROPOSER:
+      return "OPERATING_STATUS_PROPOSER";
+    case OperatingStatus.OPERATING_STATUS_INACTIVE:
+      return "OPERATING_STATUS_INACTIVE";
     case OperatingStatus.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
