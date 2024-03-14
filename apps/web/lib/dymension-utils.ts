@@ -5,7 +5,7 @@ import { jsonFetch } from "./shared-utils";
 export async function getDymensionIBCTransfertEvents(): Promise<
   IBCTransferEvent[]
 > {
-  if (env.TARGET === "electron" && !env.POSTGRES_URL) {
+  if (env.TARGET === "electron") {
     // fallback to PROD url
     return jsonFetch<IBCTransferEvent[]>(
       `https://explorer.modular.cloud/api/get-dymension-ibc-events`,

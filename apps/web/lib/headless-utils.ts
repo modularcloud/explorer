@@ -14,6 +14,7 @@ import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
 import { ALWAYS_ONLINE_NETWORKS } from "./constants";
+import { env } from "~/env.mjs";
 
 /**
  * This is reused on the `api/load-page/route.ts` file
@@ -203,6 +204,41 @@ export async function loadPage({
 }: LoadPageArgs): Promise<Page> {
   const network = await getSingleNetwork(route.network);
   if (!network) notFound();
+
+  if (env.TARGET === "electron") {
+    const response = await fetch(
+      "https://explorer.modular.cloud/api/load-page",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          route,
+          context: context ?? {},
+          revalidateTimeInSeconds,
+        }),
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        notFound();
+      } else {
+        if (!ALWAYS_ONLINE_NETWORKS.includes(network.brand)) {
+          const networkStatus = await checkIfNetworkIsOnline(route.network);
+          if (!networkStatus) {
+            throw new UnhealthyNetworkError("This network is not available");
+          }
+        }
+
+        throw new Error("Unknown Error");
+      }
+    }
+
+    return response.json();
+  }
 
   const integration = await loadIntegration(
     route.network,
