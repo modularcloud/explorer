@@ -52,7 +52,8 @@
         "CELESTIA_MAINNET_BACKUP_NODE",
         "NEXT_PUBLIC_ADOBE_EMBED_API_KEY",
         "BLOB_READ_WRITE_TOKEN",
-        "NEXT_PUBLIC_PRODUCTION_URL"
+        "NEXT_PUBLIC_PRODUCTION_URL",
+        "TARGET"
       ]
     },
     "verify#build": {
