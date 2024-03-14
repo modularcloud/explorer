@@ -9,10 +9,10 @@ import {
 import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
-  if (!env.CRON_SECRET || !env.POSTGRES_URL) {
+  if (env.TARGET === "electron") {
     return NextResponse.json(
       {
-        error: "Env variables are necessary to run this app",
+        error: "Can't run CRONs with `electron` target",
       },
       {
         status: 401,
