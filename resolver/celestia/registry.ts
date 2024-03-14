@@ -23,7 +23,7 @@ function decodeAny(anyMessage: Any) {
 }
 
 export type DecodedAny = { typeUrl: string; decodedValue: any };
-export function getMessages(txRaw: string): any {
+export function getMessages(txRaw: string) {
   const txBuffer = Buffer.from(txRaw, "base64");
 
   const txBody = Celestia.Tx.decode(txBuffer).body;
