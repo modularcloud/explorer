@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
 import { preprocess, z } from "zod";
 import { capitalize } from "./lib/shared-utils";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 export const singleNetworkSchema = z.object({
   config: z.object({

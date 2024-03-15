@@ -1,5 +1,5 @@
 // @ts-check
-import "./env.mjs";
+require("./env.js");
 
 /** @type {import('next').NextConfig} */
 const config = {
@@ -55,4 +55,4 @@ const config = {
   },
 };
 
-export default config;
+module.exports = config;

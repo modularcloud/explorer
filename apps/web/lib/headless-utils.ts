@@ -14,7 +14,7 @@ import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
 import { ALWAYS_ONLINE_NETWORKS } from "./constants";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 /**
  * This is reused on the `api/load-page/route.ts` file
@@ -200,7 +200,7 @@ export type LoadPageArgs = {
 export async function loadPage({
   route,
   context,
-  revalidateTimeInSeconds,
+  revalidateTimeInSeconds = 2,
 }: LoadPageArgs): Promise<Page> {
   const network = await getSingleNetwork(route.network);
   if (!network) notFound();
@@ -218,7 +218,16 @@ export async function loadPage({
           context: context ?? {},
           revalidateTimeInSeconds,
         }),
-        cache: "no-store",
+        next: {
+          revalidate: revalidateTimeInSeconds,
+          tags: CACHE_KEYS.resolvers.route(
+            {
+              network: route.network,
+              path: route.path,
+            },
+            context,
+          ),
+        },
       },
     );
 

@@ -1,6 +1,6 @@
 import "server-only";
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { CACHE_KEYS } from "./cache-keys";
 import { cache } from "react";
 import { integrations, integrationList } from "~/lib/cache";

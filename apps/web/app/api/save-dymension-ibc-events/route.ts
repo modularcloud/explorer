@@ -1,7 +1,7 @@
 import { registerResolvers, resolve } from "@modularcloud/headless";
 import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import {
   DYMENSION_ROLLAPP_IBC_RESOLVER_ID,
   DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT,

@@ -6,7 +6,7 @@ import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientProviders } from "~/ui/client-providers";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import localFont from "next/font/local";
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
@@ -69,6 +69,8 @@ export default async function RootLayout({
         className={`${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
       >
+        {/* Draggable area on desktop */}
+        <div className="hidden todesktop:block bg-transparent h-[35px] [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
         <SkipToMainContent />
         <ClientProviders searchOptions={searchOptionGroups}>
           <GlobalHotkeyProvider optionGroups={searchOptionGroups}>

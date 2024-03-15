@@ -122,6 +122,7 @@ module.exports = {
     },
   },
   plugins: [
+    require("@todesktop/tailwind-variants"),
     require("tailwindcss-animate"),
     require("tailwind-scrollbar")({ nocompatible: true }),
   ],

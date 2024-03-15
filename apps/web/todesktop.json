@@ -1,0 +1,6 @@
+{
+    "id": "240314gel7u7qi9",
+    "icon": "./public/images/mc-logo.svg",
+    "appPath": "./electron",
+    "schemaVersion": 1
+}

@@ -1,12 +1,12 @@
 // @ts-check
-import { createEnv } from "@t3-oss/env-nextjs";
-import { preprocess, z } from "zod";
+const { preprocess, z } = require("zod");
+const { createEnv } = require("@t3-oss/env-nextjs");
 
-export const env = createEnv({
+const env = createEnv({
   server: {
     TARGET: z.enum(["web", "electron"]).default("web"),
     NAMESPACE_ENDPOINT: z.string().url().optional(),
-    BLOB_READ_WRITE_TOKEN: z.string(),
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
     ALT_BASE_URL: z.string().url().optional(),
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
@@ -70,3 +70,7 @@ export const env = createEnv({
     TARGET: process.env.TARGET,
   },
 });
+
+module.exports = {
+  env,
+};
