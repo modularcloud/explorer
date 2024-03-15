@@ -66,7 +66,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${interDisplay.variable} font-sans text-foreground`}
+        className={`${interDisplay.variable} font-sans text-foreground todesktop:pt-[35px]`}
         suppressHydrationWarning
       >
         {/* Draggable area on desktop */}
