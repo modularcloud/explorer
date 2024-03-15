@@ -2,6 +2,11 @@
   "name": "web",
   "version": "0.0.0",
   "private": true,
+  "author": {
+    "name": "Liam Cardenas",
+    "email": "lzrs@modular.cloud"
+  },
+  "description": "A block exporer for modular blockchains.",
   "scripts": {
     "dev": "next dev --turbo",
     "clean-dev": "rm -rf .next/cache/fs-cache && next dev --turbo",
@@ -13,7 +18,8 @@
     "predev": "npm run prefetch:networks",
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs",
     "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
-    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts"
+    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
+    "electron": "electron ./electron/index.js"
   },
   "type": "module",
   "dependencies": {
@@ -72,6 +78,7 @@
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.13",
+    "electron": "^29.1.4",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
     "postcss": "^8.4.21",
