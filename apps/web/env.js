@@ -13,7 +13,7 @@ const env = createEnv({
     RESEND_API_KEY: z.string().min(1).optional(),
     RESEND_EMAIL_SENDER: z.string().email().optional(),
     RESEND_EMAIL_RECEIVER: z.string().email().optional(),
-    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
+    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url().optional(),
     POSTGRES_URL: z.string().optional(),
     POSTGRES_PRISMA_URL: z.string().optional(),
     POSTGRES_URL_NON_POOLING: z.string().optional(),
@@ -21,7 +21,7 @@ const env = createEnv({
     POSTGRES_HOST: z.string().optional(),
     POSTGRES_PASSWORD: z.string().optional(),
     POSTGRES_DATABASE: z.string().optional(),
-    CELESTIA_MAINNET_BACKUP_NODE: z.string(),
+    CELESTIA_MAINNET_BACKUP_NODE: z.string().optional(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;

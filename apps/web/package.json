@@ -6,6 +6,7 @@
     "name": "Liam Cardenas",
     "email": "lzrs@modular.cloud"
   },
+  "homepage": "https://explorer.modular.cloud",
   "description": "A block exporer for modular blockchains.",
   "scripts": {
     "dev": "next dev --turbo",
@@ -82,7 +83,7 @@
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.13",
-    "electron": "^29.1.4",
+    "electron": "29.1.4",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
     "postcss": "^8.4.21",

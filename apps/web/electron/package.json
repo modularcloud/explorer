@@ -1,0 +1,22 @@
+{
+  "name": "modular.cloud",
+  "version": "0.0.0",
+  "private": true,
+  "author": {
+    "name": "Liam Cardenas",
+    "email": "lzrs@modular.cloud"
+  },
+  "homepage": "https://explorer.modular.cloud",
+  "description": "A block exporer for modular blockchains.",
+  "scripts": {
+    "electron": "electron index.js",
+    "todesktop-build": "echo 'BUILT'"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@todesktop/runtime": "^1.6.1"
+  },
+  "devDependencies": {
+    "electron": "29.1.4"
+  }
+}

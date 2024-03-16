@@ -1,6 +1,7 @@
 {
-    "id": "240314gel7u7qi9",
-    "icon": "./public/images/mc-logo.svg",
-    "appPath": "./electron",
-    "schemaVersion": 1
+  "id": "240314gel7u7qi9",
+  "icon": "./electron/assets/mc-logo.png",
+  "appPath": "./electron",
+  "schemaVersion": 1,
+  "uploadSizeLimit": 200
 }
