@@ -3,5 +3,11 @@
   "icon": "./electron/assets/mc-logo.png",
   "appPath": "./electron",
   "schemaVersion": 1,
+  "appFiles": ["./**", "./standalone/**", "./standalone/node_modules/**"],
+  "filesForDistribution": [
+    "./**",
+    "./standalone/**",
+    "./standalone/node_modules/**"
+  ],
   "uploadSizeLimit": 200
 }
