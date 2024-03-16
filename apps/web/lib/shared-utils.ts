@@ -142,7 +142,7 @@ export function isMacLike(userAgent: string | null) {
 }
 
 export async function jsonFetch<T>(
-  url: string,
+  url: string | URL,
   options: Omit<RequestInit, "body"> & {
     body?: Record<string, any>;
   } = {},

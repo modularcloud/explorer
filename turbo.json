@@ -53,7 +53,7 @@
         "NEXT_PUBLIC_ADOBE_EMBED_API_KEY",
         "BLOB_READ_WRITE_TOKEN",
         "NEXT_PUBLIC_PRODUCTION_URL",
-        "TARGET"
+        "NEXT_PUBLIC_TARGET"
       ]
     },
     "verify#build": {

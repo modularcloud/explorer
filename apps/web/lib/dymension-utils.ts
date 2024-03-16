@@ -6,7 +6,7 @@ import { CACHE_KEYS } from "./cache-keys";
 export async function getDymensionIBCTransfertEvents(): Promise<
   IBCTransferEvent[]
 > {
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     // fallback to PROD url
     return jsonFetch<IBCTransferEvent[]>(
       `https://explorer.modular.cloud/api/get-dymension-ibc-events`,

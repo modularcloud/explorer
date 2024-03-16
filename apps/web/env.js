@@ -4,7 +4,6 @@ const { createEnv } = require("@t3-oss/env-nextjs");
 
 const env = createEnv({
   server: {
-    TARGET: z.enum(["web", "electron"]).default("web"),
     NAMESPACE_ENDPOINT: z.string().url().optional(),
     BLOB_READ_WRITE_TOKEN: z.string().optional(),
     ALT_BASE_URL: z.string().url().optional(),
@@ -29,6 +28,7 @@ const env = createEnv({
     }, z.string().url().optional()),
   },
   client: {
+    NEXT_PUBLIC_TARGET: z.enum(["web", "electron"]).default("web"),
     NEXT_PUBLIC_PRODUCTION_URL: z
       .string()
       .url()
@@ -67,7 +67,7 @@ const env = createEnv({
     NEXT_PUBLIC_ADOBE_EMBED_API_KEY:
       process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
-    TARGET: process.env.TARGET,
+    NEXT_PUBLIC_TARGET: process.env.NEXT_PUBLIC_TARGET,
   },
 });
 

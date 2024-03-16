@@ -9,7 +9,7 @@ import {
 import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     return NextResponse.json(
       {
         error: "Can't run CRONs with `electron` target",

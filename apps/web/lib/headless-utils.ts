@@ -205,7 +205,7 @@ export async function loadPage({
   const network = await getSingleNetwork(route.network);
   if (!network) notFound();
 
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     const response = await fetch(
       "https://explorer.modular.cloud/api/load-page",
       {
@@ -352,14 +352,37 @@ export async function checkIfNetworkIsOnline(
   }
 }
 
+const searhableEntitiesResponseSchema = z.object({
+  data: z.array(z.tuple([z.string(), z.string()])),
+});
+
 export async function search(networkSlug: string, query: string) {
-  const integration = await loadIntegration(networkSlug);
-
-  const queries = SearchBuilders.map(
-    (searchBuilder) => searchBuilder.getPath(decodeURIComponent(query))!,
-  ).filter(Boolean);
-
   try {
+    if (env.NEXT_PUBLIC_TARGET === "electron") {
+      const apiURL = new URL("/api/search", "https://explorer.modular.cloud");
+
+      apiURL.searchParams.set("query", query);
+      apiURL.searchParams.set("networkSlug", networkSlug);
+
+      console.log({ apiURL: apiURL.toString() });
+
+      const data = await jsonFetch(apiURL)
+        .then(searhableEntitiesResponseSchema.parse)
+        .then((res) => res.data);
+
+      if (data.length === 0) {
+        return null;
+      } else {
+        return data[0];
+      }
+    }
+
+    const integration = await loadIntegration(networkSlug);
+
+    const queries = SearchBuilders.map(
+      (searchBuilder) => searchBuilder.getPath(decodeURIComponent(query))!,
+    ).filter(Boolean);
+
     const redirectPath = await Promise.any(
       queries.map((query) =>
         integration.resolveRoute(query).then((resolution) => {
