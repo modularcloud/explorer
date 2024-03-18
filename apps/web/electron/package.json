@@ -1,5 +1,5 @@
 {
-  "name": "modular.cloud",
+  "name": "explorer",
   "version": "0.0.0",
   "private": true,
   "author": {
@@ -10,13 +10,15 @@
   "description": "A block exporer for modular blockchains.",
   "scripts": {
     "electron": "electron index.js",
-    "todesktop-build": "echo 'BUILT'"
+    "build": "cd standalone && npm install",
+    "build:todesktop": "todesktop build"
   },
   "main": "index.js",
   "dependencies": {
     "@todesktop/runtime": "^1.6.1"
   },
   "devDependencies": {
-    "electron": "29.1.4"
+    "electron": "29.1.4",
+    "todesktop": "^0.0.0"
   }
 }

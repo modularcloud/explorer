@@ -1,13 +1,17 @@
 {
   "id": "240314gel7u7qi9",
-  "icon": "./electron/assets/mc-logo.png",
-  "appPath": "./electron",
+  "icon": "./public/images/mc-logo.png",
+  "appPath": "./",
   "schemaVersion": 1,
-  "appFiles": ["./**", "./standalone/**", "./standalone/node_modules/**"],
+  "appFiles": [
+    "./**",
+    ".next/standalone/**",
+    ".next/standalone/node_modules/**"
+  ],
   "filesForDistribution": [
     "./**",
-    "./standalone/**",
-    "./standalone/node_modules/**"
+    ".next/standalone/**",
+    ".next/standalone/node_modules/**"
   ],
   "uploadSizeLimit": 200
 }
