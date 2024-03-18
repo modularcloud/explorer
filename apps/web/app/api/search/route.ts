@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     (searchBuilder) => searchBuilder.getPath(query)!,
   ).filter(Boolean);
 
-  const resolvedPathsPromise = await Promise.all(
+  const resolvedPathsPromise = await Promise.allSettled(
     queries.map((query) =>
       integration.resolveRoute(query).then((resolution) => {
         if (resolution?.type === "success") {
@@ -44,7 +44,15 @@ export async function GET(req: NextRequest) {
     ),
   );
 
-  const resolvedPaths = resolvedPathsPromise.filter((path) => path !== null);
+  const resolvedPaths = resolvedPathsPromise
+    .filter((result) => {
+      if (result.status === "rejected") {
+        return false;
+      } else {
+        return result.value !== null;
+      }
+    })
+    .map((res) => (res.status === "fulfilled" ? res.value : null)!);
 
   // remove duplicates
   const newPaths = resolvedPaths.reduce(
