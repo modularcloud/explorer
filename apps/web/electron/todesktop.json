@@ -8,7 +8,7 @@
     "extends": "package.json",
     "main": "index.js",
     "scripts": {
-      "prepare": "echo 'do nothing'"
+      "prepare": null
     },
     "devDependencies": {
       "electron": "29.1.4"
