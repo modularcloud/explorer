@@ -1,11 +1,14 @@
 {
   "name": "modularcloud",
   "version": "0.0.0",
+  "private": true,
+  "homepage": "https://explorer.modular.cloud",
+  "description": "A block exporer for modular blockchains.",
   "author": {
     "name": "Liam Cardenas",
     "email": "lzrs@modular.cloud"
   },
-  "private": true,
+  "productName": "Modular Cloud Explorer",
   "workspaces": [
     "apps/*",
     "packages/*",
