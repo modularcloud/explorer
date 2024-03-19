@@ -3,7 +3,6 @@
   "icon": "./assets/mc-logo.png",
   "appPath": "./",
   "schemaVersion": 1,
-  "electronVersion": "29.1.4",
   "packageJson": {
     "extends": "package.json",
     "main": "index.js",
@@ -16,9 +15,6 @@
     },
     "scripts": {
       "prepare": null
-    },
-    "devDependencies": {
-      "electron": "29.1.4"
     },
     "dependencies": {
       "@todesktop/runtime": "^1.6.1"
