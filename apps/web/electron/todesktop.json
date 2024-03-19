@@ -6,6 +6,13 @@
   "electronVersion": "29.1.4",
   "packageJson": {
     "extends": "package.json",
+    "productName": "Modular Cloud Explorer",
+    "homepage": "https://explorer.modular.cloud",
+    "description": "A block exporer for modular blockchains.",
+    "author": {
+      "name": "Liam Cardenas",
+      "email": "lzrs@modular.cloud"
+    },
     "main": "index.js",
     "scripts": {
       "prepare": null
