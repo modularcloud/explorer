@@ -10,9 +10,7 @@
   "description": "A block exporer for modular blockchains.",
   "scripts": {
     "electron": "electron index.js",
-    "build": "cd standalone && npm install",
-    "build:todesktop": "todesktop build",
-    "postinstall": "node todesktop-postinstall.js"
+    "build:todesktop": "todesktop build"
   },
   "main": "index.js",
   "dependencies": {

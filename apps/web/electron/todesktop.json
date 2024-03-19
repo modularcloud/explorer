@@ -3,11 +3,10 @@
   "icon": "./assets/mc-logo.png",
   "appPath": "./",
   "schemaVersion": 1,
-  "appFiles": ["./**", "./standalone/**", "./standalone/node_modules/**"],
-  "filesForDistribution": [
-    "./**",
-    "./standalone/**",
-    "./standalone/node_modules/**"
-  ],
+  "packageJson": {
+    "extends": "package.json",
+    "productName": "Modular Cloud Explorer",
+    "main": "index.js"
+  },
   "uploadSizeLimit": 200
 }

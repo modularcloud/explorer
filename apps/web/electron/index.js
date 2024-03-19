@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require("electron");
 const todesktop = require("@todesktop/runtime");
 
-require("./standalone/apps/web/server.js");
+require("./apps/web/server.js");
 
 todesktop.init();
 

@@ -21,8 +21,7 @@
     "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
     "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
     "electron": "electron ./electron/index.js",
-    "build:prepare-electron": "next build && rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.desktop .next/standalone/apps/web/.env.local && rsync -a .next/standalone/ electron/standalone && sed -i .bak 's/process.chdir(__dirname)//g' electron/standalone/apps/web/server.js",
-    "build:electron": "npm run build:prepare-electron && todesktop build"
+    "prepare-electron": "rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env.desktop .next/standalone/apps/web/.env.local && rsync -a .next/standalone/apps ./electron && rsync -a .next/standalone/packages ./electron && rsync -a .next/standalone/resolver ./electron && rsync -a .next/standalone/package.json electron/package.json && sed -i .bak 's/process.chdir(__dirname)//g' electron/apps/web/server.js"
   },
   "main": "electron/index.js",
   "dependencies": {
@@ -45,6 +44,7 @@
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.5",
+    "@tanstack/react-virtual": "^3.2.0",
     "@todesktop/runtime": "^1.6.1",
     "@uploadcare/upload-client": "^6.6.1",
     "@vercel/analytics": "^0.1.11",
