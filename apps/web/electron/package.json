@@ -11,7 +11,8 @@
   "scripts": {
     "electron": "electron index.js",
     "build": "cd standalone && npm install",
-    "build:todesktop": "todesktop build"
+    "build:todesktop": "todesktop build",
+    "postinstall": "node todesktop-postinstall.js"
   },
   "main": "index.js",
   "dependencies": {
