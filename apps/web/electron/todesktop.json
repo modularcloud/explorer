@@ -3,6 +3,7 @@
   "icon": "./assets/mc-logo.png",
   "appPath": "./",
   "schemaVersion": 1,
+  "npmVersion": "10.2.4",
   "packageJson": {
     "extends": "package.json",
     "main": "index.js",
@@ -14,7 +15,8 @@
       "email": "lzrs@modular.cloud"
     },
     "scripts": {
-      "prepare": null
+      "prepare": null,
+      "postinstall": "npm i --prefix apps/web"
     },
     "dependencies": {
       "@todesktop/runtime": "^1.6.1"
