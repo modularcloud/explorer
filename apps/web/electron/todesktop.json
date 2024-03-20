@@ -4,6 +4,7 @@
   "appPath": "./",
   "schemaVersion": 1,
   "npmVersion": "10.2.4",
+  "nodeVersion": "20.11.1",
   "packageJson": {
     "extends": "package.json",
     "main": "index.js",
@@ -15,8 +16,7 @@
       "email": "lzrs@modular.cloud"
     },
     "scripts": {
-      "prepare": null,
-      "postinstall": "npm i --prefix apps/web"
+      "prepare": null
     },
     "dependencies": {
       "@todesktop/runtime": "^1.6.1"
