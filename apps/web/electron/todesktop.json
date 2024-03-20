@@ -5,6 +5,8 @@
   "schemaVersion": 1,
   "npmVersion": "10.2.4",
   "nodeVersion": "20.11.1",
+  "includeSubNodeModules": true,
+  "asar": false,
   "packageJson": {
     "extends": "package.json",
     "main": "index.js",

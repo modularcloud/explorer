@@ -1,6 +1,6 @@
 apps/
 packages/
 resolver/
-!package.json
+package.json
 package-lock.json
 _package.json
