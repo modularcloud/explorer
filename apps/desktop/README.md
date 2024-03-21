@@ -33,3 +33,9 @@
    ```bash
    npx electron index.js
    ```
+
+4. (Optional) Build and release the project :  
+
+   ```bash
+   TODESKTOP_ACCESS_TOKEN=<token> TODESKTOP_EMAIL=<email>  todesktop build
+   ```

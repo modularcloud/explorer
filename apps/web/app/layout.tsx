@@ -58,7 +58,12 @@ export default async function RootLayout({
   const searchOptionGroups = await getGroupedNetworkChains();
 
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html
+      lang="en"
+      dir="ltr"
+      suppressHydrationWarning
+      className={env.NEXT_PUBLIC_TARGET === "electron" ? "todesktop" : ""}
+    >
       <head>
         <meta
           name="viewport"
