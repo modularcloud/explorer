@@ -1,0 +1,20 @@
+name: Build Desktop App
+on:
+  repository_dispatch:
+    types: [deploy_desktop_app]
+  workflow_dispatch:
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+      - name: Deploy to Server
+        run: |
+          npm ci
+          npx turbo run build --filter web
+        env:
+          INTERNAL_INTEGRATION_API_URL: ${{ secrets.INTERNAL_INTEGRATION_API_URL }}
