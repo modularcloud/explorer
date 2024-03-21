@@ -364,8 +364,6 @@ export async function search(networkSlug: string, query: string) {
       apiURL.searchParams.set("query", query);
       apiURL.searchParams.set("networkSlug", networkSlug);
 
-      console.log({ apiURL: apiURL.toString() });
-
       const data = await jsonFetch(apiURL)
         .then(searhableEntitiesResponseSchema.parse)
         .then((res) => res.data);
