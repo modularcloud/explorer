@@ -1,6 +1,34 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 const { app, BrowserWindow } = require("electron");
 const todesktop = require("@todesktop/runtime");
+const log = require("electron-log/main");
+
+log.initialize();
+log.transports.ipc.level = "verbose";
+Object.assign(console, log.functions);
+
+log.errorHandler.startCatching({
+  showDialog: true,
+  onError({ error, processType }) {
+    if (processType === "renderer") {
+      return;
+    }
+
+    electron.dialog
+      .showMessageBox({
+        title: "An error occurred",
+        message: error.message,
+        detail: error.stack,
+        type: "error",
+        buttons: ["Ignore", "Exit"],
+      })
+      .then((result) => {
+        if (result.response === 1) {
+          electron.app.quit();
+        }
+      });
+  },
+});
 
 function getRandomPort() {
   return Math.floor(Math.random() * (65535 - 49152 + 1)) + 49152;

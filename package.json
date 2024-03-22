@@ -40,6 +40,7 @@
   },
   "packageManager": "npm@8.19.2",
   "dependencies": {
-    "@todesktop/runtime": "^1.6.1"
+    "@todesktop/runtime": "^1.6.1",
+    "electron-log": "^5.1.2"
   }
 }
