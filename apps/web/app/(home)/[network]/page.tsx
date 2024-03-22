@@ -106,6 +106,9 @@ export default async function NetworkWidgetPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
+  console.log(
+    `==================[generateStaticParams (/[network])]==================`,
+  );
   const paidNetworks = await getAllPaidNetworks();
   return paidNetworks.map((network) => ({ network: network.slug }));
 }
