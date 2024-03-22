@@ -334,7 +334,6 @@ export async function checkIfNetworkIsOnline(
   }
   try {
     const { result } = await jsonFetch(`${rpcUrl}/status`, {
-      cache: "force-cache",
       next: {
         tags: CACHE_KEYS.networks.status(network),
         revalidate: ONE_MINUTE,

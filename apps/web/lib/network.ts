@@ -116,6 +116,12 @@ async function getSingleNetworkFetch(slug: string) {
       integration.config.primaryColor = "29 13% 45%";
     }
 
+    console.dir(
+      {
+        integration,
+      },
+      { depth: null },
+    );
     return integration;
   } catch (error) {
     return null;

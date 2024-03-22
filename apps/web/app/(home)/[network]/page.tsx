@@ -18,8 +18,32 @@ interface Props {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
+  console.log(
+    `==================[generateMetadata (/${props.params.network})]==================`,
+  );
   const network = await getSingleNetwork(props.params.network);
+  console.dir(
+    {
+      network,
+    },
+    { depth: null },
+  );
   if (!network) notFound();
+
+  console.log({
+    title: `${capitalize(network.brand)}`,
+    description: `A block explorer for the ${capitalize(network.brand)} ecosystem.`,
+    openGraph: {
+      url: `/${network.slug}`,
+      type: "website",
+      images: [
+        {
+          url: `${env.NEXT_PUBLIC_PRODUCTION_URL}/api/og?model=network-home&networkSlug=${network.slug}`,
+          ...OG_SIZE,
+        },
+      ],
+    },
+  });
 
   return {
     title: `${capitalize(network.brand)}`,
@@ -38,12 +62,27 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function NetworkWidgetPage({ params }: Props) {
+  console.log(
+    `==================[PAGE (/${params.network})]==================`,
+  );
   const network = await getSingleNetwork(params.network);
 
+  console.dir(
+    {
+      network,
+    },
+    { depth: null },
+  );
   // this fixes a bug on vercel with build where it would throw if the network doesn't
   // exist (even though technically it should always exist)
   if (!network) notFound();
 
+  console.dir(
+    {
+      layout: network.config.widgetLayout,
+    },
+    { depth: null },
+  );
   switch (network.config.widgetLayout) {
     case "SVM":
       return (
