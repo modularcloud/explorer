@@ -52,24 +52,32 @@ export async function POST(request: NextRequest) {
   } = requestParseResult.data;
 
   if (target !== "production") {
-    // ignored request
-    return Response.json({
+    // request is ignored
+    return new Response(null, {
       status: 204,
     });
   }
 
-  return await fetch(
-    "https://api.github.com/repos/modularcloud/explorer/dispatches/build-desktop-app",
+  const response = await fetch(
+    `https://api.github.com/repos/modularcloud/explorer/actions/workflows/build-and-release-desktop-app.yaml/dispatches`,
     {
-      body: JSON.stringify({ event_type: "deploy_desktop_app" }),
+      body: JSON.stringify({
+        inputs: null,
+        ref: "production",
+      }),
       method: "POST",
       headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
         Authorization: `token ${env.GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN}`,
       },
       cache: "no-store",
     },
   );
+
+  return Response.json(await response.json(), {
+    status: response.status === 204 ? 200 : response.status,
+  });
 }
 
 async function verifySignature(req: Request) {
