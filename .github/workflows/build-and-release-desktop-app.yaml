@@ -1,7 +1,5 @@
 name: Build and Release Desktop App
 on:
-  repository_dispatch:
-    types: [deploy_desktop_app]
   workflow_dispatch:
 
 jobs:
