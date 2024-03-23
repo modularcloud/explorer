@@ -1,9 +1,12 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 // @ts-check
 const { preprocess, z } = require("zod");
 const { createEnv } = require("@t3-oss/env-nextjs");
 
 const env = createEnv({
   server: {
+    DEPLOYMENT_WEBHOOK_SECRET: z.string().optional(),
+    GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN: z.string().optional(),
     NAMESPACE_ENDPOINT: z.string().url().optional(),
     BLOB_READ_WRITE_TOKEN: z.string().optional(),
     ALT_BASE_URL: z.string().url().optional(),
@@ -68,6 +71,9 @@ const env = createEnv({
       process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     NEXT_PUBLIC_TARGET: process.env.NEXT_PUBLIC_TARGET,
+    DEPLOYMENT_WEBHOOK_SECRET: process.env.DEPLOYMENT_WEBHOOK_SECRET,
+    GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN:
+      process.env.GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN,
   },
 });
 

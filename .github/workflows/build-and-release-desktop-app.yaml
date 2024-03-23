@@ -1,4 +1,4 @@
-name: Build Desktop App
+name: Build and Release Desktop App
 on:
   repository_dispatch:
     types: [deploy_desktop_app]
@@ -7,6 +7,7 @@ on:
 jobs:
   build-app:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
