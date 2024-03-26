@@ -62,14 +62,13 @@ export async function POST(request: NextRequest) {
     `https://api.github.com/repos/modularcloud/explorer/actions/workflows/build-and-release-desktop-app.yaml/dispatches`,
     {
       body: JSON.stringify({
-        inputs: null,
         ref: "production",
       }),
       method: "POST",
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
-        Authorization: `token ${env.GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${env.GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN}`,
       },
       cache: "no-store",
     },
