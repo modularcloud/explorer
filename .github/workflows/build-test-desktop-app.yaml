@@ -6,7 +6,7 @@ on:
 jobs:
   build-test-desktop-app:
     runs-on: ubuntu-latest
-    environment: production
+    environment: test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
