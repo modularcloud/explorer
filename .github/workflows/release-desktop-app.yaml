@@ -1,12 +1,9 @@
 name: Build and Release Desktop App
 on:
-  push:
-    branches:
-      - fredkiss3/building-electron-with-todesktop
   workflow_dispatch:
 
 jobs:
-  build-app:
+  build-publish-desktop-app:
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -14,14 +11,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.11.1
-      - name: Build and publish electron app
+      - name: Build electron app
         run: |
           npm ci
           npx turbo run build --filter web
           npx turbo run prepare-electron --filter web
           cd apps/desktop
           npm install -g @todesktop/cli@1.9.1
-          todesktop build # && todesktop release --latest --force
+          todesktop build
         env:
           TODESKTOP_ACCESS_TOKEN: ${{ secrets.TODESKTOP_ACCESS_TOKEN }}
           TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
@@ -31,3 +28,17 @@ jobs:
           NEXT_PUBLIC_TARGET: "electron"
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      - name: Smoke test electron app
+        run: |
+          cd apps/desktop
+          todesktop smoke-test
+        env:
+          TODESKTOP_ACCESS_TOKEN: ${{ secrets.TODESKTOP_ACCESS_TOKEN }}
+          TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
+      - name: Release electron app
+        run: |
+          cd apps/desktop
+          todesktop release --latest
+        env:
+          TODESKTOP_ACCESS_TOKEN: ${{ secrets.TODESKTOP_ACCESS_TOKEN }}
+          TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
