@@ -1,6 +1,6 @@
 {
   "id": "240314gel7u7qi9",
-  "icon": "./assets/mc-logo.png",
+  "icon": "./assets/mc-app-icon.png",
   "appPath": "./",
   "schemaVersion": 1,
   "npmVersion": "10.2.4",
