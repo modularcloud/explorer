@@ -18,9 +18,8 @@ jobs:
         run: |
           npm ci
           npx turbo run build --filter web
-          cd apps/web
-          npm run prepare-electron
-          cd ../desktop
+          npx turbo run prepare-electron --filter web
+          cd apps/desktop
           npm install -g @todesktop/cli@1.9.1
           todesktop build # && todesktop release --latest --force
         env:
