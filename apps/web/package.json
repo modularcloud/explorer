@@ -20,7 +20,7 @@
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs",
     "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
     "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
-    "prepare-electron": "rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env .next/standalone/apps/web/.env.local && rsync -a .next/standalone/apps ../desktop && rsync -a .next/standalone/packages ../desktop && rsync -a .next/standalone/resolver ../desktop && rsync -a .next/standalone/package.json ../desktop/package.json && sed -i .bak \"s#process\\.chdir(__dirname)##g\" ../desktop/apps/web/server.js"
+    "prepare-electron": "rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env .next/standalone/apps/web/.env.local && rsync -a .next/standalone/apps ../desktop && rsync -a .next/standalone/packages ../desktop && rsync -a .next/standalone/resolver ../desktop && rsync -a .next/standalone/package.json ../desktop/package.json && sed -i'.bak' \"s#process\\.chdir(__dirname)##g\" ../desktop/apps/web/server.js"
   },
   "main": "electron/index.js",
   "dependencies": {
