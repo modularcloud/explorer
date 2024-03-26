@@ -1,5 +1,8 @@
 name: Build and Release Desktop App
 on:
+  push:
+    branches:
+      - fredkiss3/building-electron-with-todesktop
   workflow_dispatch:
 
 jobs:
@@ -19,7 +22,7 @@ jobs:
           npm run prepare-electron
           cd ../desktop
           npm install -g @todesktop/cli@1.9.1
-          todesktop build && todesktop release --latest --force
+          todesktop build # && todesktop release --latest --force
         env:
           TODESKTOP_ACCESS_TOKEN: ${{ secrets.TODESKTOP_ACCESS_TOKEN }}
           TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
