@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-desktop-app:
+  build-desktop-app:
     runs-on: ubuntu-latest
     environment: test
     steps:
@@ -29,8 +29,19 @@ jobs:
           NEXT_PUBLIC_TARGET: "electron"
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+  test-desktop-app:
+    runs-on: ubuntu-latest
+    environment: test
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
       - name: Smoke test electron app
         run: |
+          npm install -g @todesktop/cli@1.9.1
           cd apps/desktop
           todesktop smoke-test
         env:
