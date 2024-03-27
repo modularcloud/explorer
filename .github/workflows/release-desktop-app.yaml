@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-publish-desktop-app:
+  build-desktop-app:
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -37,6 +37,7 @@ jobs:
 
   test-desktop-app:
     runs-on: ubuntu-latest
+    needs: build-desktop-app
     environment: test
     timeout-minutes: 45
     steps:
@@ -54,6 +55,7 @@ jobs:
           TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
 
   release-desktop-app:
+    needs: test-desktop-app
     runs-on: ubuntu-latest
     environment: test
     steps:
