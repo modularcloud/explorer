@@ -18,7 +18,7 @@ export async function Header({ networkSlug }: Props) {
   const groupedNetworks = await getGroupedNetworkChains();
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-[60] bg-muted-100">
+    <header className="fixed left-0 right-0 top-0 z-[60] tab:bg-muted-100 pt-titlebar">
       <div
         className={cn(
           "bg-white tab:bg-muted-100 flex w-full px-6 justify-between items-center py-3 gap-4 h-header border-b",

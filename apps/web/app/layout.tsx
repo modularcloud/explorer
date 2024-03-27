@@ -71,11 +71,15 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${interDisplay.variable} font-sans text-foreground todesktop:pt-[35px]`}
         suppressHydrationWarning
+        style={{
+          "--titlebar-size":
+            env.NEXT_PUBLIC_TARGET === "electron" ? "2.25rem" : "0",
+        }}
+        className={`${interDisplay.variable} font-sans text-foreground`}
       >
         {/* Draggable area on desktop */}
-        <div className="hidden todesktop:block bg-transparent h-[35px] [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
+        <div className="hidden todesktop:block bg-transparent h-titlebar [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
         <SkipToMainContent />
         <ClientProviders searchOptions={searchOptionGroups}>
           <GlobalHotkeyProvider optionGroups={searchOptionGroups}>

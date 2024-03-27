@@ -10,7 +10,14 @@
     -moz-osx-font-smoothing: grayscale; /* Firefox */
     -webkit-font-smoothing: antialiased; /* WebKit  */
     --font-inter: "InterVariable";
+    --header-size: 4rem;
+    --header-tabs-size: 4.3125rem;
+    /* --top-header: var(--header-size) + 0.25rem + var(--titlebar-size); */
   }
+}
+
+.top-header {
+  top: calc(var(--header-size) + var(--titlebar-size));
 }
 
 @supports (font-variation-settings: normal) {

@@ -30,11 +30,9 @@ module.exports = {
         },
       },
       spacing: {
-        header: `4rem`,
-        "header-tabs": `4.3125rem`,
-      },
-      top: {
-        header: "4.25rem",
+        header: `var(--header-size)`,
+        "header-tabs": `var(--header-tabs-size)`,
+        titlebar: `var(--titlebar-size)`,
       },
       colors: {
         foreground: {
