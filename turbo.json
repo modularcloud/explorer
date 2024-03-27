@@ -22,6 +22,7 @@
       "cache": false
     },
     "web#build": {
+      "outputs": [".next/**"],
       "dependsOn": ["^build", "web#prefetch:networks-prod"],
       "env": [
         "VERCEL_URL",

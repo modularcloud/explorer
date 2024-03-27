@@ -39,7 +39,6 @@ jobs:
   test-desktop-app:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    environment: test
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
