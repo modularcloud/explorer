@@ -65,6 +65,10 @@ function createWindow() {
     },
   });
 
+  // this is to override the title set by `./apps/web/server.js`
+  // so that the window will show `Explorer` instead of `next-server`
+  process.title = mainWindow.title;
+
   // and load the index.html of the app.
   mainWindow.loadURL(`http://localhost:${process.env.PORT}`);
   mainWindow.on("closed", () => {
