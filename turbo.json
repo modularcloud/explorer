@@ -18,7 +18,8 @@
       "cache": false
     },
     "web#prepare-electron": {
-      "dependsOn": ["web#build"]
+      "dependsOn": ["web#build"],
+      "cache": false
     },
     "web#build": {
       "dependsOn": ["^build", "web#prefetch:networks-prod"],
