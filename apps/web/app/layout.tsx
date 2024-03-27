@@ -74,7 +74,7 @@ export default async function RootLayout({
         suppressHydrationWarning
         style={{
           "--titlebar-size":
-            env.NEXT_PUBLIC_TARGET === "electron" ? "1.25rem" : "0",
+            env.NEXT_PUBLIC_TARGET === "electron" ? "1.25rem" : "0px",
         }}
         className={`${interDisplay.variable} font-sans text-foreground`}
       >
