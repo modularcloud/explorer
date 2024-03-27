@@ -1,5 +1,6 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-const { app, BrowserWindow } = require("electron");
+// @ts-check
+const { app, BrowserWindow, dialog } = require("electron");
 const todesktop = require("@todesktop/runtime");
 const log = require("electron-log/main");
 
@@ -14,7 +15,7 @@ log.errorHandler.startCatching({
       return;
     }
 
-    electron.dialog
+    dialog
       .showMessageBox({
         title: "An error occurred",
         message: error.message,
@@ -24,7 +25,7 @@ log.errorHandler.startCatching({
       })
       .then((result) => {
         if (result.response === 1) {
-          electron.app.quit();
+          app.quit();
         }
       });
   },
@@ -38,7 +39,7 @@ let hasServerStarted = false;
 let totalAttempsLeft = 10;
 while (!hasServerStarted && totalAttempsLeft > 0) {
   try {
-    process.env.PORT = getRandomPort();
+    process.env.PORT = getRandomPort().toString();
     require("./apps/web/server.js");
     hasServerStarted = true;
   } catch (error) {
