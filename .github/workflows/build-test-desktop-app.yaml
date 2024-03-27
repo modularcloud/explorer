@@ -15,6 +15,12 @@ jobs:
       - name: Build electron app
         run: |
           npm ci
+          cat <<EOF > apps/web/.env
+          INTERNAL_INTEGRATION_API_URL=${INTERNAL_INTEGRATION_API_URL}
+          NEXT_PUBLIC_SVM_METRICS="https://fr64dzklc3.execute-api.us-west-2.amazonaws.com/prod"
+          NEXT_PUBLIC_ADOBE_EMBED_API_KEY="a165f09589fc4cd29a574b37d1212a96"
+          NEXT_PUBLIC_TARGET='electron'
+          EOF
           npx turbo run build --filter web
           npx turbo run prepare-electron --filter web
           cd apps/desktop
@@ -24,9 +30,6 @@ jobs:
           TODESKTOP_ACCESS_TOKEN: ${{ secrets.TODESKTOP_ACCESS_TOKEN }}
           TODESKTOP_EMAIL: ${{ secrets.TODESKTOP_EMAIL }}
           INTERNAL_INTEGRATION_API_URL: ${{ secrets.INTERNAL_INTEGRATION_API_URL }}
-          NEXT_PUBLIC_SVM_METRICS: "https://fr64dzklc3.execute-api.us-west-2.amazonaws.com/prod"
-          NEXT_PUBLIC_ADOBE_EMBED_API_KEY: "a165f09589fc4cd29a574b37d1212a96"
-          NEXT_PUBLIC_TARGET: "electron"
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
