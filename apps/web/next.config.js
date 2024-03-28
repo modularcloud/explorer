@@ -15,9 +15,6 @@ const config = {
   },
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
-  experimental: {
-    useDeploymentId: true,
-  },
   logging: {
     fetches: {
       fullUrl: true,

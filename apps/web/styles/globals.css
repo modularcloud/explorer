@@ -16,7 +16,7 @@
 }
 
 .top-header {
-  top: calc(var(--header-size) + var(--titlebar-size));
+  top: var(--header-size);
 }
 
 @supports (font-variation-settings: normal) {

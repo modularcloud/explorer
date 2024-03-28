@@ -5,6 +5,7 @@ export { default as ArrowOn } from "./ArrowOn";
 export { default as ArrowOut } from "./ArrowOut";
 export { default as ArrowRight } from "./ArrowRight";
 export { default as ArrowRightGradient } from "./ArrowRightGradient";
+export { default as ArrowRightWithLine } from "./ArrowRightWithLine";
 export { default as BarChart } from "./BarChart";
 export { default as BellOff } from "./BellOff";
 export { default as BellOn } from "./BellOn";

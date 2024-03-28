@@ -34,7 +34,7 @@ export function RightPanel({ data, network }: Props) {
         // the height of the sidebar is the total height of the screen - the height of the <Header /> component
         "h-[calc(100vh_-var(--header-size))] w-[27rem]",
         "bg-muted-100 hidden lg:block",
-        "fixed top-[calc(var(--header-size)+var(--titlebar-size))] bottom-0 right-0",
+        "fixed top-[calc(var(--header-size))] bottom-0 right-0",
         "overflow-hidden z-40",
       )}
     >
@@ -98,7 +98,7 @@ export function RightPanelSkeleton() {
         // the height of the sidebar is the total height of the screen - the height of the <Header /> component
         "h-[calc(100vh_-var(--header-size))] w-[27rem]",
         "bg-muted-100 hidden lg:block",
-        "fixed top-[calc(var(--header-size)+var(--titlebar-size))] bottom-0 right-0",
+        "fixed top-[calc(var(--header-size))] bottom-0 right-0",
         "overflow-hidden z-40",
       )}
     >

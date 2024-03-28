@@ -33,7 +33,7 @@ export default async function BlockLayout({
           id="main-content"
           tabIndex={0}
           className={cn(
-            "mt-[calc(var(--header-size)+var(--titlebar-size))] bg-white min-h-screen",
+            "mt-header bg-white min-h-screen",
             // style children but not the header nav
             "[&>*:not(nav)]:bg-white col-span-6",
           )}

@@ -90,7 +90,7 @@ export async function HeaderTabs({ params }: Props) {
         "left-0 top-header w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs /> + size of the electron drag region
-        "[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+var(--header-tabs-size))]",
+        "[&_+_*]:top-[calc(var(--header-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--header-tabs-size))]",
         "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >
@@ -213,7 +213,7 @@ export async function HeaderTabsMobile({ params }: Props) {
         "px-3 py-1.5 flex tab:hidden items-center justify-between gap-2",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs /> + height of the electron titlebar
-        "[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+var(--header-tabs-size))]",
+        "[&_+_*]:top-[calc(var(--header-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--header-tabs-size))]",
       )}
     >
       <span className="text-xs text-muted flex-none">Go to</span>
@@ -231,10 +231,10 @@ export function HeaderTabsSkeleton() {
     <nav
       className={cn(
         "fixed z-30 h-header-tabs overflow-y-clip hide-scrollbars bg-white",
-        "left-0 !top-[var(--header-size)+var(--titlebar-size)] w-full lg:max-w-[calc(100%_-_27rem)]",
+        "left-0 !top-[var(--header-size)] w-full lg:max-w-[calc(100%_-_27rem)]",
         // this is to style the main section when the content is visible (no 404)
         // the position of the top anchor of this div is the height of the <Header /> + the height of <HeaderTabs /> + height of the electron titlebar
-        "[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--titlebar-size)+var(--header-tabs-size))]",
+        "[&_+_*]:top-[calc(var(--header-size)+3rem)]  tab:[&_+_*]:top-[calc(var(--header-size)+var(--header-tabs-size))]",
         "px-4 hidden tab:flex items-center justify-between gap-4",
       )}
     >

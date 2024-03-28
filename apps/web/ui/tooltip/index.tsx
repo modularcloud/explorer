@@ -13,16 +13,18 @@ interface Props {
   className?: string;
   arrowClassName?: string;
   hideArrow?: boolean;
+  sideOffset?: number;
 }
 
 export function Tooltip({
   children,
   label,
   side,
-  delayInMS = 500,
   className,
   arrowClassName,
   hideArrow,
+  delayInMS = 500,
+  sideOffset = 5,
 }: Props) {
   return (
     <RadixTooltip.Provider delayDuration={delayInMS}>
@@ -38,7 +40,7 @@ export function Tooltip({
               "border border-mid-dark-100 z-[100]",
               className,
             )}
-            sideOffset={5}
+            sideOffset={sideOffset}
           >
             {label}
             {!hideArrow && (
