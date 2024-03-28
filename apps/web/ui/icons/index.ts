@@ -87,6 +87,7 @@ export { default as Stars } from "./Stars";
 export { default as SunOff } from "./SunOff";
 export { default as SunOn } from "./SunOn";
 export { default as UsdCoin } from "./UsdCoin";
+export { default as Undo } from "./Undo";
 export { default as UserOff } from "./UserOff";
 export { default as UserOn } from "./UserOn";
 export { default as Warning } from "./Warning";

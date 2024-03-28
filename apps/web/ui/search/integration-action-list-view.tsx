@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "~/ui/shadcn/utils";
 import { useItemGrid } from "~/lib/hooks/use-item-grid";
-import { ArrowRight, Home, MenuHorizontal } from "~/ui/icons";
+import { ArrowRight, Home, MenuHorizontal, Undo } from "~/ui/icons";
 import { useRouter } from "next/navigation";
 import { capitalize } from "~/lib/shared-utils";
 import type {
@@ -202,7 +202,9 @@ export const IntegrationActionListView = React.memo(
         {
           id: "change-chain",
           groupName: "Actions",
-          icon: () => null,
+          icon: ({ className }) => (
+            <Undo className={cn("h-4 w-4", className)} />
+          ),
           label: "Search a different chain",
           onSelect: onChangeChainClicked,
         },
@@ -337,6 +339,7 @@ export const IntegrationActionListView = React.memo(
               </div>
               {items.map((item) => {
                 item = item as ListItemType;
+                const Icon = item.icon;
                 return (
                   <div
                     key={item.id}
@@ -345,13 +348,14 @@ export const IntegrationActionListView = React.memo(
                       "py-2 pl-4 rounded-md cursor-pointer text-start",
                       "aria-[selected=true]:bg-muted-100 aria-[selected=true]:text-foreground",
                       "focus-visible:outline-none",
-                      "flex items-center gap-4 scroll-mt-10",
+                      "flex items-center gap-2 scroll-mt-10",
                     )}
                   >
                     <ArrowRight
                       aria-hidden="true"
                       className="h-3 w-3 flex-none"
                     />
+                    <Icon />
                     <div className="w-[97%] flex items-center flex-grow whitespace-nowrap">
                       {item.label}&nbsp;
                       {isNavigating && currentNavigatingAction === item.id && (
