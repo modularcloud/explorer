@@ -15,10 +15,6 @@
   }
 }
 
-.top-header {
-  top: var(--header-size);
-}
-
 @supports (font-variation-settings: normal) {
   :root {
     font-optical-sizing: auto;

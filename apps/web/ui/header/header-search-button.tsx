@@ -52,6 +52,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
 
   return (
     <div className="flex gap-0 tab:gap-2">
+      {/* Buttons that appear on the desktop app */}
       <Tooltip
         label="Go to chain homepage"
         sideOffset={2}
@@ -83,8 +84,8 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           className={cn(
             "inline-flex items-center justify-between gap-3 lg:gap-5",
             "min-w-0 md:min-w-fit flex-shrink lg:flex-grow tab:max-w-[560px]",
-            "shadow-sm text-sm",
-            "py-2 px-2.5 tab:px-3.5",
+            "shadow-sm text-sm todesktop:text-xs",
+            "py-2 todesktop:py-1.5 px-2.5 tab:px-3.5",
           )}
           variant="bordered"
           style={{

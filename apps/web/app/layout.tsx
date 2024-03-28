@@ -72,10 +72,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        style={{
-          "--titlebar-size": "0px",
-        }}
-        className={`${interDisplay.variable} font-sans text-foreground`}
+        className={`${interDisplay.variable} font-sans text-foreground [--header-size:4rem] todesktop:[--header-size:3rem]`}
       >
         <SkipToMainContent />
         <ClientProviders searchOptions={searchOptionGroups}>

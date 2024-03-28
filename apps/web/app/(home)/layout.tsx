@@ -11,7 +11,7 @@ export default async function HomeLayout({
   return (
     <>
       {/* Draggable area on desktop */}
-      <div className="hidden todesktop:block bg-transparent h-8 [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
+      <div className="hidden todesktop:block bg-transparent h-header [-webkit-app-region:drag] fixed top-0 left-0 right-0 z-[9999]" />
 
       <main
         id="main-content"
