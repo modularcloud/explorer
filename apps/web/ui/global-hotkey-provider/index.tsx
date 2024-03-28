@@ -2,6 +2,8 @@
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { GroupedNetworkChains } from "~/lib/grouped-network-chains";
+import { useHotkey } from "~/lib/hooks/use-hotkey";
+import { env } from "~/env";
 
 type GlobalHotkeyContextType = {
   isSearchModalOpen: boolean;
@@ -32,6 +34,23 @@ export function GlobalHotkeyProvider({
   const router = useRouter();
   const params = useParams();
   const sequenceKeyPressedRef = React.useRef(false);
+
+  useHotkey({
+    keys: ["ArrowLeft", "ArrowRight"],
+    modifier: "META",
+    listener: (pressedKey) => {
+      if (env.NEXT_PUBLIC_TARGET === "electron") {
+        if (pressedKey === "ArrowLeft") {
+          router.back();
+        } else {
+          router.forward();
+        }
+        console.log(`consumed [cmd+${pressedKey}]`);
+        return true;
+      }
+      return false;
+    },
+  });
 
   const network = React.useMemo(() => {
     const values = optionGroups.flat();
