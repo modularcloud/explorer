@@ -3,7 +3,7 @@
 ## How to run the project
 
 1. Setup the environment variables needed to build the project with electron by modifying `app/web/.env` :
-    
+
    ```shell
    INTERNAL_INTEGRATION_API_URL=<private-api-for-getting-network-chains>
    NEXT_PUBLIC_SVM_METRICS="https://fr64dzklc3.execute-api.us-west-2.amazonaws.com/prod"
