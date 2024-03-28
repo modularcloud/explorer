@@ -63,7 +63,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
           href={`/${params.network}`}
           variant="borderless"
           isSquared
-          className="hidden todesktop:inline-flex text-muted hover:text-foreground bg-transparent"
+          className="hidden todesktop:inline-flex text-muted hover:text-foreground bg-transparent [app-region:no-drag] [-webkit-app-region:no-drag]"
         >
           <Home className={cn("h-4 w-4")} />
         </Button>
@@ -85,7 +85,7 @@ export function HeaderSearchButton({ optionGroups }: Props) {
             "inline-flex items-center justify-between gap-3 lg:gap-5",
             "min-w-0 md:min-w-fit flex-shrink lg:flex-grow tab:max-w-[560px]",
             "shadow-sm text-sm todesktop:text-xs",
-            "py-2 todesktop:py-1.5 px-2.5 tab:px-3.5",
+            "py-2 todesktop:py-1.5 px-2.5 tab:px-3.5 [app-region:no-drag] [-webkit-app-region:no-drag]",
           )}
           variant="bordered"
           style={{

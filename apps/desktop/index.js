@@ -56,12 +56,13 @@ function createWindow() {
     height: 900,
     title: "Explorer",
     titleBarStyle: "hidden",
-    titleBarOverlay: {
-      height: 35,
+    trafficLightPosition: {
+      x: 16,
+      y: 16,
     },
     webPreferences: {
       nodeIntegration: true,
-      devTools: true, // !app.isPackaged,
+      devTools: true,
     },
   });
 

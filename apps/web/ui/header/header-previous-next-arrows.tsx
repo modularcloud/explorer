@@ -18,7 +18,10 @@ export function HeaderPreviousNextArrows({
 
   return (
     <div
-      className={cn("gap-0 items-stretch flex-shrink-0 text-muted", className)}
+      className={cn(
+        "gap-0 items-stretch flex-shrink-0 text-muted [app-region:no-drag] [-webkit-app-region:no-drag]",
+        className,
+      )}
     >
       <Tooltip
         label="Go to previous page"
