@@ -14,7 +14,7 @@ import { nextCache } from "./server-utils";
 import { CACHE_KEYS } from "./cache-keys";
 import { z } from "zod";
 import { ALWAYS_ONLINE_NETWORKS } from "./constants";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 /**
  * This is reused on the `api/load-page/route.ts` file
@@ -200,12 +200,12 @@ export type LoadPageArgs = {
 export async function loadPage({
   route,
   context,
-  revalidateTimeInSeconds,
+  revalidateTimeInSeconds = 2,
 }: LoadPageArgs): Promise<Page> {
   const network = await getSingleNetwork(route.network);
   if (!network) notFound();
 
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     const response = await fetch(
       "https://explorer.modular.cloud/api/load-page",
       {
@@ -218,7 +218,16 @@ export async function loadPage({
           context: context ?? {},
           revalidateTimeInSeconds,
         }),
-        cache: "no-store",
+        next: {
+          revalidate: revalidateTimeInSeconds,
+          tags: CACHE_KEYS.resolvers.route(
+            {
+              network: route.network,
+              path: route.path,
+            },
+            context,
+          ),
+        },
       },
     );
 
@@ -325,7 +334,6 @@ export async function checkIfNetworkIsOnline(
   }
   try {
     const { result } = await jsonFetch(`${rpcUrl}/status`, {
-      cache: "force-cache",
       next: {
         tags: CACHE_KEYS.networks.status(network),
         revalidate: ONE_MINUTE,
@@ -343,14 +351,35 @@ export async function checkIfNetworkIsOnline(
   }
 }
 
+const searhableEntitiesResponseSchema = z.object({
+  data: z.array(z.tuple([z.string(), z.string()])),
+});
+
 export async function search(networkSlug: string, query: string) {
-  const integration = await loadIntegration(networkSlug);
-
-  const queries = SearchBuilders.map(
-    (searchBuilder) => searchBuilder.getPath(decodeURIComponent(query))!,
-  ).filter(Boolean);
-
   try {
+    if (env.NEXT_PUBLIC_TARGET === "electron") {
+      const apiURL = new URL("/api/search", "https://explorer.modular.cloud");
+
+      apiURL.searchParams.set("query", query);
+      apiURL.searchParams.set("networkSlug", networkSlug);
+
+      const data = await jsonFetch(apiURL)
+        .then(searhableEntitiesResponseSchema.parse)
+        .then((res) => res.data);
+
+      if (data.length === 0) {
+        return null;
+      } else {
+        return data[0];
+      }
+    }
+
+    const integration = await loadIntegration(networkSlug);
+
+    const queries = SearchBuilders.map(
+      (searchBuilder) => searchBuilder.getPath(decodeURIComponent(query))!,
+    ).filter(Boolean);
+
     const redirectPath = await Promise.any(
       queries.map((query) =>
         integration.resolveRoute(query).then((resolution) => {

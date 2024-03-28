@@ -30,11 +30,8 @@ module.exports = {
         },
       },
       spacing: {
-        header: `4rem`,
-        "header-tabs": `4.3125rem`,
-      },
-      top: {
-        header: "4.25rem",
+        header: `var(--header-size)`,
+        "header-tabs": `var(--header-tabs-size)`,
       },
       colors: {
         foreground: {
@@ -122,6 +119,7 @@ module.exports = {
     },
   },
   plugins: [
+    require("@todesktop/tailwind-variants"),
     require("tailwindcss-animate"),
     require("tailwind-scrollbar")({ nocompatible: true }),
   ],

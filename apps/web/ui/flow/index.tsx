@@ -12,6 +12,7 @@ import { jsonFetch, parseHeadlessRouteVercelFix } from "~/lib/shared-utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { CACHE_KEYS } from "~/lib/cache-keys";
 import type { ResolutionResponse } from "@modularcloud-resolver/core";
+import { env } from "~/env";
 
 type MsgRef = {
   slug: string;
@@ -234,7 +235,14 @@ function Transfer({ hash, slug }: { hash: string; slug: string }) {
   const nodeResponse = useQuery({
     queryKey: CACHE_KEYS.ibcResolve(body.resolverId, body.input),
     queryFn: async () => {
-      return await jsonFetch<ResolutionResponse>("/api/resolve", {
+      const apiURL = new URL(
+        "/api/resolve",
+        env.NEXT_PUBLIC_TARGET === "electron"
+          ? "https://explorer.modular.cloud"
+          : "",
+      );
+
+      return await jsonFetch<ResolutionResponse>(apiURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

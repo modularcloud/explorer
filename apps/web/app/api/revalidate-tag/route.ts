@@ -1,7 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 const revalidateRequestSchema = z.object({
   tags: z.array(z.string().min(1)),

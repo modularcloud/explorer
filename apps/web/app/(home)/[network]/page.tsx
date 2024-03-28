@@ -10,7 +10,7 @@ import type { HeadlessRoute } from "~/lib/headless-utils";
 import { SVMWidgetLayout } from "~/ui/network-widgets/layouts/svm";
 import { CelestiaWidgetLayout } from "~/ui/network-widgets/layouts/celestia";
 import { DymensionWidgetLayout } from "~/ui/network-widgets/layouts/dymension";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { OG_SIZE } from "~/lib/constants";
 
 interface Props {

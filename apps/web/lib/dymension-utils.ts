@@ -1,17 +1,21 @@
 import { sql } from "@vercel/postgres";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { jsonFetch } from "./shared-utils";
+import { CACHE_KEYS } from "./cache-keys";
 
 export async function getDymensionIBCTransfertEvents(): Promise<
   IBCTransferEvent[]
 > {
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     // fallback to PROD url
     return jsonFetch<IBCTransferEvent[]>(
       `https://explorer.modular.cloud/api/get-dymension-ibc-events`,
       {
         method: "POST",
-        cache: "no-store",
+        next: {
+          revalidate: 1,
+          tags: CACHE_KEYS.widgets.data("dymension-froopyland"),
+        },
       },
     );
   }

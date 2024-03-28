@@ -1,6 +1,7 @@
 name: Prettier Check
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   check-formatting:

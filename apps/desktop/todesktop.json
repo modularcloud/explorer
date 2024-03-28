@@ -1,0 +1,28 @@
+{
+  "id": "240314gel7u7qi9",
+  "icon": "./assets/mc-app-icon.png",
+  "appPath": "./",
+  "schemaVersion": 1,
+  "npmVersion": "10.2.4",
+  "nodeVersion": "20.11.1",
+  "includeSubNodeModules": true,
+  "asar": false,
+  "packageJson": {
+    "extends": "package.json",
+    "main": "index.js",
+    "productName": "Modular Cloud Explorer",
+    "homepage": "https://explorer.modular.cloud",
+    "description": "A block exporer for modular blockchains.",
+    "author": {
+      "name": "Liam Cardenas",
+      "email": "lzrs@modular.cloud"
+    },
+    "scripts": {
+      "prepare": null
+    },
+    "dependencies": {
+      "@todesktop/runtime": "^1.6.1"
+    }
+  },
+  "uploadSizeLimit": 400
+}

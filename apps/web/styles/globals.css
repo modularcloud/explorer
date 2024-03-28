@@ -10,6 +10,8 @@
     -moz-osx-font-smoothing: grayscale; /* Firefox */
     -webkit-font-smoothing: antialiased; /* WebKit  */
     --font-inter: "InterVariable";
+    --header-size: 4rem;
+    --header-tabs-size: 4.3125rem;
   }
 }
 

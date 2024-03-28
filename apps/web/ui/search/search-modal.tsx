@@ -196,7 +196,7 @@ export function SearchModal({
                           width={16}
                           height={16}
                           alt={`${currentNetwork.displayName} logo`}
-                          className="h-4 w-4 inline-block"
+                          className="h-4 w-4 inline-block rounded-full"
                         />
                       )}
 

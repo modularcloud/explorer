@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { env } from "~/env";
 import { CACHE_KEYS } from "~/lib/cache-keys";
 import { jsonFetch } from "~/lib/shared-utils";
 
@@ -20,11 +21,19 @@ export function useSearcheableEntities({
   return useQuery({
     queryKey: CACHE_KEYS.search.query(network, query),
     queryFn: async ({ signal }) => {
-      const sp = new URLSearchParams({
-        networkSlug: network,
-        query,
-      });
-      return jsonFetch("/api/search?" + sp.toString(), { signal })
+      const apiURL = new URL(
+        "/api/search",
+        env.NEXT_PUBLIC_TARGET === "electron"
+          ? "https://explorer.modular.cloud"
+          : "",
+      );
+
+      apiURL.searchParams.set("query", query);
+      apiURL.searchParams.set("networkSlug", network);
+
+      console.log({ apiURL });
+
+      return jsonFetch(apiURL, { signal })
         .then(searhableEntitiesResponseSchema.parse)
         .then((res) => res.data);
     },

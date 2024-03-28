@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { DEFAULT_WIDGET_REVALIDATE_TIME_IN_SECONDS } from "~/lib/constants";
 
 export const svmMetricsDataSchema = z.object({

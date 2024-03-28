@@ -1,6 +1,6 @@
 import "server-only";
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import { CACHE_KEYS } from "./cache-keys";
 import { cache } from "react";
 import { integrations, integrationList } from "~/lib/cache";
@@ -115,7 +115,6 @@ async function getSingleNetworkFetch(slug: string) {
       integration.config.widgetLayout = "Dymension";
       integration.config.primaryColor = "29 13% 45%";
     }
-
     return integration;
   } catch (error) {
     return null;

@@ -2,6 +2,12 @@
   "name": "web",
   "version": "0.0.0",
   "private": true,
+  "author": {
+    "name": "Liam Cardenas",
+    "email": "lzrs@modular.cloud"
+  },
+  "homepage": "https://explorer.modular.cloud",
+  "description": "A block exporer for modular blockchains.",
   "scripts": {
     "dev": "next dev --turbo",
     "clean-dev": "rm -rf .next/cache/fs-cache && next dev --turbo",
@@ -13,9 +19,10 @@
     "predev": "npm run prefetch:networks",
     "gen:icons": "npx @svgr/cli --typescript --out-dir ui/icons -- ui/icon-svgs",
     "prefetch:networks": "set -a; . ./.env.local; set +a && tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
-    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts"
+    "prefetch:networks-prod": "tsx --tsconfig ./tsconfig.script.json ./this-is-ridiculous.ts",
+    "prepare-electron": "rsync -a .next/static/ .next/standalone/apps/web/.next/static && rsync -a public/ .next/standalone/apps/web/public && cp .env .next/standalone/apps/web/.env.local && rsync -a .next/standalone/apps ../desktop && rsync -a .next/standalone/packages ../desktop && rsync -a .next/standalone/resolver ../desktop && rsync -a .next/standalone/package.json ../desktop/package.json && sed -i'.bak' \"s#process\\.chdir(__dirname)##g\" ../desktop/apps/web/server.js"
   },
-  "type": "module",
+  "main": "electron/index.js",
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@modularcloud/headless": "*",
@@ -36,6 +43,7 @@
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.5",
+    "@tanstack/react-virtual": "^3.2.0",
     "@uploadcare/upload-client": "^6.6.1",
     "@vercel/analytics": "^0.1.11",
     "@vercel/blob": "^0.14.1",
@@ -48,7 +56,7 @@
     "dayjs": "^1.11.7",
     "decimal.js": "^10.4.3",
     "lucide-react": "^0.259.0",
-    "next": "^14.1.1-canary.53",
+    "next": "^14.2.0-canary.39",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
@@ -56,6 +64,7 @@
     "recharts": "^2.5.0",
     "resend": "^2.0.0",
     "service-manager": "*",
+    "sharp": "^0.33.2",
     "slugify": "^1.6.6",
     "sonner": "^1.4.0",
     "stream": "^0.0.2",
@@ -68,6 +77,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@svgr/cli": "^8.1.0",
+    "@todesktop/tailwind-variants": "^1.0.1",
     "@types/node": "^17.0.12",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",

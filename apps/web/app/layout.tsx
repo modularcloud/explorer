@@ -6,7 +6,7 @@ import { GlobalHotkeyProvider } from "~/ui/global-hotkey-provider";
 import { SkipToMainContent } from "~/ui/skip-to-main-content";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientProviders } from "~/ui/client-providers";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import localFont from "next/font/local";
 import { getGroupedNetworkChains } from "~/lib/grouped-network-chains";
 
@@ -58,7 +58,12 @@ export default async function RootLayout({
   const searchOptionGroups = await getGroupedNetworkChains();
 
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html
+      lang="en"
+      dir="ltr"
+      suppressHydrationWarning
+      className={env.NEXT_PUBLIC_TARGET === "electron" ? "todesktop" : ""}
+    >
       <head>
         <meta
           name="viewport"
@@ -66,8 +71,8 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${interDisplay.variable} font-sans text-foreground`}
         suppressHydrationWarning
+        className={`${interDisplay.variable} font-sans text-foreground [--header-size:4rem] todesktop:[--header-size:3rem]`}
       >
         <SkipToMainContent />
         <ClientProviders searchOptions={searchOptionGroups}>

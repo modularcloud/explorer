@@ -1,12 +1,14 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 // @ts-check
-import { createEnv } from "@t3-oss/env-nextjs";
-import { preprocess, z } from "zod";
+const { preprocess, z } = require("zod");
+const { createEnv } = require("@t3-oss/env-nextjs");
 
-export const env = createEnv({
+const env = createEnv({
   server: {
-    TARGET: z.enum(["web", "electron"]).default("web"),
+    DEPLOYMENT_WEBHOOK_SECRET: z.string().optional(),
+    GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN: z.string().optional(),
     NAMESPACE_ENDPOINT: z.string().url().optional(),
-    BLOB_READ_WRITE_TOKEN: z.string(),
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
     ALT_BASE_URL: z.string().url().optional(),
     INTERNAL_INTEGRATION_API_URL: z.string().url(),
     REVALIDATE_TOKEN: z.string().min(32).optional(),
@@ -14,7 +16,7 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().min(1).optional(),
     RESEND_EMAIL_SENDER: z.string().email().optional(),
     RESEND_EMAIL_RECEIVER: z.string().email().optional(),
-    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url(),
+    SVM_DEVNET_RPC_ALTERNATIVE: z.string().url().optional(),
     POSTGRES_URL: z.string().optional(),
     POSTGRES_PRISMA_URL: z.string().optional(),
     POSTGRES_URL_NON_POOLING: z.string().optional(),
@@ -22,13 +24,14 @@ export const env = createEnv({
     POSTGRES_HOST: z.string().optional(),
     POSTGRES_PASSWORD: z.string().optional(),
     POSTGRES_DATABASE: z.string().optional(),
-    CELESTIA_MAINNET_BACKUP_NODE: z.string(),
+    CELESTIA_MAINNET_BACKUP_NODE: z.string().optional(),
     VERCEL_URL: preprocess((arg) => {
       if (!arg) return arg;
       return `https://${arg}`;
     }, z.string().url().optional()),
   },
   client: {
+    NEXT_PUBLIC_TARGET: z.enum(["web", "electron"]).default("web"),
     NEXT_PUBLIC_PRODUCTION_URL: z
       .string()
       .url()
@@ -67,6 +70,13 @@ export const env = createEnv({
     NEXT_PUBLIC_ADOBE_EMBED_API_KEY:
       process.env.NEXT_PUBLIC_ADOBE_EMBED_API_KEY,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
-    TARGET: process.env.TARGET,
+    NEXT_PUBLIC_TARGET: process.env.NEXT_PUBLIC_TARGET,
+    DEPLOYMENT_WEBHOOK_SECRET: process.env.DEPLOYMENT_WEBHOOK_SECRET,
+    GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN:
+      process.env.GITHUB_ACTION_TRIGGER_PERSONAL_ACCESS_TOKEN,
   },
 });
+
+module.exports = {
+  env,
+};

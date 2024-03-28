@@ -28,10 +28,11 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-
+.env.desktop
 # turbo
 .turbo
 
 # package builds
 dist/
 cache/
+standalone/

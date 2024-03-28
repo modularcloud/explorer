@@ -15,54 +15,8 @@ import { capitalize, range } from "~/lib/shared-utils";
 import { cn } from "~/ui/shadcn/utils";
 
 // types
-import type { ShortcutKeyProps } from "~/ui/shortcut-key";
 import type { SingleNetwork } from "~/lib/network";
 import type { Page } from "@modularcloud/headless";
-
-interface HotkeyEntryProps {
-  label: string;
-  keys: Array<{ cmd: ShortcutKeyProps["command"]; label?: string }>;
-  isLast?: boolean;
-  isFirst?: boolean;
-}
-
-function HotkeyEntry({ label, keys, isLast, isFirst }: HotkeyEntryProps) {
-  return (
-    <div
-      className={cn(
-        "grid gap-4 w-full grid-cols-5 pl-7 items-center relative py-2",
-      )}
-    >
-      {/* Left indentation marker */}
-      <div
-        className="grid items-start h-full absolute left-1 top-0 bottom-0"
-        aria-hidden="true"
-      >
-        <div
-          className={cn("w-[1px] bg-muted/25 absolute top-0", {
-            "bottom-0 rounded-md": !isLast,
-            "bottom-1/2 rounded-t-md": isLast,
-          })}
-        />
-        <div className="w-3 h-[1px] bg-muted/25 rounded-r-md absolute top-1/2 left-[1px]" />
-      </div>
-
-      <dt className="text-foreground font-medium col-span-2">{label}</dt>
-      <dd
-        className={cn(
-          "font-normal col-span-3 flex gap-2 justify-end items-center",
-          {
-            "pt-4": isFirst,
-          },
-        )}
-      >
-        {keys.map(({ cmd, label }, index) => (
-          <ShortcutKey command={cmd} label={label} key={index} />
-        ))}
-      </dd>
-    </div>
-  );
-}
 
 interface Props {
   data: Page["sidebar"];
@@ -78,9 +32,9 @@ export function RightPanel({ data, network }: Props) {
     <aside
       className={cn(
         // the height of the sidebar is the total height of the screen - the height of the <Header /> component
-        "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
+        "h-[calc(100vh_-var(--header-size))] w-[27rem]",
         "bg-muted-100 hidden lg:block",
-        "fixed top-[63px] bottom-0 right-0",
+        "fixed top-[calc(var(--header-size))] bottom-0 right-0",
         "overflow-hidden z-40",
       )}
     >
@@ -142,9 +96,9 @@ export function RightPanelSkeleton() {
     <aside
       className={cn(
         // the height of the sidebar is the total height of the screen - the height of the <Header /> component
-        "h-[calc(100vh_-_theme('spacing.header'))] w-[27rem]",
+        "h-[calc(100vh_-var(--header-size))] w-[27rem]",
         "bg-muted-100 hidden lg:block",
-        "fixed top-[63px] bottom-0 right-0",
+        "fixed top-[calc(var(--header-size))] bottom-0 right-0",
         "overflow-hidden z-40",
       )}
     >

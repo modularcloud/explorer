@@ -1,8 +1,9 @@
 // @ts-check
-import "./env.mjs";
+require("./env.js");
 
 /** @type {import('next').NextConfig} */
 const config = {
+  output: "standalone",
   async redirects() {
     return [
       {
@@ -14,9 +15,6 @@ const config = {
   },
   reactStrictMode: true,
   transpilePackages: ["service-manager"],
-  experimental: {
-    useDeploymentId: true,
-  },
   logging: {
     fetches: {
       fullUrl: true,
@@ -54,4 +52,4 @@ const config = {
   },
 };
 
-export default config;
+module.exports = config;

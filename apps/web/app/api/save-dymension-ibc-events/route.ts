@@ -1,7 +1,7 @@
 import { registerResolvers, resolve } from "@modularcloud/headless";
 import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 import {
   DYMENSION_ROLLAPP_IBC_RESOLVER_ID,
   DYMENSION_ROLLAPP_IBC_RESOLVER_INPUT,
@@ -9,7 +9,7 @@ import {
 import { IBCTransferEvent } from "~/lib/dymension-utils";
 
 export async function GET(request: NextRequest) {
-  if (env.TARGET === "electron") {
+  if (env.NEXT_PUBLIC_TARGET === "electron") {
     return NextResponse.json(
       {
         error: "Can't run CRONs with `electron` target",

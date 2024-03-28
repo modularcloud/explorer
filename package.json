@@ -1,7 +1,14 @@
 {
-  "name": "celestiascan",
+  "name": "modularcloud",
   "version": "0.0.0",
   "private": true,
+  "homepage": "https://explorer.modular.cloud",
+  "description": "A block exporer for modular blockchains.",
+  "author": {
+    "name": "Liam Cardenas",
+    "email": "lzrs@modular.cloud"
+  },
+  "productName": "Modular Cloud Explorer",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -21,6 +28,7 @@
   "devDependencies": {
     "commitlint": "^18.6.1",
     "commitlint-config-gitmoji": "^2.3.1",
+    "electron": "29.1.4",
     "eslint-config-custom": "*",
     "husky": "^9.0.11",
     "prettier": "^3.2.5",
@@ -32,6 +40,7 @@
   },
   "packageManager": "npm@8.19.2",
   "dependencies": {
-    "@tanstack/react-virtual": "^3.0.0-beta.66"
+    "@todesktop/runtime": "^1.6.1",
+    "electron-log": "^5.1.2"
   }
 }

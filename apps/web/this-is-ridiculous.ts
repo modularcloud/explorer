@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import { FileSystemCacheDEV } from "~/lib/fs-cache-dev";
 import { preprocess, z } from "zod";
 import { capitalize } from "./lib/shared-utils";
-import { env } from "~/env.mjs";
+import { env } from "~/env.js";
 
 export const singleNetworkSchema = z.object({
   config: z.object({
@@ -178,26 +178,30 @@ async function getAllPaidNetworks() {
   return allNetworks.filter((network) => network.paidVersion).slice(0, 30);
 }
 
-const paidNetworks = await getAllPaidNetworks();
+async function main() {
+  const paidNetworks = await getAllPaidNetworks();
 
-let template = `export { default as integrationList } from "./integration-summary.json";`;
-let varMap: Record<string, string> = {};
+  let template = `export { default as integrationList } from "./integration-summary.json";`;
+  let varMap: Record<string, string> = {};
 
-for (const network of paidNetworks) {
-  await getSingleNetwork(network.slug);
-  const varName = `integration${network.slug
-    .split("-")
-    .filter(Boolean)
-    .map(capitalize)
-    .join("")}`;
-  template += `\nimport { default as ${varName} } from "./integration-single-${network.slug}.json";`;
-  varMap[network.slug] = varName;
+  for (const network of paidNetworks) {
+    await getSingleNetwork(network.slug);
+    const varName = `integration${network.slug
+      .split("-")
+      .filter(Boolean)
+      .map(capitalize)
+      .join("")}`;
+    template += `\nimport { default as ${varName} } from "./integration-single-${network.slug}.json";`;
+    varMap[network.slug] = varName;
+  }
+
+  template += `\n\nexport const integrations = {`;
+  for (const [key, value] of Object.entries(varMap)) {
+    template += `\n  "${key}": ${value},`;
+  }
+  template += `\n};\n`;
+
+  await fs.writeFile("./lib/cache/index.ts", template, "utf-8");
 }
 
-template += `\n\nexport const integrations = {`;
-for (const [key, value] of Object.entries(varMap)) {
-  template += `\n  "${key}": ${value},`;
-}
-template += `\n};\n`;
-
-await fs.writeFile("./lib/cache/index.ts", template, "utf-8");
+main();

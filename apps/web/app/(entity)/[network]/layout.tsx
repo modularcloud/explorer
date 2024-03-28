@@ -1,13 +1,9 @@
-// components
 import { Header } from "~/ui/header";
 import { HideBodyOverflow } from "~/ui/hide-body-overflow";
-
-// utils
 import { getSingleNetwork } from "~/lib/network";
 import { cn } from "~/ui/shadcn/utils";
-
-// types
-import { HeadlessRoute } from "~/lib/headless-utils";
+import { DEFAULT_BRAND_COLOR } from "~/lib/constants";
+import type { HeadlessRoute } from "~/lib/headless-utils";
 
 export default async function BlockLayout({
   children,
@@ -24,7 +20,7 @@ export default async function BlockLayout({
     <main
       className="min-h-screen flex flex-col h-full"
       style={{
-        "--color-primary": network?.config.primaryColor,
+        "--color-primary": network?.config.primaryColor ?? DEFAULT_BRAND_COLOR,
         "--gradient-primary": network?.config.cssGradient,
       }}
     >
@@ -37,7 +33,7 @@ export default async function BlockLayout({
           id="main-content"
           tabIndex={0}
           className={cn(
-            "mt-[65px] bg-white min-h-screen",
+            "mt-header bg-white min-h-screen",
             // style children but not the header nav
             "[&>*:not(nav)]:bg-white col-span-6",
           )}
