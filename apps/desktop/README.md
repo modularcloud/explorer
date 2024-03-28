@@ -2,9 +2,18 @@
 
 ## How to run the project
 
-1. Build the nextjs app :
+1. Setup the environment variables needed to build the project with electron by modifying `app/web/.env` :
+    
+   ```shell
+   INTERNAL_INTEGRATION_API_URL=<private-api-for-getting-network-chains>
+   NEXT_PUBLIC_SVM_METRICS="https://fr64dzklc3.execute-api.us-west-2.amazonaws.com/prod"
+   NEXT_PUBLIC_ADOBE_EMBED_API_KEY="a165f09589fc4cd29a574b37d1212a96"
+   NEXT_PUBLIC_TARGET='electron'
+   ```
 
-   ```bash
+2. Build the nextjs app :
+
+   ```shell
    # go to the root
    cd ../..
 
@@ -15,27 +24,27 @@
    You may get an error when building the app,
    for that you can go to the web folder and build it manuaally :
 
-   ```bash
+   ```shell
    cd apps/web
    npm run prefetch:networks
    npm run build
    ```
 
-2. Export the built files from the next app :
+3. Export the built files from the next app :
 
-   ```bash
+   ```shell
    cd apps/web
    npm run prepare-electron
    ```
 
-3. Run the desktop project :
+4. Run the desktop project :
 
-   ```bash
+   ```shell
    npx electron index.js
    ```
 
-4. (Optional) Build and release the project :
+5. (Optional) Build and release the project :
 
-   ```bash
+   ```shell
    TODESKTOP_ACCESS_TOKEN=<token> TODESKTOP_EMAIL=<email>  todesktop build
    ```
